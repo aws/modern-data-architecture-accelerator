@@ -62,7 +62,7 @@ aws --version     # AWS CLI v2 for CodeArtifact access
 5. **Install project dependencies**:
 
    ```bash
-   npm run install:all
+   npm install
    ```
 
 ### NPM Registry Setup
@@ -98,7 +98,7 @@ MDAA uses a multi-stage publishing process that validates packages in AWS CodeAr
 **Usage**:
 
 ```bash
-./scripts/test_published_artifacts.sh <version> <repo> <domain> <account> <branch> [--download]
+./scripts/publish/test_published_artifacts.sh <version> <repo> <domain> <account> <branch> [--download]
 ```
 
 **Parameters**:
@@ -128,7 +128,7 @@ MDAA uses a multi-stage publishing process that validates packages in AWS CodeAr
 **Usage**:
 
 ```bash
-./scripts/validate_dependencies.sh [--npm-ready]
+./scripts/quality/validate_dependencies.sh [--npm-ready]
 ```
 
 **Features**:
@@ -145,7 +145,7 @@ MDAA uses a multi-stage publishing process that validates packages in AWS CodeAr
 **Usage**:
 
 ```bash
-./scripts/test_npm_readiness.sh [--publish] [--limit N] [--otp CODE]
+./scripts/publish/test_npm_readiness.sh [--publish] [--limit N] [--otp CODE]
 ```
 
 **Parameters**:
@@ -175,10 +175,10 @@ The NPM publishing process can be integrated into CI/CD pipelines. Here's an exa
 npm_readiness_check:
   stage: publish
   script:
-    - RELEASE_VERSION=$(jq -r .version < lerna.json)
-    - ./scripts/test_published_artifacts.sh $RELEASE_VERSION <repo> <domain> <account> <branch> --download
-    - ./scripts/validate_dependencies.sh --npm-ready
-    - ./scripts/test_npm_readiness.sh
+    - RELEASE_VERSION=$(jq -r .version < package.json)
+    - ./scripts/publish/test_published_artifacts.sh $RELEASE_VERSION <repo> <domain> <account> <branch> --download
+    - ./scripts/quality/validate_dependencies.sh --npm-ready
+    - ./scripts/publish/test_npm_readiness.sh
 ```
 
 ### Pipeline Dependencies
@@ -191,8 +191,8 @@ Ensure the NPM publishing stage depends on the readiness check to validate packa
 
 ```bash
 # Build and test packages locally
-lerna run build
-lerna run test
+npx nx run-many -t build --all
+npx nx run-many -t test --all
 ```
 
 ### 2. CodeArtifact Publishing
@@ -203,13 +203,13 @@ Packages are first published to AWS CodeArtifact for validation before public NP
 
 ```bash
 # Download packages from CodeArtifact
-./scripts/test_published_artifacts.sh 1.2.0 repo domain account main --download
+./scripts/publish/test_published_artifacts.sh 1.2.0 repo domain account main --download
 
 # Validate NPM readiness
-./scripts/validate_dependencies.sh --npm-ready
+./scripts/quality/validate_dependencies.sh --npm-ready
 
 # Test publishing readiness (dry-run)
-./scripts/test_npm_readiness.sh
+./scripts/publish/test_npm_readiness.sh
 ```
 
 ### 4. Public NPM Publishing
@@ -218,17 +218,17 @@ Packages are first published to AWS CodeArtifact for validation before public NP
 
 ```bash
 # Test without publishing
-./scripts/test_npm_readiness.sh
+./scripts/publish/test_npm_readiness.sh
 ```
 
 #### Actual Publishing
 
 ```bash
 # Publish all packages
-./scripts/test_npm_readiness.sh --publish --otp 123456
+./scripts/publish/test_npm_readiness.sh --publish --otp 123456
 
 # Publish limited number (useful for large package sets)
-./scripts/test_npm_readiness.sh --publish --limit 10 --otp 123456
+./scripts/publish/test_npm_readiness.sh --publish --limit 10 --otp 123456
 ```
 
 ## Enhanced Error Handling
@@ -249,7 +249,7 @@ All scripts include comprehensive error handling:
 If OTP expires during publishing:
 
 1. Get new 6-digit code from authenticator app
-2. Re-run with new OTP: `./scripts/test_npm_readiness.sh --publish --limit N --otp <NEW_CODE>`
+2. Re-run with new OTP: `./scripts/publish/test_npm_readiness.sh --publish --limit N --otp <NEW_CODE>`
 3. Script automatically skips already published packages
 
 ### Common Errors

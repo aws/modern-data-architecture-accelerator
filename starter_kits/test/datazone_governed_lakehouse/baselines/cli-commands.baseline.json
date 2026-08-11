@@ -1,31 +1,31 @@
 [
   {
     "index": 0,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/bootstrap' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/bootstrap:build' --output-style=static && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 1,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/roles' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/roles:build' --output-style=static && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 2,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/glue-catalog' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/glue-catalog:build' --output-style=static && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 3,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/lakeformation-settings' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/lakeformation-settings:build' --output-style=static && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 4,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/audit' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/audit:build' --output-style=static && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 5,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/audit-trail' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/audit-trail:build' --output-style=static && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 6,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/datazone' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/datazone:build' --output-style=static && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 7,
@@ -85,11 +85,11 @@
   },
   {
     "index": 21,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/bootstrap' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/bootstrap:build' --output-style=static && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 22,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/datalake' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/datalake:build' --output-style=static && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 23,
@@ -109,23 +109,23 @@
   },
   {
     "index": 27,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/bootstrap' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/bootstrap:build' --output-style=static && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 28,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/dataops-project' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/dataops-project:build' --output-style=static && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 29,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/dataops-crawler' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/dataops-crawler:build' --output-style=static && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 30,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/dataops-project' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/dataops-project:build' --output-style=static && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 31,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/dataops-project' --loglevel warn && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/dataops-project:build' --output-style=static && cd '/TEMP_DIR/datazone_governed_lakehouse' && cd ."
   },
   {
     "index": 32,

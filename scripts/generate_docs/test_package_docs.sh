@@ -3,7 +3,7 @@ set -e
 
 # Validates documentation for a single package.
 #
-# Runs from the package root directory (via NX/lerna).
+# Runs from the package root directory (via Nx).
 # 1. If typedoc.json exists, runs TypeDoc to validate API doc generation.
 # 2. Builds a minimal MkDocs site from the package's markdown files using
 #    --strict mode to catch warnings as errors, including snippet validation.

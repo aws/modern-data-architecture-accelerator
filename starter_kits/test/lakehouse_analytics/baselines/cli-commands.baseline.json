@@ -1,31 +1,31 @@
 [
   {
     "index": 0,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/bootstrap' --loglevel warn && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/bootstrap:build' --output-style=static && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
   },
   {
     "index": 1,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/roles' --loglevel warn && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/roles:build' --output-style=static && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
   },
   {
     "index": 2,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/glue-catalog' --loglevel warn && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/glue-catalog:build' --output-style=static && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
   },
   {
     "index": 3,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/lakeformation-settings' --loglevel warn && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/lakeformation-settings:build' --output-style=static && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
   },
   {
     "index": 4,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/quicksight-account' --loglevel warn && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/quicksight-account:build' --output-style=static && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
   },
   {
     "index": 5,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/audit' --loglevel warn && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/audit:build' --output-style=static && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
   },
   {
     "index": 6,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/audit-trail' --loglevel warn && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/audit-trail:build' --output-style=static && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
   },
   {
     "index": 7,
@@ -85,19 +85,19 @@
   },
   {
     "index": 21,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/bootstrap' --loglevel warn && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/bootstrap:build' --output-style=static && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
   },
   {
     "index": 22,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/datalake' --loglevel warn && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/datalake:build' --output-style=static && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
   },
   {
     "index": 23,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/athena-workgroup' --loglevel warn && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/athena-workgroup:build' --output-style=static && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
   },
   {
     "index": 24,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/datawarehouse' --loglevel warn && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/datawarehouse:build' --output-style=static && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
   },
   {
     "index": 25,
@@ -133,31 +133,31 @@
   },
   {
     "index": 33,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/bootstrap' --loglevel warn && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/bootstrap:build' --output-style=static && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
   },
   {
     "index": 34,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/dataops-project' --loglevel warn && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/dataops-project:build' --output-style=static && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
   },
   {
     "index": 35,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/dataops-crawler' --loglevel warn && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/dataops-crawler:build' --output-style=static && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
   },
   {
     "index": 36,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/dataops-data-quality' --loglevel warn && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/dataops-data-quality:build' --output-style=static && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
   },
   {
     "index": 37,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/dataops-job' --loglevel warn && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/dataops-job:build' --output-style=static && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
   },
   {
     "index": 38,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/dataops-job' --loglevel warn && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/dataops-job:build' --output-style=static && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
   },
   {
     "index": 39,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/dataops-workflow' --loglevel warn && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/dataops-workflow:build' --output-style=static && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
   },
   {
     "index": 40,
@@ -217,19 +217,19 @@
   },
   {
     "index": 54,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/bootstrap' --loglevel warn && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/bootstrap:build' --output-style=static && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
   },
   {
     "index": 55,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/quicksight-project' --loglevel warn && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/quicksight-project:build' --output-style=static && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
   },
   {
     "index": 56,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/ec2' --loglevel warn && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/ec2:build' --output-style=static && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
   },
   {
     "index": 57,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/quicksight-project' --loglevel warn && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/quicksight-project:build' --output-style=static && cd '/TEMP_DIR/lakehouse_analytics' && cd ."
   },
   {
     "index": 58,

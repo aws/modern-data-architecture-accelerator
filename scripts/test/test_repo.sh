@@ -21,7 +21,9 @@ else
 fi
 DEFAULT_MAX_WORKERS=1
 
-CONCURRENCY="${LERNA_CONCURRENCY:-$DEFAULT_CONCURRENCY}"
+# BUILD_CONCURRENCY is the current name; LERNA_CONCURRENCY is honored as a
+# fallback for any pipeline/project variable still using the old name.
+CONCURRENCY="${BUILD_CONCURRENCY:-${LERNA_CONCURRENCY:-$DEFAULT_CONCURRENCY}}"
 MAX_WORKERS="${JEST_MAX_WORKERS:-$DEFAULT_MAX_WORKERS}"
 
 # --- TypeScript tests ---

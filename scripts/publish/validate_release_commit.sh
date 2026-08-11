@@ -16,7 +16,7 @@ set -e
 #
 # What this does:
 #   Consumes the version-bumped TRACKED files from the release_version_package artifacts
-#   (package.json, lerna.json, package-lock.json, packages/, starter_kits/, schemas/,
+#   (package.json, package-lock.json, packages/, starter_kits/, schemas/,
 #   solution-manifest.yaml, README.md, CHANGELOG.md), wipes all dependency and nx state,
 #   then reproduces the release build/test from a strict `npm ci`. The strict install
 #   from the committed lockfile is the signal release_version_package cannot give.
@@ -28,7 +28,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$SCRIPT_DIR/../.."
 cd "$PROJECT_ROOT"
 
-VALIDATED_VERSION=$(jq -r .version < lerna.json)
+VALIDATED_VERSION=$(jq -r .version < package.json)
 echo "=================================================================="
 echo "Validating release commit for version: $VALIDATED_VERSION"
 echo "=================================================================="

@@ -3,40 +3,79 @@ set -e
 rm package-lock.json
 echo "Running release versioning script."
 
-#Increment version using lerna
-export CURRENT_VERSION=$(jq -r .version < lerna.json )
+# package.json is the single version source of truth, kept in sync across all
+# workspaces by the propagation below.
+export CURRENT_VERSION=$(jq -r .version < package.json)
 
-# Determine the lerna command based on RELEASE_TYPE
+# Validate before handing the level to semver: `semver -i <level>` silently falls
+# back to a patch bump for an unrecognized level, and for a prerelease it drops the
+# identifier entirely, so a typo would compute a wrong version instead of failing.
+case "${VERSION_BUMP_LEVEL}" in
+  major|minor|patch) ;;
+  *)
+    echo "ERROR: Invalid VERSION_BUMP_LEVEL: '${VERSION_BUMP_LEVEL}'. Must be major, minor, or patch." >&2
+    exit 1
+    ;;
+esac
+
+# Determine the semver bump based on RELEASE_TYPE
 case "${RELEASE_TYPE}" in
   "alpha"|"beta"|"rc")
     echo "Creating ${RELEASE_TYPE} prerelease version"
-    npx lerna version pre${VERSION_BUMP_LEVEL} --preid=${RELEASE_TYPE} --exact --no-git-tag-version --no-push --force-publish -y || true
+    NEW_VERSION=$(npx semver "$CURRENT_VERSION" -i "pre${VERSION_BUMP_LEVEL}" --preid "${RELEASE_TYPE}")
     ;;
   "release"|"")
     echo "Creating release version"
-    npx lerna version $VERSION_BUMP_LEVEL --exact --no-git-tag-version --no-push --force-publish -y || true
+    NEW_VERSION=$(npx semver "$CURRENT_VERSION" -i "${VERSION_BUMP_LEVEL}")
     ;;
   *)
     echo "Invalid RELEASE_TYPE: ${RELEASE_TYPE}. Must be alpha, beta, rc, release, or empty."
     exit 1
     ;;
 esac
+export NEW_VERSION
 
-export NEW_VERSION=$(jq -r .version < lerna.json)
+if [ -z "$NEW_VERSION" ] || [ "$NEW_VERSION" = "$CURRENT_VERSION" ]; then
+  echo "ERROR: semver did not produce a new version from '$CURRENT_VERSION' (bump '${VERSION_BUMP_LEVEL}', type '${RELEASE_TYPE}')." >&2
+  exit 1
+fi
+
+# Assert a prerelease carries the requested identifier. A bare-numeric prerelease
+# (e.g. 1.8.0-0) matches no consumer's @alpha/@beta/@rc dist-tag range.
+case "${RELEASE_TYPE}" in
+  alpha|beta|rc)
+    if [[ "$NEW_VERSION" != *"-${RELEASE_TYPE}."* ]]; then
+      echo "ERROR: RELEASE_TYPE='${RELEASE_TYPE}' but computed version '$NEW_VERSION' has no '-${RELEASE_TYPE}.N' identifier." >&2
+      exit 1
+    fi
+    ;;
+esac
 
 echo "Updating version from $CURRENT_VERSION -> $NEW_VERSION"
 
 # Update root package.json version
 jq --arg version "$NEW_VERSION" '.version = $version' package.json > package.json.tmp && mv package.json.tmp package.json
 
-# Update version in .jsii files
-find ./ -type f -name ".jsii" | grep -v node_modules | xargs -n1 -I{} sed -i  "s/\"version\": \"${CURRENT_VERSION}\"/\"version\": \"${NEW_VERSION}\"/" {}
+# .jsii assemblies need no rewrite: they are untracked build outputs, and jsii
+# stamps the assembly version from package.json at compile time.
 
 # Update peerDependency and devDependency versions in package.json files
 find ./ -type f -name "package.json" | grep -v node_modules | xargs -n1 -I{} sed -i  "s/@aws-mdaa\(.*\)\"\(.*\)$CURRENT_VERSION\"/@aws-mdaa\1\"\2$NEW_VERSION\"/" {}
 
-# Update version field in all package.json files (catches any packages lerna may have skipped)
+# Update the version field in every workspace package.json
 find ./ -type f -name "package.json" | grep -v node_modules | xargs -n1 -I{} sed -i  "s/\"version\": \"${CURRENT_VERSION}\"/\"version\": \"${NEW_VERSION}\"/" {}
+
+# installer/ is a standalone package, not an npm workspace, so the root `npm install`
+# below regenerates only the root lockfile and nothing else bumps the installer's.
+#
+# `npm version` sets package.json and both lockfile version fields absolutely. A
+# `sed` here would instead match every "version" field in the lockfile, including
+# third-party deps pinned at the same number, producing a version/resolved mismatch
+# that breaks `npm ci`.
+if [ -f "installer/package.json" ]; then
+  echo "Setting installer version to $NEW_VERSION"
+  ( cd installer && npm version "$NEW_VERSION" --no-git-tag-version --allow-same-version )
+fi
 
 # Update version in solution-manifest.yaml
 if [ -f "solution-manifest.yaml" ]; then
@@ -68,4 +107,28 @@ if [ -f "CHANGELOG.md" ]; then
 fi
 
 npm install
+
+# Assert the propagation above reached every package. The `sed` cascade is keyed on
+# CURRENT_VERSION and exits 0 whether or not it substituted, so a package that had
+# already drifted is skipped silently and can never self-correct.
+#
+# Scoped to npm workspaces plus the standalone installer: sample_customizations/*,
+# deployment/cdk-solution-helper, and the custom_aspect test fixture carry
+# deliberately independent versions. Runs after `npm install` because the lockfile
+# `npm query --package-lock-only` needs was removed at the top of this script.
+STALE_PACKAGES=""
+for pkg_dir in $(npm query .workspace --package-lock-only --expect-results | jq -r '.[].location') installer; do
+  [ -f "$pkg_dir/package.json" ] || continue
+  pkg_version=$(jq -r '.version // empty' "$pkg_dir/package.json")
+  if [ "$pkg_version" != "$NEW_VERSION" ]; then
+    STALE_PACKAGES="${STALE_PACKAGES} ${pkg_dir}(${pkg_version:-none})"
+  fi
+done
+if [ -n "$STALE_PACKAGES" ]; then
+  echo "ERROR: these packages were not bumped to ${NEW_VERSION}:${STALE_PACKAGES}" >&2
+  echo "The version sed is keyed on the current version string, so a package that had" >&2
+  echo "already drifted cannot self-correct and must be re-synced manually." >&2
+  exit 1
+fi
+echo "Verified all workspace packages and installer are at ${NEW_VERSION}."
 

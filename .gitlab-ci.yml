@@ -343,7 +343,7 @@ feature_merge_build_test:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
     AWS_DEFAULT_REGION: us-east-1
     GIT_DEPTH: '0'
-    LERNA_CONCURRENCY: '8'
+    BUILD_CONCURRENCY: '8'
     NODE_OPTIONS: '--max-old-space-size=3072'
   script:
     - ./scripts/build/npm_install_repo.sh
@@ -973,9 +973,11 @@ feature_version:
     untracked: false
     paths:
       - package.json
-      - lerna.json
       - package-lock.json
       - packages
+      # installer is a standalone (non-workspace) package whose version is bumped
+      # here; it must travel with the artifacts or the bump is lost.
+      - installer
       - starter_kits
       - target
       - schemas
@@ -1014,7 +1016,6 @@ feature_build_test:
     untracked: false
     paths:
       - package.json
-      - lerna.json
       - package-lock.json
       - packages
       - starter_kits
@@ -1090,7 +1091,11 @@ feature_package:
   artifacts:
     untracked: false
     paths:
-      - lerna.json
+      # Pass through the bumped version pair from feature_build_test. Downstream
+      # publish jobs read the version from package.json; package-lock.json must
+      # accompany it so the two never disagree for a consumer running npm ci.
+      - package.json
+      - package-lock.json
       - target
       - packages/**/jsii-dist
     exclude:
@@ -1128,7 +1133,7 @@ feature_publish_npm:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
     AWS_DEFAULT_REGION: us-east-1
   script:
-    - FEATURE_VERSION=$(jq -r .version < lerna.json)
+    - FEATURE_VERSION=$(jq -r .version < package.json)
     - echo "Deleting existing version $FEATURE_VERSION from CodeArtifact for idempotency"
     - ./scripts/publish/delete_codeartifact_version.sh $FEATURE_VERSION $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $MDAA_CODEARTIFACT_PRERELEASE_REGION $MDAA_CODEARTIFACT_PRERELEASE_NAMESPACE || true
     - ./scripts/publish/publish_npm.sh $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $CI_COMMIT_REF_SLUG
@@ -1163,7 +1168,7 @@ feature_test_published_npm:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
     AWS_DEFAULT_REGION: us-east-1
   script:
-    - SNAPSHOT_VERSION=$(jq -r .version < lerna.json)
+    - SNAPSHOT_VERSION=$(jq -r .version < package.json)
     - echo 'Testing published artifacts for version:' $SNAPSHOT_VERSION
     - ./scripts/publish/test_published_artifacts.sh $SNAPSHOT_VERSION $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $CI_COMMIT_REF_SLUG
 
@@ -1233,9 +1238,11 @@ prerelease_version:
     untracked: false
     paths:
       - package.json
-      - lerna.json
       - package-lock.json
       - packages
+      # installer is a standalone (non-workspace) package whose version is bumped
+      # here; it must travel with the artifacts or the bump is lost.
+      - installer
       - starter_kits
       - target
       - schemas
@@ -1275,7 +1282,6 @@ prerelease_build_test:
     untracked: false
     paths:
       - package.json
-      - lerna.json
       - package-lock.json
       - packages
       - starter_kits
@@ -1354,7 +1360,6 @@ prerelease_analyze:
     untracked: false
     paths:
       - package.json
-      - lerna.json
       - package-lock.json
       - packages
       - schemas
@@ -1398,7 +1403,6 @@ prerelease_package:
     untracked: false
     paths:
       - package.json
-      - lerna.json
       - package-lock.json
       - packages
       - schemas
@@ -1447,7 +1451,7 @@ prerelease_publish_npm:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
     AWS_DEFAULT_REGION: us-east-1
   script:
-    - PRERELEASE_VERSION=$(jq -r .version < lerna.json)
+    - PRERELEASE_VERSION=$(jq -r .version < package.json)
     - echo "Deleting existing version $PRERELEASE_VERSION from CodeArtifact for idempotency"
     - ./scripts/publish/delete_codeartifact_version.sh $PRERELEASE_VERSION $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $MDAA_CODEARTIFACT_PRERELEASE_REGION $MDAA_CODEARTIFACT_PRERELEASE_NAMESPACE || true
     - ./scripts/publish/publish_npm.sh $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT prerelease
@@ -1512,7 +1516,6 @@ prerelease_publish_s3:
     untracked: false
     paths:
       - package.json
-      - lerna.json
       - package-lock.json
       - packages
       - schemas
@@ -1581,9 +1584,13 @@ release_version_package:
     untracked: false
     paths:
       - package.json
-      - lerna.json
       - package-lock.json
       - packages
+      # installer is a standalone package (not an npm workspace) whose version
+      # version_release.sh bumps. Without it here the bump is discarded when the
+      # release commit is rebuilt from artifacts, silently leaving the installer
+      # a release behind.
+      - installer
       # starter_kits is an npm workspace (@aws-mdaa/starter-kits) whose version is
       # bumped by version_release.sh and pinned in package-lock.json. It must travel
       # with the release artifacts or a clean `npm ci` downstream (validate_release_commit)
@@ -1726,7 +1733,6 @@ release_publish_npm_prerelease:
     untracked: false
     paths:
       - package.json
-      - lerna.json
       - package-lock.json
       - packages
       - schemas
@@ -1745,7 +1751,7 @@ release_publish_npm_prerelease:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
     AWS_DEFAULT_REGION: us-east-1
   script:
-    - RELEASE_VERSION=$(jq -r .version < lerna.json)
+    - RELEASE_VERSION=$(jq -r .version < package.json)
     - echo "Deleting existing version $RELEASE_VERSION from CodeArtifact for idempotency"
     - ./scripts/publish/delete_codeartifact_version.sh $RELEASE_VERSION $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $MDAA_CODEARTIFACT_PRERELEASE_REGION $MDAA_CODEARTIFACT_PRERELEASE_NAMESPACE || true
     - ./scripts/publish/publish_npm.sh $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT latest
@@ -1789,7 +1795,7 @@ release_npm_readiness_check:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
     AWS_DEFAULT_REGION: us-east-1
   script:
-    - RELEASE_VERSION=$(jq -r .version < lerna.json)
+    - RELEASE_VERSION=$(jq -r .version < package.json)
     - echo 'Testing NPM readiness for version:' $RELEASE_VERSION
     - ./scripts/publish/test_published_artifacts.sh $RELEASE_VERSION $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT latest --download
     - ./scripts/quality/validate_dependencies.sh --npm-ready
@@ -1821,7 +1827,6 @@ release_publish_npm:
     untracked: false
     paths:
       - package.json
-      - lerna.json
       - package-lock.json
       - packages
       - schemas
@@ -1841,7 +1846,7 @@ release_publish_npm:
     AWS_CREDS_TARGET_ROLE: '${DELIVERY_ROLE_ARN}'
     AWS_DEFAULT_REGION: us-east-1
   script:
-    - RELEASE_VERSION=$(jq -r .version < lerna.json)
+    - RELEASE_VERSION=$(jq -r .version < package.json)
     - echo "Deleting existing version $RELEASE_VERSION from CodeArtifact for idempotency"
     - ./scripts/publish/delete_codeartifact_version.sh $RELEASE_VERSION $MDAA_CODEARTIFACT_RELEASE_NPM_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT $MDAA_CODEARTIFACT_RELEASE_REGION $MDAA_CODEARTIFACT_RELEASE_NAMESPACE || true
     - ./scripts/publish/publish_npm.sh $MDAA_CODEARTIFACT_RELEASE_NPM_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT latest
@@ -1872,7 +1877,6 @@ release_publish_pip:
     untracked: false
     paths:
       - package.json
-      - lerna.json
       - package-lock.json
       - packages
       - schemas
@@ -1919,7 +1923,6 @@ release_publish_s3:
     untracked: false
     paths:
       - package.json
-      - lerna.json
       - package-lock.json
       - packages
       - schemas
@@ -1999,7 +2002,6 @@ prerelease_push_git:
     untracked: false
     paths:
       - package.json
-      - lerna.json
       - package-lock.json
       - packages
       - schemas
@@ -2049,7 +2051,6 @@ release_push_git:
     untracked: false
     paths:
       - package.json
-      - lerna.json
       - package-lock.json
       - packages
       - schemas
@@ -2137,7 +2138,7 @@ rollback_delete_prerelease_packages:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
     AWS_DEFAULT_REGION: us-east-1
   script:
-    - RELEASE_VERSION=$(jq -r .version < lerna.json)
+    - RELEASE_VERSION=$(jq -r .version < package.json)
     - echo "Rolling back prerelease packages for version $RELEASE_VERSION"
     - ./scripts/publish/delete_codeartifact_version.sh $RELEASE_VERSION $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $MDAA_CODEARTIFACT_PRERELEASE_REGION $MDAA_CODEARTIFACT_PRERELEASE_NAMESPACE
 
@@ -2173,7 +2174,7 @@ rollback_delete_release_packages:
     AWS_CREDS_TARGET_ROLE: '${DELIVERY_ROLE_ARN}'
     AWS_DEFAULT_REGION: us-east-1
   script:
-    - RELEASE_VERSION=$(jq -r .version < lerna.json)
+    - RELEASE_VERSION=$(jq -r .version < package.json)
     - echo "Rolling back release packages for version $RELEASE_VERSION"
     - ./scripts/publish/delete_codeartifact_version.sh $RELEASE_VERSION $MDAA_CODEARTIFACT_RELEASE_NPM_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT $MDAA_CODEARTIFACT_RELEASE_REGION $MDAA_CODEARTIFACT_RELEASE_NAMESPACE
 
@@ -2261,17 +2262,23 @@ cornerstone_package_artifact:
     - "export PUBLISHED_VERSION=v$(cat package.json | jq -r '.version')"
     - 'echo "Packaging Cornerstone artifact for version: $PUBLISHED_VERSION"'
     - echo "Creating cornerstone artifact archive..."
+    # zip exits 0 when only some arguments are missing, so a stale entry in the list
+    # below would ship a silently incomplete artifact. Assert every input exists first.
+    - |
+      for f in package.json packages target schemas scripts .gitignore \
+               sonar-project.properties README.md LICENSE.txt NOTICE.txt \
+               CODE_OF_CONDUCT.md CONTRIBUTING.md buildspec.yml CHANGELOG.md \
+               SECURITY.md .viperlightignore solution-manifest.yaml deployment; do
+        [ -e "$f" ] || { echo "ERROR: cornerstone artifact input missing: $f" >&2; exit 1; }
+      done
     - |
       zip -q -r artifact.zip \
         package.json \
-        lerna.json \
         packages/ \
         target/ \
         schemas/ \
         scripts/ \
         .gitignore \
-        .cdxgen.json \
-        .cdxgenignore \
         sonar-project.properties \
         README.md \
         LICENSE.txt \

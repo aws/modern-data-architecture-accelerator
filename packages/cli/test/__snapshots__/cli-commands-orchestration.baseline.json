@@ -1,19 +1,19 @@
 [
   {
     "index": 0,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/bootstrap' --loglevel warn && cd '/TEMP_DIR' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/bootstrap:build' --output-style=static && cd '/TEMP_DIR' && cd ."
   },
   {
     "index": 1,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/roles' --loglevel warn && cd '/TEMP_DIR' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/roles:build' --output-style=static && cd '/TEMP_DIR' && cd ."
   },
   {
     "index": 2,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/roles' --loglevel warn && cd '/TEMP_DIR' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/roles:build' --output-style=static && cd '/TEMP_DIR' && cd ."
   },
   {
     "index": 3,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/roles' --loglevel warn && cd '/TEMP_DIR' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/roles:build' --output-style=static && cd '/TEMP_DIR' && cd ."
   },
   {
     "index": 4,
@@ -33,11 +33,11 @@
   },
   {
     "index": 8,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/roles' --loglevel warn && cd '/TEMP_DIR' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/roles:build' --output-style=static && cd '/TEMP_DIR' && cd ."
   },
   {
     "index": 9,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/roles' --loglevel warn && cd '/TEMP_DIR' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/roles:build' --output-style=static && cd '/TEMP_DIR' && cd ."
   },
   {
     "index": 10,
@@ -49,15 +49,15 @@
   },
   {
     "index": 12,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/roles' --loglevel warn && cd '/TEMP_DIR' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/roles:build' --output-style=static && cd '/TEMP_DIR' && cd ."
   },
   {
     "index": 13,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/roles' --loglevel warn && cd '/TEMP_DIR' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/roles:build' --output-style=static && cd '/TEMP_DIR' && cd ."
   },
   {
     "index": 14,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/roles' --loglevel warn && cd '/TEMP_DIR' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/roles:build' --output-style=static && cd '/TEMP_DIR' && cd ."
   },
   {
     "index": 15,

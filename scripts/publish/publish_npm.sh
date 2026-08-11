@@ -5,7 +5,7 @@ MDAA_CODEARTIFACT_PUBLISH_DOMAIN=$2
 MDAA_CODEARTIFACT_PUBLISH_ACCOUNT=$3
 NPM_PUBLISH_TAG=$4
 
-export PUBLISHED_VERSION=$(jq -r .version < lerna.json )
+export PUBLISHED_VERSION=$(jq -r .version < package.json )
 
 #Login to CodeArtifact release repos where we will publish release NPM packages
 aws codeartifact login --tool npm --repository $MDAA_CODEARTIFACT_PUBLISH_NPM_REPO --domain $MDAA_CODEARTIFACT_PUBLISH_DOMAIN --domain-owner $MDAA_CODEARTIFACT_PUBLISH_ACCOUNT --namespace '@aws-mdaa' --region us-east-1

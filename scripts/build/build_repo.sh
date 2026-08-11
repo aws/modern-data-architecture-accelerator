@@ -19,7 +19,7 @@ source "$SCRIPT_DIR/../nx/affected-base.sh"
 
 if [ "${CI:-}" = "true" ] && [ "${CI_COMMIT_BRANCH:-}" = "main" ] || [ "${NX_RUN_ALL:-false}" = "true" ]; then
   echo "Running full build (main or NX_RUN_ALL=true)"
-  npx lerna run build --stream --skip-nx-cache
+  npx nx run-many -t build --all --skip-nx-cache
 else
   echo "Running affected build (base: $NX_BASE)"
   npx nx affected -t build --base="$NX_BASE" --head="$NX_HEAD"

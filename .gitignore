@@ -21,9 +21,7 @@ node_modules
 # CDK asset staging directory
 .cdk.staging
 cdk.out
-**/lerna.json
 .*.ts.map
-lerna-debug.log
 target
 tsdocs
 dist

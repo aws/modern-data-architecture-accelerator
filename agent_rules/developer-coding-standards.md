@@ -91,7 +91,7 @@ diff <(git show HEAD:path/to/file.ts | grep "readonly " | sort) <(grep "readonly
 
 If any `readonly` lines differ, the edit introduced a code change — revert and redo.
 
-**After completing a module**, run `npx lerna run build` and verify zero errors.
+**After completing a module**, run `npm run build:all` and verify zero errors.
 
 ### Anti-Patterns
 

@@ -70,7 +70,7 @@ All commands are run from the repository root.
 
 ```bash
 npm run build:all              # Build all packages (no cache)
-./scripts/build/build_repo.sh       # Build via lerna (uses cache)
+./scripts/build/build_repo.sh       # Build via nx (uses cache)
 ```
 
 ### Linting and Formatting

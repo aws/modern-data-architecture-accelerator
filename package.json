@@ -49,6 +49,7 @@
     "jsii-pacmak": "1.132.0",
     "lint-staged": "16.2.7",
     "prettier": "3.7.4",
+    "semver": "7.7.4",
     "ts-node": "10.9.2",
     "typedoc": "0.28.17"
   },
@@ -66,7 +67,6 @@
   },
   "dependencies": {
     "aws-cdk": "^2.1126.0",
-    "lerna": "9.0.7",
     "nx": "^22.7.5",
     "typescript": "5.9.3"
   },

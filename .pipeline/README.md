@@ -4,7 +4,7 @@ This directory contains the Dockerfile for the CI/CD base image used across all 
 
 ## Overview
 
-The base image is built from `public.ecr.aws/docker/library/node:20` and includes all the tools and dependencies required to build, test, package, and publish the MDAA project.
+The base image is built from `public.ecr.aws/docker/library/node:22` and includes all the tools and dependencies required to build, test, package, and publish the MDAA project.
 
 ## Installed Tools
 
@@ -13,14 +13,14 @@ The base image is built from `public.ecr.aws/docker/library/node:20` and include
 | Node.js | 22.x | JavaScript runtime (base image) |
 | npm | 10.x | Package manager |
 | AWS CDK | 2.x | Infrastructure as Code |
-| Lerna | 8.x | Monorepo management |
+| Nx | 22.x (repo dependency, installed by `npm ci`) | Monorepo task orchestration and caching |
 | JSII / jsii-pacmak | latest | Multi-language CDK construct publishing |
 | Python 3 | system | Python runtime and testing |
 | UV / UVX | latest | Fast Python package management |
 | AWS CLI v2 | latest | AWS service interactions |
 | Maven | system | Java build tool |
 | Terraform | latest | Infrastructure provisioning |
-| SonarQube Scanner | 5.0.1 | Code quality analysis |
+| SonarQube Scanner | 8.0.1 | Code quality analysis |
 | git-secrets | latest | Prevents committing secrets |
 | MkDocs + plugins | latest | Documentation generation |
 | Twine | latest | Python package publishing |

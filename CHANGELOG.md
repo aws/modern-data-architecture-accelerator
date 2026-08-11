@@ -66,10 +66,19 @@
 - Added optional `eventBridgeAlerts` configuration to create EventBridge rules alerting on individual AgentCore CloudTrail events (auth failures, out-of-band configuration changes), notifying the `alarms` topic and optionally a customer-supplied remediation Lambda. Requires a CloudTrail trail logging the matched events. See the [module README](packages/apps/ai/bedrock-agentcore-runtime-app/README.md#eventbridge-alerting).
 - Agent spans are now routed to the runtime's own log group instead of the account-shared `aws/spans` group, so span content inherits the module's CMK encryption, retention, and PII masking. Set `UNIFIED_TRACES_DESTINATION_ENABLED: 'false'` in `environmentVariables` to opt out. **Upgrade impact:** requires `aws-opentelemetry-distro>=0.18.0` in the container image, and creates a new runtime version on deploy. See the [module README](packages/apps/ai/bedrock-agentcore-runtime-app/README.md#observability--tracing).
 
+### General Changes
+
+- **Build and versioning consolidated onto nx; `lerna` removed.** Task orchestration now uses `nx run` / `nx run-many`, workspace enumeration uses `npm query`, and the release version bump uses `semver`. `lerna.json` is deleted — **`package.json` is now the single version source of truth**. Repoint any local tooling that read the version from `lerna.json`.
+
 ### Bug Fixes
 
 - Standardized validation of CLI config fields, giving earlier and clearer errors for malformed values. Config values passed to the CDK and Terraform commands the CLI runs are now preserved intact, so values containing spaces, quotes, or other special characters (including Terraform `-var` values, which were previously corrupted) reach those commands unchanged.
 - Fixed `enforceVpcOnly` not restricting same-account SigV4 callers (1.7.0 regression): the `Allow`-only resource policy could not deny an IAM caller its identity policy already authorized, so out-of-VPC SigV4 invocation succeeded (JWT/OAuth callers were correctly blocked). The policy now adds explicit `DenyWrongVpc`/`DenyNoVpc` statements and covers all invoke variants via `bedrock-agentcore:InvokeAgentRuntime*`. Breaking change: out-of-VPC IAM invocations that previously succeeded are now denied.
+- Fixed the MDAA CLI's local deploy build so it no longer triggers nx's interactive "Install Nx Console?" editor-extension prompt. When a module is built from a local checkout (e.g. via `bin/mdaa`), the build now runs with the nx daemon disabled, which suppresses the prompt without affecting build output.
+- Fixed release-packaging enumerating workspaces from the installed `node_modules` tree instead of the committed lockfile, which could silently omit newly added packages from `npm pack` (and therefore from a release) when the packaging job's restored cache predated them. Enumeration now reads the lockfile and the job fails if it resolves no workspaces or produces no tarballs.
+- Fixed the release version bump silently falling back to a patch increment when `VERSION_BUMP_LEVEL` was not one of `major`/`minor`/`patch`. Invalid values are now rejected, and a prerelease build additionally asserts the computed version carries the requested `-alpha`/`-beta`/`-rc` identifier.
+- Fixed `installer/package-lock.json` not being version-bumped by the release scripts. The installer is a standalone package outside the npm workspace graph, so its lockfile was never updated alongside `installer/package.json` and the two drifted permanently out of sync. The bump now sets the version absolutely rather than pattern-matching the previous one, so it cannot rewrite an unrelated dependency pinned at the same version number.
+- Fixed the release version bump silently skipping any package whose version had already drifted, leaving it stuck permanently. The bump now verifies every workspace package and the installer reached the new version, and fails the release if any did not.
 
 ## [1.7.0] - 2026-07-16
 

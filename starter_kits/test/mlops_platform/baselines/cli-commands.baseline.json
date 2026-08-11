@@ -1,11 +1,11 @@
 [
   {
     "index": 0,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/bootstrap' --loglevel warn && cd '/TEMP_DIR/mlops_platform' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/bootstrap:build' --output-style=static && cd '/TEMP_DIR/mlops_platform' && cd ."
   },
   {
     "index": 1,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/sagemaker-mlops' --loglevel warn && cd '/TEMP_DIR/mlops_platform' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/sagemaker-mlops:build' --output-style=static && cd '/TEMP_DIR/mlops_platform' && cd ."
   },
   {
     "index": 2,

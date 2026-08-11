@@ -741,23 +741,26 @@ export class MdaaDeploy {
     const prefix = this.localPackages[npmPackage];
 
     console.log(`Module ${logPrefix}: Package ${npmPackageNoVersion} found in local codebase. Running build.`);
-    // Set MDAA_BUILD_CODE_ONLY so the package build scripts (build_package.sh on
-    // POSIX / build_cli_package.js for the CLI) compile TypeScript only, skipping
-    // schema generation and documentation not needed at deploy time. Platform-utils
-    // helpers keep the `cd`/env/join structure OS-portable; the config-derived
-    // `--scope` package name is routed through ShellCommand so it is quoted at the
-    // sink and cannot inject shell syntax.
+    // MDAA_BUILD_CODE_ONLY makes the package build scripts compile TypeScript only,
+    // skipping schema generation and documentation not needed at deploy time.
+    // Platform-utils helpers keep the `cd`/env/join structure OS-portable, and the
+    // config-derived package name is routed through ShellCommand so it is quoted at
+    // the sink. nx builds upstream dependencies first via its `^build` task
+    // dependency (nx.json).
     const buildEnv = setEnvCmd('MDAA_BUILD_CODE_ONLY', 'true');
+    // One-shot single-package build, so the nx daemon adds no value; disabling it
+    // also suppresses nx's interactive "Install Nx Console?" prompt.
+    const daemonEnv = setEnvCmd('NX_DAEMON', 'false');
     const buildCmd = ShellCommand.for('npx')
-      .flags('lerna', 'run', 'build')
-      .option('--scope', npmPackageNoVersion)
-      .flags('--loglevel', 'warn')
+      .flags('nx', 'run')
+      .arg(`${npmPackageNoVersion}:build`)
+      .flags('--output-style=static')
       .build();
     const repoRoot = path.resolve(__dirname, '..', '..', '..');
-    const buildChain = cdAndRun(repoRoot, cmdJoin(buildEnv, buildCmd));
+    const buildChain = cdAndRun(repoRoot, cmdJoin(buildEnv, daemonEnv, buildCmd));
     const returnToCwd = cdAndRun(this.cwd, staticCommand('cd .'));
     const fullBuildCmd = cmdJoin(buildChain, returnToCwd);
-    console.log(`Running Lerna Build: ${fullBuildCmd}`);
+    console.log(`Running Nx Build: ${fullBuildCmd}`);
     this.execCmd(fullBuildCmd);
 
     return prefix;

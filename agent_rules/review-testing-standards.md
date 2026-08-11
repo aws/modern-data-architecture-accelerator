@@ -97,7 +97,7 @@ When infrastructure changes are intentional:
 
 ```bash
 npm run test:update-baselines    # from package directory
-npx lerna run test:update-baselines  # from repo root
+npm run test:update-baselines:all  # from repo root
 ```
 
 Review the diff output before committing. Do NOT update baselines blindly.

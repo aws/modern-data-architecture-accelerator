@@ -1,23 +1,23 @@
 [
   {
     "index": 0,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/bootstrap' --loglevel warn && cd '/TEMP_DIR/genai_gaia_chatbot' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/bootstrap:build' --output-style=static && cd '/TEMP_DIR/genai_gaia_chatbot' && cd ."
   },
   {
     "index": 1,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/roles' --loglevel warn && cd '/TEMP_DIR/genai_gaia_chatbot' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/roles:build' --output-style=static && cd '/TEMP_DIR/genai_gaia_chatbot' && cd ."
   },
   {
     "index": 2,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/datalake' --loglevel warn && cd '/TEMP_DIR/genai_gaia_chatbot' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/datalake:build' --output-style=static && cd '/TEMP_DIR/genai_gaia_chatbot' && cd ."
   },
   {
     "index": 3,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/bedrock-builder' --loglevel warn && cd '/TEMP_DIR/genai_gaia_chatbot' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/bedrock-builder:build' --output-style=static && cd '/TEMP_DIR/genai_gaia_chatbot' && cd ."
   },
   {
     "index": 4,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/gaia-v2' --loglevel warn && cd '/TEMP_DIR/genai_gaia_chatbot' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/gaia-v2:build' --output-style=static && cd '/TEMP_DIR/genai_gaia_chatbot' && cd ."
   },
   {
     "index": 5,

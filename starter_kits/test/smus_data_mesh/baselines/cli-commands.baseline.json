@@ -1,27 +1,27 @@
 [
   {
     "index": 0,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/bootstrap' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/bootstrap:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 1,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/glue-catalog' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/glue-catalog:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 2,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/roles' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/roles:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 3,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/lakeformation-settings' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/lakeformation-settings:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 4,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/audit' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/audit:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 5,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/audit-trail' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/audit-trail:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 6,
@@ -73,27 +73,27 @@
   },
   {
     "index": 18,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/bootstrap' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/bootstrap:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 19,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/glue-catalog' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/glue-catalog:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 20,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/roles' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/roles:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 21,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/lakeformation-settings' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/lakeformation-settings:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 22,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/audit' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/audit:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 23,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/audit-trail' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/audit-trail:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 24,
@@ -121,27 +121,27 @@
   },
   {
     "index": 30,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/bootstrap' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/bootstrap:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 31,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/glue-catalog' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/glue-catalog:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 32,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/roles' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/roles:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 33,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/lakeformation-settings' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/lakeformation-settings:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 34,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/audit' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/audit:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 35,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/audit-trail' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/audit-trail:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 36,
@@ -169,27 +169,27 @@
   },
   {
     "index": 42,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/bootstrap' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/bootstrap:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 43,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/sagemaker' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/sagemaker:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 44,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/dataops-dynamodb' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/dataops-dynamodb:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 45,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/sagemaker-project' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/sagemaker-project:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 46,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/datalake' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/datalake:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 47,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/dataops-project' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/dataops-project:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 48,
@@ -241,11 +241,11 @@
   },
   {
     "index": 60,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/bootstrap' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/bootstrap:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 61,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/dataops-project' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/dataops-project:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 62,
@@ -257,11 +257,11 @@
   },
   {
     "index": 64,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/bootstrap' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/bootstrap:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 65,
-    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && npx lerna run build --scope '@aws-mdaa/sagemaker-project' --loglevel warn && cd '/TEMP_DIR/smus_data_mesh' && cd ."
+    "command": "cd '/REPO_ROOT' && export MDAA_BUILD_CODE_ONLY='true' && export NX_DAEMON='false' && npx nx run '@aws-mdaa/sagemaker-project:build' --output-style=static && cd '/TEMP_DIR/smus_data_mesh' && cd ."
   },
   {
     "index": 66,

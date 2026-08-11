@@ -52,7 +52,7 @@ jobs:
 
       - name: Build MDAA
         run: |
-          lerna run build
+          npx nx run-many -t build --all
 
       - name: Generate documentation
         run: |

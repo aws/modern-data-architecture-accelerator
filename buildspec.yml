@@ -12,8 +12,8 @@ phases:
     commands:
       - echo "Installing dependencies and executing unit tests in - `pwd`"
       - npm install
-      - chmod +x ./scripts/build/build.sh && ./scripts/build/build.sh
-      - chmod +x ./scripts/ci/test_ci.sh && ./scripts/ci/test_ci.sh
+      - npm run build
+      - npm run test
       - echo "Installing dependencies and executing unit tests completed `date`"
   build:
     commands:
@@ -32,14 +32,11 @@ phases:
 artifacts:
   files:
     - package.json
-    - lerna.json
     - packages/**/*
     - target/**/*
     - schemas/**/*
     - scripts/**/*
     - .gitignore
-    - .cdxgen.json
-    - .cdxgenignore
     - sonar-project.properties
     - README.md
     - LICENSE.txt
@@ -53,7 +50,6 @@ artifacts:
     - .gitleaksignore
     - .semgrepignore
     - solution-manifest.yaml
-    - .cdxgenrc
     - deployment/**/*
   exclude-paths:
     - '**/node_modules/**'

@@ -1945,3 +1945,67 @@ describe('installPython coverage', () => {
     mockExecSync.mockRestore();
   });
 });
+
+describe('MdaaDeploy.prepLocalPackage (local module build command)', () => {
+  // All other suites mock loadLocalPackages to return {}, so the prepLocalPackage
+  // branch of prepNpmPackage is never otherwise exercised.
+  const LOCAL_PACKAGE = '@aws-mdaa/datalake';
+
+  let mdaaDeploy: MdaaDeploy;
+  let mockExecCmd: jest.SpyInstance;
+
+  beforeEach(() => {
+    // Seed localPackages so prepNpmPackage takes the local-build branch.
+    jest.spyOn(packageHelper, 'loadLocalPackages').mockReturnValue({
+      [LOCAL_PACKAGE]: '/repo/packages/apps/analytics/datalake-app',
+    });
+
+    mdaaDeploy = new MdaaDeploy({ action: 'deploy', testing: 'true' }, [], {
+      organization: 'test-org',
+      domains: {
+        'test-domain': {
+          environments: {
+            'test-env': {
+              modules: { 'test-module': { module_path: LOCAL_PACKAGE } },
+            },
+          },
+        },
+      },
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockExecCmd = jest.spyOn(mdaaDeploy as any, 'execCmd').mockImplementation(jest.fn());
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('builds a local module via nx run <pkg>:build in code-only mode', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [modulePath, localModule] = (mdaaDeploy as any).prepNpmPackage('test-module', LOCAL_PACKAGE);
+
+    // Local package -> resolved to its on-disk prefix, flagged as a local module.
+    expect(localModule).toBe(true);
+    expect(modulePath).toBe('/repo/packages/apps/analytics/datalake-app');
+
+    expect(mockExecCmd).toHaveBeenCalledTimes(1);
+    const fullCmd = String(mockExecCmd.mock.calls[0][0]);
+
+    // Assembled as `cd <repoRoot> && <env> && <daemonEnv> && <build> && cd <cwd> &&
+    // cd .`. Assert on the segments rather than the whole string, whose `cd` paths
+    // depend on the checkout location. The length check comes first so a structural
+    // change fails here instead of yielding '' and satisfying the assertions below.
+    const segments = fullCmd.split(' && ');
+    expect(segments).toHaveLength(6);
+    const buildEnv = segments[1];
+    const daemonEnv = segments[2];
+    const buildCmd = segments[3];
+
+    expect(buildEnv).toBe(`export MDAA_BUILD_CODE_ONLY=${shellQuote('true')}`);
+    expect(daemonEnv).toBe(`export NX_DAEMON=${shellQuote('false')}`);
+
+    // The nx target is shell-quoted at the sink; nx resolves upstream deps itself.
+    expect(buildCmd).toBe(`npx nx run ${shellQuote(`${LOCAL_PACKAGE}:build`)} --output-style=static`);
+  });
+});

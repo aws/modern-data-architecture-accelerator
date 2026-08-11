@@ -4,7 +4,7 @@ MDAA_CODEARTIFACT_PIP_PUBLISH_REPO=$1
 MDAA_CODEARTIFACT_PUBLISH_DOMAIN=$2
 MDAA_CODEARTIFACT_PUBLISH_ACCOUNT=$3
 
-export PUBLISHED_VERSION=$(jq -r .version < lerna.json )
+export PUBLISHED_VERSION=$(jq -r .version < package.json )
 
 #Publish pip release packages
 aws codeartifact login --tool twine --repository $MDAA_CODEARTIFACT_PIP_PUBLISH_REPO --domain $MDAA_CODEARTIFACT_PUBLISH_DOMAIN --domain-owner $MDAA_CODEARTIFACT_PUBLISH_ACCOUNT --region us-east-1

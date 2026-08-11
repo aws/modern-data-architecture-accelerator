@@ -468,7 +468,7 @@ After creating any new package:
 
 1. **Add to workspace** — verify the package path matches a glob in root `package.json` `workspaces`
 2. **Install dependencies** — run `npm install` from the repo root
-3. **Build** — `npx lerna run build` (or `npm run build` in the package)
+3. **Build** — `npm run build:all` (or `npm run build` in the package)
 4. **Lint** — `npm run lint`
 5. **Test** — `npm run test`
 6. **Generate baselines** (apps only) — `npm run test:update-baselines`

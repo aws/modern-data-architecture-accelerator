@@ -49,7 +49,7 @@ HEADER = """\
 # the same way the repo's bin/mdaa wrapper does: npm install, then build only
 # the CLI (plus the @aws-mdaa/testing harness that jest loads). The MDAA CLI
 # then builds each module it needs on demand at synth time
-# (lerna run build --scope <module>). The shared cache (same key as
+# (nx run <module>:build). The shared cache (same key as
 # feature_merge_build_test) is pulled when available to warm node_modules and
 # the build caches; correctness does not depend on a cache hit.
 
@@ -117,7 +117,7 @@ sk_{kit}:
     # and parent-job artifacts aren't available to a child pipeline, so this
     # must not assume a prior build; a warm cache just makes it faster.
     - npm install --no-save --quiet
-    - MDAA_BUILD_CODE_ONLY=true npx lerna run build --scope @aws-mdaa/cli --scope @aws-mdaa/testing --loglevel warn
+    - MDAA_BUILD_CODE_ONLY=true npx nx run-many -t build -p @aws-mdaa/cli @aws-mdaa/testing --output-style=static
     - cd starter_kits && python3 {runner} --kit {kit}
 """
 
