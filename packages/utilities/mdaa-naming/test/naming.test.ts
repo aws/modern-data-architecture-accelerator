@@ -83,6 +83,10 @@ describe('MdaaDefaultResourceNaming', () => {
     expect(naming.withResourceType(MdaaResourceType.BEDROCK_AGENTCORE_GATEWAY_TARGET).resourceName('tgt')).toBe(
       naming.resourceName('tgt'),
     );
+    // S3 Tables resource type resolves through the no-op default as well.
+    expect(naming.withResourceType(MdaaResourceType.S3_TABLES).resourceName('analytics')).toBe(
+      naming.resourceName('analytics'),
+    );
   });
 
   test('ssmOrgPath', () => {

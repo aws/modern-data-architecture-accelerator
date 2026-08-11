@@ -12,6 +12,7 @@
  */
 export enum MdaaResourceType {
   S3_BUCKET = 's3',
+  S3_TABLES = 's3-tables',
   LAMBDA_FUNCTION = 'lambda',
   LAMBDA_LAYER = 'lambda-layer',
   IAM_ROLE = 'iam-role',

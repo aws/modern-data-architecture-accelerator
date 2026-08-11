@@ -1,0 +1,2502 @@
+{
+  "Description": "(SO0320-s3-tables) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "SsmParameterValuesampleorginstance1generatedroledataengineeridC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/sample-org/instance1/generated-role/data-engineer/id"
+    },
+    "SsmParameterValuesampleorginstance1generatedroledataanalystarnC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/sample-org/instance1/generated-role/data-analyst/arn"
+    },
+    "SsmParameterValuetestorgtestdomaingeneratedroledataanalystidC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/generated-role/data-analyst/id"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-s3-tables-main/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "s3-tables",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-s3-tables-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-s3-tables) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "s3tableskmsanalyticsprimary6F098D18": {
+      "Type": "AWS::KMS::Key",
+      "Properties": {
+        "EnableKeyRotation": true,
+        "Enabled": true,
+        "KeyPolicy": {
+          "Statement": [
+            {
+              "Action": "kms:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account:root"
+              },
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext"
+              ],
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleRess3tablesanalyticsprimary0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleRess3tablesanalyticsprimary1",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleRess3tablesanalyticsprimary2",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Ref": "SsmParameterValuetestorgtestdomaingeneratedroledataanalystidC96584B6F00A464EAD1953AFF4B05118Parameter"
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Ref": "SsmParameterValuesampleorginstance1generatedroledataengineeridC96584B6F00A464EAD1953AFF4B05118Parameter"
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleRess3tablesanalyticsprimary5",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleRess3tablesanalyticsprimary6",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "test-org-test-env-test-domain-test-s3-tables-main-usage-stmt"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:GenerateDataKey"
+              ],
+              "Condition": {
+                "StringLike": {
+                  "kms:EncryptionContext:aws:s3:arn": "arn:test-partition:s3tables:test-region:test-account:bucket/test-org-test-env-test-domain-test-s3-tables-main-anal-2f11ab58/*"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "maintenance.s3tables.amazonaws.com"
+              },
+              "Resource": "*",
+              "Sid": "AllowS3TablesMaintenance"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "s3-tables"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-s3-tables-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "s3tableskmsanalyticsprimaryAliasFF8F2B8F": {
+      "Type": "AWS::KMS::Alias",
+      "Properties": {
+        "AliasName": "alias/test-org-test-env-test-domain-test-s3-tables-main-analytics-primary",
+        "TargetKeyId": {
+          "Fn::GetAtt": [
+            "s3tableskmsanalyticsprimary6F098D18",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "s3tableskmsanalyticsprimarykmsanalyticsprimaryarnssmE181510D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-s3-tables-main/kms/analytics-primary/arn",
+        "Tags": {
+          "mdaa_cdk_app": "s3-tables",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-s3-tables-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "s3tableskmsanalyticsprimary6F098D18",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "s3tableskmsanalyticsprimarykmsanalyticsprimaryidssm560E0020": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-s3-tables-main/kms/analytics-primary/id",
+        "Tags": {
+          "mdaa_cdk_app": "s3-tables",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-s3-tables-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "s3tableskmsanalyticsprimary6F098D18"
+        }
+      }
+    },
+    "s3tablesbucketanalyticsprimary63E2D5B2": {
+      "Type": "AWS::S3Tables::TableBucket",
+      "Properties": {
+        "EncryptionConfiguration": {
+          "KMSKeyArn": {
+            "Fn::GetAtt": [
+              "s3tableskmsanalyticsprimary6F098D18",
+              "Arn"
+            ]
+          },
+          "SSEAlgorithm": "aws:kms"
+        },
+        "TableBucketName": "test-org-test-env-test-domain-test-s3-tables-main-anal-2f11ab58",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "s3-tables"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-s3-tables-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "UnreferencedFileRemoval": {
+          "NoncurrentDays": 7,
+          "Status": "Enabled",
+          "UnreferencedDays": 14
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "s3tablesbucketanalyticsprimaryPolicy18960A4D": {
+      "Type": "AWS::S3Tables::TableBucketPolicy",
+      "Properties": {
+        "ResourcePolicy": {
+          "Statement": [
+            {
+              "Action": "s3tables:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "s3tablesbucketanalyticsprimary63E2D5B2",
+                    "TableBucketARN"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "s3tablesbucketanalyticsprimary63E2D5B2",
+                          "TableBucketARN"
+                        ]
+                      },
+                      "/table/*"
+                    ]
+                  ]
+                }
+              ],
+              "Sid": "DenyNonTLS"
+            },
+            {
+              "Action": "s3tables:*",
+              "Condition": {
+                "StringNotLike": {
+                  "aws:PrincipalArn": [
+                    "arn:test-partition:iam::test-account:role/DataPlatformAdmin",
+                    {
+                      "Fn::GetAtt": [
+                        "RoleRess3tablesanalyticsprimary1",
+                        "arn"
+                      ]
+                    },
+                    {
+                      "Ref": "SsmParameterValuesampleorginstance1generatedroledataanalystarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+                    },
+                    {
+                      "Fn::GetAtt": [
+                        "RoleRess3tablesanalyticsprimary3",
+                        "arn"
+                      ]
+                    },
+                    {
+                      "Fn::GetAtt": [
+                        "RoleRess3tablesanalyticsprimary4",
+                        "arn"
+                      ]
+                    },
+                    "arn:test-partition:iam::test-account:role/DataEngineer",
+                    "arn:test-partition:iam::test-account:role/EtlPipelineRole",
+                    "arn:test-partition:iam::test-account:role/cdk-hnb659fds-cfn-exec-role-test-account-test-region"
+                  ]
+                }
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "s3tablesbucketanalyticsprimary63E2D5B2",
+                    "TableBucketARN"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "s3tablesbucketanalyticsprimary63E2D5B2",
+                          "TableBucketARN"
+                        ]
+                      },
+                      "/table/*"
+                    ]
+                  ]
+                }
+              ],
+              "Sid": "DenyAll"
+            },
+            {
+              "Action": [
+                "s3tables:GetTable",
+                "s3tables:GetTableData",
+                "s3tables:GetTableMetadataLocation",
+                "s3tables:GetNamespace",
+                "s3tables:GetTableBucket",
+                "s3tables:ListTables",
+                "s3tables:ListNamespaces",
+                "s3tables:PutTableData",
+                "s3tables:UpdateTableMetadataLocation",
+                "s3tables:CreateTable",
+                "s3tables:DeleteTable",
+                "s3tables:RenameTable",
+                "s3tables:CreateNamespace",
+                "s3tables:DeleteNamespace"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": [
+                  "arn:test-partition:iam::test-account:role/DataPlatformAdmin",
+                  {
+                    "Fn::GetAtt": [
+                      "RoleRess3tablesanalyticsprimary1",
+                      "arn"
+                    ]
+                  }
+                ]
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "s3tablesbucketanalyticsprimary63E2D5B2",
+                    "TableBucketARN"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "s3tablesbucketanalyticsprimary63E2D5B2",
+                          "TableBucketARN"
+                        ]
+                      },
+                      "/table/*"
+                    ]
+                  ]
+                }
+              ],
+              "Sid": "AdminGrant-PlatformAdmin"
+            },
+            {
+              "Action": [
+                "s3tables:GetTable",
+                "s3tables:GetTableData",
+                "s3tables:GetTableMetadataLocation",
+                "s3tables:GetNamespace",
+                "s3tables:GetTableBucket",
+                "s3tables:ListTables",
+                "s3tables:ListNamespaces"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": [
+                  {
+                    "Ref": "SsmParameterValuesampleorginstance1generatedroledataanalystarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+                  },
+                  {
+                    "Fn::GetAtt": [
+                      "RoleRess3tablesanalyticsprimary3",
+                      "arn"
+                    ]
+                  }
+                ]
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "s3tablesbucketanalyticsprimary63E2D5B2",
+                    "TableBucketARN"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "s3tablesbucketanalyticsprimary63E2D5B2",
+                          "TableBucketARN"
+                        ]
+                      },
+                      "/table/*"
+                    ]
+                  ]
+                }
+              ],
+              "Sid": "ReaderGrant-EngineerReadWrite"
+            },
+            {
+              "Action": [
+                "s3tables:GetTable",
+                "s3tables:GetTableData",
+                "s3tables:GetTableMetadataLocation",
+                "s3tables:GetNamespace",
+                "s3tables:GetTableBucket",
+                "s3tables:ListTables",
+                "s3tables:ListNamespaces",
+                "s3tables:PutTableData",
+                "s3tables:UpdateTableMetadataLocation"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": [
+                  {
+                    "Fn::GetAtt": [
+                      "RoleRess3tablesanalyticsprimary4",
+                      "arn"
+                    ]
+                  },
+                  "arn:test-partition:iam::test-account:role/DataEngineer",
+                  "arn:test-partition:iam::test-account:role/EtlPipelineRole"
+                ]
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "s3tablesbucketanalyticsprimary63E2D5B2",
+                    "TableBucketARN"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "s3tablesbucketanalyticsprimary63E2D5B2",
+                          "TableBucketARN"
+                        ]
+                      },
+                      "/table/*"
+                    ]
+                  ]
+                }
+              ],
+              "Sid": "WriterGrant-EngineerReadWrite"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "TableBucketARN": {
+          "Fn::GetAtt": [
+            "s3tablesbucketanalyticsprimary63E2D5B2",
+            "TableBucketARN"
+          ]
+        }
+      }
+    },
+    "s3tablesbucketanalyticsprimarytablebucketanalyticsprimaryarnssm3AD70FBD": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-s3-tables-main/table-bucket/analytics-primary/arn",
+        "Tags": {
+          "mdaa_cdk_app": "s3-tables",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-s3-tables-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "s3tablesbucketanalyticsprimary63E2D5B2",
+            "TableBucketARN"
+          ]
+        }
+      }
+    },
+    "s3tablesnsanalyticsprimaryclickstreamD59BDC05": {
+      "Type": "AWS::S3Tables::Namespace",
+      "Properties": {
+        "Namespace": "clickstream",
+        "TableBucketARN": {
+          "Fn::GetAtt": [
+            "s3tablesbucketanalyticsprimary63E2D5B2",
+            "TableBucketARN"
+          ]
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "s3tablesnsanalyticsprimaryclickstreamtablebucketanalyticsprimarynamespaceclickstreamnamessmCADA42A6": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-s3-tables-main/table-bucket/analytics-primary/namespace/clickstream/name",
+        "Tags": {
+          "mdaa_cdk_app": "s3-tables",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-s3-tables-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "clickstream"
+      }
+    },
+    "s3tablestableanalyticsprimaryclickstreampageeventsDF05128D": {
+      "Type": "AWS::S3Tables::Table",
+      "Properties": {
+        "Compaction": {
+          "Status": "enabled",
+          "TargetFileSizeMB": 256
+        },
+        "IcebergMetadata": {
+          "IcebergPartitionSpec": {
+            "Fields": [
+              {
+                "Name": "event_timestamp_day",
+                "SourceId": 7,
+                "Transform": "day"
+              },
+              {
+                "Name": "event_type_identity",
+                "SourceId": 6,
+                "Transform": "identity"
+              }
+            ]
+          },
+          "IcebergSchema": {
+            "SchemaFieldList": [
+              {
+                "Id": 1,
+                "Name": "event_id",
+                "Required": true,
+                "Type": "string"
+              },
+              {
+                "Id": 2,
+                "Name": "user_id",
+                "Required": true,
+                "Type": "string"
+              },
+              {
+                "Id": 3,
+                "Name": "session_id",
+                "Required": true,
+                "Type": "string"
+              },
+              {
+                "Id": 4,
+                "Name": "page_url",
+                "Required": true,
+                "Type": "string"
+              },
+              {
+                "Id": 5,
+                "Name": "referrer_url",
+                "Required": false,
+                "Type": "string"
+              },
+              {
+                "Id": 6,
+                "Name": "event_type",
+                "Required": true,
+                "Type": "string"
+              },
+              {
+                "Id": 7,
+                "Name": "event_timestamp",
+                "Required": true,
+                "Type": "timestamptz"
+              },
+              {
+                "Id": 8,
+                "Name": "duration_ms",
+                "Required": false,
+                "Type": "long"
+              },
+              {
+                "Id": 9,
+                "Name": "country_code",
+                "Required": false,
+                "Type": "string"
+              }
+            ]
+          },
+          "IcebergSortOrder": {
+            "Fields": [
+              {
+                "Direction": "desc",
+                "NullOrder": "nulls-last",
+                "SourceId": 7,
+                "Transform": "identity"
+              },
+              {
+                "Direction": "asc",
+                "NullOrder": "nulls-first",
+                "SourceId": 2,
+                "Transform": "identity"
+              }
+            ]
+          }
+        },
+        "Namespace": "clickstream",
+        "OpenTableFormat": "ICEBERG",
+        "SnapshotManagement": {
+          "MaxSnapshotAgeHours": 720,
+          "MinSnapshotsToKeep": 10,
+          "Status": "enabled"
+        },
+        "TableBucketARN": {
+          "Fn::GetAtt": [
+            "s3tablesbucketanalyticsprimary63E2D5B2",
+            "TableBucketARN"
+          ]
+        },
+        "TableName": "page_events",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "s3-tables"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-s3-tables-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "DependsOn": [
+        "s3tablesnsanalyticsprimaryclickstreamD59BDC05",
+        "s3tablesnsanalyticsprimaryclickstreamtablebucketanalyticsprimarynamespaceclickstreamnamessmCADA42A6"
+      ],
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "s3tablestableanalyticsprimaryclickstreampageeventsPolicyC576D979": {
+      "Type": "AWS::S3Tables::TablePolicy",
+      "Properties": {
+        "ResourcePolicy": {
+          "Statement": [
+            {
+              "Action": "s3tables:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "s3tablestableanalyticsprimaryclickstreampageeventsDF05128D",
+                  "TableARN"
+                ]
+              },
+              "Sid": "DenyNonTLS"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "TableARN": {
+          "Fn::GetAtt": [
+            "s3tablestableanalyticsprimaryclickstreampageeventsDF05128D",
+            "TableARN"
+          ]
+        }
+      },
+      "DependsOn": [
+        "s3tablesnsanalyticsprimaryclickstreamD59BDC05",
+        "s3tablesnsanalyticsprimaryclickstreamtablebucketanalyticsprimarynamespaceclickstreamnamessmCADA42A6"
+      ]
+    },
+    "s3tablestableanalyticsprimaryclickstreampageeventstablebucketanalyticsprimarynamespaceclickstreamtablepageeventsarnssmD4152F38": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-s3-tables-main/table-bucket/analytics-primary/namespace/clickstream/table/page_events/arn",
+        "Tags": {
+          "mdaa_cdk_app": "s3-tables",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-s3-tables-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "s3tablestableanalyticsprimaryclickstreampageeventsDF05128D",
+            "TableARN"
+          ]
+        }
+      },
+      "DependsOn": [
+        "s3tablesnsanalyticsprimaryclickstreamD59BDC05",
+        "s3tablesnsanalyticsprimaryclickstreamtablebucketanalyticsprimarynamespaceclickstreamnamessmCADA42A6"
+      ]
+    },
+    "s3tablestableanalyticsprimaryclickstreamusersessionsAE00DD13": {
+      "Type": "AWS::S3Tables::Table",
+      "Properties": {
+        "Compaction": {
+          "Status": "enabled",
+          "TargetFileSizeMB": 256
+        },
+        "IcebergMetadata": {
+          "IcebergPartitionSpec": {
+            "Fields": [
+              {
+                "Name": "user_id_bucket",
+                "SourceId": 2,
+                "Transform": "bucket[16]"
+              },
+              {
+                "Name": "user_agent_truncate",
+                "SourceId": 7,
+                "Transform": "truncate[10]"
+              },
+              {
+                "Name": "start_time_day",
+                "SourceId": 3,
+                "Transform": "day"
+              }
+            ]
+          },
+          "IcebergSchema": {
+            "SchemaFieldList": [
+              {
+                "Id": 1,
+                "Name": "session_id",
+                "Required": true,
+                "Type": "string"
+              },
+              {
+                "Id": 2,
+                "Name": "user_id",
+                "Required": true,
+                "Type": "string"
+              },
+              {
+                "Id": 3,
+                "Name": "start_time",
+                "Required": true,
+                "Type": "timestamptz"
+              },
+              {
+                "Id": 4,
+                "Name": "end_time",
+                "Required": false,
+                "Type": "timestamptz"
+              },
+              {
+                "Id": 5,
+                "Name": "page_count",
+                "Required": true,
+                "Type": "int"
+              },
+              {
+                "Id": 6,
+                "Name": "device_type",
+                "Required": false,
+                "Type": "string"
+              },
+              {
+                "Id": 7,
+                "Name": "user_agent",
+                "Required": false,
+                "Type": "string"
+              }
+            ]
+          },
+          "IcebergSortOrder": {
+            "Fields": [
+              {
+                "Direction": "desc",
+                "NullOrder": "nulls-last",
+                "SourceId": 3,
+                "Transform": "identity"
+              }
+            ]
+          }
+        },
+        "Namespace": "clickstream",
+        "OpenTableFormat": "ICEBERG",
+        "SnapshotManagement": {
+          "MaxSnapshotAgeHours": 720,
+          "MinSnapshotsToKeep": 10,
+          "Status": "enabled"
+        },
+        "TableBucketARN": {
+          "Fn::GetAtt": [
+            "s3tablesbucketanalyticsprimary63E2D5B2",
+            "TableBucketARN"
+          ]
+        },
+        "TableName": "user_sessions",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "s3-tables"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-s3-tables-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "DependsOn": [
+        "s3tablesnsanalyticsprimaryclickstreamD59BDC05",
+        "s3tablesnsanalyticsprimaryclickstreamtablebucketanalyticsprimarynamespaceclickstreamnamessmCADA42A6"
+      ],
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "s3tablestableanalyticsprimaryclickstreamusersessionsPolicyE3F76E85": {
+      "Type": "AWS::S3Tables::TablePolicy",
+      "Properties": {
+        "ResourcePolicy": {
+          "Statement": [
+            {
+              "Action": "s3tables:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "s3tablestableanalyticsprimaryclickstreamusersessionsAE00DD13",
+                  "TableARN"
+                ]
+              },
+              "Sid": "DenyNonTLS"
+            },
+            {
+              "Action": [
+                "s3tables:GetTable",
+                "s3tables:GetTableData",
+                "s3tables:GetTableMetadataLocation",
+                "s3tables:PutTableData",
+                "s3tables:UpdateTableMetadataLocation",
+                "s3tables:DeleteTable",
+                "s3tables:RenameTable"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": [
+                  "arn:test-partition:iam::test-account:role/DataPlatformAdmin",
+                  {
+                    "Fn::GetAtt": [
+                      "RoleRess3tablesanalyticsprimary1",
+                      "arn"
+                    ]
+                  }
+                ]
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "s3tablestableanalyticsprimaryclickstreamusersessionsAE00DD13",
+                  "TableARN"
+                ]
+              },
+              "Sid": "AdminGrant-PlatformAdmin"
+            },
+            {
+              "Action": [
+                "s3tables:GetTable",
+                "s3tables:GetTableData",
+                "s3tables:GetTableMetadataLocation"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": [
+                  {
+                    "Ref": "SsmParameterValuesampleorginstance1generatedroledataanalystarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+                  },
+                  {
+                    "Fn::GetAtt": [
+                      "RoleRess3tablesanalyticsprimary3",
+                      "arn"
+                    ]
+                  }
+                ]
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "s3tablestableanalyticsprimaryclickstreamusersessionsAE00DD13",
+                  "TableARN"
+                ]
+              },
+              "Sid": "ReaderGrant-AnalystReadOnly"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "TableARN": {
+          "Fn::GetAtt": [
+            "s3tablestableanalyticsprimaryclickstreamusersessionsAE00DD13",
+            "TableARN"
+          ]
+        }
+      },
+      "DependsOn": [
+        "s3tablesnsanalyticsprimaryclickstreamD59BDC05",
+        "s3tablesnsanalyticsprimaryclickstreamtablebucketanalyticsprimarynamespaceclickstreamnamessmCADA42A6"
+      ]
+    },
+    "s3tablestableanalyticsprimaryclickstreamusersessionstablebucketanalyticsprimarynamespaceclickstreamtableusersessionsarnssmA19D2EFA": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-s3-tables-main/table-bucket/analytics-primary/namespace/clickstream/table/user_sessions/arn",
+        "Tags": {
+          "mdaa_cdk_app": "s3-tables",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-s3-tables-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "s3tablestableanalyticsprimaryclickstreamusersessionsAE00DD13",
+            "TableARN"
+          ]
+        }
+      },
+      "DependsOn": [
+        "s3tablesnsanalyticsprimaryclickstreamD59BDC05",
+        "s3tablesnsanalyticsprimaryclickstreamtablebucketanalyticsprimarynamespaceclickstreamnamessmCADA42A6"
+      ]
+    },
+    "s3tablesnsanalyticsprimarymetrics175CC0F7": {
+      "Type": "AWS::S3Tables::Namespace",
+      "Properties": {
+        "Namespace": "metrics",
+        "TableBucketARN": {
+          "Fn::GetAtt": [
+            "s3tablesbucketanalyticsprimary63E2D5B2",
+            "TableBucketARN"
+          ]
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "s3tablesnsanalyticsprimarymetricstablebucketanalyticsprimarynamespacemetricsnamessm2F5C2B79": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-s3-tables-main/table-bucket/analytics-primary/namespace/metrics/name",
+        "Tags": {
+          "mdaa_cdk_app": "s3-tables",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-s3-tables-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "metrics"
+      }
+    },
+    "s3tablestableanalyticsprimarymetricsapilatencyC2DB61D8": {
+      "Type": "AWS::S3Tables::Table",
+      "Properties": {
+        "Compaction": {
+          "Status": "enabled",
+          "TargetFileSizeMB": 256
+        },
+        "IcebergMetadata": {
+          "IcebergPartitionSpec": {
+            "Fields": [
+              {
+                "Name": "timestamp_hour",
+                "SourceId": 6,
+                "Transform": "hour"
+              },
+              {
+                "Name": "region_identity",
+                "SourceId": 7,
+                "Transform": "identity"
+              }
+            ]
+          },
+          "IcebergSchema": {
+            "SchemaFieldList": [
+              {
+                "Id": 1,
+                "Name": "request_id",
+                "Required": true,
+                "Type": "string"
+              },
+              {
+                "Id": 2,
+                "Name": "endpoint",
+                "Required": true,
+                "Type": "string"
+              },
+              {
+                "Id": 3,
+                "Name": "method",
+                "Required": true,
+                "Type": "string"
+              },
+              {
+                "Id": 4,
+                "Name": "status_code",
+                "Required": true,
+                "Type": "int"
+              },
+              {
+                "Id": 5,
+                "Name": "latency_ms",
+                "Required": true,
+                "Type": "double"
+              },
+              {
+                "Id": 6,
+                "Name": "timestamp",
+                "Required": true,
+                "Type": "timestamptz"
+              },
+              {
+                "Id": 7,
+                "Name": "region",
+                "Required": true,
+                "Type": "string"
+              }
+            ]
+          },
+          "IcebergSortOrder": {
+            "Fields": [
+              {
+                "Direction": "desc",
+                "NullOrder": "nulls-last",
+                "SourceId": 6,
+                "Transform": "identity"
+              },
+              {
+                "Direction": "desc",
+                "NullOrder": "nulls-last",
+                "SourceId": 5,
+                "Transform": "identity"
+              }
+            ]
+          }
+        },
+        "Namespace": "metrics",
+        "OpenTableFormat": "ICEBERG",
+        "SnapshotManagement": {
+          "MaxSnapshotAgeHours": 720,
+          "MinSnapshotsToKeep": 10,
+          "Status": "enabled"
+        },
+        "TableBucketARN": {
+          "Fn::GetAtt": [
+            "s3tablesbucketanalyticsprimary63E2D5B2",
+            "TableBucketARN"
+          ]
+        },
+        "TableName": "api_latency",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "s3-tables"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-s3-tables-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "DependsOn": [
+        "s3tablesnsanalyticsprimarymetrics175CC0F7",
+        "s3tablesnsanalyticsprimarymetricstablebucketanalyticsprimarynamespacemetricsnamessm2F5C2B79"
+      ],
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "s3tablestableanalyticsprimarymetricsapilatencyPolicy254BEF89": {
+      "Type": "AWS::S3Tables::TablePolicy",
+      "Properties": {
+        "ResourcePolicy": {
+          "Statement": [
+            {
+              "Action": "s3tables:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "s3tablestableanalyticsprimarymetricsapilatencyC2DB61D8",
+                  "TableARN"
+                ]
+              },
+              "Sid": "DenyNonTLS"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "TableARN": {
+          "Fn::GetAtt": [
+            "s3tablestableanalyticsprimarymetricsapilatencyC2DB61D8",
+            "TableARN"
+          ]
+        }
+      },
+      "DependsOn": [
+        "s3tablesnsanalyticsprimarymetrics175CC0F7",
+        "s3tablesnsanalyticsprimarymetricstablebucketanalyticsprimarynamespacemetricsnamessm2F5C2B79"
+      ]
+    },
+    "s3tablestableanalyticsprimarymetricsapilatencytablebucketanalyticsprimarynamespacemetricstableapilatencyarnssm36C40547": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-s3-tables-main/table-bucket/analytics-primary/namespace/metrics/table/api_latency/arn",
+        "Tags": {
+          "mdaa_cdk_app": "s3-tables",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-s3-tables-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "s3tablestableanalyticsprimarymetricsapilatencyC2DB61D8",
+            "TableARN"
+          ]
+        }
+      },
+      "DependsOn": [
+        "s3tablesnsanalyticsprimarymetrics175CC0F7",
+        "s3tablesnsanalyticsprimarymetricstablebucketanalyticsprimarynamespacemetricsnamessm2F5C2B79"
+      ]
+    },
+    "s3tablesbucketingestionlanding1398D265": {
+      "Type": "AWS::S3Tables::TableBucket",
+      "Properties": {
+        "EncryptionConfiguration": {
+          "KMSKeyArn": "arn:test-partition:kms:test-region:test-account:key/12345678-1234-1234-1234-123456789012",
+          "SSEAlgorithm": "aws:kms"
+        },
+        "TableBucketName": "test-org-test-env-test-domain-test-s3-tables-main-ing--56db42f5",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "s3-tables"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-s3-tables-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "UnreferencedFileRemoval": {
+          "Status": "Disabled"
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "s3tablesbucketingestionlandingPolicy6AE153BE": {
+      "Type": "AWS::S3Tables::TableBucketPolicy",
+      "Properties": {
+        "ResourcePolicy": {
+          "Statement": [
+            {
+              "Action": "s3tables:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "s3tablesbucketingestionlanding1398D265",
+                    "TableBucketARN"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "s3tablesbucketingestionlanding1398D265",
+                          "TableBucketARN"
+                        ]
+                      },
+                      "/table/*"
+                    ]
+                  ]
+                }
+              ],
+              "Sid": "DenyNonTLS"
+            },
+            {
+              "Action": "s3tables:*",
+              "Condition": {
+                "StringNotLike": {
+                  "aws:PrincipalArn": [
+                    "arn:test-partition:iam::test-account:role/DataPlatformAdmin",
+                    {
+                      "Fn::GetAtt": [
+                        "RoleRess3tablesanalyticsprimary1",
+                        "arn"
+                      ]
+                    },
+                    "arn:test-partition:iam::test-account:role/EtlPipelineRole",
+                    {
+                      "Ref": "SsmParameterValuesampleorginstance1generatedroledataanalystarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+                    },
+                    {
+                      "Fn::GetAtt": [
+                        "RoleRess3tablesanalyticsprimary3",
+                        "arn"
+                      ]
+                    },
+                    {
+                      "Fn::GetAtt": [
+                        "RoleRess3tablesanalyticsprimary4",
+                        "arn"
+                      ]
+                    },
+                    "arn:test-partition:iam::test-account:role/DataEngineer",
+                    "arn:test-partition:iam::test-account:role/cdk-hnb659fds-cfn-exec-role-test-account-test-region"
+                  ]
+                }
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "s3tablesbucketingestionlanding1398D265",
+                    "TableBucketARN"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "s3tablesbucketingestionlanding1398D265",
+                          "TableBucketARN"
+                        ]
+                      },
+                      "/table/*"
+                    ]
+                  ]
+                }
+              ],
+              "Sid": "DenyAll"
+            },
+            {
+              "Action": [
+                "s3tables:GetTable",
+                "s3tables:GetTableData",
+                "s3tables:GetTableMetadataLocation",
+                "s3tables:GetNamespace",
+                "s3tables:GetTableBucket",
+                "s3tables:ListTables",
+                "s3tables:ListNamespaces",
+                "s3tables:PutTableData",
+                "s3tables:UpdateTableMetadataLocation",
+                "s3tables:CreateTable",
+                "s3tables:DeleteTable",
+                "s3tables:RenameTable",
+                "s3tables:CreateNamespace",
+                "s3tables:DeleteNamespace"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": [
+                  "arn:test-partition:iam::test-account:role/DataPlatformAdmin",
+                  {
+                    "Fn::GetAtt": [
+                      "RoleRess3tablesanalyticsprimary1",
+                      "arn"
+                    ]
+                  }
+                ]
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "s3tablesbucketingestionlanding1398D265",
+                    "TableBucketARN"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "s3tablesbucketingestionlanding1398D265",
+                          "TableBucketARN"
+                        ]
+                      },
+                      "/table/*"
+                    ]
+                  ]
+                }
+              ],
+              "Sid": "AdminGrant-PlatformAdmin"
+            },
+            {
+              "Action": [
+                "s3tables:GetTable",
+                "s3tables:GetTableData",
+                "s3tables:GetTableMetadataLocation",
+                "s3tables:GetNamespace",
+                "s3tables:GetTableBucket",
+                "s3tables:ListTables",
+                "s3tables:ListNamespaces",
+                "s3tables:PutTableData",
+                "s3tables:UpdateTableMetadataLocation"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account:role/EtlPipelineRole"
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "s3tablesbucketingestionlanding1398D265",
+                    "TableBucketARN"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "s3tablesbucketingestionlanding1398D265",
+                          "TableBucketARN"
+                        ]
+                      },
+                      "/table/*"
+                    ]
+                  ]
+                }
+              ],
+              "Sid": "WriterGrant-PipelineIngest"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "TableBucketARN": {
+          "Fn::GetAtt": [
+            "s3tablesbucketingestionlanding1398D265",
+            "TableBucketARN"
+          ]
+        }
+      }
+    },
+    "s3tablesbucketingestionlandingtablebucketingestionlandingarnssm9B85F575": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-s3-tables-main/table-bucket/ingestion-landing/arn",
+        "Tags": {
+          "mdaa_cdk_app": "s3-tables",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-s3-tables-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "s3tablesbucketingestionlanding1398D265",
+            "TableBucketARN"
+          ]
+        }
+      }
+    },
+    "s3tablesnsingestionlandingrawingestion0CDF0276": {
+      "Type": "AWS::S3Tables::Namespace",
+      "Properties": {
+        "Namespace": "raw_ingestion",
+        "TableBucketARN": {
+          "Fn::GetAtt": [
+            "s3tablesbucketingestionlanding1398D265",
+            "TableBucketARN"
+          ]
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "s3tablesnsingestionlandingrawingestiontablebucketingestionlandingnamespacerawingestionnamessm389C388B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-s3-tables-main/table-bucket/ingestion-landing/namespace/raw_ingestion/name",
+        "Tags": {
+          "mdaa_cdk_app": "s3-tables",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-s3-tables-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "raw_ingestion"
+      }
+    },
+    "s3tablestableingestionlandingrawingestionordersA43BD800": {
+      "Type": "AWS::S3Tables::Table",
+      "Properties": {
+        "Compaction": {
+          "Status": "disabled"
+        },
+        "IcebergMetadata": {
+          "IcebergPartitionSpec": {
+            "Fields": [
+              {
+                "Name": "order_date_month",
+                "SourceId": 3,
+                "Transform": "month"
+              },
+              {
+                "Name": "customer_id_bucket",
+                "SourceId": 2,
+                "Transform": "bucket[32]"
+              }
+            ]
+          },
+          "IcebergSchema": {
+            "SchemaFieldList": [
+              {
+                "Id": 1,
+                "Name": "order_id",
+                "Required": true,
+                "Type": "string"
+              },
+              {
+                "Id": 2,
+                "Name": "customer_id",
+                "Required": true,
+                "Type": "string"
+              },
+              {
+                "Id": 3,
+                "Name": "order_date",
+                "Required": true,
+                "Type": "date"
+              },
+              {
+                "Id": 4,
+                "Name": "total_amount",
+                "Required": true,
+                "Type": "decimal(10,2)"
+              },
+              {
+                "Id": 5,
+                "Name": "currency",
+                "Required": true,
+                "Type": "string"
+              },
+              {
+                "Id": 6,
+                "Name": "status",
+                "Required": true,
+                "Type": "string"
+              },
+              {
+                "Id": 7,
+                "Name": "created_at",
+                "Required": true,
+                "Type": "timestamptz"
+              },
+              {
+                "Id": 8,
+                "Name": "updated_at",
+                "Required": false,
+                "Type": "timestamptz"
+              }
+            ]
+          },
+          "IcebergSortOrder": {
+            "Fields": [
+              {
+                "Direction": "desc",
+                "NullOrder": "nulls-last",
+                "SourceId": 3,
+                "Transform": "identity"
+              }
+            ]
+          }
+        },
+        "Namespace": "raw_ingestion",
+        "OpenTableFormat": "ICEBERG",
+        "SnapshotManagement": {
+          "Status": "disabled"
+        },
+        "TableBucketARN": {
+          "Fn::GetAtt": [
+            "s3tablesbucketingestionlanding1398D265",
+            "TableBucketARN"
+          ]
+        },
+        "TableName": "orders",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "s3-tables"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-s3-tables-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "DependsOn": [
+        "s3tablesnsingestionlandingrawingestion0CDF0276",
+        "s3tablesnsingestionlandingrawingestiontablebucketingestionlandingnamespacerawingestionnamessm389C388B"
+      ],
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "s3tablestableingestionlandingrawingestionordersPolicyB2C72E20": {
+      "Type": "AWS::S3Tables::TablePolicy",
+      "Properties": {
+        "ResourcePolicy": {
+          "Statement": [
+            {
+              "Action": "s3tables:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "s3tablestableingestionlandingrawingestionordersA43BD800",
+                  "TableARN"
+                ]
+              },
+              "Sid": "DenyNonTLS"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "TableARN": {
+          "Fn::GetAtt": [
+            "s3tablestableingestionlandingrawingestionordersA43BD800",
+            "TableARN"
+          ]
+        }
+      },
+      "DependsOn": [
+        "s3tablesnsingestionlandingrawingestion0CDF0276",
+        "s3tablesnsingestionlandingrawingestiontablebucketingestionlandingnamespacerawingestionnamessm389C388B"
+      ]
+    },
+    "s3tablestableingestionlandingrawingestionorderstablebucketingestionlandingnamespacerawingestiontableordersarnssmDA2AFD26": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-s3-tables-main/table-bucket/ingestion-landing/namespace/raw_ingestion/table/orders/arn",
+        "Tags": {
+          "mdaa_cdk_app": "s3-tables",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-s3-tables-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "s3tablestableingestionlandingrawingestionordersA43BD800",
+            "TableARN"
+          ]
+        }
+      },
+      "DependsOn": [
+        "s3tablesnsingestionlandingrawingestion0CDF0276",
+        "s3tablesnsingestionlandingrawingestiontablebucketingestionlandingnamespacerawingestionnamessm389C388B"
+      ]
+    },
+    "s3tablestableingestionlandingrawingestioninventorysnapshots7C9693F2": {
+      "Type": "AWS::S3Tables::Table",
+      "Properties": {
+        "Compaction": {
+          "Status": "disabled"
+        },
+        "IcebergMetadata": {
+          "IcebergPartitionSpec": {
+            "Fields": [
+              {
+                "Name": "snapshot_date_day",
+                "SourceId": 5,
+                "Transform": "day"
+              },
+              {
+                "Name": "warehouse_id_identity",
+                "SourceId": 3,
+                "Transform": "identity"
+              }
+            ]
+          },
+          "IcebergSchema": {
+            "SchemaFieldList": [
+              {
+                "Id": 1,
+                "Name": "snapshot_id",
+                "Required": true,
+                "Type": "string"
+              },
+              {
+                "Id": 2,
+                "Name": "product_id",
+                "Required": true,
+                "Type": "string"
+              },
+              {
+                "Id": 3,
+                "Name": "warehouse_id",
+                "Required": true,
+                "Type": "string"
+              },
+              {
+                "Id": 4,
+                "Name": "quantity",
+                "Required": true,
+                "Type": "int"
+              },
+              {
+                "Id": 5,
+                "Name": "snapshot_date",
+                "Required": true,
+                "Type": "date"
+              },
+              {
+                "Id": 6,
+                "Name": "is_available",
+                "Required": true,
+                "Type": "boolean"
+              }
+            ]
+          },
+          "IcebergSortOrder": {
+            "Fields": [
+              {
+                "Direction": "desc",
+                "NullOrder": "nulls-last",
+                "SourceId": 5,
+                "Transform": "identity"
+              },
+              {
+                "Direction": "asc",
+                "NullOrder": "nulls-first",
+                "SourceId": 2,
+                "Transform": "identity"
+              }
+            ]
+          }
+        },
+        "Namespace": "raw_ingestion",
+        "OpenTableFormat": "ICEBERG",
+        "SnapshotManagement": {
+          "Status": "disabled"
+        },
+        "TableBucketARN": {
+          "Fn::GetAtt": [
+            "s3tablesbucketingestionlanding1398D265",
+            "TableBucketARN"
+          ]
+        },
+        "TableName": "inventory_snapshots",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "s3-tables"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-s3-tables-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "DependsOn": [
+        "s3tablesnsingestionlandingrawingestion0CDF0276",
+        "s3tablesnsingestionlandingrawingestiontablebucketingestionlandingnamespacerawingestionnamessm389C388B"
+      ],
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "s3tablestableingestionlandingrawingestioninventorysnapshotsPolicyDBCAE497": {
+      "Type": "AWS::S3Tables::TablePolicy",
+      "Properties": {
+        "ResourcePolicy": {
+          "Statement": [
+            {
+              "Action": "s3tables:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "s3tablestableingestionlandingrawingestioninventorysnapshots7C9693F2",
+                  "TableARN"
+                ]
+              },
+              "Sid": "DenyNonTLS"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "TableARN": {
+          "Fn::GetAtt": [
+            "s3tablestableingestionlandingrawingestioninventorysnapshots7C9693F2",
+            "TableARN"
+          ]
+        }
+      },
+      "DependsOn": [
+        "s3tablesnsingestionlandingrawingestion0CDF0276",
+        "s3tablesnsingestionlandingrawingestiontablebucketingestionlandingnamespacerawingestionnamessm389C388B"
+      ]
+    },
+    "s3tablestableingestionlandingrawingestioninventorysnapshotstablebucketingestionlandingnamespacerawingestiontableinventorysnapshotsarnssmCA5D23E7": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-s3-tables-main/table-bucket/ingestion-landing/namespace/raw_ingestion/table/inventory_snapshots/arn",
+        "Tags": {
+          "mdaa_cdk_app": "s3-tables",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-s3-tables-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "s3tablestableingestionlandingrawingestioninventorysnapshots7C9693F2",
+            "TableARN"
+          ]
+        }
+      },
+      "DependsOn": [
+        "s3tablesnsingestionlandingrawingestion0CDF0276",
+        "s3tablesnsingestionlandingrawingestiontablebucketingestionlandingnamespacerawingestionnamessm389C388B"
+      ]
+    },
+    "s3tablesnsingestionlandingprocessed7B335D87": {
+      "Type": "AWS::S3Tables::Namespace",
+      "Properties": {
+        "Namespace": "processed",
+        "TableBucketARN": {
+          "Fn::GetAtt": [
+            "s3tablesbucketingestionlanding1398D265",
+            "TableBucketARN"
+          ]
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "s3tablesnsingestionlandingprocessedtablebucketingestionlandingnamespaceprocessednamessm07983031": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-s3-tables-main/table-bucket/ingestion-landing/namespace/processed/name",
+        "Tags": {
+          "mdaa_cdk_app": "s3-tables",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-s3-tables-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "processed"
+      }
+    },
+    "s3tablestableingestionlandingprocessedcustomerprofiles43224577": {
+      "Type": "AWS::S3Tables::Table",
+      "Properties": {
+        "Compaction": {
+          "Status": "disabled"
+        },
+        "IcebergMetadata": {
+          "IcebergPartitionSpec": {
+            "Fields": [
+              {
+                "Name": "customer_id_bucket",
+                "SourceId": 1,
+                "Transform": "bucket[64]"
+              },
+              {
+                "Name": "segment_identity",
+                "SourceId": 5,
+                "Transform": "identity"
+              },
+              {
+                "Name": "signup_date_year",
+                "SourceId": 3,
+                "Transform": "year"
+              }
+            ]
+          },
+          "IcebergSchema": {
+            "SchemaFieldList": [
+              {
+                "Id": 1,
+                "Name": "customer_id",
+                "Required": true,
+                "Type": "string"
+              },
+              {
+                "Id": 2,
+                "Name": "email_hash",
+                "Required": true,
+                "Type": "string"
+              },
+              {
+                "Id": 3,
+                "Name": "signup_date",
+                "Required": true,
+                "Type": "date"
+              },
+              {
+                "Id": 4,
+                "Name": "lifetime_value",
+                "Required": false,
+                "Type": "double"
+              },
+              {
+                "Id": 5,
+                "Name": "segment",
+                "Required": false,
+                "Type": "string"
+              },
+              {
+                "Id": 6,
+                "Name": "last_updated",
+                "Required": true,
+                "Type": "timestamptz"
+              }
+            ]
+          },
+          "IcebergSortOrder": {
+            "Fields": [
+              {
+                "Direction": "desc",
+                "NullOrder": "nulls-last",
+                "SourceId": 6,
+                "Transform": "identity"
+              }
+            ]
+          }
+        },
+        "Namespace": "processed",
+        "OpenTableFormat": "ICEBERG",
+        "SnapshotManagement": {
+          "Status": "disabled"
+        },
+        "TableBucketARN": {
+          "Fn::GetAtt": [
+            "s3tablesbucketingestionlanding1398D265",
+            "TableBucketARN"
+          ]
+        },
+        "TableName": "customer_profiles",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "s3-tables"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-s3-tables-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "DependsOn": [
+        "s3tablesnsingestionlandingprocessed7B335D87",
+        "s3tablesnsingestionlandingprocessedtablebucketingestionlandingnamespaceprocessednamessm07983031"
+      ],
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "s3tablestableingestionlandingprocessedcustomerprofilesPolicyE1CD2A62": {
+      "Type": "AWS::S3Tables::TablePolicy",
+      "Properties": {
+        "ResourcePolicy": {
+          "Statement": [
+            {
+              "Action": "s3tables:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "s3tablestableingestionlandingprocessedcustomerprofiles43224577",
+                  "TableARN"
+                ]
+              },
+              "Sid": "DenyNonTLS"
+            },
+            {
+              "Action": [
+                "s3tables:GetTable",
+                "s3tables:GetTableData",
+                "s3tables:GetTableMetadataLocation"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": [
+                  {
+                    "Ref": "SsmParameterValuesampleorginstance1generatedroledataanalystarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+                  },
+                  {
+                    "Fn::GetAtt": [
+                      "RoleRess3tablesanalyticsprimary3",
+                      "arn"
+                    ]
+                  }
+                ]
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "s3tablestableingestionlandingprocessedcustomerprofiles43224577",
+                  "TableARN"
+                ]
+              },
+              "Sid": "ReaderGrant-AnalystReadOnly"
+            },
+            {
+              "Action": [
+                "s3tables:GetTable",
+                "s3tables:GetTableData",
+                "s3tables:GetTableMetadataLocation"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": [
+                  {
+                    "Ref": "SsmParameterValuesampleorginstance1generatedroledataanalystarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+                  },
+                  {
+                    "Fn::GetAtt": [
+                      "RoleRess3tablesanalyticsprimary3",
+                      "arn"
+                    ]
+                  }
+                ]
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "s3tablestableingestionlandingprocessedcustomerprofiles43224577",
+                  "TableARN"
+                ]
+              },
+              "Sid": "ReaderGrant-EngineerReadWrite"
+            },
+            {
+              "Action": [
+                "s3tables:GetTable",
+                "s3tables:GetTableData",
+                "s3tables:GetTableMetadataLocation",
+                "s3tables:PutTableData",
+                "s3tables:UpdateTableMetadataLocation"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": [
+                  {
+                    "Fn::GetAtt": [
+                      "RoleRess3tablesanalyticsprimary4",
+                      "arn"
+                    ]
+                  },
+                  "arn:test-partition:iam::test-account:role/DataEngineer",
+                  "arn:test-partition:iam::test-account:role/EtlPipelineRole"
+                ]
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "s3tablestableingestionlandingprocessedcustomerprofiles43224577",
+                  "TableARN"
+                ]
+              },
+              "Sid": "WriterGrant-EngineerReadWrite"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "TableARN": {
+          "Fn::GetAtt": [
+            "s3tablestableingestionlandingprocessedcustomerprofiles43224577",
+            "TableARN"
+          ]
+        }
+      },
+      "DependsOn": [
+        "s3tablesnsingestionlandingprocessed7B335D87",
+        "s3tablesnsingestionlandingprocessedtablebucketingestionlandingnamespaceprocessednamessm07983031"
+      ]
+    },
+    "s3tablestableingestionlandingprocessedcustomerprofilestablebucketingestionlandingnamespaceprocessedtablecustomerprofilesarnssm2B1ACD0F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-s3-tables-main/table-bucket/ingestion-landing/namespace/processed/table/customer_profiles/arn",
+        "Tags": {
+          "mdaa_cdk_app": "s3-tables",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-s3-tables-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "s3tablestableingestionlandingprocessedcustomerprofiles43224577",
+            "TableARN"
+          ]
+        }
+      },
+      "DependsOn": [
+        "s3tablesnsingestionlandingprocessed7B335D87",
+        "s3tablesnsingestionlandingprocessedtablebucketingestionlandingnamespaceprocessednamessm07983031"
+      ]
+    },
+    "RoleRess3tablesanalyticsprimary0": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "s3tables-analytics-primary-0",
+          "arn": "arn:test-partition:iam::test-account:role/DataPlatformAdmin"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "RoleRess3tablesanalyticsprimary1": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "s3tables-analytics-primary-1",
+          "name": "DataPlatformAdmin"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "RoleRess3tablesanalyticsprimary2": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "s3tables-analytics-primary-2",
+          "arn": {
+            "Ref": "SsmParameterValuesampleorginstance1generatedroledataanalystarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+          }
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "RoleRess3tablesanalyticsprimary5": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "s3tables-analytics-primary-5",
+          "arn": "arn:test-partition:iam::test-account:role/DataEngineer"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "RoleRess3tablesanalyticsprimary6": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "s3tables-analytics-primary-6",
+          "arn": "arn:test-partition:iam::test-account:role/EtlPipelineRole"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "RoleRess3tablesanalyticsprimary3": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "s3tables-analytics-primary-3",
+          "id": {
+            "Ref": "SsmParameterValuetestorgtestdomaingeneratedroledataanalystidC96584B6F00A464EAD1953AFF4B05118Parameter"
+          }
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "RoleRess3tablesanalyticsprimary4": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "s3tables-analytics-primary-4",
+          "id": {
+            "Ref": "SsmParameterValuesampleorginstance1generatedroledataengineeridC96584B6F00A464EAD1953AFF4B05118Parameter"
+          }
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    }
+  },
+  "Outputs": {
+    "s3tableskmsanalyticsprimarykmsanalyticsprimaryarnoutDE51D815": {
+      "Value": {
+        "Fn::GetAtt": [
+          "s3tableskmsanalyticsprimary6F098D18",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-s3-tables-main:kms:analyticsprimary:arn"
+      }
+    },
+    "s3tableskmsanalyticsprimarykmsanalyticsprimaryidout3B2CB9F6": {
+      "Value": {
+        "Ref": "s3tableskmsanalyticsprimary6F098D18"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-s3-tables-main:kms:analyticsprimary:id"
+      }
+    },
+    "s3tablesbucketanalyticsprimarytablebucketanalyticsprimaryarnoutC76C9801": {
+      "Value": {
+        "Fn::GetAtt": [
+          "s3tablesbucketanalyticsprimary63E2D5B2",
+          "TableBucketARN"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-s3-tables-main:table-bucket:analyticsprimary:arn"
+      }
+    },
+    "s3tablesnsanalyticsprimaryclickstreamtablebucketanalyticsprimarynamespaceclickstreamnameout05493752": {
+      "Value": "clickstream",
+      "Export": {
+        "Name": "test-org:test-domain:test-s3-tables-main:table-bucket:analyticsprimarynamespaceclickstream:name"
+      }
+    },
+    "s3tablestableanalyticsprimaryclickstreampageeventstablebucketanalyticsprimarynamespaceclickstreamtablepageeventsarnout36128ED1": {
+      "Value": {
+        "Fn::GetAtt": [
+          "s3tablestableanalyticsprimaryclickstreampageeventsDF05128D",
+          "TableARN"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-s3-tables-main:table-bucket:analyticsprimarynamespaceclickstreamtablepage-events:arn"
+      }
+    },
+    "s3tablestableanalyticsprimaryclickstreamusersessionstablebucketanalyticsprimarynamespaceclickstreamtableusersessionsarnoutAB84CB05": {
+      "Value": {
+        "Fn::GetAtt": [
+          "s3tablestableanalyticsprimaryclickstreamusersessionsAE00DD13",
+          "TableARN"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-s3-tables-main:table-bucket:analyticsprimarynamespaceclickstreamtableuser-sessions:arn"
+      }
+    },
+    "s3tablesnsanalyticsprimarymetricstablebucketanalyticsprimarynamespacemetricsnameoutC2FCEA5D": {
+      "Value": "metrics",
+      "Export": {
+        "Name": "test-org:test-domain:test-s3-tables-main:table-bucket:analyticsprimarynamespacemetrics:name"
+      }
+    },
+    "s3tablestableanalyticsprimarymetricsapilatencytablebucketanalyticsprimarynamespacemetricstableapilatencyarnoutAD286429": {
+      "Value": {
+        "Fn::GetAtt": [
+          "s3tablestableanalyticsprimarymetricsapilatencyC2DB61D8",
+          "TableARN"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-s3-tables-main:table-bucket:analyticsprimarynamespacemetricstableapi-latency:arn"
+      }
+    },
+    "s3tablesbucketingestionlandingtablebucketingestionlandingarnout90BEA9F4": {
+      "Value": {
+        "Fn::GetAtt": [
+          "s3tablesbucketingestionlanding1398D265",
+          "TableBucketARN"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-s3-tables-main:table-bucket:ingestionlanding:arn"
+      }
+    },
+    "s3tablesnsingestionlandingrawingestiontablebucketingestionlandingnamespacerawingestionnameout914289BB": {
+      "Value": "raw_ingestion",
+      "Export": {
+        "Name": "test-org:test-domain:test-s3-tables-main:table-bucket:ingestionlandingnamespaceraw-ingestion:name"
+      }
+    },
+    "s3tablestableingestionlandingrawingestionorderstablebucketingestionlandingnamespacerawingestiontableordersarnoutBE261250": {
+      "Value": {
+        "Fn::GetAtt": [
+          "s3tablestableingestionlandingrawingestionordersA43BD800",
+          "TableARN"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-s3-tables-main:table-bucket:ingestionlandingnamespaceraw-ingestiontableorders:arn"
+      }
+    },
+    "s3tablestableingestionlandingrawingestioninventorysnapshotstablebucketingestionlandingnamespacerawingestiontableinventorysnapshotsarnout927507EE": {
+      "Value": {
+        "Fn::GetAtt": [
+          "s3tablestableingestionlandingrawingestioninventorysnapshots7C9693F2",
+          "TableARN"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-s3-tables-main:table-bucket:ingestionlandingnamespaceraw-ingestiontableinventory-snapshots:arn"
+      }
+    },
+    "s3tablesnsingestionlandingprocessedtablebucketingestionlandingnamespaceprocessednameoutB6FE4B46": {
+      "Value": "processed",
+      "Export": {
+        "Name": "test-org:test-domain:test-s3-tables-main:table-bucket:ingestionlandingnamespaceprocessed:name"
+      }
+    },
+    "s3tablestableingestionlandingprocessedcustomerprofilestablebucketingestionlandingnamespaceprocessedtablecustomerprofilesarnoutA3F2A56B": {
+      "Value": {
+        "Fn::GetAtt": [
+          "s3tablestableingestionlandingprocessedcustomerprofiles43224577",
+          "TableARN"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-s3-tables-main:table-bucket:ingestionlandingnamespaceprocessedtablecustomer-profiles:arn"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

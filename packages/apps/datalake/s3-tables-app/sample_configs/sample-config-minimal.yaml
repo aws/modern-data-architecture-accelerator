@@ -1,0 +1,44 @@
+# Minimal config for the S3 Tables module.
+# Deploys a single table bucket with one namespace, one table,
+# and one IAM grant using only required properties.
+
+# See the README "Configuration" section for role reference options (name, arn, id).
+# Logical role mappings used throughout the config.
+roles:
+  DataEngineer:
+    - arn: arn:{{partition}}:iam::{{account}}:role/DataEngineer
+
+# Named access policies defining role-based permissions for S3 Tables resources.
+# Role tiers: ReadRoles | ReadWriteRoles | ReadWriteSuperRoles.
+accessPolicies:
+  EngineersWrite:
+    ReadWriteRoles:
+      - DataEngineer
+
+# Table bucket definitions — each bucket provisions an S3 Tables table bucket
+# with nested namespaces and Iceberg tables.
+tableBuckets:
+  analytics-data:
+    accessPolicies:
+      - EngineersWrite
+    namespaces:
+      events:
+        tables:
+          page_views:
+            # Columns keyed by name; declaration order sets Iceberg field ids.
+            # 'required' defaults to false.
+            columns:
+              event_id:
+                type: string
+                required: true
+              user_id:
+                type: string
+                required: true
+              page_url:
+                type: string
+                required: true
+              event_timestamp:
+                type: timestamptz
+                required: true
+              duration_ms:
+                type: long

@@ -1,0 +1,345 @@
+# Comprehensive config for the S3 Tables module.
+# Exercises all schema properties including optional features.
+# Deploys multiple table buckets with namespaces, tables, maintenance
+# settings, external KMS, partitions with all transforms, sort orders,
+# and table-level access policies.
+
+# See the README "Configuration" section for role reference options (name, arn, id).
+# Logical role mappings. Each key is a logical role name used
+# throughout the config. Values are lists of physical role references.
+# Roles can be referenced by name (auto-expanded to ARN), by explicit ARN,
+# by unique ID, by SSM parameter, or as SSO-managed roles.
+roles:
+  DataAdmin:
+    # Role by ARN
+    - arn: arn:{{partition}}:iam::{{account}}:role/DataPlatformAdmin
+    # Role by name (auto-expanded to ARN at deploy time)
+    - name: DataPlatformAdmin
+  DataEngineer:
+    # Role by unique ID via SSM parameter
+    - id: ssm:/sample-org/instance1/generated-role/data-engineer/id
+    # Role by ARN
+    - arn: arn:{{partition}}:iam::{{account}}:role/DataEngineer
+  DataAnalyst:
+    # Role by ARN via SSM parameter
+    - arn: ssm:/sample-org/instance1/generated-role/data-analyst/arn
+    # MDAA-generated role ID
+    - id: generated-role-id:data-analyst
+  PipelineRole:
+    # Role by ARN for ETL pipeline execution
+    - arn: arn:{{partition}}:iam::{{account}}:role/EtlPipelineRole
+
+# Named access policies defining role-based permissions for S3 Tables resources.
+# Policies are referenced by name in table bucket and table configurations.
+# Role tiers:
+#   ReadRoles           -> read-only  (Get*/List* on table data + metadata)
+#   ReadWriteRoles      -> read-write (Read + Put/Update table data)
+#   ReadWriteSuperRoles -> full admin (ReadWrite + create/delete/rename, manage policy)
+accessPolicies:
+  # Full admin access for platform administrators
+  PlatformAdmin:
+    ReadWriteSuperRoles:
+      - DataAdmin
+
+  # Read-write access for data engineers, read-only for analysts
+  EngineerReadWrite:
+    ReadWriteRoles:
+      - DataEngineer
+      - PipelineRole
+    ReadRoles:
+      - DataAnalyst
+
+  # Read-only access for data consumers
+  AnalystReadOnly:
+    ReadRoles:
+      - DataAnalyst
+
+  # Pipeline-only write access for automated ingestion
+  PipelineIngest:
+    ReadWriteRoles:
+      - PipelineRole
+
+# Table bucket definitions keyed by logical bucket name.
+# Each bucket provisions an AWS::S3Tables::TableBucket with nested
+# namespaces and Iceberg tables.
+tableBuckets:
+  # Primary analytics bucket with full maintenance configuration
+  analytics-primary:
+    accessPolicies:
+      - PlatformAdmin
+      - EngineerReadWrite
+    # Maintenance configuration for compaction, snapshots, and cleanup
+    maintenance:
+      compaction:
+        targetFileSizeMB: 256
+        enabled: true
+      snapshots:
+        minToKeep: 10
+        maxAgeHours: 720
+        enabled: true
+      removeUnreferenced:
+        afterDays: 14
+        keepNonCurrentDays: 7
+        enabled: true
+    namespaces:
+      # Clickstream events namespace
+      clickstream:
+        tables:
+          # Table with identity and time-based partitions
+          page_events:
+            # Columns keyed by name; declaration order sets Iceberg field ids.
+            columns:
+              event_id:
+                type: string
+                required: true
+              user_id:
+                type: string
+                required: true
+              session_id:
+                type: string
+                required: true
+              page_url:
+                type: string
+                required: true
+              referrer_url:
+                type: string
+              event_type:
+                type: string
+                required: true
+              event_timestamp:
+                type: timestamptz
+                required: true
+              duration_ms:
+                type: long
+              country_code:
+                type: string
+            # Partitions keyed by source column name.
+            # NOTE: a column may be partitioned by only one transform (map key = column).
+            partitions:
+              # Time-based partitioning on timestamp
+              event_timestamp:
+                transform: day
+              # Identity partition on event type
+              event_type:
+                transform: identity
+            # Sort order keyed by source column name.
+            sortBy:
+              event_timestamp:
+                direction: DESC
+                nullOrder: nulls-last
+              user_id:
+                direction: ASC
+                nullOrder: nulls-first
+
+          # Table with bucket and truncate transforms
+          user_sessions:
+            columns:
+              session_id:
+                type: string
+                required: true
+              user_id:
+                type: string
+                required: true
+              start_time:
+                type: timestamptz
+                required: true
+              end_time:
+                type: timestamptz
+              page_count:
+                type: int
+                required: true
+              device_type:
+                type: string
+              user_agent:
+                type: string
+            partitions:
+              # Bucket transform for even distribution across partitions
+              user_id:
+                transform: bucket
+                numBuckets: 16
+              # Truncate transform on user agent string
+              user_agent:
+                transform: truncate
+                width: 10
+              # Day partition on session start
+              start_time:
+                transform: day
+            sortBy:
+              start_time:
+                direction: DESC
+                nullOrder: nulls-last
+            # Additional table-level access grants (added on top of the bucket-level policies;
+            # table-level policies broaden access, they cannot narrow the bucket grant).
+            accessPolicies:
+              - PlatformAdmin
+              - AnalystReadOnly
+
+      # Metrics namespace
+      metrics:
+        tables:
+          api_latency:
+            columns:
+              request_id:
+                type: string
+                required: true
+              endpoint:
+                type: string
+                required: true
+              method:
+                type: string
+                required: true
+              status_code:
+                type: int
+                required: true
+              latency_ms:
+                type: double
+                required: true
+              timestamp:
+                type: timestamptz
+                required: true
+              region:
+                type: string
+                required: true
+            partitions:
+              # Hour-grained partitioning for high-volume latency metrics
+              timestamp:
+                transform: hour
+              region:
+                transform: identity
+            sortBy:
+              timestamp:
+                direction: DESC
+                nullOrder: nulls-last
+              latency_ms:
+                direction: DESC
+                nullOrder: nulls-last
+
+  # Secondary bucket with external KMS key and pipeline ingestion
+  ingestion-landing:
+    accessPolicies:
+      - PlatformAdmin
+      - PipelineIngest
+    # External KMS key ARN (module will reference this key instead of creating one)
+    kmsKeyArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/12345678-1234-1234-1234-123456789012
+    # Maintenance fully disabled for this landing/ingestion bucket: raw ingestion tables are
+    # short-lived and rewritten frequently, so compaction, snapshot management, and unreferenced
+    # file removal are all turned off.
+    maintenance:
+      compaction:
+        enabled: false
+      snapshots:
+        enabled: false
+      removeUnreferenced:
+        enabled: false
+    namespaces:
+      # Raw ingestion namespace for pipeline data
+      raw_ingestion:
+        tables:
+          orders:
+            columns:
+              order_id:
+                type: string
+                required: true
+              customer_id:
+                type: string
+                required: true
+              order_date:
+                type: date
+                required: true
+              total_amount:
+                type: decimal(10,2)
+                required: true
+              currency:
+                type: string
+                required: true
+              status:
+                type: string
+                required: true
+              created_at:
+                type: timestamptz
+                required: true
+              updated_at:
+                type: timestamptz
+            partitions:
+              order_date:
+                transform: month
+              customer_id:
+                transform: bucket
+                numBuckets: 32
+            sortBy:
+              order_date:
+                direction: DESC
+                nullOrder: nulls-last
+
+          inventory_snapshots:
+            columns:
+              snapshot_id:
+                type: string
+                required: true
+              product_id:
+                type: string
+                required: true
+              warehouse_id:
+                type: string
+                required: true
+              quantity:
+                type: int
+                required: true
+              snapshot_date:
+                type: date
+                required: true
+              is_available:
+                type: boolean
+                required: true
+            partitions:
+              snapshot_date:
+                transform: day
+              warehouse_id:
+                transform: identity
+            sortBy:
+              snapshot_date:
+                direction: DESC
+                nullOrder: nulls-last
+              product_id:
+                direction: ASC
+                nullOrder: nulls-first
+
+      # Processed data namespace with additional table-level access grants
+      processed:
+        tables:
+          customer_profiles:
+            columns:
+              customer_id:
+                type: string
+                required: true
+              email_hash:
+                type: string
+                required: true
+              signup_date:
+                type: date
+                required: true
+              lifetime_value:
+                type: double
+              segment:
+                type: string
+              last_updated:
+                type: timestamptz
+                required: true
+            partitions:
+              customer_id:
+                transform: bucket
+                numBuckets: 64
+              segment:
+                transform: identity
+              # Year-grained partitioning on signup cohort
+              signup_date:
+                transform: year
+            sortBy:
+              last_updated:
+                direction: DESC
+                nullOrder: nulls-last
+            # Additional table-level grants — give analysts and engineers access to this
+            # specific table on top of the bucket-level policies (additive, not a restriction).
+            accessPolicies:
+              - AnalystReadOnly
+              - EngineerReadWrite

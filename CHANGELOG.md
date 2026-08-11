@@ -36,6 +36,15 @@
   - DataOps project integration for shared KMS key auto-wiring via `projectName`
   - Comprehensive, minimal, and no-project sample configs with inline documentation
 
+#### S3 Tables Module
+
+- New `@aws-mdaa/s3-tables` module (with `@aws-mdaa/s3-tables-l3-construct` and `@aws-mdaa/s3-tables-constructs`): declaratively provisions Amazon S3 Tables (managed Apache Iceberg storage) following the MDAA `roles → accessPolicies → tableBuckets` configuration pattern.
+  - **Table buckets, namespaces, and tables**: define Iceberg table buckets, namespaces, and tables via `tableBuckets`, with per-table `columns` (keyed map), `partitions` (identity/bucket/truncate/year/month/day/hour transforms), and `sortBy`.
+  - **Encryption**: mandatory KMS encryption at rest — a dedicated customer-managed key is created per bucket, or an external key can be supplied via `kmsKeyArn`. Key usage is granted only to declared role IDs.
+  - **Access control**: named `accessPolicies` map reader/writer/admin permission sets to logical roles, applied at bucket scope and optionally extended (additively) per table; table grants are additive and cannot narrow bucket access. Bucket policies are deny-by-default and every bucket and table policy enforces TLS.
+  - **Maintenance**: optional per-bucket `maintenance` block for Iceberg compaction (`compaction.targetFileSizeMB`), snapshot management (`snapshots.minToKeep`, `snapshots.maxAgeHours`), and unreferenced file removal (`removeUnreferenced.afterDays`, `removeUnreferenced.keepNonCurrentDays`).
+  - Resource ARNs and names are exported to SSM for cross-stack discovery. Ships with minimal and comprehensive sample configs, JSON schema validation, and documentation.
+
 #### Athena Workgroup Module
 
 - **S3 Lifecycle Policies** (`@aws-mdaa/athena-workgroup`, `@aws-mdaa/athena-workgroup-l3-construct`): Added optional `lifecycleConfiguration` to the athena-workgroup module, enabling S3 lifecycle rules on the workgroup results bucket. Rules without an explicit prefix are automatically scoped to the `athena-results/` prefix; rules with an explicit prefix are applied as-is. When omitted, the results bucket has no lifecycle rules (existing behavior preserved).
