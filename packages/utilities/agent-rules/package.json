@@ -34,7 +34,7 @@
     "typescript": "5.9.3"
   },
   "dependencies": {
-    "js-yaml": "4.2.0"
+    "js-yaml": "4.3.1"
   },
   "nx": {
     "targets": {
