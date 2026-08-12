@@ -5,6 +5,7 @@
 
 export * from './alarms';
 export * from './authorizer';
+export * from './cognito-auth';
 export * from './eventbridge-rules';
 export * from './log-protection';
 export * from './resource-policy';

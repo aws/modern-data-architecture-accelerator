@@ -23,6 +23,12 @@
 #   the oldest branch-unique commit) is stable across target movement and
 #   back-merges, so it is used instead.
 #
+#   The fork point is resolved in sonar-project-key.sh, which folds it into
+#   the project key. Anchor and key must come from one place: if the key named
+#   a different commit, a rebase would move the anchor without moving the key,
+#   the "project exists" check below would skip, and the stale period start
+#   would misclassify the target's own commits as this MR's new code.
+#
 # The baseline only runs once per MR project lifetime. If the project
 # already exists on the SonarQube server, this script exits immediately.
 # The analysis cache from the baseline carries over to the first MR scan,
@@ -62,8 +68,9 @@ echo "MR branch:     ${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}"
 echo "Target branch: ${SONAR_TARGET_REF} (${SONAR_TARGET_SHA})"
 
 # Skip if the MR project already exists — baseline only needs to run once
-# per (source, target, target-HEAD) key. When the target branch moves, the
-# key changes, this lookup misses, and a fresh baseline is established.
+# per (source, target, fork-point) key. When the branch is rebased the fork
+# point moves, the key changes, this lookup misses, and a fresh baseline is
+# established at the new anchor.
 echo "Checking if project already exists on SonarQube server..."
 PROJECT_EXISTS=$(python3 "${SCRIPT_DIR}/sonar_project_exists.py" "${PROJECT_KEY}")
 
@@ -81,40 +88,24 @@ fi
 
 echo "Project does not exist — running baseline scan."
 
-# Target ref already resolved by sonar-project-key.sh. (The target HEAD SHA
-# is used only in the log line above and to derive the project key; the
-# baseline scans the fork point, not the target HEAD.)
-TARGET_REF="${SONAR_TARGET_REF}"
-
-# Find the ORIGINAL fork point: the parent of the oldest commit unique to
-# this branch. Commits reachable from the target (including any target
-# commits merged back into this branch) are excluded by "${TARGET_REF}..HEAD",
-# so the oldest remaining commit is the branch's first commit and its parent
-# is the true divergence point. This is stable across target movement and
-# back-merges, unlike `git merge-base`.
+# The fork point and its date come from sonar-project-key.sh, which derives
+# the project key from the same commit. Recomputing them here would let the
+# key and the baseline it names drift apart — the failure this anchoring is
+# meant to prevent.
 MR_HEAD=$(git rev-parse HEAD)
-FIRST_MR_COMMIT=$(git rev-list --topo-order --reverse "${TARGET_REF}..${MR_HEAD}" | head -1)
+BRANCH_POINT="${SONAR_FORK_POINT}"
+BASELINE_DATE="${SONAR_BASELINE_DATE}"
 
-if [ -z "${FIRST_MR_COMMIT}" ]; then
-  echo "No commits unique to this branch vs ${TARGET_REF} — nothing to gate."
-  echo "=== Target baseline: SKIPPED (no unique commits) ==="
+if [ -z "${BRANCH_POINT}" ]; then
+  # Either no commits unique to this branch, or its oldest unique commit is a
+  # root commit (orphan branch / unrelated-history MR) with no parent to anchor
+  # to. Nothing to gate either way — skip cleanly instead of crashing the job
+  # under `set -e`.
+  echo "No fork point resolved against ${SONAR_TARGET_REF} — nothing to anchor a baseline to."
+  echo "=== Target baseline: SKIPPED (no fork point) ==="
   exit 0
 fi
 
-if ! BRANCH_POINT=$(git rev-parse --verify --quiet "${FIRST_MR_COMMIT}^"); then
-  # The oldest branch-unique commit is a root commit (orphan branch /
-  # unrelated-history MR) with no parent to anchor the baseline to. Skip
-  # cleanly instead of crashing the job under `set -e`.
-  echo "Oldest branch-unique commit ${FIRST_MR_COMMIT} is a root commit — no fork-point parent to anchor the baseline to."
-  echo "=== Target baseline: SKIPPED (root commit, no parent) ==="
-  exit 0
-fi
-# Committer date (not author date): rebases rewrite committer dates to the
-# rebase time, so every MR commit sorts strictly after this anchor.
-# Format as yyyy-MM-dd'T'HH:mm:ssZ with a numeric offset and NO colon (e.g.
-# 2026-06-26T18:54:51+0000) — sonar.projectDate rejects the ISO-8601 colon
-# offset (+00:00) that `%cI` produces.
-BASELINE_DATE=$(git show -s --date=format:'%Y-%m-%dT%H:%M:%S%z' --format=%cd "${BRANCH_POINT}")
 echo "Fork point:   ${BRANCH_POINT}"
 echo "Baseline date: ${BASELINE_DATE}"
 

@@ -45,7 +45,15 @@ When creating MRs/PRs:
 
 ## GitLab access
 
-`code.aws.dev` is a GitLab site. To read or act on anything there (MRs, issues, discussions, files, pipelines), use ONLY the GitLab MCP tools (`mcp__gitlab__*`). Never use the builder-mcp `ReadInternalWebsites` tool (or any web-fetch tool) on a `code.aws.dev` URL. If a GitLab MCP tool fails (e.g. auth/posture errors), stop and tell the user rather than falling back to another tool.
+`code.aws.dev` is a GitLab site. To read or act on anything there (MRs, issues, discussions, files, pipelines), use ONLY the GitLab MCP tools (`mcp__gitlab__*`).
+
+There is no fallback. You MUST NOT substitute any other mechanism, including:
+
+- Web-fetch tools — the builder-mcp `ReadInternalWebsites` tool, `WebFetch`, or any similar tool, on a `code.aws.dev` URL
+- CLI tools — `glab` in particular, and any other GitLab client
+- Direct API calls — `curl`/`git` against the REST or GraphQL endpoints, with any token source
+
+Do not check whether such a tool is installed or configured, and do not offer one as an option. If a GitLab MCP tool fails (e.g. auth/posture errors), or cannot do what is being asked (a missing tool for the operation, an unexposed field such as the native work-item Status), STOP and tell the user what failed and what you were attempting, so they can fix the MCP server or perform that step themselves. Reporting a blocked step is the correct outcome; working around it is not.
 
 ### Paginated results truncate silently
 

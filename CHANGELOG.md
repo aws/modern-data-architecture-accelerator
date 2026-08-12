@@ -23,18 +23,10 @@
 
 #### DataOps MWAA Module
 
-- New `@aws-mdaa/dataops-mwaa` module: Amazon Managed Workflows for Apache Airflow (MWAA) deployment with enterprise security
-  - Supports multiple named MWAA environments per module
-  - Uses DataOps project bucket for Airflow artifacts under `airflow/<env-name>/` prefix
-  - Execution roles created externally in Roles module (same pattern as Glue Jobs)
-  - KMS encryption (project key or dedicated), VPC isolation, private web server by default
-  - Per-environment security group with self-referencing rule for worker communication
-  - All Airflow component logging enabled at INFO minimum (scheduler, worker, webserver, DAG processing, task)
-  - Pre-creates each Airflow component's CloudWatch log group with KMS encryption and default two-year retention (configurable per environment via `logRetentionDays`, `0` for infinite) instead of MWAA's never-expire default
-  - Per-environment access managed policy for web login and CLI access
-  - Configurable scaling (workers, web servers, schedulers), Airflow config overrides, maintenance window
-  - DataOps project integration for shared KMS key auto-wiring via `projectName`
-  - Comprehensive, minimal, and no-project sample configs with inline documentation
+- New `@aws-mdaa/dataops-mwaa` module: Amazon Managed Workflows for Apache Airflow (MWAA) deployment with enterprise security — multiple named environments per module, KMS encryption (project or dedicated key), VPC isolation with a private web server by default, and execution roles created externally in the Roles module (as with Glue Jobs)
+  - All Airflow component logging enabled at INFO minimum, with each component's log group pre-created with KMS encryption and two-year retention (configurable via `logRetentionDays`, `0` for infinite) instead of MWAA's never-expire default
+  - Configurable scaling (workers, web servers, schedulers), Airflow config overrides, and maintenance window; per-environment access policy for web login and CLI
+  - DataOps project integration via `projectName` for shared KMS key auto-wiring and Airflow artifacts under the project bucket's `airflow/<env-name>/` prefix
 
 #### S3 Tables Module
 
@@ -51,9 +43,8 @@
 
 #### Audit Trail Module
 
-- **Non-S3 Data Events** (`@aws-mdaa/audit-trail`, `@aws-mdaa/audit-trail-l3-construct`): Added optional `dataEventSelectors` to each trail, capturing CloudTrail data events for any supported `resources.type` — such as `AWS::BedrockAgentCore::Runtime`, `AWS::Lambda::Function`, or `AWS::DynamoDB::Table` — rather than S3 only. Each map key becomes the CloudTrail selector name; each entry takes a required `resourceType`, with optional `resourceArns` (prefix-matched, to scope capture and control cost) and `readWriteType`. CloudTrail accepts exactly one resource type per selector, so covering several types means several entries. This makes the trail prerequisite for the AgentCore Runtime module's `eventBridgeAlerts` expressible in MDAA config: invocation-level data events are off by default, so rules matching them previously deployed cleanly and never fired.
-- **Mutually exclusive with `eventSelectors`** (`@aws-mdaa/audit-trail`): `dataEventSelectors` renders CloudTrail advanced event selectors while the existing S3-only `eventSelectors` renders basic ones, and CloudTrail accepts only one style per trail. Setting both on a single trail now fails at synth with an actionable error; split the two styles across separate trails instead. Trails using `eventSelectors` alone are unchanged.
-- **`includeManagementEvents` on the advanced-selector path** (`@aws-mdaa/audit-trail`): When set alongside `dataEventSelectors`, a management event selector is now rendered explicitly. Advanced event selectors replace a trail's default selectors outright, so a trail carrying only data selectors captures no control plane events at all — set `includeManagementEvents: true` when the same trail should also cover lifecycle calls such as `UpdateAgentRuntime`.
+- **Non-S3 Data Events** (`@aws-mdaa/audit-trail`, `@aws-mdaa/audit-trail-l3-construct`): Added optional `dataEventSelectors` to each trail, capturing CloudTrail data events for any supported `resources.type` — `AWS::BedrockAgentCore::Runtime`, `AWS::Lambda::Function`, `AWS::DynamoDB::Table` — rather than S3 only. Each entry takes a required `resourceType` plus optional `resourceArns` (prefix-matched, to control cost) and `readWriteType`; CloudTrail allows one resource type per selector, so several types means several entries. This makes the trail prerequisite for the AgentCore Runtime module's `eventBridgeAlerts` expressible in config.
+- **`dataEventSelectors` is mutually exclusive with `eventSelectors`** (`@aws-mdaa/audit-trail`): the two render CloudTrail's advanced and basic selector styles respectively, and a trail accepts only one style. Setting both now fails at synth; split them across separate trails. Also set `includeManagementEvents: true` when a trail carrying data selectors should still capture control plane calls such as `UpdateAgentRuntime` — advanced selectors replace a trail's defaults outright, so it otherwise captures none.
 
 ### Data Science/AI/ML Changes
 
@@ -68,12 +59,11 @@
 
 #### Bedrock AgentCore Runtime Module
 
-- Added optional `networkConfiguration.vpcEndpoint` to create the AgentCore interface VPC endpoint (`com.amazonaws.{region}.bedrock-agentcore`) with Private DNS, an app-SG-scoped security group, and an invoke-only endpoint policy. Presence opts in; omit to use a pre-existing endpoint. Supports `endpointPolicy.allowPrincipals` and `createSupportingEndpoints` (ECR, STS, CloudWatch Logs). Required for `enforceVpcOnly` to be satisfiable. See the [module README](packages/apps/ai/bedrock-agentcore-runtime-app/README.md#aws-service-endpoints).
-- Corrected the documented AgentCore VPC endpoint service name from `bedrock-agent-runtime` to `bedrock-agentcore`.
-- Added optional `alarms` configuration to create CloudWatch alarms on the AgentCore error-rate and throttle-count metrics, notifying either an existing or a module-created CMK-encrypted SNS topic. Opt-in; omitting the block deploys no alarms. See the [module README](packages/apps/ai/bedrock-agentcore-runtime-app/README.md#cloudwatch-alarms).
-- Added optional `alarms.notificationEmails` to subscribe email addresses to a module-created alarm topic, so notifications reach an operator. See the [module README](packages/apps/ai/bedrock-agentcore-runtime-app/README.md#subscribing-to-the-notification-topic).
-- Added optional `eventBridgeAlerts` configuration to create EventBridge rules alerting on individual AgentCore CloudTrail events (auth failures, out-of-band configuration changes), notifying the `alarms` topic and optionally a customer-supplied remediation Lambda. Requires a CloudTrail trail logging the matched events. See the [module README](packages/apps/ai/bedrock-agentcore-runtime-app/README.md#eventbridge-alerting).
-- Agent spans are now routed to the runtime's own log group instead of the account-shared `aws/spans` group, so span content inherits the module's CMK encryption, retention, and PII masking. Set `UNIFIED_TRACES_DESTINATION_ENABLED: 'false'` in `environmentVariables` to opt out. **Upgrade impact:** requires `aws-opentelemetry-distro>=0.18.0` in the container image, and creates a new runtime version on deploy. See the [module README](packages/apps/ai/bedrock-agentcore-runtime-app/README.md#observability--tracing).
+- Added optional `authorizerConfiguration.customJwtAuthorizer.cognito` to have MDAA create the Cognito user pool and app client issuing the runtime's JWTs, composing the discovery URL and audience itself. Exactly one of `discoveryUrl` or `cognito` is now required; existing configurations are unaffected. Two defaults to know before deploying: **MFA is required**, so each user registers a TOTP authenticator before their first token, and the pool is **retained** when the stack is deleted. See the [module README](packages/apps/ai/bedrock-agentcore-runtime-app/README.md#inbound-authorization).
+- Added optional `networkConfiguration.vpcEndpoint` to create the AgentCore interface VPC endpoint with Private DNS, an app-SG-scoped security group, and an invoke-only endpoint policy. Opt-in; required for `enforceVpcOnly` to be satisfiable. Also corrects the documented endpoint service name from `bedrock-agent-runtime` to `bedrock-agentcore`. See the [module README](packages/apps/ai/bedrock-agentcore-runtime-app/README.md#aws-service-endpoints).
+- Added optional `alarms` configuration for CloudWatch alarms on the AgentCore error-rate and throttle-count metrics, notifying an existing or module-created CMK-encrypted SNS topic, with `notificationEmails` to subscribe operators. Opt-in. See the [module README](packages/apps/ai/bedrock-agentcore-runtime-app/README.md#cloudwatch-alarms).
+- Added optional `eventBridgeAlerts` configuration for EventBridge rules alerting on AgentCore CloudTrail events (auth failures, out-of-band configuration changes), with optional customer-supplied remediation. Requires a trail logging the matched events. See the [module README](packages/apps/ai/bedrock-agentcore-runtime-app/README.md#eventbridge-alerting).
+- Agent spans now route to the runtime's own log group instead of the account-shared `aws/spans` group, inheriting the module's CMK encryption, retention, and PII masking. Opt out with `UNIFIED_TRACES_DESTINATION_ENABLED: 'false'`. **Upgrade impact:** requires `aws-opentelemetry-distro>=0.18.0` in the container image, and creates a new runtime version on deploy. See the [module README](packages/apps/ai/bedrock-agentcore-runtime-app/README.md#observability--tracing).
 
 ### General Changes
 

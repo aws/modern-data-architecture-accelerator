@@ -1,0 +1,89 @@
+# Bedrock AgentCore Runtime with an MDAA-managed Cognito identity provider.
+# Demonstrates the `cognito` inbound-auth path, where MDAA creates and configures
+# the IdP rather than requiring a pre-existing one, with its default app client.
+#
+# Why a dedicated config: `cognito` is mutually exclusive with the `discoveryUrl`
+# present in the comprehensive config, so the two cannot coexist in one valid
+# config and this branch cannot be exercised from there.
+#
+# For the hosted-UI (OAuth) client, see sample-config-cognito-hosted-ui.yaml.
+# That is a separate config rather than another option here because a client
+# either has OAuth disabled or has OAuth flows configured — never both.
+#
+# Callers on this path present the Cognito **ID token**. Cognito puts the app
+# client ID in the ID token's `aud` claim but in the access token's `client_id`
+# claim, and AgentCore validates every claim filter configured — so MDAA sets
+# `allowedAudience` and never `allowedClients`. For access-token callers, use the
+# `discoveryUrl` path with a hand-configured `allowedClients` instead.
+
+# Unique name for the Bedrock AgentCore Runtime
+agentRuntimeName: testAgentRuntime
+# Container deployment configuration
+agentRuntimeArtifact:
+  containerConfiguration:
+    containerUri: '{{account}}.dkr.ecr.{{region}}.amazonaws.com/test-runtime:latest'
+# VPC network configuration for secure runtime deployment
+networkConfiguration:
+  securityGroups:
+    - sg-12345678
+  subnets:
+    - subnet-12345678
+    - subnet-87654321
+# Inbound authorization. Exactly one of `discoveryUrl` (an IdP you already run)
+# or `cognito` (MDAA creates one) is required.
+authorizerConfiguration:
+  customJwtAuthorizer:
+    # Opt in to an MDAA-created Cognito user pool. `cognito: {}` accepts every
+    # default: PLUS feature plan with enforced threat protection, an 8+ character
+    # mixed-class password policy, admin-created users only, email-only account
+    # recovery, optional TOTP MFA, 15-minute tokens, and OAuth disabled on the
+    # app client.
+    #
+    # MDAA composes the OIDC discovery URL from the created pool and adds the
+    # created client to allowedAudience, so neither is specified here.
+    cognito:
+      # (Optional) ID and access token validity in minutes. Defaults to 15.
+      # 15-30 is the AgentCore guidance for agentic workloads; Cognito's own
+      # default is 60. MDAA accepts 5-60 as a policy choice — Cognito itself
+      # permits up to 1 day.
+      idTokenValidityMinutes: 15
+      # (Optional) MFA enforcement: off | optional | required. Defaults to
+      # required, which is what this config uses. TOTP from an authenticator app
+      # is the only second factor, so every user must register one before their
+      # first token. The hostedUi block below means Cognito's managed login
+      # handles that enrolment; without it your application drives the flow
+      # itself (InitiateAuth returns an MFA_SETUP challenge, then
+      # AssociateSoftwareToken / VerifySoftwareToken / RespondToAuthChallenge)
+      # and MDAA warns at synth to make that requirement visible.
+      #
+      # Set `optional` when tokens are obtained by a caller with no human present:
+      # a service cannot register an authenticator, and keeping a TOTP seed next
+      # to the password would make the second factor a copy of the first.
+      mfa: required
+      # (Optional) Pool removal policy: destroy | retain. Defaults to retain,
+      # which keeps the pool (and its users) when the stack is deleted and also
+      # enables Cognito deletion protection. Set destroy for ephemeral
+      # deployments that should tear down cleanly — with destroy, deleting the
+      # stack deletes the pool and every user record in it.
+      removalPolicy: retain
+      # Federation requires a hosted UI: Cognito signs federated users in only through the
+      # hosted-UI Login/Authorize endpoints, never via InitiateAuth. Without it the identity
+      # provider below would be created but unreachable, so MDAA rejects that combination.
+      hostedUi:
+        callbackUrls:
+          - 'https://app.example.com/callback'
+        cognitoDomainPrefix: 'test-agent-auth-saml'
+      # (Optional) Federation with an enterprise identity provider. At most one
+      # of saml or oidc. Federated sign-in is enabled on the app client
+      # alongside Cognito-native sign-in.
+      federation:
+        saml:
+          # SAML metadata document URL published by the enterprise IdP
+          metadataUrl: 'https://login.microsoftonline.com/test-tenant/federationmetadata/2007-06/federationmetadata.xml'
+          # (Optional) SAML assertion attribute mapped to Cognito's email
+          # attribute. Defaults to 'email'.
+          emailClaim: 'email'
+    # (Optional) Additional accepted audiences. MDAA always adds the client it
+    # creates, so these are extra accepted values rather than a replacement.
+    allowedAudience:
+      - 'an-additional-client-id'

@@ -456,10 +456,10 @@ AWS: Bedrock AgentCore Runtime authorizer
 
 Validation: Optional; AuthorizerConfigurationProperty
 
-| Property                                                               | Pattern | Type   | Deprecated | Definition                                                                   | Title/Description                                                                                                                                                                                                                                                                                                                              |
-| ---------------------------------------------------------------------- | ------- | ------ | ---------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [customJwtAuthorizer](#authorizerConfiguration_customJwtAuthorizer ) | No      | object | No         | In #/definitions/CustomJwtAuthorizerProperty                                 | Custom JWT authorizer for token-based authentication via OIDC.<br /><br />Use cases: JWT authentication, token validation, OIDC integration<br /><br />AWS: Custom JWT authorizer for Bedrock AgentCore Runtime<br /><br />Validation: Optional; CustomJwtAuthorizerProperty                                                                   |
-| - [jwtAuthorizer](#authorizerConfiguration_jwtAuthorizer )             | No      | object | No         | Same as [customJwtAuthorizer](#authorizerConfiguration_customJwtAuthorizer ) | Custom JWT authorizer configuration for token-based authentication via OIDC.<br /><br />Use cases: JWT authentication, OIDC integration, token validation, identity provider connection<br /><br />AWS: Bedrock AgentCore Runtime JWT authorizer<br /><br />Validation: discoveryUrl required; must end with /.well-known/openid-configuration |
+| Property                                                               | Pattern | Type   | Deprecated | Definition                                                                   | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ---------------------------------------------------------------------- | ------- | ------ | ---------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [customJwtAuthorizer](#authorizerConfiguration_customJwtAuthorizer ) | No      | object | No         | In #/definitions/CustomJwtAuthorizerProperty                                 | Custom JWT authorizer for token-based authentication via OIDC.<br /><br />Use cases: JWT authentication, token validation, OIDC integration<br /><br />AWS: Custom JWT authorizer for Bedrock AgentCore Runtime<br /><br />Validation: Optional; CustomJwtAuthorizerProperty                                                                                                                                                                                                                                                                                                                                                                                                    |
+| - [jwtAuthorizer](#authorizerConfiguration_jwtAuthorizer )             | No      | object | No         | Same as [customJwtAuthorizer](#authorizerConfiguration_customJwtAuthorizer ) | Custom JWT authorizer configuration for token-based authentication via OIDC.<br /><br />Exactly one of \`discoveryUrl\` or \`cognito\` must be specified — they are the two ways<br />of naming the identity provider, differing only in who provisions it. Supply<br />\`discoveryUrl\` for an IdP you already run, or \`cognito\` to have MDAA create and<br />configure one.<br /><br />Use cases: JWT authentication, OIDC integration, token validation, identity provider connection<br /><br />AWS: Bedrock AgentCore Runtime JWT authorizer<br /><br />Validation: exactly one of discoveryUrl or cognito; discoveryUrl must end with /.well-known/openid-configuration |
 
 ### <a name="authorizerConfiguration_customJwtAuthorizer"></a>5.1. Property `root > authorizerConfiguration > customJwtAuthorizer`
 
@@ -478,11 +478,12 @@ AWS: Custom JWT authorizer for Bedrock AgentCore Runtime
 
 Validation: Optional; CustomJwtAuthorizerProperty
 
-| Property                                                                           | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                  |
-| ---------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [allowedAudience](#authorizerConfiguration_customJwtAuthorizer_allowedAudience ) | No      | array of string | No         | -          | Allowed audience values for JWT token validation.<br /><br />Use cases: Audience validation, client filtering, access restriction<br /><br />AWS: JWT audience claim validation<br /><br />Validation: Optional; String[]; validates against aud claim                             |
-| - [allowedClients](#authorizerConfiguration_customJwtAuthorizer_allowedClients )   | No      | array of string | No         | -          | Allowed client IDs for JWT token validation.<br /><br />Use cases: Client ID validation, application filtering, access control<br /><br />AWS: JWT client_id claim validation<br /><br />Validation: Optional; String[]; validates against client_id claim                         |
-| + [discoveryUrl](#authorizerConfiguration_customJwtAuthorizer_discoveryUrl )       | No      | string          | No         | -          | OIDC discovery URL for JWT token validation.<br /><br />Use cases: OIDC integration, token validation, identity provider connection<br /><br />AWS: OIDC discovery URL for JWT validation<br /><br />Validation: Required; String; must end with /.well-known/openid-configuration |
+| Property                                                                           | Pattern | Type            | Deprecated | Definition                           | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ---------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [allowedAudience](#authorizerConfiguration_customJwtAuthorizer_allowedAudience ) | No      | array of string | No         | -                                    | Allowed audience values for JWT token validation.<br /><br />On the \`cognito\` path MDAA always adds the app client it creates, so values set here<br />are additional accepted audiences rather than a replacement.<br /><br />Use cases: Audience validation, client filtering, access restriction<br /><br />AWS: JWT audience claim validation<br /><br />Validation: Optional; String[]; validates against aud claim                                                                                                                                                                                                                                                                                                                                                               |
+| - [allowedClients](#authorizerConfiguration_customJwtAuthorizer_allowedClients )   | No      | array of string | No         | -                                    | Allowed client IDs for JWT token validation.<br /><br />Only valid on the \`discoveryUrl\` path. Combining it with \`cognito\` is rejected at<br />synth: AgentCore validates every claim filter configured, and MDAA sets<br />\`allowedAudience\` to the app client it creates — Cognito puts that ID in the ID token's<br />\`aud\` but the access token's \`client_id\`, so no token would satisfy both filters and<br />every caller would be rejected.<br /><br />Use cases: Client ID validation, application filtering, access control<br /><br />AWS: JWT client_id claim validation<br /><br />Validation: Optional; String[]; validates against client_id claim                                                                                                               |
+| - [cognito](#authorizerConfiguration_customJwtAuthorizer_cognito )                 | No      | object          | No         | In #/definitions/CognitoAuthProperty | Opts in to an MDAA-created Cognito user pool as the identity provider, instead of<br />supplying \`discoveryUrl\` for one you already run. Mutually exclusive with<br />\`discoveryUrl\`; an empty object accepts all defaults.<br /><br />MDAA composes the discovery URL from the created pool and adds the created app<br />client to \`allowedAudience\`, so neither needs to be supplied. Callers on this path<br />present the **ID token**, which is why \`allowedClients\` is not set for them.<br /><br />Use cases: Deploying an IdP alongside the runtime, agentic-workload token hardening<br /><br />AWS: Amazon Cognito user pool + app client fronting CUSTOM_JWT inbound auth<br /><br />Validation: Optional; CognitoAuthProperty; mutually exclusive with discoveryUrl |
+| - [discoveryUrl](#authorizerConfiguration_customJwtAuthorizer_discoveryUrl )       | No      | string          | No         | -                                    | OIDC discovery URL for JWT token validation, for an identity provider you already<br />run (Cognito, Okta, Entra ID, ...). Mutually exclusive with \`cognito\`.<br /><br />Use cases: OIDC integration, token validation, identity provider connection<br /><br />AWS: OIDC discovery URL for JWT validation<br /><br />Validation: Required unless cognito is specified; String; must end with /.well-known/openid-configuration                                                                                                                                                                                                                                                                                                                                                        |
 
 #### <a name="authorizerConfiguration_customJwtAuthorizer_allowedAudience"></a>5.1.1. Property `root > authorizerConfiguration > customJwtAuthorizer > allowedAudience`
 
@@ -492,6 +493,9 @@ Validation: Optional; CustomJwtAuthorizerProperty
 | **Required** | No                |
 
 **Description:** Allowed audience values for JWT token validation.
+
+On the `cognito` path MDAA always adds the app client it creates, so values set here
+are additional accepted audiences rather than a replacement.
 
 Use cases: Audience validation, client filtering, access restriction
 
@@ -527,6 +531,12 @@ Validation: Optional; String[]; validates against aud claim
 
 **Description:** Allowed client IDs for JWT token validation.
 
+Only valid on the `discoveryUrl` path. Combining it with `cognito` is rejected at
+synth: AgentCore validates every claim filter configured, and MDAA sets
+`allowedAudience` to the app client it creates — Cognito puts that ID in the ID token's
+`aud` but the access token's `client_id`, so no token would satisfy both filters and
+every caller would be rejected.
+
 Use cases: Client ID validation, application filtering, access control
 
 AWS: JWT client_id claim validation
@@ -552,20 +562,455 @@ Validation: Optional; String[]; validates against client_id claim
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="authorizerConfiguration_customJwtAuthorizer_discoveryUrl"></a>5.1.3. Property `root > authorizerConfiguration > customJwtAuthorizer > discoveryUrl`
+#### <a name="authorizerConfiguration_customJwtAuthorizer_cognito"></a>5.1.3. Property `root > authorizerConfiguration > customJwtAuthorizer > cognito`
+
+|                           |                                   |
+| ------------------------- | --------------------------------- |
+| **Type**                  | `object`                          |
+| **Required**              | No                                |
+| **Additional properties** | Not allowed                       |
+| **Defined in**            | #/definitions/CognitoAuthProperty |
+
+**Description:** Opts in to an MDAA-created Cognito user pool as the identity provider, instead of
+supplying `discoveryUrl` for one you already run. Mutually exclusive with
+`discoveryUrl`; an empty object accepts all defaults.
+
+MDAA composes the discovery URL from the created pool and adds the created app
+client to `allowedAudience`, so neither needs to be supplied. Callers on this path
+present the **ID token**, which is why `allowedClients` is not set for them.
+
+Use cases: Deploying an IdP alongside the runtime, agentic-workload token hardening
+
+AWS: Amazon Cognito user pool + app client fronting CUSTOM_JWT inbound auth
+
+Validation: Optional; CognitoAuthProperty; mutually exclusive with discoveryUrl
+
+| Property                                                                                                 | Pattern | Type             | Deprecated | Definition                                 | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| -------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [federation](#authorizerConfiguration_customJwtAuthorizer_cognito_federation )                         | No      | object           | No         | In #/definitions/CognitoFederationProperty | Federation with an enterprise identity provider. Requires \`hostedUi\`, since Cognito<br />signs federated users in only through the hosted-UI endpoints.<br /><br />Use cases: Enterprise SSO<br /><br />AWS: UserPoolIdentityProvider<br /><br />Validation: Optional; requires hostedUi; at most one of saml or oidc                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [hostedUi](#authorizerConfiguration_customJwtAuthorizer_cognito_hostedUi )                             | No      | object           | No         | In #/definitions/CognitoHostedUiProperty   | Hosted-UI authorization code grant, with a Cognito domain and a managed-login branding<br />style so the sign-in page renders.<br /><br />Configuring it also has three effects beyond the grant itself: managed login drives TOTP<br />enrolment for a \`required\` MFA pool, the client drops the plaintext-password auth flow<br />(sign-in goes through the code grant instead), and \`federation\` becomes usable — it<br />requires this block. Omit it and the client has OAuth disabled entirely.<br /><br />Use cases: Browser-based sign-in, federated sign-in, managed TOTP enrolment<br /><br />AWS: UserPoolClient OAuth settings + UserPoolDomain + ManagedLoginBranding<br /><br />Validation: Optional; CognitoHostedUiProperty; required when federation is configured |
+| - [idTokenValidityMinutes](#authorizerConfiguration_customJwtAuthorizer_cognito_idTokenValidityMinutes ) | No      | number           | No         | -                                          | ID and access token validity in minutes. Defaults to 15.<br /><br />15-30 minutes is the AgentCore guidance for agentic workloads; Cognito's own<br />default is 60. The accepted 5-60 range is an MDAA policy choice — Cognito itself<br />permits up to 1 day.<br /><br />Use cases: Token lifetime hardening, revocation-gap reduction<br /><br />AWS: AWS::Cognito::UserPoolClient IdTokenValidity / AccessTokenValidity<br /><br />Validation: Optional; Number; 5-60 minutes                                                                                                                                                                                                                                                                                                      |
+| - [mfa](#authorizerConfiguration_customJwtAuthorizer_cognito_mfa )                                       | No      | enum (of string) | No         | -                                          | MFA enforcement. Defaults to \`required\`, so each user must register a TOTP<br />authenticator before their first token — see {@link CognitoMfaMode} for the enrolment<br />paths, and set \`optional\` when no human is present to enrol.<br /><br />Use cases: MFA enforcement, non-interactive callers<br /><br />AWS: MfaConfiguration / EnabledMfas<br /><br />Validation: Optional; off \| optional \| required                                                                                                                                                                                                                                                                                                                                                                  |
+| - [removalPolicy](#authorizerConfiguration_customJwtAuthorizer_cognito_removalPolicy )                   | No      | enum (of string) | No         | -                                          | Pool removal policy. Defaults to \`retain\`.<br /><br />\`retain\` keeps the pool when the stack is deleted, so user records survive, and also<br />enables Cognito deletion protection. \`destroy\` means a stack deletion **deletes the<br />pool and every user record in it** — set it for ephemeral deployments that should tear<br />down cleanly, and note that a retained pool also keeps its hosted-UI domain, whose<br />prefix is globally unique per region.<br /><br />Use cases: Production pool retention, ephemeral test deployments<br /><br />AWS: DeletionPolicy / UpdateReplacePolicy, plus DeletionProtection<br /><br />Validation: Optional; destroy \| retain                                                                                                   |
+
+##### <a name="authorizerConfiguration_customJwtAuthorizer_cognito_federation"></a>5.1.3.1. Property `root > authorizerConfiguration > customJwtAuthorizer > cognito > federation`
+
+|                           |                                         |
+| ------------------------- | --------------------------------------- |
+| **Type**                  | `object`                                |
+| **Required**              | No                                      |
+| **Additional properties** | Not allowed                             |
+| **Defined in**            | #/definitions/CognitoFederationProperty |
+
+**Description:** Federation with an enterprise identity provider. Requires `hostedUi`, since Cognito
+signs federated users in only through the hosted-UI endpoints.
+
+Use cases: Enterprise SSO
+
+AWS: UserPoolIdentityProvider
+
+Validation: Optional; requires hostedUi; at most one of saml or oidc
+
+| Property                                                                        | Pattern | Type   | Deprecated | Definition                                     | Title/Description                                                                                                                                                                                 |
+| ------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [oidc](#authorizerConfiguration_customJwtAuthorizer_cognito_federation_oidc ) | No      | object | No         | In #/definitions/CognitoOidcFederationProperty | OIDC federation configuration.<br /><br />Use cases: OIDC enterprise SSO<br /><br />AWS: UserPoolIdentityProvider ProviderType OIDC<br /><br />Validation: Optional; mutually exclusive with saml |
+| - [saml](#authorizerConfiguration_customJwtAuthorizer_cognito_federation_saml ) | No      | object | No         | In #/definitions/CognitoSamlFederationProperty | SAML federation configuration.<br /><br />Use cases: SAML enterprise SSO<br /><br />AWS: UserPoolIdentityProvider ProviderType SAML<br /><br />Validation: Optional; mutually exclusive with oidc |
+
+###### <a name="authorizerConfiguration_customJwtAuthorizer_cognito_federation_oidc"></a>5.1.3.1.1. Property `root > authorizerConfiguration > customJwtAuthorizer > cognito > federation > oidc`
+
+|                           |                                             |
+| ------------------------- | ------------------------------------------- |
+| **Type**                  | `object`                                    |
+| **Required**              | No                                          |
+| **Additional properties** | Not allowed                                 |
+| **Defined in**            | #/definitions/CognitoOidcFederationProperty |
+
+**Description:** OIDC federation configuration.
+
+Use cases: OIDC enterprise SSO
+
+AWS: UserPoolIdentityProvider ProviderType OIDC
+
+Validation: Optional; mutually exclusive with saml
+
+| Property                                                                                             | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                  |
+| ---------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [clientId](#authorizerConfiguration_customJwtAuthorizer_cognito_federation_oidc_clientId )         | No      | string | No         | -          | OIDC client ID registered with the enterprise IdP.<br /><br />Use cases: OIDC provider registration<br /><br />AWS: ProviderDetails client_id<br /><br />Validation: Required; String                                              |
+| + [clientSecret](#authorizerConfiguration_customJwtAuthorizer_cognito_federation_oidc_clientSecret ) | No      | string | No         | -          | OIDC client secret registered with the enterprise IdP.<br /><br />Use cases: OIDC provider registration<br /><br />AWS: ProviderDetails client_secret<br /><br />Validation: Required; String                                      |
+| - [emailClaim](#authorizerConfiguration_customJwtAuthorizer_cognito_federation_oidc_emailClaim )     | No      | string | No         | -          | OIDC claim mapped to the Cognito \`email\` attribute. Defaults to \`email\`.<br /><br />Use cases: Attribute mapping, user identification<br /><br />AWS: AttributeMapping email<br /><br />Validation: Optional; String           |
+| + [issuerUrl](#authorizerConfiguration_customJwtAuthorizer_cognito_federation_oidc_issuerUrl )       | No      | string | No         | -          | OIDC issuer URL. Cognito discovers the provider's endpoints beneath it.<br /><br />Use cases: OIDC provider registration<br /><br />AWS: ProviderDetails oidc_issuer<br /><br />Validation: Required; String; must be an https URL |
+
+###### <a name="authorizerConfiguration_customJwtAuthorizer_cognito_federation_oidc_clientId"></a>5.1.3.1.1.1. Property `root > authorizerConfiguration > customJwtAuthorizer > cognito > federation > oidc > clientId`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-**Description:** OIDC discovery URL for JWT token validation.
+**Description:** OIDC client ID registered with the enterprise IdP.
+
+Use cases: OIDC provider registration
+
+AWS: ProviderDetails client_id
+
+Validation: Required; String
+
+###### <a name="authorizerConfiguration_customJwtAuthorizer_cognito_federation_oidc_clientSecret"></a>5.1.3.1.1.2. Property `root > authorizerConfiguration > customJwtAuthorizer > cognito > federation > oidc > clientSecret`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** OIDC client secret registered with the enterprise IdP.
+
+Use cases: OIDC provider registration
+
+AWS: ProviderDetails client_secret
+
+Validation: Required; String
+
+###### <a name="authorizerConfiguration_customJwtAuthorizer_cognito_federation_oidc_emailClaim"></a>5.1.3.1.1.3. Property `root > authorizerConfiguration > customJwtAuthorizer > cognito > federation > oidc > emailClaim`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** OIDC claim mapped to the Cognito `email` attribute. Defaults to `email`.
+
+Use cases: Attribute mapping, user identification
+
+AWS: AttributeMapping email
+
+Validation: Optional; String
+
+###### <a name="authorizerConfiguration_customJwtAuthorizer_cognito_federation_oidc_issuerUrl"></a>5.1.3.1.1.4. Property `root > authorizerConfiguration > customJwtAuthorizer > cognito > federation > oidc > issuerUrl`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** OIDC issuer URL. Cognito discovers the provider's endpoints beneath it.
+
+Use cases: OIDC provider registration
+
+AWS: ProviderDetails oidc_issuer
+
+Validation: Required; String; must be an https URL
+
+| Restrictions                      |                                                                       |
+| --------------------------------- | --------------------------------------------------------------------- |
+| **Must match regular expression** | ```^https://``` [Test](https://regex101.com/?regex=%5Ehttps%3A%2F%2F) |
+
+###### <a name="authorizerConfiguration_customJwtAuthorizer_cognito_federation_saml"></a>5.1.3.1.2. Property `root > authorizerConfiguration > customJwtAuthorizer > cognito > federation > saml`
+
+|                           |                                             |
+| ------------------------- | ------------------------------------------- |
+| **Type**                  | `object`                                    |
+| **Required**              | No                                          |
+| **Additional properties** | Not allowed                                 |
+| **Defined in**            | #/definitions/CognitoSamlFederationProperty |
+
+**Description:** SAML federation configuration.
+
+Use cases: SAML enterprise SSO
+
+AWS: UserPoolIdentityProvider ProviderType SAML
+
+Validation: Optional; mutually exclusive with oidc
+
+| Property                                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                           |
+| -------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [emailClaim](#authorizerConfiguration_customJwtAuthorizer_cognito_federation_saml_emailClaim )   | No      | string | No         | -          | SAML assertion attribute mapped to the Cognito \`email\` attribute.<br />Defaults to \`email\`.<br /><br />Use cases: Attribute mapping, user identification<br /><br />AWS: AttributeMapping email<br /><br />Validation: Optional; String |
+| + [metadataUrl](#authorizerConfiguration_customJwtAuthorizer_cognito_federation_saml_metadataUrl ) | No      | string | No         | -          | SAML metadata document URL published by the enterprise IdP.<br /><br />Use cases: SAML provider registration<br /><br />AWS: ProviderDetails MetadataURL<br /><br />Validation: Required; String; must be an https URL                      |
+
+###### <a name="authorizerConfiguration_customJwtAuthorizer_cognito_federation_saml_emailClaim"></a>5.1.3.1.2.1. Property `root > authorizerConfiguration > customJwtAuthorizer > cognito > federation > saml > emailClaim`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** SAML assertion attribute mapped to the Cognito `email` attribute.
+Defaults to `email`.
+
+Use cases: Attribute mapping, user identification
+
+AWS: AttributeMapping email
+
+Validation: Optional; String
+
+###### <a name="authorizerConfiguration_customJwtAuthorizer_cognito_federation_saml_metadataUrl"></a>5.1.3.1.2.2. Property `root > authorizerConfiguration > customJwtAuthorizer > cognito > federation > saml > metadataUrl`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** SAML metadata document URL published by the enterprise IdP.
+
+Use cases: SAML provider registration
+
+AWS: ProviderDetails MetadataURL
+
+Validation: Required; String; must be an https URL
+
+| Restrictions                      |                                                                       |
+| --------------------------------- | --------------------------------------------------------------------- |
+| **Must match regular expression** | ```^https://``` [Test](https://regex101.com/?regex=%5Ehttps%3A%2F%2F) |
+
+##### <a name="authorizerConfiguration_customJwtAuthorizer_cognito_hostedUi"></a>5.1.3.2. Property `root > authorizerConfiguration > customJwtAuthorizer > cognito > hostedUi`
+
+|                           |                                       |
+| ------------------------- | ------------------------------------- |
+| **Type**                  | `object`                              |
+| **Required**              | No                                    |
+| **Additional properties** | Not allowed                           |
+| **Defined in**            | #/definitions/CognitoHostedUiProperty |
+
+**Description:** Hosted-UI authorization code grant, with a Cognito domain and a managed-login branding
+style so the sign-in page renders.
+
+Configuring it also has three effects beyond the grant itself: managed login drives TOTP
+enrolment for a `required` MFA pool, the client drops the plaintext-password auth flow
+(sign-in goes through the code grant instead), and `federation` becomes usable — it
+requires this block. Omit it and the client has OAuth disabled entirely.
+
+Use cases: Browser-based sign-in, federated sign-in, managed TOTP enrolment
+
+AWS: UserPoolClient OAuth settings + UserPoolDomain + ManagedLoginBranding
+
+Validation: Optional; CognitoHostedUiProperty; required when federation is configured
+
+| Property                                                                                                    | Pattern | Type                      | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ----------------------------------------------------------------------------------------------------------- | ------- | ------------------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [allowedOAuthScopes](#authorizerConfiguration_customJwtAuthorizer_cognito_hostedUi_allowedOAuthScopes )   | No      | array of enum (of string) | No         | -          | OAuth scopes granted to the hosted-UI client. Defaults to openid, profile, email.<br /><br />Use cases: Scope restriction<br /><br />AWS: AllowedOAuthScopes<br /><br />Validation: Optional; subset of openid \| profile \| email \| phone                                                                                                                                                                                                                                                                         |
+| + [callbackUrls](#authorizerConfiguration_customJwtAuthorizer_cognito_hostedUi_callbackUrls )               | No      | array of string           | No         | -          | Redirect URIs permitted after a successful sign-in. Required, because a hosted UI<br />without a callback URL cannot complete the code grant.<br /><br />Use cases: OAuth redirect<br /><br />AWS: AllowedOAuthFlows / CallbackURLs<br /><br />Validation: Required; String[]; non-empty; https URLs (http allowed for localhost)                                                                                                                                                                                   |
+| - [cognitoDomainPrefix](#authorizerConfiguration_customJwtAuthorizer_cognito_hostedUi_cognitoDomainPrefix ) | No      | string                    | No         | -          | Cognito hosted-UI domain prefix. Defaults to an MDAA naming-derived prefix.<br /><br />Cognito domain prefixes are globally unique per region, so a naming-derived<br />default can collide with another account's pool in the same region. Set this<br />explicitly if deployment fails with a domain-already-exists error.<br /><br />Use cases: Hosted UI domain<br /><br />AWS: AWS::Cognito::UserPoolDomain Domain<br /><br />Validation: Optional; String; lowercase letters, digits, and hyphens; 1-63 chars |
+| - [logoutUrls](#authorizerConfiguration_customJwtAuthorizer_cognito_hostedUi_logoutUrls )                   | No      | array of string           | No         | -          | Redirect URIs permitted after sign-out.<br /><br />Use cases: OAuth sign-out redirect<br /><br />AWS: LogoutURLs<br /><br />Validation: Optional; String[]; https URLs (http allowed for localhost)                                                                                                                                                                                                                                                                                                                 |
+
+###### <a name="authorizerConfiguration_customJwtAuthorizer_cognito_hostedUi_allowedOAuthScopes"></a>5.1.3.2.1. Property `root > authorizerConfiguration > customJwtAuthorizer > cognito > hostedUi > allowedOAuthScopes`
+
+|              |                             |
+| ------------ | --------------------------- |
+| **Type**     | `array of enum (of string)` |
+| **Required** | No                          |
+
+**Description:** OAuth scopes granted to the hosted-UI client. Defaults to openid, profile, email.
+
+Use cases: Scope restriction
+
+AWS: AllowedOAuthScopes
+
+Validation: Optional; subset of openid | profile | email | phone
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                                    | Description |
+| ------------------------------------------------------------------------------------------------------------------ | ----------- |
+| [allowedOAuthScopes items](#authorizerConfiguration_customJwtAuthorizer_cognito_hostedUi_allowedOAuthScopes_items) | -           |
+
+###### <a name="authorizerConfiguration_customJwtAuthorizer_cognito_hostedUi_allowedOAuthScopes_items"></a>5.1.3.2.1.1. root > authorizerConfiguration > customJwtAuthorizer > cognito > hostedUi > allowedOAuthScopes > allowedOAuthScopes items
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "email"
+* "openid"
+* "phone"
+* "profile"
+
+###### <a name="authorizerConfiguration_customJwtAuthorizer_cognito_hostedUi_callbackUrls"></a>5.1.3.2.2. Property `root > authorizerConfiguration > customJwtAuthorizer > cognito > hostedUi > callbackUrls`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | Yes               |
+
+**Description:** Redirect URIs permitted after a successful sign-in. Required, because a hosted UI
+without a callback URL cannot complete the code grant.
+
+Use cases: OAuth redirect
+
+AWS: AllowedOAuthFlows / CallbackURLs
+
+Validation: Required; String[]; non-empty; https URLs (http allowed for localhost)
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | 1                  |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                        | Description |
+| ------------------------------------------------------------------------------------------------------ | ----------- |
+| [callbackUrls items](#authorizerConfiguration_customJwtAuthorizer_cognito_hostedUi_callbackUrls_items) | -           |
+
+###### <a name="authorizerConfiguration_customJwtAuthorizer_cognito_hostedUi_callbackUrls_items"></a>5.1.3.2.2.1. root > authorizerConfiguration > customJwtAuthorizer > cognito > hostedUi > callbackUrls > callbackUrls items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="authorizerConfiguration_customJwtAuthorizer_cognito_hostedUi_cognitoDomainPrefix"></a>5.1.3.2.3. Property `root > authorizerConfiguration > customJwtAuthorizer > cognito > hostedUi > cognitoDomainPrefix`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Cognito hosted-UI domain prefix. Defaults to an MDAA naming-derived prefix.
+
+Cognito domain prefixes are globally unique per region, so a naming-derived
+default can collide with another account's pool in the same region. Set this
+explicitly if deployment fails with a domain-already-exists error.
+
+Use cases: Hosted UI domain
+
+AWS: AWS::Cognito::UserPoolDomain Domain
+
+Validation: Optional; String; lowercase letters, digits, and hyphens; 1-63 chars
+
+| Restrictions                      |                                                                                                                                                         |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Must match regular expression** | ```^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$``` [Test](https://regex101.com/?regex=%5E%5Ba-z0-9%5D%28%3F%3A%5Ba-z0-9-%5D%7B0%2C61%7D%5Ba-z0-9%5D%29%3F%24) |
+
+###### <a name="authorizerConfiguration_customJwtAuthorizer_cognito_hostedUi_logoutUrls"></a>5.1.3.2.4. Property `root > authorizerConfiguration > customJwtAuthorizer > cognito > hostedUi > logoutUrls`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+**Description:** Redirect URIs permitted after sign-out.
+
+Use cases: OAuth sign-out redirect
+
+AWS: LogoutURLs
+
+Validation: Optional; String[]; https URLs (http allowed for localhost)
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                    | Description |
+| -------------------------------------------------------------------------------------------------- | ----------- |
+| [logoutUrls items](#authorizerConfiguration_customJwtAuthorizer_cognito_hostedUi_logoutUrls_items) | -           |
+
+###### <a name="authorizerConfiguration_customJwtAuthorizer_cognito_hostedUi_logoutUrls_items"></a>5.1.3.2.4.1. root > authorizerConfiguration > customJwtAuthorizer > cognito > hostedUi > logoutUrls > logoutUrls items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="authorizerConfiguration_customJwtAuthorizer_cognito_idTokenValidityMinutes"></a>5.1.3.3. Property `root > authorizerConfiguration > customJwtAuthorizer > cognito > idTokenValidityMinutes`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `15`     |
+
+**Description:** ID and access token validity in minutes. Defaults to 15.
+
+15-30 minutes is the AgentCore guidance for agentic workloads; Cognito's own
+default is 60. The accepted 5-60 range is an MDAA policy choice — Cognito itself
+permits up to 1 day.
+
+Use cases: Token lifetime hardening, revocation-gap reduction
+
+AWS: AWS::Cognito::UserPoolClient IdTokenValidity / AccessTokenValidity
+
+Validation: Optional; Number; 5-60 minutes
+
+| Restrictions |         |
+| ------------ | ------- |
+| **Minimum**  | &ge; 5  |
+| **Maximum**  | &le; 60 |
+
+##### <a name="authorizerConfiguration_customJwtAuthorizer_cognito_mfa"></a>5.1.3.4. Property `root > authorizerConfiguration > customJwtAuthorizer > cognito > mfa`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+**Description:** MFA enforcement. Defaults to `required`, so each user must register a TOTP
+authenticator before their first token — see {@link CognitoMfaMode} for the enrolment
+paths, and set `optional` when no human is present to enrol.
+
+Use cases: MFA enforcement, non-interactive callers
+
+AWS: MfaConfiguration / EnabledMfas
+
+Validation: Optional; off | optional | required
+
+Must be one of:
+* "off"
+* "optional"
+* "required"
+
+##### <a name="authorizerConfiguration_customJwtAuthorizer_cognito_removalPolicy"></a>5.1.3.5. Property `root > authorizerConfiguration > customJwtAuthorizer > cognito > removalPolicy`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+| **Default**  | `"retain"`         |
+
+**Description:** Pool removal policy. Defaults to `retain`.
+
+`retain` keeps the pool when the stack is deleted, so user records survive, and also
+enables Cognito deletion protection. `destroy` means a stack deletion **deletes the
+pool and every user record in it** — set it for ephemeral deployments that should tear
+down cleanly, and note that a retained pool also keeps its hosted-UI domain, whose
+prefix is globally unique per region.
+
+Use cases: Production pool retention, ephemeral test deployments
+
+AWS: DeletionPolicy / UpdateReplacePolicy, plus DeletionProtection
+
+Validation: Optional; destroy | retain
+
+Must be one of:
+* "destroy"
+* "retain"
+
+#### <a name="authorizerConfiguration_customJwtAuthorizer_discoveryUrl"></a>5.1.4. Property `root > authorizerConfiguration > customJwtAuthorizer > discoveryUrl`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** OIDC discovery URL for JWT token validation, for an identity provider you already
+run (Cognito, Okta, Entra ID, ...). Mutually exclusive with `cognito`.
 
 Use cases: OIDC integration, token validation, identity provider connection
 
 AWS: OIDC discovery URL for JWT validation
 
-Validation: Required; String; must end with /.well-known/openid-configuration
+Validation: Required unless cognito is specified; String; must end with /.well-known/openid-configuration
 
 ### <a name="authorizerConfiguration_jwtAuthorizer"></a>5.2. Property `root > authorizerConfiguration > jwtAuthorizer`
 
@@ -578,11 +1023,16 @@ Validation: Required; String; must end with /.well-known/openid-configuration
 
 **Description:** Custom JWT authorizer configuration for token-based authentication via OIDC.
 
+Exactly one of `discoveryUrl` or `cognito` must be specified — they are the two ways
+of naming the identity provider, differing only in who provisions it. Supply
+`discoveryUrl` for an IdP you already run, or `cognito` to have MDAA create and
+configure one.
+
 Use cases: JWT authentication, OIDC integration, token validation, identity provider connection
 
 AWS: Bedrock AgentCore Runtime JWT authorizer
 
-Validation: discoveryUrl required; must end with /.well-known/openid-configuration
+Validation: exactly one of discoveryUrl or cognito; discoveryUrl must end with /.well-known/openid-configuration
 
 ## <a name="dataProtection"></a>6. Property `root > dataProtection`
 

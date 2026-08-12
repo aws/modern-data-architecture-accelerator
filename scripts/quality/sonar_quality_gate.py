@@ -133,9 +133,12 @@ def print_quality_gate(project_key: str, server: str, credentials: str) -> bool:
 
 def print_issues(project_key: str, server: str, credentials: str, public_url: str) -> None:
     """Print new-code issues for the project."""
+    # componentKeys, not projectKeys: inNewCodePeriod=true is rejected with
+    # HTTP 400 ("One and only one component must be provided when searching in
+    # new code period") unless the scope is a single component.
     url = (
         f"{server}/api/issues/search"
-        f"?projectKeys={project_key}"
+        f"?componentKeys={project_key}"
         f"&statuses=OPEN,CONFIRMED,REOPENED"
         f"&inNewCodePeriod=true"
         f"&ps={PAGE_SIZE}"

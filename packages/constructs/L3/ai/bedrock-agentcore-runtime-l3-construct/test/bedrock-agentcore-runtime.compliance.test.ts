@@ -313,4 +313,39 @@ describe('BedrockAgentcoreRuntimeL3Construct Compliance Tests', () => {
 
     testApp.checkCdkNagCompliance(stack);
   });
+
+  describe('Runtime with MDAA-managed Cognito authorizer', () => {
+    const testApp = new MdaaTestApp();
+    const stack = testApp.testStack;
+    const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+      agentRuntimeName: 'cognito-compliant-runtime',
+      agentRuntimeArtifact: {
+        containerConfiguration: {
+          containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-runtime:latest',
+        },
+      },
+      networkConfiguration: {
+        securityGroups: ['sg-12345678'],
+        subnets: ['subnet-12345678'],
+      },
+      // The hosted UI is included so the nag rules also see the OAuth-enabled client and
+      // the domain, not just the default OAuth-disabled client.
+      authorizerConfiguration: {
+        customJwtAuthorizer: {
+          cognito: {
+            hostedUi: {
+              callbackUrls: ['https://app.example.com/callback'],
+              cognitoDomainPrefix: 'compliance-agent-auth',
+            },
+          },
+        },
+      },
+      naming: testApp.naming,
+      roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+    };
+
+    new BedrockAgentcoreRuntimeL3Construct(stack, 'cognito-compliant-runtime-construct', constructProps);
+
+    testApp.checkCdkNagCompliance(stack);
+  });
 });

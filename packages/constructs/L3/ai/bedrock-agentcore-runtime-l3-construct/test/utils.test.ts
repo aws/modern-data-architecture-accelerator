@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { AgentcoreCognitoAuth } from '@aws-mdaa/agentcore-shared';
+import { aws_bedrockagentcore as bedrockagentcore } from 'aws-cdk-lib';
 import {
   buildAuthorizerConfiguration,
   buildLifecycleConfiguration,
@@ -10,8 +12,33 @@ import {
   buildRequestHeaderConfiguration,
   extractCustomPolicyStatements,
   NetworkConfigurationProperty,
+  resolveJwtAuthorizerConfig,
   sanitizeBedrockAgentcoreName,
+  validateJwtAuthorizerIdpSource,
 } from '../lib';
+
+const VALID_DISCOVERY_URL = 'https://example.com/.well-known/openid-configuration';
+
+/**
+ * Stands in for the created Cognito resources. Only the two fields
+ * buildAuthorizerConfiguration reads are populated — constructing a real pool here would
+ * pull in a CDK stack to test pure field mapping. The pool itself is covered by
+ * agentcore-shared's cognito-auth tests.
+ */
+const FAKE_COGNITO_AUTH = {
+  discoveryUrl: 'https://cognito-idp.test-region.amazonaws.com/pool-id/.well-known/openid-configuration',
+  audience: 'created-client-id',
+};
+
+/**
+ * Narrows the L1's `IResolvable | CustomJWTAuthorizerConfigurationProperty` union to the
+ * struct. buildAuthorizerConfiguration always returns a plain object, never a token.
+ */
+function jwtAuthorizerOf(
+  result: bedrockagentcore.CfnRuntime.AuthorizerConfigurationProperty,
+): bedrockagentcore.CfnRuntime.CustomJWTAuthorizerConfigurationProperty {
+  return result.customJwtAuthorizer as bedrockagentcore.CfnRuntime.CustomJWTAuthorizerConfigurationProperty;
+}
 
 describe('bedrock-agentcore-runtime-utils', () => {
   describe('buildLifecycleConfiguration', () => {
@@ -151,6 +178,130 @@ describe('bedrock-agentcore-runtime-utils', () => {
     it('should return empty config when no authorizer provided', () => {
       const result = buildAuthorizerConfiguration({});
       expect(result).toEqual({});
+    });
+
+    it('should throw when both discoveryUrl and cognito are configured', () => {
+      expect(() =>
+        buildAuthorizerConfiguration({
+          customJwtAuthorizer: { discoveryUrl: VALID_DISCOVERY_URL, cognito: {} },
+        }),
+      ).toThrow(/accepts either discoveryUrl or cognito, not both/);
+    });
+
+    it('should throw when neither discoveryUrl nor cognito is configured', () => {
+      expect(() => buildAuthorizerConfiguration({ customJwtAuthorizer: {} })).toThrow(
+        /requires exactly one of discoveryUrl or cognito/,
+      );
+    });
+
+    // The deprecated alias must not be a way around the XOR.
+    it('should enforce the XOR through the deprecated jwtAuthorizer alias', () => {
+      expect(() =>
+        buildAuthorizerConfiguration({
+          jwtAuthorizer: { discoveryUrl: VALID_DISCOVERY_URL, cognito: {} },
+        }),
+      ).toThrow(/accepts either discoveryUrl or cognito, not both/);
+    });
+
+    // Synth and deploy both succeed with this combination, then every caller is rejected —
+    // AgentCore ANDs the claim filters and no Cognito token satisfies both.
+    it('should throw when cognito is combined with allowedClients', () => {
+      expect(() =>
+        buildAuthorizerConfiguration({
+          customJwtAuthorizer: { cognito: {}, allowedClients: ['my-client'] },
+        }),
+      ).toThrow(/cannot combine cognito with allowedClients/);
+    });
+
+    it('should allow allowedClients on the discoveryUrl path', () => {
+      expect(() =>
+        buildAuthorizerConfiguration({
+          customJwtAuthorizer: { discoveryUrl: VALID_DISCOVERY_URL, allowedClients: ['my-client'] },
+        }),
+      ).not.toThrow();
+    });
+
+    it('should substitute the composed discovery URL and audience on the cognito path', () => {
+      const result = buildAuthorizerConfiguration(
+        { customJwtAuthorizer: { cognito: {} } },
+        FAKE_COGNITO_AUTH as unknown as AgentcoreCognitoAuth,
+      );
+
+      expect(result).toEqual({
+        customJwtAuthorizer: {
+          discoveryUrl: FAKE_COGNITO_AUTH.discoveryUrl,
+          allowedAudience: ['created-client-id'],
+          allowedClients: undefined,
+        },
+      });
+    });
+
+    it('should prepend the created client to additional configured audiences', () => {
+      const result = buildAuthorizerConfiguration(
+        { customJwtAuthorizer: { cognito: {}, allowedAudience: ['extra-aud'] } },
+        FAKE_COGNITO_AUTH as unknown as AgentcoreCognitoAuth,
+      );
+
+      expect(jwtAuthorizerOf(result).allowedAudience).toEqual(['created-client-id', 'extra-aud']);
+    });
+
+    // Cognito puts the client ID in the ID token's `aud`, and AgentCore ANDs the claim
+    // filters it is given, so MDAA must not add allowedClients here.
+    it('should not set allowedClients on the cognito path', () => {
+      const result = buildAuthorizerConfiguration(
+        { customJwtAuthorizer: { cognito: {} } },
+        FAKE_COGNITO_AUTH as unknown as AgentcoreCognitoAuth,
+      );
+
+      expect(jwtAuthorizerOf(result).allowedClients).toBeUndefined();
+    });
+
+    it('should ignore cognito resources when the user supplied their own discoveryUrl', () => {
+      const result = buildAuthorizerConfiguration({
+        customJwtAuthorizer: { discoveryUrl: VALID_DISCOVERY_URL, allowedAudience: ['my-client'] },
+      });
+
+      expect(jwtAuthorizerOf(result).discoveryUrl).toBe(VALID_DISCOVERY_URL);
+      expect(jwtAuthorizerOf(result).allowedAudience).toEqual(['my-client']);
+    });
+  });
+
+  describe('resolveJwtAuthorizerConfig', () => {
+    it('should prefer customJwtAuthorizer over the deprecated alias', () => {
+      const resolved = resolveJwtAuthorizerConfig({
+        customJwtAuthorizer: { discoveryUrl: VALID_DISCOVERY_URL },
+        jwtAuthorizer: { discoveryUrl: 'https://deprecated.example.com/.well-known/openid-configuration' },
+      });
+
+      expect(resolved?.discoveryUrl).toBe(VALID_DISCOVERY_URL);
+    });
+
+    it('should fall back to the deprecated alias', () => {
+      expect(resolveJwtAuthorizerConfig({ jwtAuthorizer: { cognito: {} } })?.cognito).toEqual({});
+    });
+
+    it('should return undefined when neither is set (AWS IAM)', () => {
+      expect(resolveJwtAuthorizerConfig({})).toBeUndefined();
+    });
+  });
+
+  describe('validateJwtAuthorizerIdpSource', () => {
+    it('should accept discoveryUrl alone', () => {
+      expect(() => validateJwtAuthorizerIdpSource({ discoveryUrl: VALID_DISCOVERY_URL })).not.toThrow();
+    });
+
+    it('should accept cognito alone', () => {
+      expect(() => validateJwtAuthorizerIdpSource({ cognito: {} })).not.toThrow();
+    });
+
+    it('should reject both', () => {
+      expect(() => validateJwtAuthorizerIdpSource({ discoveryUrl: VALID_DISCOVERY_URL, cognito: {} })).toThrow(
+        /not both/,
+      );
+    });
+
+    it('should reject neither', () => {
+      expect(() => validateJwtAuthorizerIdpSource({})).toThrow(/exactly one of discoveryUrl or cognito/);
     });
   });
 

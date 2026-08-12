@@ -45,9 +45,15 @@ if [ "${SONAR_IS_MR}" = "true" ]; then
   VERSION_ARGS=""
 
   # Check if the MR contains any TypeScript changes. If not, skip —
-  # there's nothing for SonarQube to gate on.
-  MERGE_BASE=$(git merge-base "${SONAR_TARGET_REF}" HEAD)
-  TS_CHANGES=$(git diff --name-only "${MERGE_BASE}" HEAD -- '*.ts' | grep -v '\.d\.ts$' | grep -v '/test/' | head -1)
+  # there's nothing for SonarQube to gate on. Diff against the same fork point
+  # the baseline is anchored to (not `git merge-base`, which drifts forward on
+  # a back-merge) so this check and the baseline's cannot disagree about
+  # whether the scan should run.
+  if [ -z "${SONAR_FORK_POINT}" ]; then
+    echo "No fork point resolved against ${SONAR_TARGET_REF} — skipping SonarQube scan."
+    exit 0
+  fi
+  TS_CHANGES=$(git diff --name-only "${SONAR_FORK_POINT}" HEAD -- '*.ts' | grep -v '\.d\.ts$' | grep -v '/test/' | head -1)
 
   if [ -z "${TS_CHANGES}" ]; then
     echo "No TypeScript source changes detected — skipping SonarQube scan."

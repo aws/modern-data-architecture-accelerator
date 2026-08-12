@@ -15,11 +15,14 @@ import {
   AGENTCORE_RUNTIME_ARN_REQUEST_PARAMETER,
   AGENTCORE_RUNTIME_ERROR_METRICS,
   AGENTCORE_RUNTIME_ID_REQUEST_PARAMETER,
+  AgentcoreCognitoAuth,
+  CognitoAuthProperty,
   createAgentCoreAlarms,
   createAgentCoreEventBridgeRules,
   createAgentCoreLogProtection,
   createAgentCoreResourcePolicy,
   createAgentCoreVpcEndpoint,
+  createAgentcoreCognitoAuth,
   VpcEndpointProperty,
 } from '@aws-mdaa/agentcore-shared';
 import { DockerImageAsset, Platform } from 'aws-cdk-lib/aws-ecr-assets';
@@ -32,7 +35,9 @@ import {
   buildNetworkConfiguration,
   buildRequestHeaderConfiguration,
   extractCustomPolicyStatements,
+  resolveJwtAuthorizerConfig,
   sanitizeBedrockAgentcoreName,
+  validateJwtAuthorizerIdpSource,
 } from './utils';
 
 /**
@@ -205,25 +210,50 @@ export interface LifecycleConfigurationProperty {
 /**
  * Custom JWT authorizer configuration for token-based authentication via OIDC.
  *
+ * Exactly one of `discoveryUrl` or `cognito` must be specified — they are the two ways
+ * of naming the identity provider, differing only in who provisions it. Supply
+ * `discoveryUrl` for an IdP you already run, or `cognito` to have MDAA create and
+ * configure one.
+ *
  * Use cases: JWT authentication, OIDC integration, token validation, identity provider connection
  *
  * AWS: Bedrock AgentCore Runtime JWT authorizer
  *
- * Validation: discoveryUrl required; must end with /.well-known/openid-configuration
+ * Validation: exactly one of discoveryUrl or cognito; discoveryUrl must end with /.well-known/openid-configuration
  */
 export interface CustomJwtAuthorizerProperty {
   /**
-   * OIDC discovery URL for JWT token validation.
+   * OIDC discovery URL for JWT token validation, for an identity provider you already
+   * run (Cognito, Okta, Entra ID, ...). Mutually exclusive with `cognito`.
    *
    * Use cases: OIDC integration, token validation, identity provider connection
    *
    * AWS: OIDC discovery URL for JWT validation
    *
-   * Validation: Required; String; must end with /.well-known/openid-configuration
+   * Validation: Required unless cognito is specified; String; must end with /.well-known/openid-configuration
    **/
-  readonly discoveryUrl: string;
+  readonly discoveryUrl?: string;
+  /**
+   * Opts in to an MDAA-created Cognito user pool as the identity provider, instead of
+   * supplying `discoveryUrl` for one you already run. Mutually exclusive with
+   * `discoveryUrl`; an empty object accepts all defaults.
+   *
+   * MDAA composes the discovery URL from the created pool and adds the created app
+   * client to `allowedAudience`, so neither needs to be supplied. Callers on this path
+   * present the **ID token**, which is why `allowedClients` is not set for them.
+   *
+   * Use cases: Deploying an IdP alongside the runtime, agentic-workload token hardening
+   *
+   * AWS: Amazon Cognito user pool + app client fronting CUSTOM_JWT inbound auth
+   *
+   * Validation: Optional; CognitoAuthProperty; mutually exclusive with discoveryUrl
+   **/
+  readonly cognito?: CognitoAuthProperty;
   /**
    * Allowed audience values for JWT token validation.
+   *
+   * On the `cognito` path MDAA always adds the app client it creates, so values set here
+   * are additional accepted audiences rather than a replacement.
    *
    * Use cases: Audience validation, client filtering, access restriction
    *
@@ -234,6 +264,12 @@ export interface CustomJwtAuthorizerProperty {
   readonly allowedAudience?: string[];
   /**
    * Allowed client IDs for JWT token validation.
+   *
+   * Only valid on the `discoveryUrl` path. Combining it with `cognito` is rejected at
+   * synth: AgentCore validates every claim filter configured, and MDAA sets
+   * `allowedAudience` to the app client it creates — Cognito puts that ID in the ID token's
+   * `aud` but the access token's `client_id`, so no token would satisfy both filters and
+   * every caller would be rejected.
    *
    * Use cases: Client ID validation, application filtering, access control
    *
@@ -1059,6 +1095,8 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
   public readonly runtime: bedrockagentcore.CfnRuntime;
   public readonly runtimeEndpoint?: bedrockagentcore.CfnRuntimeEndpoint;
   public readonly runtimeRole?: MdaaRole;
+  /** MDAA-created Cognito IdP; undefined unless the `cognito` authorizer path is configured. */
+  public readonly cognitoAuth?: AgentcoreCognitoAuth;
   private readonly repositoryArn?: string;
   protected readonly props: BedrockAgentcoreRuntimeL3ConstructProps;
   /** KMS key created for log-group encryption; reused for the alarm SNS topic when one is created. */
@@ -1113,6 +1151,11 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
       );
     }
 
+    // Create the MDAA-managed Cognito IdP when opted in. Created before the runtime so the
+    // authorizer can consume the pool's CDK token directly: the pool feeds the runtime and
+    // never the reverse, so there is no circular dependency.
+    this.cognitoAuth = this.createCognitoAuth(props.authorizerConfiguration);
+
     // Build typed runtime properties for CloudFormation
     const runtimeProps: bedrockagentcore.CfnRuntimeProps = {
       agentRuntimeName: this.sanitizedRuntimeName,
@@ -1128,7 +1171,7 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
         ? buildLifecycleConfiguration(props.lifecycleConfiguration)
         : undefined,
       authorizerConfiguration: props.authorizerConfiguration
-        ? buildAuthorizerConfiguration(props.authorizerConfiguration)
+        ? buildAuthorizerConfiguration(props.authorizerConfiguration, this.cognitoAuth)
         : undefined,
       requestHeaderConfiguration: props.requestHeaderConfiguration
         ? buildRequestHeaderConfiguration(props.requestHeaderConfiguration)
@@ -1222,6 +1265,67 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
 
     // Store runtime information in SSM Parameter Store
     this.storeSSMParameters(props.agentRuntimeName);
+
+    // Publish the MDAA-created pool's identifiers for callers that must authenticate against it
+    if (this.cognitoAuth) {
+      this.storeCognitoParameters(this.cognitoAuth, props.agentRuntimeName);
+    }
+  }
+
+  /**
+   * Creates the MDAA-managed Cognito user pool and app client when the `cognito` authorizer
+   * path is configured, via either `customJwtAuthorizer` or the deprecated `jwtAuthorizer`
+   * alias. Returns undefined for every other configuration, including AWS IAM (no authorizer)
+   * and a user-supplied `discoveryUrl` — neither creates Cognito resources.
+   *
+   * The `cognito`/`discoveryUrl` XOR is validated here rather than only in
+   * {@link buildAuthorizerConfiguration}, so a config naming both fails before any pool is
+   * created instead of after.
+   */
+  private createCognitoAuth(
+    authorizerConfiguration?: AuthorizerConfigurationProperty,
+  ): AgentcoreCognitoAuth | undefined {
+    if (!authorizerConfiguration) {
+      return undefined;
+    }
+    const jwtConfig = resolveJwtAuthorizerConfig(authorizerConfiguration);
+    if (!jwtConfig) {
+      return undefined;
+    }
+    validateJwtAuthorizerIdpSource(jwtConfig);
+    if (!jwtConfig.cognito) {
+      return undefined;
+    }
+    return createAgentcoreCognitoAuth(this, 'CognitoAuth', {
+      cognitoConfig: jwtConfig.cognito,
+      naming: this.props.naming,
+    });
+  }
+
+  /**
+   * Publishes the MDAA-created pool's identifiers so callers can authenticate against it
+   * without reading the CloudFormation stack. The discovery URL is published for the
+   * caller's own token validation — the runtime itself consumes the CDK token directly,
+   * because an SSM dynamic reference would not satisfy its synth-time URL pattern check.
+   */
+  private storeCognitoParameters(cognitoAuth: AgentcoreCognitoAuth, runtimeName: string): void {
+    const params: { name: string; value: string }[] = [
+      { name: 'user-pool-id', value: cognitoAuth.userPool.userPoolId },
+      { name: 'client-id', value: cognitoAuth.userPoolClient.userPoolClientId },
+      { name: 'discovery-url', value: cognitoAuth.discoveryUrl },
+    ];
+    if (cognitoAuth.userPoolDomain) {
+      params.push({ name: 'domain', value: cognitoAuth.userPoolDomain.domainName });
+    }
+    params.forEach(({ name, value }) => {
+      new MdaaParamAndOutput(this, {
+        resourceType: 'cognito',
+        resourceId: runtimeName,
+        name: name,
+        value: value,
+        ...this.props,
+      });
+    });
   }
 
   /**
@@ -1777,7 +1881,7 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
     // identity for the policy to match), but a SigV4 runtime can and should name its
     // caller roles.
     const jwtConfigured = !!(
-      (props.authorizerConfiguration?.customJwtAuthorizer ?? props.authorizerConfiguration?.jwtAuthorizer) // NOSONAR
+      props.authorizerConfiguration && resolveJwtAuthorizerConfig(props.authorizerConfiguration)
     );
     if (!jwtConfigured && !vpcEndpointConfig.endpointPolicy?.allowPrincipals?.length) {
       Annotations.of(this).addWarningV2(

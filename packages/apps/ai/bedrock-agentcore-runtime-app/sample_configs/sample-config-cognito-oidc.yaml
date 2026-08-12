@@ -1,0 +1,62 @@
+# Bedrock AgentCore Runtime with an MDAA-managed Cognito IdP federated to an
+# enterprise OIDC provider.
+#
+# Why a dedicated config: `cognito.federation` accepts at most one of `saml` or
+# `oidc`, so the OIDC branch cannot be expressed in sample-config-cognito.yaml,
+# which exercises the SAML branch.
+#
+# OIDC federation registers a distinct AWS::Cognito::UserPoolIdentityProvider
+# (ProviderType OIDC) and enables it on the app client alongside Cognito-native
+# sign-in, exactly as the SAML branch does. It also requires a hosted UI, since
+# Cognito signs federated users in only through the hosted-UI endpoints.
+
+# Unique name for the Bedrock AgentCore Runtime
+agentRuntimeName: testAgentRuntime
+# Container deployment configuration
+agentRuntimeArtifact:
+  containerConfiguration:
+    containerUri: '{{account}}.dkr.ecr.{{region}}.amazonaws.com/test-runtime:latest'
+# VPC network configuration for secure runtime deployment
+networkConfiguration:
+  securityGroups:
+    - sg-12345678
+  subnets:
+    - subnet-12345678
+    - subnet-87654321
+# Inbound authorization via an MDAA-created Cognito pool
+authorizerConfiguration:
+  customJwtAuthorizer:
+    cognito:
+      # Cognito delegates authentication for federated users to the enterprise IdP and
+      # offers them no additional factor, so its own MFA setting does not reach them —
+      # enforce MFA at the IdP instead. `off` states that plainly rather than leaving the
+      # `required` default to imply an enforcement this pool cannot apply. Set `required`
+      # if you also create local (non-federated) users in this pool.
+      mfa: 'off'
+      # Federation requires a hosted UI: Cognito signs federated users in only through the
+      # hosted-UI Login/Authorize endpoints, never via InitiateAuth. Without it the identity
+      # provider below would be created but unreachable, so MDAA rejects that combination.
+      hostedUi:
+        callbackUrls:
+          - 'https://app.example.com/callback'
+        cognitoDomainPrefix: 'test-agent-auth-oidc'
+      federation:
+        oidc:
+          # OIDC issuer URL. Cognito discovers the provider's endpoints beneath it.
+          issuerUrl: 'https://login.microsoftonline.com/test-tenant/v2.0'
+          # OIDC client ID registered with the enterprise IdP
+          clientId: 'test-oidc-client-id'
+          # OIDC client secret registered with the enterprise IdP.
+          #
+          # Use a Secrets Manager dynamic reference, as below — NOT a literal secret.
+          # Cognito needs the value when it registers the provider, so a literal string is
+          # rendered in cleartext into the template's ProviderDetails and is then readable
+          # by anyone with cloudformation:GetTemplate on the stack. A dynamic reference is
+          # resolved at deploy time, leaving only the pointer in the template.
+          # Replace the region, account, and secret name with your own values. MDAA's own
+          # {{region}}/{{account}} placeholders are NOT substituted inside a
+          # {{resolve:...}} reference — the nested braces defeat the substitution — so
+          # write the ARN out in full.
+          clientSecret: '{{resolve:secretsmanager:arn:aws:secretsmanager:us-east-1:111122223333:secret:my-oidc-client-secret:SecretString:clientSecret}}'
+          # (Optional) OIDC claim mapped to Cognito's email attribute. Defaults to 'email'.
+          emailClaim: 'email'

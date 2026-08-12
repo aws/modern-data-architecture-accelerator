@@ -16,6 +16,7 @@ This module deploys and integrates the following resources:
 - **Bedrock AgentCore Resource-Based Policy** (Optional) — Resource-based policy restricting runtime invocations to traffic originating from the configured VPC. Created when `enforceVpcOnly` is true.
 - **AgentCore Interface VPC Endpoint** (Optional) — Interface endpoint for `com.amazonaws.{region}.bedrock-agentcore` with Private DNS, a least-privilege endpoint policy, and a security group restricting ingress to the runtime's application security groups. Created when `networkConfiguration.vpcEndpoint` is configured; can also create supporting endpoints (ECR, STS, CloudWatch Logs). See [AWS Service Endpoints](#aws-service-endpoints).
 - **Bedrock AgentCore Runtime Endpoint** (Optional) — API endpoint for invoking the agent runtime via Bedrock AgentCore APIs.
+- **Cognito User Pool + App Client** (Optional) — Identity provider for JWT inbound auth, created when `authorizerConfiguration.customJwtAuthorizer.cognito` is configured. Includes threat protection, a strong password policy, required MFA, and agentic-workload token defaults. With `hostedUi`, also creates a **User Pool Domain** and a **Managed Login Branding** style (Cognito activates managed login only for a client that has one), and optionally an enterprise SAML/OIDC **Identity Provider**. See [Inbound Authorization](#inbound-authorization).
 - **ECR Docker Image Asset** — Container image built and pushed to ECR at deploy time (when using `codePath`).
 - **IAM Execution Role + Managed Policy** — Runtime execution role with permissions for ECR image access, CloudWatch Logs, X-Ray tracing, CloudWatch Metrics, Bedrock AgentCore workload identity tokens, and Bedrock model invocation. Can use an existing role via `roleArn` or auto-create one.
 - **CloudWatch Log Group** — Log group for runtime execution logs.
@@ -23,7 +24,7 @@ This module deploys and integrates the following resources:
 - **CloudWatch Data Protection Policy** — PII masking policy applied to the log groups on ingestion. Extendable via `dataProtection.additionalIdentifiers`.
 - **CloudWatch Alarms** (Optional) — Error-rate and/or throttle-count alarms on the AgentCore service metrics (namespace `AWS/Bedrock-AgentCore`), created when an `alarms` block is configured. Notify an SNS topic on breach.
 - **SNS Topic** (Optional) — CMK-encrypted topic for alarm notifications, created when `alarms.createNotificationTopic` is true. Alternatively, alarms notify an existing topic via `alarms.notificationTopicArn`.
-- **SSM Parameters** — Runtime ARN, Runtime ID, Runtime Name, and optionally Endpoint ARN/ID, stored in Parameter Store for cross-module reference. A created alarm SNS topic and the alarms publish their own SSM parameters (topic and alarm ARN/name) via the underlying MDAA constructs.
+- **SSM Parameters** — Runtime ARN, Runtime ID, Runtime Name, and optionally Endpoint ARN/ID, stored in Parameter Store for cross-module reference. A created Cognito pool publishes its pool ID, client ID, discovery URL, and (with a hosted UI) domain. A created alarm SNS topic and the alarms publish their own SSM parameters (topic and alarm ARN/name) via the underlying MDAA constructs.
 
 ---
 
@@ -52,11 +53,118 @@ This module is designed in alignment with MDAA security/compliance principles an
 - **Network Isolation**:
   - Runtimes deployed in VPC mode with no public internet access unless explicitly configured via VPC routing
   - JWT authentication (custom or standard) controls runtime endpoint access
+- **Inbound Authorization**:
+  - An MDAA-created Cognito pool requires MFA by default, enables threat protection, requires an 8+ character mixed-class password, restricts user creation to administrators, and limits account recovery to email (see [Inbound Authorization](#inbound-authorization))
+  - Required MFA obliges each user to register a TOTP authenticator before their first token — see [MFA enrolment](#mfa-enrolment), and set `mfa: optional` for callers with no human present to enrol
+  - Tokens default to a 15-minute lifetime rather than Cognito's 60-minute default, and the refresh token is bound to 1 day rather than Cognito's 30, so a leaked token of either kind has a comparable revocation gap
+  - The app client has OAuth disabled unless a hosted UI is explicitly configured, so no implicit grant or default callback URL is created
+  - SRP is always available and the plaintext-password auth flow is enabled only where no alternative exists — a hosted-UI deployment signs in through the authorization code grant instead
+  - The pool is retained on stack deletion with Cognito deletion protection enabled, so an identity store cannot be destroyed by tearing down the stack
 - **Observability & Monitoring**:
   - Agent spans are routed to the runtime's own log group rather than the account-shared `aws/spans` group, bringing span content (prompts, model I/O, tool arguments and results) inside the same CMK encryption, retention, and PII-masking boundary as the agent's logs (see [Observability & Tracing](#observability--tracing))
   - Optional CloudWatch alarms on error rate and throttle count for production incident detection (see [Alarms](#cloudwatch-alarms))
   - Optional EventBridge rules alerting on individual security events — auth failures and out-of-band configuration changes — with optional customer-supplied remediation (see [EventBridge Alerting](#eventbridge-alerting))
   - A module-created alarm SNS topic is CMK-encrypted and enforces TLS for delivery
+
+---
+
+## Inbound Authorization
+
+A runtime uses either AWS IAM (SigV4) or JWT bearer tokens for inbound auth — never both. Omit `authorizerConfiguration` entirely and the runtime uses IAM, which is the default. Configure `customJwtAuthorizer` and it uses `CUSTOM_JWT`.
+
+On the JWT path, exactly one of two fields names the identity provider. They differ only in **who provisions it**:
+
+| Field          | Who creates the IdP | When to use                                                          |
+| -------------- | ------------------- | -------------------------------------------------------------------- |
+| `discoveryUrl` | You                 | You already run an OIDC-compliant IdP (Cognito, Okta, Entra ID, ...)  |
+| `cognito`      | MDAA                | You want an IdP deployed and configured alongside the runtime         |
+
+Specifying both fails at synth; so does specifying neither.
+
+### Bring your own IdP: `discoveryUrl`
+
+MDAA creates no Cognito resources and passes your values through:
+
+```yaml
+authorizerConfiguration:
+  customJwtAuthorizer:
+    discoveryUrl: 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_ABC123/.well-known/openid-configuration'
+    allowedAudience:
+      - 'my-existing-client-id'
+```
+
+### MDAA-managed IdP: `cognito`
+
+`cognito: {}` accepts every default. MDAA composes the OIDC discovery URL from the created pool and adds the created app client to `allowedAudience`, so you supply neither:
+
+```yaml
+authorizerConfiguration:
+  customJwtAuthorizer:
+    cognito: {}
+```
+
+Defaults applied to the pool and client:
+
+| Setting             | Default                                              | Why                                                                          |
+| ------------------- | ---------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Feature plan        | `PLUS` with threat protection `ENFORCED`             | Cognito acts on detected risk rather than only recording it                   |
+| Password policy     | 8+ chars, upper/lower/digit/symbol                   | CDK-nag `AwsSolutions-COG1`                                                   |
+| User creation       | Administrators only                                  | A runtime's callers are provisioned deliberately                              |
+| Account recovery    | Email only                                           | SMS recovery is vulnerable to SIM-swap                                        |
+| MFA                 | `required` (TOTP)                                    | Compliance-clean by default; see [MFA enrolment](#mfa-enrolment) before deploying |
+| Token validity      | 15 minutes (ID and access)                           | AgentCore guidance for agentic workloads; Cognito's own default is 60 minutes |
+| Refresh token       | 1 day                                                | Cognito's 30-day default would let a leaked refresh token mint access tokens for a month |
+| Auth flows          | SRP always; plaintext password only without `hostedUi` | `USER_PASSWORD_AUTH` sends the password itself, so it is enabled only where no alternative exists |
+| Client secret       | None                                                 | The caller authenticates as a user, so a shared secret binds no identity      |
+| OAuth               | Disabled unless `hostedUi` is configured             | Avoids CDK's implicit grant and `https://example.com` callback defaults       |
+| Removal policy      | `retain`, with deletion protection                   | A wrongly destroyed identity store loses every user record irrecoverably       |
+
+Token validity is configurable from 5 to 60 minutes via `idTokenValidityMinutes`. That range is an MDAA policy choice — Cognito itself permits 5 minutes to 1 day, and the 60-minute cap keeps this module from being configured less securely than an unconfigured pool.
+
+Each branch has its own sample config, because they are mutually exclusive and cannot be combined in one file:
+
+**Federation requires `hostedUi`.** Cognito signs federated users in only through the hosted-UI Login and Authorize endpoints — never `InitiateAuth` — so `cognito.federation` without `cognito.hostedUi` is rejected at synth rather than deploying an identity provider no caller could reach.
+
+| Config | Demonstrates |
+| ------ | ------------ |
+| [sample-config-cognito.yaml](sample_configs/sample-config-cognito.yaml) | Pool defaults, hosted UI, and SAML federation |
+| [sample-config-cognito-hosted-ui.yaml](sample_configs/sample-config-cognito-hosted-ui.yaml) | Hosted-UI authorization code grant, no federation |
+| [sample-config-cognito-oidc.yaml](sample_configs/sample-config-cognito-oidc.yaml) | OIDC enterprise federation |
+
+### MFA enrolment
+
+**Read this before deploying with the default `mfa: required`.** TOTP from an authenticator app is the only second factor this pool enables, and Cognito requires every user to register one before they can obtain their first token. Who drives that registration depends on your configuration — and one case cannot do it at all:
+
+| Your callers | Configure | Who enrols the user |
+| ------------ | --------- | ------------------- |
+| People signing in through a browser | `hostedUi` (any `mfa`) | Cognito's managed login prompts for MFA setup and shows the QR code |
+| People signing in through your own UI | `mfa: required`, no `hostedUi` | **Your application** — see the flow below |
+| A service, job, or agent with no human present | `mfa: optional` | Nobody. MFA does not apply |
+
+If you configure `hostedUi`, you have nothing further to do: MDAA creates the hosted-UI domain and a managed-login branding style, and managed login then prompts each user through TOTP registration. (The branding style is required — Cognito activates managed login only for a client that has one, and assigns a default solely through the console, not the API.) Otherwise your application implements it, which is four calls threading a session through:
+
+1. `InitiateAuth` (`USER_PASSWORD_AUTH`) returns an **`MFA_SETUP`** challenge instead of tokens
+2. `AssociateSoftwareToken`, authorized with the challenge `Session`, returns the shared secret
+3. Present that secret to the user as a QR code; they scan it into an authenticator app and enter the generated code, which you confirm with `VerifySoftwareToken`
+4. `RespondToAuthChallenge` with `ChallengeName: MFA_SETUP` and the verified session completes sign-in
+
+On every subsequent sign-in the user gets a `SOFTWARE_TOKEN_MFA` challenge and supplies a fresh code. This is ordinary application code for any app enforcing MFA — Amplify's `setUpTOTP` and `confirmSignIn` wrap the same sequence — and you would write it regardless of who provisioned the pool. It is called out here because a deployment that does not expect it will find that **users simply cannot authenticate**, and the failure surfaces as an unexpected challenge response rather than an error mentioning MFA. MDAA emits a synth warning (`cognitoRequiredMfaWithoutHostedUi`) for this combination.
+
+**Set `mfa: optional` when no human is present to enrol.** A service caller authenticating with `USER_PASSWORD_AUTH` cannot register an authenticator, and storing a TOTP seed beside the password would make the "second" factor a second copy of the first — so MFA is not weakened by this setting, it is inapplicable. That pool carries documented CDK-nag suppressions for the MFA rules; a pool left on the default carries none.
+
+### Callers present the ID token
+
+Cognito puts the app client ID in the **ID token's `aud`** claim but in the **access token's `client_id`** claim. AgentCore validates every claim filter that is configured, so setting `allowedAudience` and `allowedClients` together requires a token to satisfy both — which no Cognito token does.
+
+MDAA therefore populates `allowedAudience` on the `cognito` path, never sets `allowedClients`, and **rejects a config that combines the two at synth** rather than deploying a pool that refuses every caller. **Access-token callers are not supported on this path**; use `discoveryUrl` with a hand-configured `allowedClients` for those. This is also why `idTokenValidityMinutes` is the security-relevant knob.
+
+Tokens must carry user context: AgentCore Identity binds on `iss`+`sub` throughout, so tokens minted from one shared client with no user context collapse every caller into a single identity and reuse the same Token Vault credentials across users. A user-context token from this pool has `sub` populated.
+
+### Operational notes
+
+- **The pool is retained by default** and carries Cognito deletion protection, so deleting the stack leaves it behind. Set `removalPolicy: destroy` for ephemeral deployments that should tear down cleanly — that deletes the pool and every user record in it.
+- **Cognito domain prefixes are globally unique per region.** The naming-derived default for `hostedUi` can collide with another account's pool; if deployment reports the domain already exists, set `cognitoDomainPrefix` explicitly.
+- **The pool and runtime deploy in one stack.** This is required, not merely convenient: the runtime validates the discovery URL at synth time, and a CloudFormation dynamic reference (`{{resolve:ssm:...}}`) does not match the required pattern — so publishing the URL to SSM for a separate stack to reference back cannot work. An unresolved CDK token does match.
 
 ---
 
@@ -165,6 +273,49 @@ Restricts runtime invocations to traffic originating from the configured VPC usi
 ```yaml
 # Contents available via above link
 --8<-- "target/docs/packages/apps/ai/bedrock-agentcore-runtime-app/sample_configs/sample-config-resource-policy.yaml"
+```
+
+#### MDAA-Managed Cognito Variant
+
+Has MDAA create and configure the Cognito user pool that issues the runtime's JWTs, rather than requiring a pre-existing identity provider. Choose this variant when you have no OIDC-compliant IdP to point at, or want one deployed with agentic-workload security defaults alongside the runtime. Shows the pool's security defaults together with a hosted UI and SAML federation. Requires its own config because `cognito` is mutually exclusive with the comprehensive config's `discoveryUrl` (see [Inbound Authorization](#inbound-authorization)).
+
+[sample-config-cognito.yaml](sample_configs/sample-config-cognito.yaml)
+
+```yaml
+# Contents available via above link
+--8<-- "target/docs/packages/apps/ai/bedrock-agentcore-runtime-app/sample_configs/sample-config-cognito.yaml"
+```
+
+#### MDAA-Managed Cognito with Hosted UI Variant
+
+Adds the Cognito hosted UI to the MDAA-managed pool, enabling the authorization code grant for callers that sign a user in through a browser front end. Choose this variant when a web front end logs the user in, rather than the caller invoking `InitiateAuth` directly. Shows a hosted UI on its own, with no federation — the plain browser-sign-in case.
+
+[sample-config-cognito-hosted-ui.yaml](sample_configs/sample-config-cognito-hosted-ui.yaml)
+
+```yaml
+# Contents available via above link
+--8<-- "target/docs/packages/apps/ai/bedrock-agentcore-runtime-app/sample_configs/sample-config-cognito-hosted-ui.yaml"
+```
+
+#### MDAA-Managed Cognito with OIDC Federation Variant
+
+Federates the MDAA-managed pool to an enterprise OIDC identity provider, enabling it on the app client alongside Cognito-native sign-in. Choose this variant when users authenticate through a corporate IdP that speaks OIDC. Requires its own config because `cognito.federation` accepts at most one of `saml` or `oidc`, so this branch cannot coexist with the SAML example.
+
+> **Supply `oidc.clientSecret` as a Secrets Manager dynamic reference, not plaintext.** Cognito requires the secret's value when the identity provider is registered, so whatever you put in config is what CloudFormation receives — a literal string is rendered in cleartext into the template's `ProviderDetails` and is then readable by anyone with `cloudformation:GetTemplate` on the stack. Reference the secret instead, and CloudFormation resolves it at deploy time while the template stores only the pointer:
+>
+> ```yaml
+> clientSecret: '{{resolve:secretsmanager:arn:aws:secretsmanager:us-east-1:111122223333:secret:my-oidc-secret:SecretString:clientSecret}}'
+> ```
+>
+> Write the ARN out in full: MDAA's `{{region}}` and `{{account}}` placeholders are not substituted inside a `{{resolve:...}}` reference, because the nested braces defeat the substitution.
+>
+> The same applies to `saml` federation only if your IdP requires a secret; SAML metadata URLs are not sensitive.
+
+[sample-config-cognito-oidc.yaml](sample_configs/sample-config-cognito-oidc.yaml)
+
+```yaml
+# Contents available via above link
+--8<-- "target/docs/packages/apps/ai/bedrock-agentcore-runtime-app/sample_configs/sample-config-cognito-oidc.yaml"
 ```
 
 ### CloudWatch Alarms

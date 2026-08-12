@@ -137,7 +137,7 @@
                 },
                 "jwtAuthorizer": {
                     "$ref": "#/definitions/CustomJwtAuthorizerProperty",
-                    "description": "Custom JWT authorizer configuration for token-based authentication via OIDC.\n\nUse cases: JWT authentication, OIDC integration, token validation, identity provider connection\n\nAWS: Bedrock AgentCore Runtime JWT authorizer\n\nValidation: discoveryUrl required; must end with /.well-known/openid-configuration"
+                    "description": "Custom JWT authorizer configuration for token-based authentication via OIDC.\n\nExactly one of `discoveryUrl` or `cognito` must be specified — they are the two ways\nof naming the identity provider, differing only in who provisions it. Supply\n`discoveryUrl` for an IdP you already run, or `cognito` to have MDAA create and\nconfigure one.\n\nUse cases: JWT authentication, OIDC integration, token validation, identity provider connection\n\nAWS: Bedrock AgentCore Runtime JWT authorizer\n\nValidation: exactly one of discoveryUrl or cognito; discoveryUrl must end with /.well-known/openid-configuration"
                 }
             },
             "type": "object"
@@ -519,6 +519,152 @@
             },
             "type": "object"
         },
+        "CognitoAuthProperty": {
+            "additionalProperties": false,
+            "description": "MDAA-managed Cognito user pool and app client for AgentCore inbound JWT authorization.\n\nOpting in to this configuration makes MDAA create the identity provider rather than\nrequiring a pre-existing one: the pool, an app client with agentic-workload token\ndefaults, and the composed OIDC discovery URL and audience that the runtime's JWT\nauthorizer consumes. An empty object accepts every default.\n\nCallers on this path present the **ID token** — see\n{@link AgentcoreCognitoAuth.discoveryUrl} for why, and why `allowedClients` is not set.\n\nUse cases: Deploying an IdP alongside a runtime, agentic-workload token hardening\n\nAWS: Amazon Cognito user pool + app client fronting AgentCore CUSTOM_JWT inbound auth\n\nValidation: presence of this configuration opts in to pool creation",
+            "properties": {
+                "federation": {
+                    "$ref": "#/definitions/CognitoFederationProperty",
+                    "description": "Federation with an enterprise identity provider. Requires `hostedUi`, since Cognito\nsigns federated users in only through the hosted-UI endpoints.\n\nUse cases: Enterprise SSO\n\nAWS: UserPoolIdentityProvider\n\nValidation: Optional; requires hostedUi; at most one of saml or oidc"
+                },
+                "hostedUi": {
+                    "$ref": "#/definitions/CognitoHostedUiProperty",
+                    "description": "Hosted-UI authorization code grant, with a Cognito domain and a managed-login branding\nstyle so the sign-in page renders.\n\nConfiguring it also has three effects beyond the grant itself: managed login drives TOTP\nenrolment for a `required` MFA pool, the client drops the plaintext-password auth flow\n(sign-in goes through the code grant instead), and `federation` becomes usable — it\nrequires this block. Omit it and the client has OAuth disabled entirely.\n\nUse cases: Browser-based sign-in, federated sign-in, managed TOTP enrolment\n\nAWS: UserPoolClient OAuth settings + UserPoolDomain + ManagedLoginBranding\n\nValidation: Optional; CognitoHostedUiProperty; required when federation is configured"
+                },
+                "idTokenValidityMinutes": {
+                    "default": 15,
+                    "description": "ID and access token validity in minutes. Defaults to 15.\n\n15-30 minutes is the AgentCore guidance for agentic workloads; Cognito's own\ndefault is 60. The accepted 5-60 range is an MDAA policy choice — Cognito itself\npermits up to 1 day.\n\nUse cases: Token lifetime hardening, revocation-gap reduction\n\nAWS: AWS::Cognito::UserPoolClient IdTokenValidity / AccessTokenValidity\n\nValidation: Optional; Number; 5-60 minutes",
+                    "maximum": 60,
+                    "minimum": 5,
+                    "type": "number"
+                },
+                "mfa": {
+                    "description": "MFA enforcement. Defaults to `required`, so each user must register a TOTP\nauthenticator before their first token — see {@link CognitoMfaMode} for the enrolment\npaths, and set `optional` when no human is present to enrol.\n\nUse cases: MFA enforcement, non-interactive callers\n\nAWS: MfaConfiguration / EnabledMfas\n\nValidation: Optional; off | optional | required",
+                    "enum": [
+                        "off",
+                        "optional",
+                        "required"
+                    ],
+                    "type": "string"
+                },
+                "removalPolicy": {
+                    "default": "retain",
+                    "description": "Pool removal policy. Defaults to `retain`.\n\n`retain` keeps the pool when the stack is deleted, so user records survive, and also\nenables Cognito deletion protection. `destroy` means a stack deletion **deletes the\npool and every user record in it** — set it for ephemeral deployments that should tear\ndown cleanly, and note that a retained pool also keeps its hosted-UI domain, whose\nprefix is globally unique per region.\n\nUse cases: Production pool retention, ephemeral test deployments\n\nAWS: DeletionPolicy / UpdateReplacePolicy, plus DeletionProtection\n\nValidation: Optional; destroy | retain",
+                    "enum": [
+                        "destroy",
+                        "retain"
+                    ],
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "CognitoFederationProperty": {
+            "additionalProperties": false,
+            "description": "Federation with an enterprise identity provider. At most one of `saml` or `oidc` may\nbe configured — a single pool federating to two enterprise providers is out of scope\nfor this module.\n\nRequires `hostedUi`. Cognito signs federated users in only through the hosted-UI Login\nand Authorize endpoints, never `InitiateAuth`, so a pool with federation and no hosted UI\nwould register a provider no caller could reach.\n\nUse cases: Enterprise SSO\n\nAWS: AWS::Cognito::UserPoolIdentityProvider\n\nValidation: Optional; requires hostedUi; at most one of saml or oidc",
+            "properties": {
+                "oidc": {
+                    "$ref": "#/definitions/CognitoOidcFederationProperty",
+                    "description": "OIDC federation configuration.\n\nUse cases: OIDC enterprise SSO\n\nAWS: UserPoolIdentityProvider ProviderType OIDC\n\nValidation: Optional; mutually exclusive with saml"
+                },
+                "saml": {
+                    "$ref": "#/definitions/CognitoSamlFederationProperty",
+                    "description": "SAML federation configuration.\n\nUse cases: SAML enterprise SSO\n\nAWS: UserPoolIdentityProvider ProviderType SAML\n\nValidation: Optional; mutually exclusive with oidc"
+                }
+            },
+            "type": "object"
+        },
+        "CognitoHostedUiProperty": {
+            "additionalProperties": false,
+            "description": "Hosted-UI authorization code grant, for callers that sign a user in through a browser\nfront end rather than calling `InitiateAuth` directly.\n\nPresence of this configuration opts in to OAuth on the app client. When it is absent\nthe client has OAuth disabled entirely — see {@link buildClientOAuthOptions} for why\nthat is the secure default rather than merely the minimal one.\n\nUse cases: Browser-based sign-in, hosted login page\n\nAWS: AWS::Cognito::UserPoolClient OAuth settings, AWS::Cognito::UserPoolDomain\n\nValidation: callbackUrls required and non-empty; all URLs must be https",
+            "properties": {
+                "allowedOAuthScopes": {
+                    "description": "OAuth scopes granted to the hosted-UI client. Defaults to openid, profile, email.\n\nUse cases: Scope restriction\n\nAWS: AllowedOAuthScopes\n\nValidation: Optional; subset of openid | profile | email | phone",
+                    "items": {
+                        "enum": [
+                            "email",
+                            "openid",
+                            "phone",
+                            "profile"
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "callbackUrls": {
+                    "description": "Redirect URIs permitted after a successful sign-in. Required, because a hosted UI\nwithout a callback URL cannot complete the code grant.\n\nUse cases: OAuth redirect\n\nAWS: AllowedOAuthFlows / CallbackURLs\n\nValidation: Required; String[]; non-empty; https URLs (http allowed for localhost)",
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "cognitoDomainPrefix": {
+                    "description": "Cognito hosted-UI domain prefix. Defaults to an MDAA naming-derived prefix.\n\nCognito domain prefixes are globally unique per region, so a naming-derived\ndefault can collide with another account's pool in the same region. Set this\nexplicitly if deployment fails with a domain-already-exists error.\n\nUse cases: Hosted UI domain\n\nAWS: AWS::Cognito::UserPoolDomain Domain\n\nValidation: Optional; String; lowercase letters, digits, and hyphens; 1-63 chars",
+                    "pattern": "^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$",
+                    "type": "string"
+                },
+                "logoutUrls": {
+                    "description": "Redirect URIs permitted after sign-out.\n\nUse cases: OAuth sign-out redirect\n\nAWS: LogoutURLs\n\nValidation: Optional; String[]; https URLs (http allowed for localhost)",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "callbackUrls"
+            ],
+            "type": "object"
+        },
+        "CognitoOidcFederationProperty": {
+            "additionalProperties": false,
+            "description": "OIDC federation with an enterprise identity provider, registered on the MDAA-created\npool and enabled on the app client alongside Cognito-native sign-in.\n\nThe client secret is supplied by value here because Cognito requires it at provider\nregistration. Supply it via an MDAA config secret reference rather than in plaintext\nconfig wherever the surrounding config supports it.\n\nUse cases: Enterprise SSO with an OIDC IdP\n\nAWS: AWS::Cognito::UserPoolIdentityProvider (ProviderType OIDC)\n\nValidation: issuerUrl, clientId, and clientSecret all required",
+            "properties": {
+                "clientId": {
+                    "description": "OIDC client ID registered with the enterprise IdP.\n\nUse cases: OIDC provider registration\n\nAWS: ProviderDetails client_id\n\nValidation: Required; String",
+                    "type": "string"
+                },
+                "clientSecret": {
+                    "description": "OIDC client secret registered with the enterprise IdP.\n\nUse cases: OIDC provider registration\n\nAWS: ProviderDetails client_secret\n\nValidation: Required; String",
+                    "type": "string"
+                },
+                "emailClaim": {
+                    "description": "OIDC claim mapped to the Cognito `email` attribute. Defaults to `email`.\n\nUse cases: Attribute mapping, user identification\n\nAWS: AttributeMapping email\n\nValidation: Optional; String",
+                    "type": "string"
+                },
+                "issuerUrl": {
+                    "description": "OIDC issuer URL. Cognito discovers the provider's endpoints beneath it.\n\nUse cases: OIDC provider registration\n\nAWS: ProviderDetails oidc_issuer\n\nValidation: Required; String; must be an https URL",
+                    "pattern": "^https://",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "clientId",
+                "clientSecret",
+                "issuerUrl"
+            ],
+            "type": "object"
+        },
+        "CognitoSamlFederationProperty": {
+            "additionalProperties": false,
+            "description": "SAML federation with an enterprise identity provider, registered on the MDAA-created\npool and enabled on the app client alongside Cognito-native sign-in.\n\nUse cases: Enterprise SSO, Entra ID / ADFS / Okta federation\n\nAWS: AWS::Cognito::UserPoolIdentityProvider (ProviderType SAML)\n\nValidation: metadataUrl required; must be an https URL",
+            "properties": {
+                "emailClaim": {
+                    "description": "SAML assertion attribute mapped to the Cognito `email` attribute.\nDefaults to `email`.\n\nUse cases: Attribute mapping, user identification\n\nAWS: AttributeMapping email\n\nValidation: Optional; String",
+                    "type": "string"
+                },
+                "metadataUrl": {
+                    "description": "SAML metadata document URL published by the enterprise IdP.\n\nUse cases: SAML provider registration\n\nAWS: ProviderDetails MetadataURL\n\nValidation: Required; String; must be an https URL",
+                    "pattern": "^https://",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "metadataUrl"
+            ],
+            "type": "object"
+        },
         "Conditions": {
             "additionalProperties": false,
             "description": "Conditions for when an IAM Policy is in effect, specified in the following structure:\n\n`{ \"Operator\": { \"keyInRequestContext\": \"value\" } }`\n\nThe value can be either a single string value or an array of string values.\n\nFor more information, including which operators are supported, see [the IAM\ndocumentation](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition.html).",
@@ -587,30 +733,31 @@
         },
         "CustomJwtAuthorizerProperty": {
             "additionalProperties": false,
-            "description": "Custom JWT authorizer configuration for token-based authentication via OIDC.\n\nUse cases: JWT authentication, OIDC integration, token validation, identity provider connection\n\nAWS: Bedrock AgentCore Runtime JWT authorizer\n\nValidation: discoveryUrl required; must end with /.well-known/openid-configuration",
+            "description": "Custom JWT authorizer configuration for token-based authentication via OIDC.\n\nExactly one of `discoveryUrl` or `cognito` must be specified — they are the two ways\nof naming the identity provider, differing only in who provisions it. Supply\n`discoveryUrl` for an IdP you already run, or `cognito` to have MDAA create and\nconfigure one.\n\nUse cases: JWT authentication, OIDC integration, token validation, identity provider connection\n\nAWS: Bedrock AgentCore Runtime JWT authorizer\n\nValidation: exactly one of discoveryUrl or cognito; discoveryUrl must end with /.well-known/openid-configuration",
             "properties": {
                 "allowedAudience": {
-                    "description": "Allowed audience values for JWT token validation.\n\nUse cases: Audience validation, client filtering, access restriction\n\nAWS: JWT audience claim validation\n\nValidation: Optional; String[]; validates against aud claim",
+                    "description": "Allowed audience values for JWT token validation.\n\nOn the `cognito` path MDAA always adds the app client it creates, so values set here\nare additional accepted audiences rather than a replacement.\n\nUse cases: Audience validation, client filtering, access restriction\n\nAWS: JWT audience claim validation\n\nValidation: Optional; String[]; validates against aud claim",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "allowedClients": {
-                    "description": "Allowed client IDs for JWT token validation.\n\nUse cases: Client ID validation, application filtering, access control\n\nAWS: JWT client_id claim validation\n\nValidation: Optional; String[]; validates against client_id claim",
+                    "description": "Allowed client IDs for JWT token validation.\n\nOnly valid on the `discoveryUrl` path. Combining it with `cognito` is rejected at\nsynth: AgentCore validates every claim filter configured, and MDAA sets\n`allowedAudience` to the app client it creates — Cognito puts that ID in the ID token's\n`aud` but the access token's `client_id`, so no token would satisfy both filters and\nevery caller would be rejected.\n\nUse cases: Client ID validation, application filtering, access control\n\nAWS: JWT client_id claim validation\n\nValidation: Optional; String[]; validates against client_id claim",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
+                "cognito": {
+                    "$ref": "#/definitions/CognitoAuthProperty",
+                    "description": "Opts in to an MDAA-created Cognito user pool as the identity provider, instead of\nsupplying `discoveryUrl` for one you already run. Mutually exclusive with\n`discoveryUrl`; an empty object accepts all defaults.\n\nMDAA composes the discovery URL from the created pool and adds the created app\nclient to `allowedAudience`, so neither needs to be supplied. Callers on this path\npresent the **ID token**, which is why `allowedClients` is not set for them.\n\nUse cases: Deploying an IdP alongside the runtime, agentic-workload token hardening\n\nAWS: Amazon Cognito user pool + app client fronting CUSTOM_JWT inbound auth\n\nValidation: Optional; CognitoAuthProperty; mutually exclusive with discoveryUrl"
+                },
                 "discoveryUrl": {
-                    "description": "OIDC discovery URL for JWT token validation.\n\nUse cases: OIDC integration, token validation, identity provider connection\n\nAWS: OIDC discovery URL for JWT validation\n\nValidation: Required; String; must end with /.well-known/openid-configuration",
+                    "description": "OIDC discovery URL for JWT token validation, for an identity provider you already\nrun (Cognito, Okta, Entra ID, ...). Mutually exclusive with `cognito`.\n\nUse cases: OIDC integration, token validation, identity provider connection\n\nAWS: OIDC discovery URL for JWT validation\n\nValidation: Required unless cognito is specified; String; must end with /.well-known/openid-configuration",
                     "type": "string"
                 }
             },
-            "required": [
-                "discoveryUrl"
-            ],
             "type": "object"
         },
         "DataProtectionProperty": {

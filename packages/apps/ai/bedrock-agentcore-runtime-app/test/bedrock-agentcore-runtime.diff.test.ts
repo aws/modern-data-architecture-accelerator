@@ -140,4 +140,70 @@ describe('Bedrock Agentcore Runtime Baseline Diff Tests', () => {
       },
     ),
   );
+
+  baselineDiffTestApp(
+    'Bedrock Agentcore Runtime Cognito',
+    Create.appProvider(
+      context => {
+        const moduleApp = new BedrockAgentcoreRuntimeApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-cognito.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-bedrock-agentcore-runtime-cognito',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
+
+  baselineDiffTestApp(
+    'Bedrock Agentcore Runtime Cognito Hosted UI',
+    Create.appProvider(
+      context => {
+        const moduleApp = new BedrockAgentcoreRuntimeApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-cognito-hosted-ui.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-bedrock-agentcore-runtime-cognito-hosted-ui',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
+
+  baselineDiffTestApp(
+    'Bedrock Agentcore Runtime Cognito OIDC Federation',
+    Create.appProvider(
+      context => {
+        const moduleApp = new BedrockAgentcoreRuntimeApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-cognito-oidc.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-bedrock-agentcore-runtime-cognito-oidc',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
 });

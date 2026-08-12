@@ -1,0 +1,1746 @@
+{
+  "Description": "(SO0320-bedrock-agentcore-runtime) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-cognito/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-cognito",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-bedrock-agentcore-runtime) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "bedrockagentcoreruntimeRuntimeManagedPolicyC84DC486": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "Managed policy for Bedrock AgentCore Runtime: testAgentRuntime",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-agentcore-runtime-cognito-bedrock-agentcore-runtime-testagentruntime",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "ecr:GetAuthorizationToken",
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "ECRTokenAccess"
+            },
+            {
+              "Action": [
+                "logs:DescribeLogStreams",
+                "logs:CreateLogGroup"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:/aws/bedrock-agentcore/runtimes/*"
+            },
+            {
+              "Action": "logs:DescribeLogGroups",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:*"
+            },
+            {
+              "Action": [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:/aws/bedrock-agentcore/runtimes/*:log-stream:*"
+            },
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+                "xray:GetSamplingRules",
+                "xray:GetSamplingTargets"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": "cloudwatch:PutMetricData",
+              "Condition": {
+                "StringEquals": {
+                  "cloudwatch:namespace": "bedrock-agentcore"
+                }
+              },
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "bedrock-agentcore:GetWorkloadAccessToken",
+                "bedrock-agentcore:GetWorkloadAccessTokenForJWT",
+                "bedrock-agentcore:GetWorkloadAccessTokenForUserId"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                "arn:test-partition:bedrock-agentcore:test-region:test-account:workload-identity-directory/default",
+                "arn:test-partition:bedrock-agentcore:test-region:test-account:workload-identity-directory/default/workload-identity/*"
+              ],
+              "Sid": "GetAgentAccessToken"
+            },
+            {
+              "Action": [
+                "bedrock:InvokeModel",
+                "bedrock:InvokeModelWithResponseStream"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                "arn:test-partition:bedrock:*::foundation-model/*",
+                "arn:test-partition:bedrock:test-region:test-account:*"
+              ],
+              "Sid": "BedrockModelInvocation"
+            },
+            {
+              "Action": "logs:PutResourcePolicy",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:/aws/bedrock-agentcore/runtimes/test_org_test_env_test_domain_test_bed__22654a04-*",
+              "Sid": "SpanDestinationResourcePolicy"
+            },
+            {
+              "Action": [
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:ecr:test-region:test-account:repository/test-runtime",
+              "Sid": "ECRRepositoryAccess"
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts] Wildcard resources required for ECR GetAuthorizationToken (global service), X-Ray, CloudWatch Metrics (scoped by namespace condition), and Bedrock foundation models. logs:PutResourcePolicy uses a wildcard suffix because AgentCore appends the endpoint qualifier to the log group name at runtime; it is scoped to this runtime's own log-group prefix (/aws/bedrock-agentcore/runtimes/<runtimeName>-*), not to all runtimes. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeRuntimeRole7820E6C7": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account"
+                },
+                "ArnLike": {
+                  "aws:SourceArn": "arn:test-partition:bedrock-agentcore:test-region:test-account:*"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "bedrock-agentcore.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "IAM role for Bedrock AgentCore Runtime: testAgentRuntime",
+        "ManagedPolicyArns": [
+          {
+            "Ref": "bedrockagentcoreruntimeRuntimeManagedPolicyC84DC486"
+          }
+        ],
+        "RoleName": "test-org-test-env-test-domain-test-bedrock-agentcore-r--5100c61f",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-agentcore-runtime"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-agentcore-runtime-cognito"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts] Wildcard resources required for ECR GetAuthorizationToken (global service), X-Ray, CloudWatch Metrics (scoped by namespace condition), and Bedrock foundation models. logs:PutResourcePolicy uses a wildcard suffix because AgentCore appends the endpoint qualifier to the log group name at runtime; it is scoped to this runtime's own log-group prefix (/aws/bedrock-agentcore/runtimes/<runtimeName>-*), not to all runtimes. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts] Using customer managed policies for Bedrock AgentCore Runtime as required for compliance",
+              "id": "AwsSolutions-IAM4"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeRuntimeRolerolebedrockagentcoreruntimetestAgentRuntimearnssm13190A0D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-cognito/role/bedrock-agentcore-runtime-testagentruntime/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-cognito",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeRuntimeRole7820E6C7",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts] Wildcard resources required for ECR GetAuthorizationToken (global service), X-Ray, CloudWatch Metrics (scoped by namespace condition), and Bedrock foundation models. logs:PutResourcePolicy uses a wildcard suffix because AgentCore appends the endpoint qualifier to the log group name at runtime; it is scoped to this runtime's own log-group prefix (/aws/bedrock-agentcore/runtimes/<runtimeName>-*), not to all runtimes. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts] Using customer managed policies for Bedrock AgentCore Runtime as required for compliance",
+              "id": "AwsSolutions-IAM4"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeRuntimeRolerolebedrockagentcoreruntimetestAgentRuntimeidssm3573B392": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-cognito/role/bedrock-agentcore-runtime-testagentruntime/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-cognito",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeRuntimeRole7820E6C7",
+            "RoleId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts] Wildcard resources required for ECR GetAuthorizationToken (global service), X-Ray, CloudWatch Metrics (scoped by namespace condition), and Bedrock foundation models. logs:PutResourcePolicy uses a wildcard suffix because AgentCore appends the endpoint qualifier to the log group name at runtime; it is scoped to this runtime's own log-group prefix (/aws/bedrock-agentcore/runtimes/<runtimeName>-*), not to all runtimes. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts] Using customer managed policies for Bedrock AgentCore Runtime as required for compliance",
+              "id": "AwsSolutions-IAM4"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeRuntimeRolerolebedrockagentcoreruntimetestAgentRuntimenamessmBF3B2D5B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-cognito/role/bedrock-agentcore-runtime-testagentruntime/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-cognito",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockagentcoreruntimeRuntimeRole7820E6C7"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts] Wildcard resources required for ECR GetAuthorizationToken (global service), X-Ray, CloudWatch Metrics (scoped by namespace condition), and Bedrock foundation models. logs:PutResourcePolicy uses a wildcard suffix because AgentCore appends the endpoint qualifier to the log group name at runtime; it is scoped to this runtime's own log-group prefix (/aws/bedrock-agentcore/runtimes/<runtimeName>-*), not to all runtimes. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts] Using customer managed policies for Bedrock AgentCore Runtime as required for compliance",
+              "id": "AwsSolutions-IAM4"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeCognitoAuthUserPool5BCEB9CE": {
+      "Type": "AWS::Cognito::UserPool",
+      "Properties": {
+        "AccountRecoverySetting": {
+          "RecoveryMechanisms": [
+            {
+              "Name": "verified_email",
+              "Priority": 1
+            }
+          ]
+        },
+        "AdminCreateUserConfig": {
+          "AllowAdminCreateUserOnly": true
+        },
+        "AutoVerifiedAttributes": [
+          "email"
+        ],
+        "DeletionProtection": "ACTIVE",
+        "EmailVerificationMessage": "The verification code to your new account is {####}",
+        "EmailVerificationSubject": "Verify your new account",
+        "EnabledMfas": [
+          "SOFTWARE_TOKEN_MFA"
+        ],
+        "MfaConfiguration": "ON",
+        "Policies": {
+          "PasswordPolicy": {
+            "MinimumLength": 8,
+            "RequireLowercase": true,
+            "RequireNumbers": true,
+            "RequireSymbols": true,
+            "RequireUppercase": true
+          }
+        },
+        "SmsVerificationMessage": "The verification code to your new account is {####}",
+        "UserPoolAddOns": {
+          "AdvancedSecurityMode": "ENFORCED"
+        },
+        "UserPoolName": "test-org-test-env-test-domain-test-bedrock-agentcore-runtime-cognito",
+        "UserPoolTags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-cognito",
+          "mdaa_org": "test-org"
+        },
+        "UserPoolTier": "PLUS",
+        "UsernameAttributes": [
+          "email"
+        ],
+        "VerificationMessageTemplate": {
+          "DefaultEmailOption": "CONFIRM_WITH_CODE",
+          "EmailMessage": "The verification code to your new account is {####}",
+          "EmailSubject": "Verify your new account",
+          "SmsMessage": "The verification code to your new account is {####}"
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "bedrockagentcoreruntimeCognitoAuthUserPoolCognitoAuthClientA9A45F5B": {
+      "Type": "AWS::Cognito::UserPoolClient",
+      "Properties": {
+        "AccessTokenValidity": 15,
+        "AllowedOAuthFlows": [
+          "code"
+        ],
+        "AllowedOAuthFlowsUserPoolClient": true,
+        "AllowedOAuthScopes": [
+          "openid",
+          "profile",
+          "email"
+        ],
+        "CallbackURLs": [
+          "https://app.example.com/callback"
+        ],
+        "ClientName": "test-org-test-env-test-domain-test-bedrock-agentcore-runtime-cognito",
+        "EnableTokenRevocation": true,
+        "ExplicitAuthFlows": [
+          "ALLOW_USER_SRP_AUTH",
+          "ALLOW_REFRESH_TOKEN_AUTH"
+        ],
+        "GenerateSecret": false,
+        "IdTokenValidity": 15,
+        "PreventUserExistenceErrors": "ENABLED",
+        "RefreshTokenValidity": 1440,
+        "SupportedIdentityProviders": [
+          "COGNITO",
+          {
+            "Ref": "bedrockagentcoreruntimeCognitoAuthSamlProviderC700B2F7"
+          }
+        ],
+        "TokenValidityUnits": {
+          "AccessToken": "minutes",
+          "IdToken": "minutes",
+          "RefreshToken": "minutes"
+        },
+        "UserPoolId": {
+          "Ref": "bedrockagentcoreruntimeCognitoAuthUserPool5BCEB9CE"
+        }
+      },
+      "DependsOn": [
+        "bedrockagentcoreruntimeCognitoAuthSamlProviderC700B2F7"
+      ]
+    },
+    "bedrockagentcoreruntimeCognitoAuthUserPoolCognitoAuthDomainB542083D": {
+      "Type": "AWS::Cognito::UserPoolDomain",
+      "Properties": {
+        "Domain": "test-agent-auth-saml",
+        "ManagedLoginVersion": 2,
+        "UserPoolId": {
+          "Ref": "bedrockagentcoreruntimeCognitoAuthUserPool5BCEB9CE"
+        }
+      }
+    },
+    "bedrockagentcoreruntimeCognitoAuthSamlProviderC700B2F7": {
+      "Type": "AWS::Cognito::UserPoolIdentityProvider",
+      "Properties": {
+        "AttributeMapping": {
+          "email": "email"
+        },
+        "ProviderDetails": {
+          "IDPSignout": false,
+          "MetadataURL": "https://login.microsoftonline.com/test-tenant/federationmetadata/2007-06/federationmetadata.xml"
+        },
+        "ProviderName": "testorgtesteSamlProvider1D52246C",
+        "ProviderType": "SAML",
+        "UserPoolId": {
+          "Ref": "bedrockagentcoreruntimeCognitoAuthUserPool5BCEB9CE"
+        }
+      }
+    },
+    "bedrockagentcoreruntimeCognitoAuthManagedLoginBranding11E663A5": {
+      "Type": "AWS::Cognito::ManagedLoginBranding",
+      "Properties": {
+        "ClientId": {
+          "Ref": "bedrockagentcoreruntimeCognitoAuthUserPoolCognitoAuthClientA9A45F5B"
+        },
+        "UseCognitoProvidedValues": true,
+        "UserPoolId": {
+          "Ref": "bedrockagentcoreruntimeCognitoAuthUserPool5BCEB9CE"
+        }
+      }
+    },
+    "bedrockagentcoreruntimeRuntime84537D71": {
+      "Type": "AWS::BedrockAgentCore::Runtime",
+      "Properties": {
+        "AgentRuntimeArtifact": {
+          "ContainerConfiguration": {
+            "ContainerUri": "test-account.dkr.ecr.test-region.amazonaws.com/test-runtime:latest"
+          }
+        },
+        "AgentRuntimeName": "test_org_test_env_test_domain_test_bed__22654a04",
+        "AuthorizerConfiguration": {
+          "CustomJWTAuthorizer": {
+            "AllowedAudience": [
+              {
+                "Ref": "bedrockagentcoreruntimeCognitoAuthUserPoolCognitoAuthClientA9A45F5B"
+              },
+              "an-additional-client-id"
+            ],
+            "DiscoveryUrl": {
+              "Fn::Join": [
+                "",
+                [
+                  "https://cognito-idp.test-region.amazonaws.com/",
+                  {
+                    "Ref": "bedrockagentcoreruntimeCognitoAuthUserPool5BCEB9CE"
+                  },
+                  "/.well-known/openid-configuration"
+                ]
+              ]
+            }
+          }
+        },
+        "EnvironmentVariables": {
+          "UNIFIED_TRACES_DESTINATION_ENABLED": "true"
+        },
+        "NetworkConfiguration": {
+          "NetworkMode": "VPC",
+          "NetworkModeConfig": {
+            "SecurityGroups": [
+              "sg-12345678"
+            ],
+            "Subnets": [
+              "subnet-12345678",
+              "subnet-87654321"
+            ]
+          }
+        },
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeRuntimeRole7820E6C7",
+            "Arn"
+          ]
+        },
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-cognito",
+          "mdaa_org": "test-org"
+        }
+      }
+    },
+    "bedrockagentcoreruntimeXRayResourcePolicyADC714BD": {
+      "Type": "AWS::Logs::ResourcePolicy",
+      "Properties": {
+        "PolicyDocument": "{\"Statement\":[{\"Action\":\"logs:PutLogEvents\",\"Condition\":{\"ArnLike\":{\"aws:SourceArn\":\"arn:test-partition:xray:test-region:test-account:*\"},\"StringEquals\":{\"aws:SourceAccount\":\"test-account\"}},\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"xray.amazonaws.com\"},\"Resource\":[\"arn:test-partition:logs:test-region:test-account:log-group:aws/spans:*\",\"arn:test-partition:logs:test-region:test-account:log-group:/aws/application-signals/data:*\"],\"Sid\":\"TransactionSearchXRayAccess\"}],\"Version\":\"2012-10-17\"}",
+        "PolicyName": "testorgtestenvtestdomaintestbedrockagentcoreruntimecognitobedrockagentcoreruntimeXRayResourcePolicy6FDD92C5"
+      }
+    },
+    "bedrockagentcoreruntimeTransactionSearchConfig2B8A09A6": {
+      "Type": "AWS::XRay::TransactionSearchConfig",
+      "Properties": {
+        "IndexingPercentage": 1
+      },
+      "DependsOn": [
+        "bedrockagentcoreruntimeXRayResourcePolicyADC714BD"
+      ]
+    },
+    "bedrockagentcoreruntimeLogGroupKmsKeyAF16CAC2": {
+      "Type": "AWS::KMS::Key",
+      "Properties": {
+        "Description": "KMS key for AgentCore Runtime log group encryption: testAgentRuntime",
+        "EnableKeyRotation": true,
+        "Enabled": true,
+        "KeyPolicy": {
+          "Statement": [
+            {
+              "Action": "kms:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account:root"
+              },
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "kms:Encrypt*",
+                "kms:Decrypt*",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+                "kms:Describe*"
+              ],
+              "Condition": {
+                "ArnLike": {
+                  "kms:EncryptionContext:aws:logs:arn": "arn:test-partition:logs:test-region:test-account:*"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "logs.test-region.amazonaws.com"
+              },
+              "Resource": "*",
+              "Sid": "AllowCloudWatchLogsEncryption"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-agentcore-runtime"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-agentcore-runtime-cognito"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "bedrockagentcoreruntimeLogGroupKmsKeyAlias9789D351": {
+      "Type": "AWS::KMS::Alias",
+      "Properties": {
+        "AliasName": "alias/test-org-test-env-test-domain-test-bedrock-agentcore-runtime-cognito-agentcore-runtime-logs-testagentruntime",
+        "TargetKeyId": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeLogGroupKmsKeyAF16CAC2",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeLogGroupKmsKeykmsagentcoreruntimelogstestAgentRuntimearnssmC8940647": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-cognito/kms/agentcore-runtime-logs-testagentruntime/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-cognito",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeLogGroupKmsKeyAF16CAC2",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeLogGroupKmsKeykmsagentcoreruntimelogstestAgentRuntimeidssmD130847B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-cognito/kms/agentcore-runtime-logs-testagentruntime/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-cognito",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockagentcoreruntimeLogGroupKmsKeyAF16CAC2"
+        }
+      }
+    },
+    "bedrockagentcoreruntimeLogProtectionD71F766E": {
+      "Type": "Custom::AgentCoreLogProtection",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customAgentCoreLogProtectionproviderframeworkonEvent185E2063",
+            "Arn"
+          ]
+        },
+        "runtimeId": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeRuntime84537D71",
+            "AgentRuntimeId"
+          ]
+        },
+        "kmsKeyArn": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeLogGroupKmsKeyAF16CAC2",
+            "Arn"
+          ]
+        },
+        "dataProtectionPolicy": "{\"Name\":\"agentcore-runtime-data-protection\",\"Version\":\"2021-06-01\",\"Statement\":[{\"Sid\":\"audit-policy\",\"DataIdentifier\":[\"arn:aws:dataprotection::aws:data-identifier/EmailAddress\",\"arn:aws:dataprotection::aws:data-identifier/CreditCardNumber\",\"arn:aws:dataprotection::aws:data-identifier/Ssn-US\",\"arn:aws:dataprotection::aws:data-identifier/Name\",\"arn:aws:dataprotection::aws:data-identifier/Address\",\"arn:aws:dataprotection::aws:data-identifier/PhoneNumber-US\",\"arn:aws:dataprotection::aws:data-identifier/IpAddress\"],\"Operation\":{\"Audit\":{\"FindingsDestination\":{}}}},{\"Sid\":\"redact-policy\",\"DataIdentifier\":[\"arn:aws:dataprotection::aws:data-identifier/EmailAddress\",\"arn:aws:dataprotection::aws:data-identifier/CreditCardNumber\",\"arn:aws:dataprotection::aws:data-identifier/Ssn-US\",\"arn:aws:dataprotection::aws:data-identifier/Name\",\"arn:aws:dataprotection::aws:data-identifier/Address\",\"arn:aws:dataprotection::aws:data-identifier/PhoneNumber-US\",\"arn:aws:dataprotection::aws:data-identifier/IpAddress\"],\"Operation\":{\"Deidentify\":{\"MaskConfig\":{}}}}]}"
+      },
+      "DependsOn": [
+        "bedrockagentcoreruntimeRuntime84537D71"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "bedrockagentcoreruntimeagentRuntimetestAgentRuntimearnssmBD5DB9C8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-cognito/agentruntime/testagentruntime/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-cognito",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeRuntime84537D71",
+            "AgentRuntimeArn"
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeagentRuntimetestAgentRuntimeidssm74DFCF6E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-cognito/agentruntime/testagentruntime/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-cognito",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeRuntime84537D71",
+            "AgentRuntimeId"
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeagentRuntimetestAgentRuntimenamessm299B449F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-cognito/agentruntime/testagentruntime/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-cognito",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-bedrock-agentcore-runtime-cognito-testagentruntime"
+      }
+    },
+    "bedrockagentcoreruntimecognitotestAgentRuntimeuserpoolidssmBB7BB27E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-cognito/cognito/testagentruntime/user-pool-id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-cognito",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockagentcoreruntimeCognitoAuthUserPool5BCEB9CE"
+        }
+      }
+    },
+    "bedrockagentcoreruntimecognitotestAgentRuntimeclientidssm80C398A2": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-cognito/cognito/testagentruntime/client-id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-cognito",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockagentcoreruntimeCognitoAuthUserPoolCognitoAuthClientA9A45F5B"
+        }
+      }
+    },
+    "bedrockagentcoreruntimecognitotestAgentRuntimediscoveryurlssm8F76FB14": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-cognito/cognito/testagentruntime/discovery-url",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-cognito",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "https://cognito-idp.test-region.amazonaws.com/",
+              {
+                "Ref": "bedrockagentcoreruntimeCognitoAuthUserPool5BCEB9CE"
+              },
+              "/.well-known/openid-configuration"
+            ]
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimecognitotestAgentRuntimedomainssm667DB74E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-cognito/cognito/testagentruntime/domain",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-cognito",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockagentcoreruntimeCognitoAuthUserPoolCognitoAuthDomainB542083D"
+        }
+      }
+    },
+    "customAgentCoreLogProtectionhandlerrole772ADF8C": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "RoleName": "test-org-test-env-test-domain-test-bedrock-agentcore-ru--7b02013",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-agentcore-runtime"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-agentcore-runtime-cognito"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionhandlerroleDefaultPolicy74388693": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-bedrock-agentcore-ru--7b02013*"
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-bedrock-agentcore-ru--7b02013*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "customAgentCoreLogProtectionhandlerroleDefaultPolicy74388693",
+        "Roles": [
+          {
+            "Ref": "customAgentCoreLogProtectionhandlerrole772ADF8C"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionhandlerpolicy6DC99A72": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "logs:DescribeLogGroups",
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "logs:AssociateKmsKey",
+                "logs:DisassociateKmsKey",
+                "logs:PutRetentionPolicy",
+                "logs:PutDataProtectionPolicy"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:test-partition:logs:test-region:test-account:log-group:/aws/bedrock-agentcore/runtimes/",
+                    {
+                      "Fn::GetAtt": [
+                        "bedrockagentcoreruntimeRuntime84537D71",
+                        "AgentRuntimeId"
+                      ]
+                    },
+                    "-*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": "kms:DescribeKey",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockagentcoreruntimeLogGroupKmsKeyAF16CAC2",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "AgentCoreLogProtection-handler",
+        "Roles": [
+          {
+            "Ref": "customAgentCoreLogProtectionhandlerrole772ADF8C"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] logs:DescribeLogGroups does not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html). Log group mutation actions are scoped to the deployment account/region and runtime-specific prefix pattern (/aws/bedrock-agentcore/runtimes/{runtimeId}-*).",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionhandlerfunction04508FB7": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Environment": {
+          "Variables": {
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-bedrock-agentcore-ru--7b02013",
+        "Handler": "log_protection.lambda_handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "customAgentCoreLogProtectionhandlerrole772ADF8C",
+            "Arn"
+          ]
+        },
+        "Runtime": "python3.14",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-agentcore-runtime"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-agentcore-runtime-cognito"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 300
+      },
+      "DependsOn": [
+        "customAgentCoreLogProtectionhandlerpolicy6DC99A72",
+        "customAgentCoreLogProtectionhandlerroleDefaultPolicy74388693",
+        "customAgentCoreLogProtectionhandlerrole772ADF8C"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionhandlerfunctionlambdaAgentCoreLogProtectionhandlernamessmF07E99E2": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-cognito/lambda/agentcorelogprotection-handler/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-cognito",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "customAgentCoreLogProtectionhandlerfunction04508FB7"
+        }
+      },
+      "DependsOn": [
+        "customAgentCoreLogProtectionhandlerpolicy6DC99A72"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionhandlerfunctionlambdaAgentCoreLogProtectionhandlerarnssmEC90D0CB": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-cognito/lambda/agentcorelogprotection-handler/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-cognito",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "customAgentCoreLogProtectionhandlerfunction04508FB7",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "customAgentCoreLogProtectionhandlerpolicy6DC99A72"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionhandlerfunctionlambdaAgentCoreLogProtectionhandlerloggroupssm640D0F72": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-cognito/lambda/agentcorelogprotection-handler/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-cognito",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "customAgentCoreLogProtectionhandlerfunction04508FB7"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": [
+        "customAgentCoreLogProtectionhandlerpolicy6DC99A72"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionproviderrole75408012": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "CR Role",
+        "RoleName": "test-org-test-env-test-domain-test-bedrock-agentcore-r--294f6e52",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-agentcore-runtime"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-agentcore-runtime-cognito"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionproviderroleDefaultPolicyC06F89FF": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-bedrock-agentcore-r--294f6e52*"
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-bedrock-agentcore-r--294f6e52*"
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "customAgentCoreLogProtectionhandlerfunction04508FB7",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "customAgentCoreLogProtectionhandlerfunction04508FB7",
+                          "Arn"
+                        ]
+                      },
+                      ":*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "lambda:GetFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "customAgentCoreLogProtectionhandlerfunction04508FB7",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "customAgentCoreLogProtectionproviderroleDefaultPolicyC06F89FF",
+        "Roles": [
+          {
+            "Ref": "customAgentCoreLogProtectionproviderrole75408012"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionproviderframeworkonEvent185E2063": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Description": "AWS CDK resource provider framework - onEvent (test-org-test-env-test-domain-test-bedrock-agentcore-runtime-cognito/custom-AgentCoreLogProtection-provider)",
+        "Environment": {
+          "Variables": {
+            "USER_ON_EVENT_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "customAgentCoreLogProtectionhandlerfunction04508FB7",
+                "Arn"
+              ]
+            }
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-bedrock-agentcore-r--294f6e52",
+        "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON"
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "customAgentCoreLogProtectionproviderrole75408012",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs24.x",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-agentcore-runtime"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-agentcore-runtime-cognito"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 900
+      },
+      "DependsOn": [
+        "customAgentCoreLogProtectionproviderroleDefaultPolicyC06F89FF",
+        "customAgentCoreLogProtectionproviderrole75408012"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Lambda function Runtime set by CDK Provider Framework",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "bedrockagentcoreruntimeRuntimeRolerolebedrockagentcoreruntimetestAgentRuntimearnoutDCD6E14D": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockagentcoreruntimeRuntimeRole7820E6C7",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-cognito:role:bedrockagentcoreruntimetestagentruntime:arn"
+      }
+    },
+    "bedrockagentcoreruntimeRuntimeRolerolebedrockagentcoreruntimetestAgentRuntimeidout2448B0F0": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockagentcoreruntimeRuntimeRole7820E6C7",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-cognito:role:bedrockagentcoreruntimetestagentruntime:id"
+      }
+    },
+    "bedrockagentcoreruntimeRuntimeRolerolebedrockagentcoreruntimetestAgentRuntimenameout2A76137F": {
+      "Value": {
+        "Ref": "bedrockagentcoreruntimeRuntimeRole7820E6C7"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-cognito:role:bedrockagentcoreruntimetestagentruntime:name"
+      }
+    },
+    "bedrockagentcoreruntimeLogGroupKmsKeykmsagentcoreruntimelogstestAgentRuntimearnoutEB26F9CF": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockagentcoreruntimeLogGroupKmsKeyAF16CAC2",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-cognito:kms:agentcoreruntimelogstestagentruntime:arn"
+      }
+    },
+    "bedrockagentcoreruntimeLogGroupKmsKeykmsagentcoreruntimelogstestAgentRuntimeidoutF3ACDAB6": {
+      "Value": {
+        "Ref": "bedrockagentcoreruntimeLogGroupKmsKeyAF16CAC2"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-cognito:kms:agentcoreruntimelogstestagentruntime:id"
+      }
+    },
+    "bedrockagentcoreruntimeagentRuntimetestAgentRuntimearnoutA7A7C358": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockagentcoreruntimeRuntime84537D71",
+          "AgentRuntimeArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-cognito:agentruntime:testagentruntime:arn"
+      }
+    },
+    "bedrockagentcoreruntimeagentRuntimetestAgentRuntimeidout28FA5C57": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockagentcoreruntimeRuntime84537D71",
+          "AgentRuntimeId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-cognito:agentruntime:testagentruntime:id"
+      }
+    },
+    "bedrockagentcoreruntimeagentRuntimetestAgentRuntimenameout5E164965": {
+      "Value": "test-org-test-env-test-domain-test-bedrock-agentcore-runtime-cognito-testagentruntime",
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-cognito:agentruntime:testagentruntime:name"
+      }
+    },
+    "bedrockagentcoreruntimecognitotestAgentRuntimeuserpoolidout1BBB2244": {
+      "Value": {
+        "Ref": "bedrockagentcoreruntimeCognitoAuthUserPool5BCEB9CE"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-cognito:cognito:testagentruntime:user-pool-id"
+      }
+    },
+    "bedrockagentcoreruntimecognitotestAgentRuntimeclientidout99DC2F15": {
+      "Value": {
+        "Ref": "bedrockagentcoreruntimeCognitoAuthUserPoolCognitoAuthClientA9A45F5B"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-cognito:cognito:testagentruntime:client-id"
+      }
+    },
+    "bedrockagentcoreruntimecognitotestAgentRuntimediscoveryurlout55870BE0": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://cognito-idp.test-region.amazonaws.com/",
+            {
+              "Ref": "bedrockagentcoreruntimeCognitoAuthUserPool5BCEB9CE"
+            },
+            "/.well-known/openid-configuration"
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-cognito:cognito:testagentruntime:discovery-url"
+      }
+    },
+    "bedrockagentcoreruntimecognitotestAgentRuntimedomainout5773751D": {
+      "Value": {
+        "Ref": "bedrockagentcoreruntimeCognitoAuthUserPoolCognitoAuthDomainB542083D"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-cognito:cognito:testagentruntime:domain"
+      }
+    },
+    "customAgentCoreLogProtectionhandlerfunctionlambdaAgentCoreLogProtectionhandlernameoutC1A1A368": {
+      "Value": {
+        "Ref": "customAgentCoreLogProtectionhandlerfunction04508FB7"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-cognito:lambda:agentcorelogprotectionhandler:name"
+      }
+    },
+    "customAgentCoreLogProtectionhandlerfunctionlambdaAgentCoreLogProtectionhandlerarnout04AFBBA1": {
+      "Value": {
+        "Fn::GetAtt": [
+          "customAgentCoreLogProtectionhandlerfunction04508FB7",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-cognito:lambda:agentcorelogprotectionhandler:arn"
+      }
+    },
+    "customAgentCoreLogProtectionhandlerfunctionlambdaAgentCoreLogProtectionhandlerloggroupoutAFB34640": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "customAgentCoreLogProtectionhandlerfunction04508FB7"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-cognito:lambda:agentcorelogprotectionhandler:log-group"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

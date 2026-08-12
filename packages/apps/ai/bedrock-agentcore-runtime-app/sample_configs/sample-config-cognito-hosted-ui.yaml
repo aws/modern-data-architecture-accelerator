@@ -1,0 +1,62 @@
+# Bedrock AgentCore Runtime with an MDAA-managed Cognito IdP and hosted UI.
+# Demonstrates the `cognito.hostedUi` option, for callers that sign a user in
+# through a browser front end rather than calling InitiateAuth directly.
+#
+# Why a dedicated config: this one shows `hostedUi` on its own, with no federation,
+# which is the plain browser-sign-in case. sample-config-cognito.yaml pairs a hosted
+# UI with SAML federation, and sample-config-cognito-oidc.yaml with OIDC — those
+# branches are mutually exclusive with each other.
+#
+# Configuring `hostedUi` enables the authorization code grant and creates a Cognito
+# domain plus a managed-login branding style (Cognito activates managed login only
+# for a client that has one). It also drops the plaintext-password auth flow, since
+# sign-in goes through the code grant instead.
+#
+# Omit `hostedUi` and the client has OAuth disabled entirely — which is the secure
+# default, because CDK's own client defaults would otherwise enable the implicit
+# grant, grant the aws.cognito.signin.user.admin scope, and set a callback URL on a
+# domain the deployer does not own.
+
+# Unique name for the Bedrock AgentCore Runtime
+agentRuntimeName: testAgentRuntime
+# Container deployment configuration
+agentRuntimeArtifact:
+  containerConfiguration:
+    containerUri: '{{account}}.dkr.ecr.{{region}}.amazonaws.com/test-runtime:latest'
+# VPC network configuration for secure runtime deployment
+networkConfiguration:
+  securityGroups:
+    - sg-12345678
+  subnets:
+    - subnet-12345678
+    - subnet-87654321
+# Inbound authorization via an MDAA-created Cognito pool
+authorizerConfiguration:
+  customJwtAuthorizer:
+    cognito:
+      # Hosted-UI authorization code grant. The implicit grant is never enabled:
+      # it returns tokens in the redirect fragment, where they land in browser
+      # history and referrer headers.
+      hostedUi:
+        # Redirect URIs permitted after a successful sign-in. Required — a hosted
+        # UI without a callback URL cannot complete the code grant. Must be https
+        # (Cognito permits plain http only for http://localhost).
+        callbackUrls:
+          - 'https://app.example.com/callback'
+        # (Optional) Redirect URIs permitted after sign-out
+        logoutUrls:
+          - 'https://app.example.com/logout'
+        # (Optional) Cognito domain prefix for the hosted UI. Defaults to an
+        # MDAA naming-derived value. Cognito domain prefixes are globally unique
+        # per region, so the derived default can collide with another account's
+        # pool — set this explicitly if deployment reports the domain already
+        # exists.
+        cognitoDomainPrefix: 'test-agent-auth'
+        # (Optional) OAuth scopes. Defaults to openid, profile, email.
+        # aws.cognito.signin.user.admin is deliberately not offered: it would let
+        # the bearer read and mutate their own user attributes through the
+        # Cognito API, which an AgentCore caller has no need for.
+        allowedOAuthScopes:
+          - openid
+          - profile
+          - email
