@@ -96,3 +96,9 @@ MDAA L2 Constructs implement resource-level compliance with CDK Nag rulesets. Th
 - [**SFTP Transfer Family Server Construct**](packages/constructs/L2/transfer-family-constructs/README.md)
 - [**(Preview) RDS Aurora Constructs**](packages/constructs/L2/rds-constructs/README.md)
 - [**(Preview) DynamoDB Construct**](packages/constructs/L2/ddb-constructs/README.md)
+
+## Service-Specific Prerequisites
+
+Organization-level controls assumed by particular services, published alongside the sample configurations that deploy them.
+
+- [**AgentCore Security Prerequisites**](https://github.com/aws-samples/sample-config-modern-data-architecture-accelerator/blob/main/agentic_app/AGENTCORE_SECURITY_PREREQUISITES.md)

@@ -12,7 +12,7 @@
 # Usage:
 #   .claude/skills/story-prep/new_branch.sh <branch-name> [base-branch] [remote]
 #
-# Branch name must match: ^(feat/|chore/|spike/|fix/)[a-z0-9]+(-[a-z0-9]+)*$
+# Branch name must match: ^(feat/|chore/|spike/|fix/|docs/)[a-z0-9]+(-[a-z0-9]+)*$
 # Base branch defaults to 'main'; remote defaults to 'origin'.
 # ============================================================================
 
@@ -24,10 +24,11 @@ cd "$PROJECT_ROOT"
 
 usage() {
     echo "Usage: $0 <branch-name> [base-branch] [remote]" >&2
-    echo "Branch name must start with 'feat/' or 'fix/' or 'chore/' or 'spike/' followed by lowercase letters, numbers, or hyphens." >&2
+    echo "Branch name must start with 'feat/' or 'fix/' or 'chore/' or 'spike/' or 'docs/' followed by lowercase letters, numbers, or hyphens." >&2
     echo "Base branch defaults to 'main' if not specified. Remote defaults to 'origin'." >&2
     echo "Example: $0 feat/user-authentication" >&2
     echo "Example: $0 fix/login-bug" >&2
+    echo "Example: $0 docs/1161-security-prereqs" >&2
     echo "Example: $0 feat/new-feature develop" >&2
     exit 1
 }
@@ -42,7 +43,7 @@ base_branch=${2:-main}
 remote=${3:-origin}
 
 # Validate before any git side effects, so a typo costs nothing.
-if ! [[ $new_branch_name =~ ^(feat/|chore/|spike/|fix/)[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
+if ! [[ $new_branch_name =~ ^(feat/|chore/|spike/|fix/|docs/)[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
     echo "Error: Invalid branch name format: '$new_branch_name'" >&2
     usage
 fi

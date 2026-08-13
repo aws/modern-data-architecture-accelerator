@@ -66,6 +66,15 @@ This module is designed in alignment with MDAA security/compliance principles an
   - Optional EventBridge rules alerting on individual security events — auth failures and out-of-band configuration changes — with optional customer-supplied remediation (see [EventBridge Alerting](#eventbridge-alerting))
   - A module-created alarm SNS topic is CMK-encrypted and enforces TLS for delivery
 
+### Organization-Level Prerequisites
+
+The controls above are what this module deploys. The org-level guardrails around them — SCPs, CloudTrail data events, cross-account telemetry aggregation — are documented in [AgentCore Security Prerequisites](https://github.com/aws-samples/sample-config-modern-data-architecture-accelerator/blob/main/agentic_app/AGENTCORE_SECURITY_PREREQUISITES.md), alongside the AgentCore sample configuration.
+
+Two items from it affect how this module behaves:
+
+- **CloudTrail data events are off by default.** `InvokeAgentRuntime` is a data event, so until they are enabled there is no invocation audit trail and the `auth-failure` [EventBridge rule](#eventbridge-alerting) matches nothing. Enable them with the audit-trail module's [`dataEventSelectors`](../../governance/audit-trail-app/README.md#data-event-selectors), using `resourceType: AWS::BedrockAgentCore::Runtime`.
+- **SCPs do not restrict OAuth/JWT callers.** For a runtime using `customJwtAuthorizer` the resource-based policy is the perimeter, which is what [`enforceVpcOnly`](#vpc-only-enforcement-variant) generates.
+
 ---
 
 ## Inbound Authorization
@@ -398,6 +407,10 @@ Where alarms detect _statistical_ conditions (a rate or a count over a period), 
 **`eventBridgeAlerts` requires an `alarms` block** that either creates a notification topic (`createNotificationTopic: true`) or references one (`notificationTopicArn`). That topic is the default target for every rule; configuring `eventBridgeAlerts` without one fails at synth rather than deploying rules that notify nothing.
 
 **Prerequisite: a CloudTrail trail** in the account/region logging the AgentCore events you want to match. CloudTrail delivers API-call events to the default event bus, which is what these rules match. Management events (the lifecycle APIs such as `UpdateAgentRuntime`) are logged by default on any trail; **data events (invocation) are off by default** and must be enabled explicitly. A rule whose events are not covered by a trail will never match.
+
+Deploy the trail with the [audit-trail](../../governance/audit-trail-app/README.md) module. The two rules have different requirements: `config-change` matches management events, so any trail satisfies it, while `auth-failure` matches an invocation **data** event and needs a `dataEventSelectors` entry for `AWS::BedrockAgentCore::Runtime`. See [Enabling EventBridge alerting on AgentCore invocations](../../governance/audit-trail-app/README.md#enabling-eventbridge-alerting-on-agentcore-invocations) for a worked trail config, and [Data Event Selectors](../../governance/audit-trail-app/README.md#data-event-selectors) for the property reference, cost scoping, and the EventBridge delivery lag. For enabling data events on a trail MDAA does not own, see [AgentCore Security Prerequisites](https://github.com/aws-samples/sample-config-modern-data-architecture-accelerator/blob/main/agentic_app/AGENTCORE_SECURITY_PREREQUISITES.md#2-cloudtrail-data-events).
+
+**Keep `includeManagementEvents: true` on that trail.** Advanced event selectors replace a trail's default selectors, so a trail carrying only data selectors logs no control plane events at all — which silences `config-change` while leaving it deployed and apparently healthy.
 
 Rules are a **keyed map**. Each key becomes part of the rule's resource name, so keep keys stable across deployments. Each rule matches on `errorCodes`, `eventNames`, or both:
 

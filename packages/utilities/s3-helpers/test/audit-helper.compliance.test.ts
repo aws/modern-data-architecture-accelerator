@@ -131,12 +131,12 @@ describe('AuditHelper.createDataEventCloudTrail', () => {
     'data-events',
     [
       {
-        name: 'AgentCore runtime data events',
+        name: 'agentcore-runtime',
         resourceType: 'AWS::BedrockAgentCore::Runtime',
         resourceArns: ['arn:test-partition:bedrock-agentcore:test-region:test-account:runtime/test-runtime'],
       },
       {
-        name: 'Lambda write events',
+        name: 'lambda-write-events',
         resourceType: 'AWS::Lambda::Function',
         readWriteType: 'WriteOnly',
       },
@@ -177,7 +177,7 @@ describe('AuditHelper.createDataEventCloudTrail', () => {
           FieldSelectors: [{ Field: 'eventCategory', Equals: ['Management'] }],
         },
         {
-          Name: 'AgentCore runtime data events',
+          Name: 'agentcore-runtime',
           FieldSelectors: [
             { Field: 'eventCategory', Equals: ['Data'] },
             { Field: 'resources.type', Equals: ['AWS::BedrockAgentCore::Runtime'] },
@@ -188,7 +188,7 @@ describe('AuditHelper.createDataEventCloudTrail', () => {
           ],
         },
         {
-          Name: 'Lambda write events',
+          Name: 'lambda-write-events',
           FieldSelectors: [
             { Field: 'eventCategory', Equals: ['Data'] },
             { Field: 'resources.type', Equals: ['AWS::Lambda::Function'] },
@@ -215,7 +215,7 @@ describe('AuditHelper.createDataEventCloudTrail without management events', () =
   // outright, so this trail captures no control plane events at all -- the behaviour this
   // suite pins, since it is silent rather than an error.
   const trail = AuditHelper.createDataEventCloudTrail(stack, testBucket, testKey, testApp.naming, 'data-only', [
-    { name: 'Lambda read events', resourceType: 'AWS::Lambda::Function', readWriteType: 'ReadOnly' },
+    { name: 'lambda-read-events', resourceType: 'AWS::Lambda::Function', readWriteType: 'ReadOnly' },
     { name: 'DynamoDB all events', resourceType: 'AWS::DynamoDB::Table', readWriteType: 'All' },
   ]);
   MdaaNagSuppressions.addCodeResourceSuppressions(
@@ -240,7 +240,7 @@ describe('AuditHelper.createDataEventCloudTrail without management events', () =
     template.hasResourceProperties('AWS::CloudTrail::Trail', {
       AdvancedEventSelectors: [
         {
-          Name: 'Lambda read events',
+          Name: 'lambda-read-events',
           FieldSelectors: [
             { Field: 'eventCategory', Equals: ['Data'] },
             { Field: 'resources.type', Equals: ['AWS::Lambda::Function'] },

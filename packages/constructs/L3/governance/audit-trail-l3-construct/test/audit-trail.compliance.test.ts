@@ -93,7 +93,7 @@ describe('MDAA Audit Trail with Data Event Selectors - Compliance', () => {
         cloudTrailAuditKmsKeyArn: 'arn:test-partition:kms:test-region:test-account:key/agentcore-key-id',
         includeManagementEvents: true,
         dataEventSelectors: {
-          'AgentCore runtime data events': {
+          'agentcore-runtime': {
             resourceType: 'AWS::BedrockAgentCore::Runtime',
             resourceArns: ['arn:test-partition:bedrock-agentcore:test-region:test-account:runtime/test-runtime'],
           },
@@ -104,7 +104,7 @@ describe('MDAA Audit Trail with Data Event Selectors - Compliance', () => {
       'lambda-audit': {
         cloudTrailAuditBucketName: 'lambda-audit-bucket',
         cloudTrailAuditKmsKeyArn: 'arn:test-partition:kms:test-region:test-account:key/lambda-key-id',
-        dataEventSelectors: { 'Lambda write events': { resourceType: 'AWS::Lambda::Function' } },
+        dataEventSelectors: { 'lambda-write-events': { resourceType: 'AWS::Lambda::Function' } },
       },
     },
 

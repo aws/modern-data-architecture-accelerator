@@ -31,7 +31,7 @@ trails:
     dataEventSelectors:
       # Runtime invocations. This is what makes InvokeAgentRuntime — and the
       # AccessDenied on a denied invocation — visible to EventBridge.
-      AgentCore runtime data events:
+      agentcore-runtime:
         # (Required) The CloudTrail resources.type to capture. CloudTrail accepts exactly
         # one resource type per selector, so covering the runtime endpoint as well means
         # a second entry below rather than a second value here.
@@ -51,7 +51,7 @@ trails:
       # resources.type per selector rule noted above.
       # Pointing this at the RUNTIME ARN is deliberate: an endpoint ARN is
       # <runtime ARN>/runtime-endpoint/<name>, so the runtime ARN prefixes it.
-      AgentCore runtime endpoint data events:
+      agentcore-runtime-endpoint:
         resourceType: AWS::BedrockAgentCore::RuntimeEndpoint
         resourceArns:
           - ssm-domain:/bedrock-agentcore-runtime/agentruntime/my-agent-runtime/arn
@@ -67,7 +67,7 @@ trails:
     dataEventSelectors:
       # Whole-resource-type capture, with no resourceArns scoping. Convenient, but the
       # broadest and most expensive option — every Lambda invocation in the account.
-      All Lambda function invocations:
+      all-lambda-functions:
         resourceType: AWS::Lambda::Function
         # Only mutating calls, halving volume where reads are not of interest.
         readWriteType: WriteOnly

@@ -78,7 +78,7 @@
                 ]
               }
             ],
-            "Name": "AgentCore runtime data events"
+            "Name": "agentcore-runtime"
           },
           {
             "FieldSelectors": [
@@ -103,7 +103,7 @@
                 ]
               }
             ],
-            "Name": "AgentCore runtime endpoint data events"
+            "Name": "agentcore-runtime-endpoint"
           }
         ],
         "EnableLogFileValidation": true,
@@ -184,7 +184,7 @@
                 "Field": "readOnly"
               }
             ],
-            "Name": "All Lambda function invocations"
+            "Name": "all-lambda-functions"
           }
         ],
         "EnableLogFileValidation": true,

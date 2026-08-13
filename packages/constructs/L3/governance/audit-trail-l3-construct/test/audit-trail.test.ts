@@ -181,11 +181,11 @@ describe('Data Event Selectors', () => {
         cloudTrailAuditKmsKeyArn: 'arn:test-partition:kms:test-region:test-account:key/agentcore-key-id',
         includeManagementEvents: true,
         dataEventSelectors: {
-          'AgentCore runtime data events': {
+          'agentcore-runtime': {
             resourceType: 'AWS::BedrockAgentCore::Runtime',
             resourceArns: ['arn:test-partition:bedrock-agentcore:test-region:test-account:runtime/test-runtime'],
           },
-          'AgentCore runtime endpoint data events': {
+          'agentcore-runtime-endpoint': {
             resourceType: 'AWS::BedrockAgentCore::RuntimeEndpoint',
           },
         },
@@ -194,9 +194,9 @@ describe('Data Event Selectors', () => {
         cloudTrailAuditBucketName: 'lambda-audit-bucket',
         cloudTrailAuditKmsKeyArn: 'arn:test-partition:kms:test-region:test-account:key/lambda-key-id',
         dataEventSelectors: {
-          'Lambda write events': { resourceType: 'AWS::Lambda::Function', readWriteType: 'WriteOnly' },
-          'Lambda read events': { resourceType: 'AWS::Lambda::Function', readWriteType: 'ReadOnly' },
-          'Lambda all events': { resourceType: 'AWS::Lambda::Function', readWriteType: 'All' },
+          'lambda-write-events': { resourceType: 'AWS::Lambda::Function', readWriteType: 'WriteOnly' },
+          'lambda-read-events': { resourceType: 'AWS::Lambda::Function', readWriteType: 'ReadOnly' },
+          'lambda-all-events': { resourceType: 'AWS::Lambda::Function', readWriteType: 'All' },
         },
       },
     },
@@ -213,7 +213,7 @@ describe('Data Event Selectors', () => {
       TrailName: 'test-org-test-env-test-domain-test-module-agentcore-audit',
       AdvancedEventSelectors: Match.arrayWith([
         Match.objectLike({
-          Name: 'AgentCore runtime data events',
+          Name: 'agentcore-runtime',
           FieldSelectors: Match.arrayWith([
             { Field: 'eventCategory', Equals: ['Data'] },
             { Field: 'resources.type', Equals: ['AWS::BedrockAgentCore::Runtime'] },
@@ -228,7 +228,7 @@ describe('Data Event Selectors', () => {
       TrailName: 'test-org-test-env-test-domain-test-module-agentcore-audit',
       AdvancedEventSelectors: Match.arrayWith([
         Match.objectLike({
-          Name: 'AgentCore runtime data events',
+          Name: 'agentcore-runtime',
           FieldSelectors: Match.arrayWith([
             {
               Field: 'resources.ARN',
@@ -248,7 +248,7 @@ describe('Data Event Selectors', () => {
     });
     const selectors = Object.values(trails)[0].Properties.AdvancedEventSelectors;
     const endpointSelector = selectors.find(
-      (selector: { Name: string }) => selector.Name === 'AgentCore runtime endpoint data events',
+      (selector: { Name: string }) => selector.Name === 'agentcore-runtime-endpoint',
     );
     expect(endpointSelector.FieldSelectors).toHaveLength(2);
     expect(
@@ -290,10 +290,10 @@ describe('Data Event Selectors', () => {
         .find((selector: { Name: string }) => selector.Name === name)
         .FieldSelectors.find((field: { Field: string }) => field.Field === 'readOnly');
 
-    expect(readOnlyFieldFor('Lambda write events')).toEqual({ Field: 'readOnly', Equals: ['false'] });
-    expect(readOnlyFieldFor('Lambda read events')).toEqual({ Field: 'readOnly', Equals: ['true'] });
+    expect(readOnlyFieldFor('lambda-write-events')).toEqual({ Field: 'readOnly', Equals: ['false'] });
+    expect(readOnlyFieldFor('lambda-read-events')).toEqual({ Field: 'readOnly', Equals: ['true'] });
     // 'All' is the CloudTrail default and is expressed by omitting the field entirely.
-    expect(readOnlyFieldFor('Lambda all events')).toBeUndefined();
+    expect(readOnlyFieldFor('lambda-all-events')).toBeUndefined();
   });
 
   test('Basic event selectors are removed so CloudTrail accepts the advanced ones', () => {

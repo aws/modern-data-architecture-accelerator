@@ -71,6 +71,31 @@ The goal is not to summarize the story — it's to find the things that would wa
 
 **Prototype the risky mechanism before declaring it ready.** When a story depends on a non-obvious API behaviour — a CDK escape hatch, an L1 property, a construct's render path — write a throwaway script against the repo's own vendored `aws-cdk-lib` and synth it. This is where the expensive surprises hide (a silently-dropped property, an L2 that always emits a conflicting field, a wrong property name that type-checks). Ten minutes here saves an afternoon.
 
+**Verify AWS service-capability claims against current AWS documentation.** A repo-only review cannot catch these. A synth proves the template renders; it says nothing about whether the service still accepts a property, whether a capability was deprecated, or whether an API the story names exists at all. Stories citing service behaviour — quotas, TTLs, condition keys, API names, defaults, regional availability — are asserting things that move independently of this repo, and your training data is not a source for them.
+
+Use the MCP tools, not a web-fetch tool. `docs.aws.amazon.com` renders client-side, so `WebFetch` returns an empty page and looks like a missing doc:
+
+```
+mcp__builder-mcp__InternalSearch        query: "<service> <capability>"  domain: AWS_DOCS
+mcp__builder-mcp__ReadInternalWebsites  inputs: ["https://docs.aws.amazon.com/<path>"]
+```
+
+Search first — guessing doc URLs wastes turns, and the API Reference pages (`/latest/APIReference/API_<Op>.html`) carry the request shape and error list the dev guide often omits.
+
+**For any claim that an API, action, or field exists, check the service model.** This is the cheapest high-value check available and it settles the question outright:
+
+```bash
+python3 -c "
+import botocore.session
+m = botocore.session.get_session().get_service_model('<service>')
+print(sorted(m.operation_names))
+print(sorted(m.operation_model('<Op>').input_shape.members))"
+```
+
+An action absent from the model is not callable, no matter how confidently a design doc, a slide, or a presenter names it. Enablement material and internal decks age faster than the API.
+
+When public docs and internal material disagree, say so rather than picking one. Record for each claim whether it is confirmed by public docs, stated only in internal material, contested, or unresolved — the implementer needs that to decide how firmly to word it, especially where the README publishes publicly. A value real enough to document but absent from AWS docs should say so, so readers don't conclude the README is wrong when they can't find it.
+
 **Check the acceptance criteria are actually verifiable.** Each should be Given/When/Then per `.gitlab/issue_templates/default.md`, and each should be testable by the means the repo has: synth-time assertions, unit tests, baseline diffs. Flag any criterion that is really runtime behaviour — it needs a manual test-account note, not a test. Flag any that is ambiguous in a way that changes the implementation (e.g. "scopes to those ARNs" when `Equals` and `StartsWith` behave differently).
 
 **Look for gaps in the proposed solution**, especially default and omitted-config paths. A guard specified only for the "both fields set" case commonly misses the "only the new field set" case, which is the primary use case. Trace what the code does when the new option is present and the old one is absent.
@@ -89,6 +114,27 @@ Report as: verified claims, then blocking gaps, then corrections to the plan, th
 
 **If the review finds blocking gaps, present them and ask the user whether to proceed to Phase 4 or fix the workitem first.** Don't cut a branch for a story that needs rewriting, and don't refuse to cut one either — it's the user's call. Corrections to the *plan* (as opposed to missing requirements) generally don't block; note them and carry on.
 
+### If you rewrite the workitem, leave no trace of the rewrite
+
+The story is a specification, not a record of how it was produced. Its reader is encountering it for the first time and needs to know only what is true now. Notes about what an earlier version claimed are noise to everyone but you, and they invite the reader to weigh a superseded version against the current one.
+
+Write the corrected description as if it had always read that way. Strip:
+
+- Revision preambles and "corrected on <date>" notes
+- Struck-through former text (`~~…~~`) — delete it, don't display it crossed out
+- "The original version of this story asserted X" — just state the correct thing
+- Table rows or list items whose only content is a correction ("Slide 7 → actually slide 8") — fix the citation in place and drop the row
+- Editorialising about the sources ("neither deck notices this", "omitted from the original story")
+- Renamed-thing trails ("formerly tracked under #NNNN")
+
+Keep anything that changes what the implementer does, even when it originates in a correction:
+
+- Warnings not to do something a source recommends, plus the reason — otherwise an implementer reading the same source re-adds it
+- Genuine open questions, marked open
+- Per-claim confidence, framed as *how to word this*, not as *what I checked*
+
+The test: would a reader who had never seen the earlier version wonder why this sentence is here? If yes, it's archaeology — cut it.
+
 ## Phase 4: Create the branch
 
 Only after the user is satisfied with readiness.
@@ -101,9 +147,9 @@ Only after the user is satisfied with readiness.
 
 **The script pushes the branch to `origin` (`git push -u`).** That's outward-facing, so confirm the branch name with the user before running it rather than picking one and pushing.
 
-Name it `<type>/<workitem-id>-<short-kebab-slug>`, e.g. `feat/1345-audit-trail-data-events`. Pick `type` from the story's labels: `feat` for a feature request, `fix` for a bug, plus `chore` and `spike`.
+Name it `<type>/<workitem-id>-<short-kebab-slug>`, e.g. `feat/1345-audit-trail-data-events`. Pick `type` from the story's labels: `feat` for a feature request, `fix` for a bug, `docs` for a documentation-only deliverable, plus `chore` and `spike`.
 
-It enforces `^(feat/|chore/|spike/|fix/)[a-z0-9]+(-[a-z0-9]+)*$`. Rejected: `feature/`, uppercase, underscores, a trailing hyphen, consecutive hyphens. Keep the slug short — it's derived from the story title, not a copy of it.
+It enforces `^(feat/|chore/|spike/|fix/|docs/)[a-z0-9]+(-[a-z0-9]+)*$`. Rejected: `feature/`, `doc/` (plural `docs/`), uppercase, underscores, a trailing hyphen, consecutive hyphens. Keep the slug short — it's derived from the story title, not a copy of it.
 
 Every guard runs before any git side effect and exits 1 with a message on stderr, so a rejection costs nothing and never leaves a half-made branch:
 
