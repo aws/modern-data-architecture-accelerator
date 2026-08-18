@@ -103,6 +103,7 @@ Validation: executionRoleArn, command, and description are required; other prope
 | - [executionProperty](#jobs_additionalProperties_executionProperty )       | No      | object           | No         | In #/definitions/CfnJob.ExecutionPropertyProperty    | Execution properties including maximum concurrent runs.                                                                                                                                              |
 | + [executionRoleArn](#jobs_additionalProperties_executionRoleArn )         | No      | string           | No         | -                                                    | IAM role ARN for Glue job execution permissions.                                                                                                                                                     |
 | - [glueVersion](#jobs_additionalProperties_glueVersion )                   | No      | string           | No         | -                                                    | Glue runtime version for the job.                                                                                                                                                                    |
+| - [lineage](#jobs_additionalProperties_lineage )                           | No      | object           | No         | In #/definitions/DataZoneLineageConfig               | Optional Amazon DataZone lineage event configuration. Requires Glue version 5.0 or higher.                                                                                                           |
 | - [maxCapacity](#jobs_additionalProperties_maxCapacity )                   | No      | number           | No         | -                                                    | Maximum DPU capacity for the job.                                                                                                                                                                    |
 | - [maxRetries](#jobs_additionalProperties_maxRetries )                     | No      | number           | No         | -                                                    | Maximum retry count before job failure.                                                                                                                                                              |
 | - [notificationProperty](#jobs_additionalProperties_notificationProperty ) | No      | object           | No         | In #/definitions/CfnJob.NotificationPropertyProperty | Notification settings for job monitoring and alerting.                                                                                                                                               |
@@ -385,7 +386,73 @@ The default is 1. An error is returned when this threshold is reached. The maxim
 
 **Description:** Glue runtime version for the job.
 
-#### <a name="jobs_additionalProperties_maxCapacity"></a>3.1.13. Property `root > jobs > additionalProperties > maxCapacity`
+#### <a name="jobs_additionalProperties_lineage"></a>3.1.13. Property `root > jobs > additionalProperties > lineage`
+
+|                           |                                     |
+| ------------------------- | ----------------------------------- |
+| **Type**                  | `object`                            |
+| **Required**              | No                                  |
+| **Additional properties** | Not allowed                         |
+| **Defined in**            | #/definitions/DataZoneLineageConfig |
+
+**Description:** Optional Amazon DataZone lineage event configuration. Requires Glue version 5.0 or higher.
+
+| Property                                                                                     | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| -------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [accountId](#jobs_additionalProperties_lineage_accountId )                                 | No      | string  | No         | -          | Account ID of the Glue Data Catalog whose metadata is referenced in lineage events (sets \`spark.glue.accountId\`).<br />Must be a 12-digit AWS account ID. Defaults to the deploying account. This is the Data Catalog account and is<br />independent of the account that owns the DataZone domain (the domain is assumed to be in the deploying account).                                                                                                                                                                        |
+| + [domainId](#jobs_additionalProperties_lineage_domainId )                                   | No      | string  | No         | -          | Amazon DataZone (SageMaker Unified Studio) domain ID that will receive the lineage events, e.g. \`dzd_xxxxxxxxx\`.<br />Mirrors the \`domainIdentifier\` pattern documented for the DataZone \`PostLineageEvent\` API, which this feature<br />drives: either separator (\`-\` or \`_\`), mixed case, and at most 36 characters after the separator. The charset<br />admits no whitespace, which is relied upon when interpolating this value into the space-separated Spark \`--conf\`<br />string and into the domain ARN below. |
+| + [enabled](#jobs_additionalProperties_lineage_enabled )                                     | No      | boolean | No         | -          | Whether to emit lineage events to Amazon DataZone. When false, no lineage configuration is injected.                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| - [manageExecutionRolePolicy](#jobs_additionalProperties_lineage_manageExecutionRolePolicy ) | No      | boolean | No         | -          | Whether the module attaches a managed policy granting \`datazone:PostLineageEvent\` (scoped to the domain ARN) to<br />the job execution role. Defaults to true. Set to false when the execution role is externally managed and you will<br />grant the permission yourself.                                                                                                                                                                                                                                                        |
+
+##### <a name="jobs_additionalProperties_lineage_accountId"></a>3.1.13.1. Property `root > jobs > additionalProperties > lineage > accountId`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Account ID of the Glue Data Catalog whose metadata is referenced in lineage events (sets `spark.glue.accountId`).
+Must be a 12-digit AWS account ID. Defaults to the deploying account. This is the Data Catalog account and is
+independent of the account that owns the DataZone domain (the domain is assumed to be in the deploying account).
+
+##### <a name="jobs_additionalProperties_lineage_domainId"></a>3.1.13.2. Property `root > jobs > additionalProperties > lineage > domainId`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Amazon DataZone (SageMaker Unified Studio) domain ID that will receive the lineage events, e.g. `dzd_xxxxxxxxx`.
+Mirrors the `domainIdentifier` pattern documented for the DataZone `PostLineageEvent` API, which this feature
+drives: either separator (`-` or `_`), mixed case, and at most 36 characters after the separator. The charset
+admits no whitespace, which is relied upon when interpolating this value into the space-separated Spark `--conf`
+string and into the domain ARN below.
+
+| Restrictions                      |                                                                                                                       |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| **Must match regular expression** | ```^dzd[-_][a-zA-Z0-9_-]{1,36}$``` [Test](https://regex101.com/?regex=%5Edzd%5B-_%5D%5Ba-zA-Z0-9_-%5D%7B1%2C36%7D%24) |
+
+##### <a name="jobs_additionalProperties_lineage_enabled"></a>3.1.13.3. Property `root > jobs > additionalProperties > lineage > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | Yes       |
+
+**Description:** Whether to emit lineage events to Amazon DataZone. When false, no lineage configuration is injected.
+
+##### <a name="jobs_additionalProperties_lineage_manageExecutionRolePolicy"></a>3.1.13.4. Property `root > jobs > additionalProperties > lineage > manageExecutionRolePolicy`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Whether the module attaches a managed policy granting `datazone:PostLineageEvent` (scoped to the domain ARN) to
+the job execution role. Defaults to true. Set to false when the execution role is externally managed and you will
+grant the permission yourself.
+
+#### <a name="jobs_additionalProperties_maxCapacity"></a>3.1.14. Property `root > jobs > additionalProperties > maxCapacity`
 
 |              |          |
 | ------------ | -------- |
@@ -394,7 +461,7 @@ The default is 1. An error is returned when this threshold is reached. The maxim
 
 **Description:** Maximum DPU capacity for the job.
 
-#### <a name="jobs_additionalProperties_maxRetries"></a>3.1.14. Property `root > jobs > additionalProperties > maxRetries`
+#### <a name="jobs_additionalProperties_maxRetries"></a>3.1.15. Property `root > jobs > additionalProperties > maxRetries`
 
 |              |          |
 | ------------ | -------- |
@@ -403,7 +470,7 @@ The default is 1. An error is returned when this threshold is reached. The maxim
 
 **Description:** Maximum retry count before job failure.
 
-#### <a name="jobs_additionalProperties_notificationProperty"></a>3.1.15. Property `root > jobs > additionalProperties > notificationProperty`
+#### <a name="jobs_additionalProperties_notificationProperty"></a>3.1.16. Property `root > jobs > additionalProperties > notificationProperty`
 
 |                           |                                                   |
 | ------------------------- | ------------------------------------------------- |
@@ -418,7 +485,7 @@ The default is 1. An error is returned when this threshold is reached. The maxim
 | --------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------------------------------------------------------------------------- |
 | - [notifyDelayAfter](#jobs_additionalProperties_notificationProperty_notifyDelayAfter ) | No      | number | No         | -          | After a job run starts, the number of minutes to wait before sending a job run delay notification. |
 
-##### <a name="jobs_additionalProperties_notificationProperty_notifyDelayAfter"></a>3.1.15.1. Property `root > jobs > additionalProperties > notificationProperty > notifyDelayAfter`
+##### <a name="jobs_additionalProperties_notificationProperty_notifyDelayAfter"></a>3.1.16.1. Property `root > jobs > additionalProperties > notificationProperty > notifyDelayAfter`
 
 |              |          |
 | ------------ | -------- |
@@ -427,7 +494,7 @@ The default is 1. An error is returned when this threshold is reached. The maxim
 
 **Description:** After a job run starts, the number of minutes to wait before sending a job run delay notification.
 
-#### <a name="jobs_additionalProperties_numberOfWorkers"></a>3.1.16. Property `root > jobs > additionalProperties > numberOfWorkers`
+#### <a name="jobs_additionalProperties_numberOfWorkers"></a>3.1.17. Property `root > jobs > additionalProperties > numberOfWorkers`
 
 |              |          |
 | ------------ | -------- |
@@ -436,7 +503,7 @@ The default is 1. An error is returned when this threshold is reached. The maxim
 
 **Description:** Number of workers for parallel processing.
 
-#### <a name="jobs_additionalProperties_template"></a>3.1.17. Property `root > jobs > additionalProperties > template`
+#### <a name="jobs_additionalProperties_template"></a>3.1.18. Property `root > jobs > additionalProperties > template`
 
 |              |          |
 | ------------ | -------- |
@@ -445,7 +512,7 @@ The default is 1. An error is returned when this threshold is reached. The maxim
 
 **Description:** Template name for configuration inheritance.
 
-#### <a name="jobs_additionalProperties_timeout"></a>3.1.18. Property `root > jobs > additionalProperties > timeout`
+#### <a name="jobs_additionalProperties_timeout"></a>3.1.19. Property `root > jobs > additionalProperties > timeout`
 
 |              |          |
 | ------------ | -------- |
@@ -454,7 +521,7 @@ The default is 1. An error is returned when this threshold is reached. The maxim
 
 **Description:** Job timeout in minutes.
 
-#### <a name="jobs_additionalProperties_workerType"></a>3.1.19. Property `root > jobs > additionalProperties > workerType`
+#### <a name="jobs_additionalProperties_workerType"></a>3.1.20. Property `root > jobs > additionalProperties > workerType`
 
 |              |                    |
 | ------------ | ------------------ |

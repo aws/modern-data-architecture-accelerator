@@ -1,0 +1,37 @@
+# DataOps Job module configuration demonstrating Amazon DataZone data lineage.
+# Deploys a Glue ETL job that emits OpenLineage events to a DataZone /
+# SageMaker Unified Studio domain, mirroring the Glue Studio "Generate lineage
+# events" toggle. See the module README section "DataZone Data Lineage".
+
+# (Optional) DataOps project name for job resource autowiring.
+projectName: dataops-project-test
+
+# Map of job names to Glue job definitions.
+jobs:
+  LineageJob:
+    # IAM role ARN for Glue job execution permissions.
+    executionRoleArn: arn:{{partition}}:iam::{{account}}:role/example-lineage-glue-role
+    # Job command configuration.
+    command:
+      # Job type. (enum: glueetl, pythonshell)
+      name: 'glueetl'
+      # (Optional) Python version. (enum: 2, 3)
+      pythonVersion: '3'
+      # Relative path to the Glue script.
+      scriptLocation: ./src/glue/python/job.py
+    # Job description.
+    description: Glue ETL job emitting DataZone lineage events
+    # (Optional) DataZone Spark lineage requires Glue 5.0 or higher.
+    glueVersion: '5.0'
+    # (Optional) Amazon DataZone lineage configuration.
+    lineage:
+      # Emit OpenLineage events to DataZone.
+      enabled: true
+      # DataZone (SageMaker Unified Studio) domain ID receiving the events.
+      domainId: dzd_examplelineage
+      # (Optional) Glue Data Catalog account for spark.glue.accountId. Must be a
+      # 12-digit account ID. Defaults to the deploying account.
+      # accountId: '123456789012'
+      # (Optional) Set to false when the execution role is externally managed and
+      # you will grant datazone:PostLineageEvent yourself. Defaults to true.
+      # manageExecutionRolePolicy: false

@@ -1,0 +1,17 @@
+# Positive-test fixture (not a usable sample): enables DataZone lineage on a
+# supported Glue version (5.0). Exercised by dataops-job.lineage-validation.test.ts
+# to assert the injected OpenLineage --conf content.
+projectName: dataops-project-test
+
+jobs:
+  GoodLineageJob:
+    executionRoleArn: arn:{{partition}}:iam::{{account}}:role/example-lineage-glue-role
+    description: Lineage enabled on a supported Glue version
+    glueVersion: '5.0'
+    command:
+      name: 'glueetl'
+      pythonVersion: '3'
+      scriptLocation: ../../sample_configs/src/glue/python/job.py
+    lineage:
+      enabled: true
+      domainId: dzd_positivetest

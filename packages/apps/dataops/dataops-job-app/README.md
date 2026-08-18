@@ -31,6 +31,37 @@ DqEvaluation:
 
 ---
 
+## DataZone Data Lineage
+
+Glue Spark jobs can emit OpenLineage events to an Amazon DataZone / SageMaker Unified Studio domain, mirroring the "Generate lineage events" toggle in the AWS Glue Studio console. Enable it with the optional `lineage` section on a job (or a template):
+
+```yaml
+jobs:
+  MyEtlJob:
+    executionRoleArn: some-arn
+    description: ETL job with DataZone lineage
+    glueVersion: '5.0'
+    command:
+      name: glueetl
+      scriptLocation: ./src/glue/python/job.py
+    lineage:
+      enabled: true
+      domainId: dzd_xxxxxxxxx
+      # accountId optional; defaults to the deploying account
+```
+
+When `lineage.enabled` is true, the module injects the OpenLineage Spark listener configuration into the job's `--conf` argument (preserving any `--conf` you set yourself). Declaring `lineage` in a template lets multiple jobs inherit it; an individual job can override `domainId` or set `enabled: false` to opt out.
+
+**Requirements and prerequisites:**
+
+- **Glue 5.0+** — DataZone Spark lineage requires Glue version 5.0 or higher. Enabling lineage on a job with a lower or unset `glueVersion` fails at synth time with a hard error.
+- **Execution role permission** — the job execution role needs `datazone:PostLineageEvent` on the target domain. When lineage is enabled, the module **attaches a managed policy granting this permission (scoped to the domain ARN) to the execution role automatically**. If the role is externally managed and you will grant the permission yourself, set `lineage.manageExecutionRolePolicy: false` to skip the attachment. The domain is assumed to be in the deploying account; `lineage.accountId` (optional, a 12-digit AWS account ID) sets only the Glue Data Catalog account (`spark.glue.accountId`) and defaults to the deploying account.
+- **Domain-side configuration** — the DataZone domain must have lineage import enabled (via the Default Data Lake blueprint) for events to be surfaced. See the AWS documentation on [data lineage in Amazon DataZone](https://docs.aws.amazon.com/datazone/latest/userguide/datazone-data-lineage.html).
+
+> **Note:** This is unrelated to the `asset:smus.py` script above, which publishes Glue **Data Quality** results to DataZone. The `lineage` section captures **ETL run lineage** for the Spark job itself.
+
+---
+
 ## Deployed Resources
 
 This module deploys and integrates the following resources:
@@ -67,6 +98,7 @@ This module is designed in alignment with MDAA security/compliance principles an
 - **Least Privilege**:
   - Execution roles scoped per job
   - Project resources referenced via `project:` prefix for consistent access control
+  - When DataZone lineage is enabled, the module attaches a managed policy granting only `datazone:PostLineageEvent`, scoped to the specific domain ARN, to that job's execution role; the grant is skipped when `lineage.manageExecutionRolePolicy` is set to `false`
 - **Network Isolation**:
   - Optional VPC binding via Glue connections for accessing data sources in private networks
 
@@ -131,6 +163,17 @@ Uses workerType + numberOfWorkers instead of maxCapacity for explicit control ov
 ```yaml
 # Contents available via above link
 --8<-- "target/docs/packages/apps/dataops/dataops-job-app/sample_configs/sample-config-workertype.yaml"
+```
+
+#### DataZone Lineage Configuration
+
+Deploys a Glue 5.0 job that emits OpenLineage events to an Amazon DataZone / SageMaker Unified Studio domain. Use this variant when you want ETL run lineage captured in DataZone; see [DataZone Data Lineage](#datazone-data-lineage) for prerequisites.
+
+[sample-config-lineage.yaml](sample_configs/sample-config-lineage.yaml)
+
+```yaml
+# Contents available via above link
+--8<-- "target/docs/packages/apps/dataops/dataops-job-app/sample_configs/sample-config-lineage.yaml"
 ```
 
 ---

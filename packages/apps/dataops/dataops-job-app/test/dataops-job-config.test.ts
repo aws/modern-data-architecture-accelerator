@@ -4,6 +4,37 @@
  */
 
 import { mergeDeep } from '../lib/dataops-job-config';
+import { JobConfig } from '@aws-mdaa/dataops-job-l3-construct';
+
+describe('lineage template inheritance via mergeDeep', () => {
+  // Templates and jobs share the JobConfig type; the parser deep-merges a template copy into the
+  // job before validation. These tests exercise that merge for the lineage section.
+  const lineageTemplate: JobConfig = {
+    executionRoleArn: 'some-arn',
+    command: { name: 'glueetl', scriptLocation: './job.py' },
+    description: 'templated job',
+    glueVersion: '5.0',
+    lineage: { enabled: true, domainId: 'dzd_from_template' },
+  };
+
+  test('job inherits lineage from the template', () => {
+    const merged = mergeDeep(JSON.parse(JSON.stringify(lineageTemplate)) as JobConfig, {} as JobConfig);
+    expect(merged.lineage).toEqual({ enabled: true, domainId: 'dzd_from_template' });
+  });
+
+  test('job overrides the inherited domainId', () => {
+    const jobOverride = { lineage: { domainId: 'dzd_from_job' } } as unknown as JobConfig;
+    const merged = mergeDeep(JSON.parse(JSON.stringify(lineageTemplate)) as JobConfig, jobOverride);
+    expect(merged.lineage).toEqual({ enabled: true, domainId: 'dzd_from_job' });
+  });
+
+  test('job opts out by setting enabled false', () => {
+    const jobOptOut = { lineage: { enabled: false } } as unknown as JobConfig;
+    const merged = mergeDeep(JSON.parse(JSON.stringify(lineageTemplate)) as JobConfig, jobOptOut);
+    expect(merged.lineage?.enabled).toBe(false);
+    expect(merged.lineage?.domainId).toBe('dzd_from_template');
+  });
+});
 
 describe('mergeDeep', () => {
   // Basic merging tests

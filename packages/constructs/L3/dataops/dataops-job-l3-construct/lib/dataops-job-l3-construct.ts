@@ -6,7 +6,7 @@
 import { DataOpsProjectUtils } from '@aws-mdaa/dataops-project-l3-construct';
 import { EventBridgeHelper } from '@aws-mdaa/eventbridge-helper';
 import { MdaaCfnJob } from '@aws-mdaa/glue-constructs';
-import { MdaaRole } from '@aws-mdaa/iam-constructs';
+import { MdaaManagedPolicy, MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { CfnJob } from 'aws-cdk-lib/aws-glue';
@@ -17,14 +17,14 @@ import * as path from 'path';
 import { SnsTopic } from 'aws-cdk-lib/aws-events-targets';
 import { MdaaSnsTopic } from '@aws-mdaa/sns-constructs';
 import { Rule } from 'aws-cdk-lib/aws-events';
-import { Fn } from 'aws-cdk-lib';
+import { Fn, Token } from 'aws-cdk-lib';
 import { ConfigurationElement } from '@aws-mdaa/config';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { MdaaLogGroup } from '@aws-mdaa/cloudwatch-constructs';
 import { IKey, Key } from 'aws-cdk-lib/aws-kms';
 import { updateProps } from '@aws-mdaa/cloudwatch-constructs/lib/loggroup-utils';
 import { IBucket } from 'aws-cdk-lib/aws-s3';
-import { IRole } from 'aws-cdk-lib/aws-iam';
+import { Effect, IRole, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 
 export type JobCommandPythonVersion = '2' | '3' | undefined;
 export type JobCommandName = 'glueetl' | 'pythonshell';
@@ -75,6 +75,46 @@ export type JobWorkerType =
   | 'R.8X';
 
 /**
+ * Configuration for emitting OpenLineage events from a Glue Spark job to an Amazon DataZone
+ * (SageMaker Unified Studio) domain. Mirrors the "Generate lineage events" option in the AWS
+ * Glue console: when enabled, the module injects the OpenLineage Spark listener configuration
+ * into the job's `--conf` argument so runs publish lineage to the specified DataZone domain.
+ *
+ * Use cases: Automated data lineage capture; DataZone/SageMaker governance; Impact analysis
+ *
+ * AWS: AWS Glue Spark OpenLineage integration with the Amazon DataZone `PostLineageEvent` API
+ *
+ * Validation: Requires Glue version 5.0 or higher (enforced at synth time). When enabled, the
+ * module attaches a managed policy granting `datazone:PostLineageEvent` on the target domain to
+ * the job execution role, unless `manageExecutionRolePolicy` is set to false.
+ */
+export interface DataZoneLineageConfig {
+  /** Whether to emit lineage events to Amazon DataZone. When false, no lineage configuration is injected. */
+  readonly enabled: boolean;
+  /**
+   * Amazon DataZone (SageMaker Unified Studio) domain ID that will receive the lineage events, e.g. `dzd_xxxxxxxxx`.
+   * Mirrors the `domainIdentifier` pattern documented for the DataZone `PostLineageEvent` API, which this feature
+   * drives: either separator (`-` or `_`), mixed case, and at most 36 characters after the separator. The charset
+   * admits no whitespace, which is relied upon when interpolating this value into the space-separated Spark `--conf`
+   * string and into the domain ARN below.
+   * @pattern ^dzd[-_][a-zA-Z0-9_-]{1,36}$
+   */
+  readonly domainId: string;
+  /**
+   * Account ID of the Glue Data Catalog whose metadata is referenced in lineage events (sets `spark.glue.accountId`).
+   * Must be a 12-digit AWS account ID. Defaults to the deploying account. This is the Data Catalog account and is
+   * independent of the account that owns the DataZone domain (the domain is assumed to be in the deploying account).
+   */
+  readonly accountId?: string;
+  /**
+   * Whether the module attaches a managed policy granting `datazone:PostLineageEvent` (scoped to the domain ARN) to
+   * the job execution role. Defaults to true. Set to false when the execution role is externally managed and you will
+   * grant the permission yourself.
+   */
+  readonly manageExecutionRolePolicy?: boolean;
+}
+
+/**
  * Configuration for a Glue job including execution roles, commands, capacity, and monitoring.
  *
  * Use cases: ETL job configuration; Data transformation; Job resource management; DataOps processing
@@ -122,6 +162,8 @@ export interface JobConfig {
   readonly additionalFiles?: string[];
   /** Continuous logging configuration for real-time monitoring. */
   readonly continuousLogging?: LoggingConfig;
+  /** Optional Amazon DataZone lineage event configuration. Requires Glue version 5.0 or higher. */
+  readonly lineage?: DataZoneLineageConfig;
 }
 
 export interface GlueJobL3ConstructProps extends MdaaL3ConstructProps {
@@ -163,6 +205,9 @@ export interface GlueJobL3ConstructProps extends MdaaL3ConstructProps {
    */
   readonly assetBasePath?: string;
 }
+
+/** Minimum Glue version required to emit Amazon DataZone Spark lineage events. */
+const MIN_DATAZONE_LINEAGE_GLUE_VERSION = 5;
 
 export class GlueJobL3Construct extends MdaaL3Construct {
   protected readonly props: GlueJobL3ConstructProps;
@@ -365,6 +410,96 @@ export class GlueJobL3Construct extends MdaaL3Construct {
     }
   }
 
+  /**
+   * Inject Amazon DataZone OpenLineage Spark configuration into the job's `--conf` argument when
+   * lineage is enabled. Enforces the Glue 5.0+ requirement with a hard error, and preserves any
+   * user-supplied `--conf` value by appending the lineage settings.
+   */
+  private addDataZoneLineage(jobName: string, jobConfig: JobConfig, defaultArguments: ConfigurationElement) {
+    const lineage = jobConfig.lineage;
+    if (!lineage?.enabled) {
+      return;
+    }
+
+    const glueVersion = jobConfig.glueVersion;
+    // Parse defensively: an unset, non-numeric, or below-minimum version must fail.
+    // Number.isNaN guards against unparseable strings (e.g. 'latest'), which would
+    // otherwise slip through a bare `< MIN` comparison (NaN < n is always false).
+    const parsedGlueVersion = glueVersion ? Number.parseFloat(glueVersion) : Number.NaN;
+    if (Number.isNaN(parsedGlueVersion) || parsedGlueVersion < MIN_DATAZONE_LINEAGE_GLUE_VERSION) {
+      throw new Error(
+        `Job '${jobName}' enables DataZone lineage, which requires Glue version 5.0 or higher, ` +
+          `but glueVersion is '${glueVersion ?? 'undefined'}'. Set glueVersion to '5.0' or higher.`,
+      );
+    }
+
+    // A user-provided accountId feeds spark.glue.accountId; a typo would deploy cleanly and surface
+    // later as an AccessDenied. Validate it here (fail-fast), skipping CDK tokens (e.g. env-agnostic
+    // stacks where this.account is unresolved) which cannot be checked at synth time.
+    if (
+      lineage.accountId !== undefined &&
+      !Token.isUnresolved(lineage.accountId) &&
+      !/^\d{12}$/.test(lineage.accountId)
+    ) {
+      throw new Error(
+        `Job '${jobName}' lineage.accountId must be a 12-digit AWS account ID, but received '${lineage.accountId}'.`,
+      );
+    }
+
+    const accountId = lineage.accountId ?? this.account;
+    const lineageConf = [
+      'spark.extraListeners=io.openlineage.spark.agent.OpenLineageSparkListener',
+      '--conf spark.openlineage.transport.type=amazon_datazone_api',
+      `--conf spark.openlineage.transport.domainId=${lineage.domainId}`,
+      '--conf spark.openlineage.facets.custom_environment_variables=[AWS_DEFAULT_REGION;GLUE_VERSION;GLUE_COMMAND_CRITERIA;GLUE_PYTHON_VERSION;]',
+      `--conf spark.glue.accountId=${accountId}`,
+    ].join(' ');
+
+    // defaultArguments comes straight from user YAML, so --conf isn't guaranteed to be a string
+    // (e.g. `--conf: 42` parses as a number). Fail fast rather than silently stringifying it.
+    const existingConf = defaultArguments['--conf'];
+    if (existingConf !== undefined && typeof existingConf !== 'string') {
+      throw new Error(
+        `Job '${jobName}' sets a non-string '--conf' default argument (received ${typeof existingConf}); ` +
+          `lineage requires '--conf' to be a string of Spark configuration settings.`,
+      );
+    }
+    defaultArguments['--conf'] = existingConf ? `${existingConf} --conf ${lineageConf}` : lineageConf;
+
+    this.grantDataZoneLineagePermissions(jobName, jobConfig.executionRoleArn, lineage);
+  }
+
+  /**
+   * Attach a managed policy granting `datazone:PostLineageEvent` on the target DataZone domain to
+   * the job's execution role, so lineage emission works without a separate manual IAM change.
+   * Skipped when `lineage.manageExecutionRolePolicy` is explicitly false (externally managed role).
+   * The grant is scoped to the specific domain ARN, which is owned by the deploying account.
+   */
+  private grantDataZoneLineagePermissions(jobName: string, executionRoleArn: string, lineage: DataZoneLineageConfig) {
+    if (lineage.manageExecutionRolePolicy === false) {
+      return;
+    }
+    const resolvedRole = this.props.roleHelper.resolveRoleRefWithRefId(
+      { arn: executionRoleArn },
+      `${jobName}-lineage-exec`,
+    );
+
+    const domainArn = `arn:${this.partition}:datazone:${this.region}:${this.account}:domain/${lineage.domainId}`;
+    const lineagePolicy = new MdaaManagedPolicy(this.scope, `${jobName}-lineage-policy`, {
+      naming: this.props.naming,
+      managedPolicyName: `${jobName}-lineage`,
+      statements: [
+        new PolicyStatement({
+          sid: 'DataZonePostLineageEvent',
+          effect: Effect.ALLOW,
+          actions: ['datazone:PostLineageEvent'],
+          resources: [domainArn],
+        }),
+      ],
+    });
+    resolvedRole.role(`${jobName}-lineage-role`).addManagedPolicy(lineagePolicy);
+  }
+
   private resolveAssetPath(jobName: string, location: string): string {
     if (location.startsWith('asset:')) {
       const assetName = location.substring('asset:'.length);
@@ -462,6 +597,8 @@ export class GlueJobL3Construct extends MdaaL3Construct {
     }
 
     defaultArguments['--TempDir'] = `s3://${this.props.bucketName}/temp/jobs/${jobName}`;
+
+    this.addDataZoneLineage(jobName, jobConfig, defaultArguments);
 
     // add continuous logging unless explicitly disabled
     if (jobConfig.continuousLogging) {

@@ -501,6 +501,34 @@
             ],
             "type": "object"
         },
+        "DataZoneLineageConfig": {
+            "additionalProperties": false,
+            "description": "Configuration for emitting OpenLineage events from a Glue Spark job to an Amazon DataZone\n(SageMaker Unified Studio) domain. Mirrors the \"Generate lineage events\" option in the AWS\nGlue console: when enabled, the module injects the OpenLineage Spark listener configuration\ninto the job's `--conf` argument so runs publish lineage to the specified DataZone domain.\n\nUse cases: Automated data lineage capture; DataZone/SageMaker governance; Impact analysis\n\nAWS: AWS Glue Spark OpenLineage integration with the Amazon DataZone `PostLineageEvent` API\n\nValidation: Requires Glue version 5.0 or higher (enforced at synth time). When enabled, the\nmodule attaches a managed policy granting `datazone:PostLineageEvent` on the target domain to\nthe job execution role, unless `manageExecutionRolePolicy` is set to false.",
+            "properties": {
+                "accountId": {
+                    "description": "Account ID of the Glue Data Catalog whose metadata is referenced in lineage events (sets `spark.glue.accountId`).\nMust be a 12-digit AWS account ID. Defaults to the deploying account. This is the Data Catalog account and is\nindependent of the account that owns the DataZone domain (the domain is assumed to be in the deploying account).",
+                    "type": "string"
+                },
+                "domainId": {
+                    "description": "Amazon DataZone (SageMaker Unified Studio) domain ID that will receive the lineage events, e.g. `dzd_xxxxxxxxx`.\nMirrors the `domainIdentifier` pattern documented for the DataZone `PostLineageEvent` API, which this feature\ndrives: either separator (`-` or `_`), mixed case, and at most 36 characters after the separator. The charset\nadmits no whitespace, which is relied upon when interpolating this value into the space-separated Spark `--conf`\nstring and into the domain ARN below.",
+                    "pattern": "^dzd[-_][a-zA-Z0-9_-]{1,36}$",
+                    "type": "string"
+                },
+                "enabled": {
+                    "description": "Whether to emit lineage events to Amazon DataZone. When false, no lineage configuration is injected.",
+                    "type": "boolean"
+                },
+                "manageExecutionRolePolicy": {
+                    "description": "Whether the module attaches a managed policy granting `datazone:PostLineageEvent` (scoped to the domain ARN) to\nthe job execution role. Defaults to true. Set to false when the execution role is externally managed and you will\ngrant the permission yourself.",
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "domainId",
+                "enabled"
+            ],
+            "type": "object"
+        },
         "DockerImage": {
             "additionalProperties": false,
             "description": "A Docker image",
@@ -1587,6 +1615,10 @@
                 "glueVersion": {
                     "description": "Glue runtime version for the job.",
                     "type": "string"
+                },
+                "lineage": {
+                    "$ref": "#/definitions/DataZoneLineageConfig",
+                    "description": "Optional Amazon DataZone lineage event configuration. Requires Glue version 5.0 or higher."
                 },
                 "maxCapacity": {
                     "description": "Maximum DPU capacity for the job.",

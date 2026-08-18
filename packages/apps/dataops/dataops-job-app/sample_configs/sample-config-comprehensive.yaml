@@ -67,6 +67,28 @@ templates:
       --job-language: scala
     # (Optional) Glue runtime version for the job.
     glueVersion: '5.0'
+
+  # Template that enables Amazon DataZone / SageMaker Unified Studio data
+  # lineage. Jobs inheriting this template emit OpenLineage events to the
+  # configured domain without repeating the lineage section. Requires Glue
+  # version 5.0+ (enforced at synth time). When lineage is enabled the module
+  # attaches a datazone:PostLineageEvent managed policy to this execution
+  # role, so it must be a resolvable role (ARN, SSM ref, or MDAA role name),
+  # not a placeholder.
+  ExampleLineageTemplate:
+    executionRoleArn: arn:{{partition}}:iam::{{account}}:role/example-lineage-glue-role
+    command:
+      name: 'glueetl'
+      pythonVersion: '3'
+      scriptLocation: ./src/glue/python/job.py
+    description: Glue job template with DataZone lineage enabled
+    glueVersion: '5.0'
+    # (Optional) Amazon DataZone lineage configuration.
+    lineage:
+      # Toggle lineage event emission on/off.
+      enabled: true
+      # Amazon DataZone / SageMaker Unified Studio domain ID.
+      domainId: dzd_exampledomain
 # Map of job names to Glue job definitions for ETL processing and
 # data transformation.
 jobs:
@@ -143,6 +165,30 @@ jobs:
     maxRetries: 0
     # (Optional) Job timeout in minutes.
     timeout: 30
+
+  # DataZone lineage: inherits the lineage template as-is and emits
+  # OpenLineage events to dzd_exampledomain.
+  LineageJobInherited:
+    template: 'ExampleLineageTemplate'
+
+  # DataZone lineage: inherits the template but overrides the target domain
+  # and pins the Glue Data Catalog account to a specific 12-digit account
+  # (e.g. a shared/cross-account catalog). Omit accountId to default to the
+  # deploying account. The DataZone domain itself is always assumed to be in
+  # the deploying account.
+  LineageJobOverride:
+    template: 'ExampleLineageTemplate'
+    lineage:
+      enabled: true
+      domainId: dzd_overridedomain
+      accountId: '123456789012'
+
+  # DataZone lineage: inherits the template but opts out via enabled: false,
+  # so no lineage configuration is injected.
+  LineageJobDisabled:
+    template: 'ExampleLineageTemplate'
+    lineage:
+      enabled: false
 
   # Data Quality evaluation job using the pre-built DQ script from DF.
   # Use the `asset:` prefix to reference bundled scripts instead of

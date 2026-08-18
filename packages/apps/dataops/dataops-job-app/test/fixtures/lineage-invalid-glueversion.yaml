@@ -1,0 +1,18 @@
+# Negative-test fixture (not a usable sample): enables DataZone lineage on a
+# Glue version below 5.0, which must fail at synth time. Exercised by
+# dataops-job.lineage-validation.test.ts.
+projectName: dataops-project-test
+
+jobs:
+  BadLineageJob:
+    executionRoleArn: some-arn
+    description: Lineage enabled on an unsupported Glue version
+    # Below the 5.0 minimum required for DataZone lineage.
+    glueVersion: '4.0'
+    command:
+      name: 'glueetl'
+      pythonVersion: '3'
+      scriptLocation: ../../sample_configs/src/glue/python/job.py
+    lineage:
+      enabled: true
+      domainId: dzd_test123

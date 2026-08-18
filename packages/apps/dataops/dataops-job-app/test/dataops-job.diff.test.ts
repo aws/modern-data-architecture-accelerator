@@ -96,4 +96,26 @@ describe('GlueJob Baseline Diff Tests', () => {
       },
     ),
   );
+
+  baselineDiffTestApp(
+    'GlueJob Lineage',
+    Create.appProvider(
+      context => {
+        const moduleApp = new GlueJobCDKApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-lineage.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-gluejob-lineage',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
 });
