@@ -524,6 +524,74 @@
                 "Service": "s3.amazonaws.com"
               },
               "Resource": "*"
+            },
+            {
+              "Action": [
+                "kms:Encrypt",
+                "kms:Decrypt",
+                "kms:GenerateDataKey"
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "kms:ViaService": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "s3.test-region.",
+                        {
+                          "Ref": "AWS::URLSuffix"
+                        }
+                      ]
+                    ]
+                  }
+                },
+                "StringLike": {
+                  "kms:EncryptionContext:aws:s3:arn": [
+                    "arn:test-partition:s3:::test-org-test-env-test-domain-test-datalake-main-curated",
+                    "arn:test-partition:s3:::test-org-test-env-test-domain-test-datalake-main-curated/data/*"
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account-2:role/sample-datalake-replication"
+              },
+              "Resource": "*",
+              "Sid": "inbound-replication-curated"
+            },
+            {
+              "Action": [
+                "kms:Encrypt",
+                "kms:Decrypt",
+                "kms:GenerateDataKey"
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "kms:ViaService": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "s3.test-region.",
+                        {
+                          "Ref": "AWS::URLSuffix"
+                        }
+                      ]
+                    ]
+                  }
+                },
+                "StringLike": {
+                  "kms:EncryptionContext:aws:s3:arn": [
+                    "arn:test-partition:s3:::test-org-test-env-test-domain-test-datalake-main-exchange",
+                    "arn:test-partition:s3:::test-org-test-env-test-domain-test-datalake-main-exchange/incoming/*"
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account-2:role/sample-datalake-replication"
+              },
+              "Resource": "*",
+              "Sid": "inbound-replication-exchange"
             }
           ],
           "Version": "2012-10-17"
@@ -577,6 +645,7 @@
           "mdaa_module_name": "test-datalake-main",
           "mdaa_org": "test-org"
         },
+        "Tier": "Advanced",
         "Type": "String",
         "Value": {
           "Fn::GetAtt": [
@@ -597,6 +666,7 @@
           "mdaa_module_name": "test-datalake-main",
           "mdaa_org": "test-org"
         },
+        "Tier": "Advanced",
         "Type": "String",
         "Value": {
           "Ref": "cmk01DE03DA"
@@ -1281,6 +1351,56 @@
             },
             {
               "Action": [
+                "s3:ReplicateObject",
+                "s3:ReplicateTags",
+                "s3:ReplicateDelete"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account-2:role/sample-datalake-replication"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "bucketcurated81D6F3A3",
+                        "Arn"
+                      ]
+                    },
+                    "/data/*"
+                  ]
+                ]
+              },
+              "Sid": "InboundReplicationObjects"
+            },
+            {
+              "Action": [
+                "s3:GetBucketVersioning",
+                "s3:ListBucket"
+              ],
+              "Condition": {
+                "StringLike": {
+                  "s3:prefix": [
+                    "data/*"
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account-2:role/sample-datalake-replication"
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bucketcurated81D6F3A3",
+                  "Arn"
+                ]
+              },
+              "Sid": "InboundReplicationBucket"
+            },
+            {
+              "Action": [
                 "s3:GetObject*",
                 "s3:PutObject",
                 "s3:PutObjectTagging",
@@ -1871,6 +1991,7 @@
           "mdaa_module_name": "test-datalake-main",
           "mdaa_org": "test-org"
         },
+        "Tier": "Advanced",
         "Type": "String",
         "Value": {
           "Ref": "bucketcurated81D6F3A3"
@@ -1888,6 +2009,7 @@
           "mdaa_module_name": "test-datalake-main",
           "mdaa_org": "test-org"
         },
+        "Tier": "Advanced",
         "Type": "String",
         "Value": {
           "Fn::GetAtt": [
@@ -1968,6 +2090,1318 @@
       ],
       "UpdateReplacePolicy": "Delete",
       "DeletionPolicy": "Delete"
+    },
+    "replicationroleexchange3A6535A1": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "s3.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "Role assumed by S3 to replicate objects out of the exchange data lake bucket.",
+        "RoleName": "test-org-test-env-test-domain-test-datalake-main-exchan-3bf8b2d8",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datalake"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datalake-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "replicationroleexchangeroleexchangereplicationarnssm33E3C231": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datalake-main/role/exchange-replication/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datalake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datalake-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "replicationroleexchange3A6535A1",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "replicationroleexchangeroleexchangereplicationidssm5660155F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datalake-main/role/exchange-replication/id",
+        "Tags": {
+          "mdaa_cdk_app": "datalake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datalake-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "replicationroleexchange3A6535A1",
+            "RoleId"
+          ]
+        }
+      }
+    },
+    "replicationroleexchangeroleexchangereplicationnamessmF76EF296": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datalake-main/role/exchange-replication/name",
+        "Tags": {
+          "mdaa_cdk_app": "datalake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datalake-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "replicationroleexchange3A6535A1"
+        }
+      }
+    },
+    "bucketexchange21206A05": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "BucketKeyEnabled": true,
+              "ServerSideEncryptionByDefault": {
+                "KMSMasterKeyID": {
+                  "Fn::GetAtt": [
+                    "cmk01DE03DA",
+                    "Arn"
+                  ]
+                },
+                "SSEAlgorithm": "aws:kms"
+              }
+            }
+          ]
+        },
+        "BucketName": "test-org-test-env-test-domain-test-datalake-main-exchange",
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        },
+        "ReplicationConfiguration": {
+          "Role": {
+            "Fn::GetAtt": [
+              "replicationroleexchange3A6535A1",
+              "Arn"
+            ]
+          },
+          "Rules": [
+            {
+              "DeleteMarkerReplication": {
+                "Status": "Disabled"
+              },
+              "Destination": {
+                "Account": "test-account-2",
+                "Bucket": "arn:test-partition:s3:::sample-dr-datalake-exchange",
+                "EncryptionConfiguration": {
+                  "ReplicaKmsKeyID": "arn:test-partition:kms:test-region:test-account-2:key/test-replication-key"
+                }
+              },
+              "Filter": {
+                "Prefix": "outgoing/"
+              },
+              "Id": "replication-exchange-outgoing",
+              "Priority": 1,
+              "SourceSelectionCriteria": {
+                "SseKmsEncryptedObjects": {
+                  "Status": "Enabled"
+                }
+              },
+              "Status": "Enabled"
+            }
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datalake"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datalake-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VersioningConfiguration": {
+          "Status": "Enabled"
+        }
+      },
+      "DependsOn": [
+        "replicationpolicyexchangeB42ECEB7"
+      ],
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "AwsSolutions-S1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "NIST.800.53.R5-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "HIPAA.Security-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "PCI.DSS.321-S3BucketLoggingEnabled"
+            }
+          ]
+        }
+      }
+    },
+    "bucketexchangePolicy84BC445D": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "bucketexchange21206A05"
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "bucketexchange21206A05",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "bucketexchange21206A05",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "s3:PutObject",
+              "Condition": {
+                "StringEquals": {
+                  "s3:x-amz-server-side-encryption": "AES256"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "bucketexchange21206A05",
+                        "Arn"
+                      ]
+                    },
+                    "/*"
+                  ]
+                ]
+              },
+              "Sid": "DenyAES"
+            },
+            {
+              "Action": "s3:PutObject",
+              "Condition": {
+                "StringNotLikeIfExists": {
+                  "s3:x-amz-server-side-encryption-aws-kms-key-id": {
+                    "Fn::GetAtt": [
+                      "cmk01DE03DA",
+                      "Arn"
+                    ]
+                  }
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "bucketexchange21206A05",
+                        "Arn"
+                      ]
+                    },
+                    "/*"
+                  ]
+                ]
+              },
+              "Sid": "ForceKMS"
+            },
+            {
+              "Action": [
+                "s3:ReplicateObject",
+                "s3:ReplicateTags",
+                "s3:ReplicateDelete"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account-2:role/sample-datalake-replication"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "bucketexchange21206A05",
+                        "Arn"
+                      ]
+                    },
+                    "/incoming/*"
+                  ]
+                ]
+              },
+              "Sid": "InboundReplicationObjects"
+            },
+            {
+              "Action": [
+                "s3:GetBucketVersioning",
+                "s3:ListBucket"
+              ],
+              "Condition": {
+                "StringLike": {
+                  "s3:prefix": [
+                    "incoming/*"
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account-2:role/sample-datalake-replication"
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bucketexchange21206A05",
+                  "Arn"
+                ]
+              },
+              "Sid": "InboundReplicationBucket"
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:PutObject",
+                "s3:PutObjectTagging",
+                "s3:DeleteObject",
+                "s3:DeleteObjectVersion"
+              ],
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResRootrws0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResRootrws1",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    "AROA1234567890:*"
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "bucketexchange21206A05",
+                        "Arn"
+                      ]
+                    },
+                    "/*"
+                  ]
+                ]
+              },
+              "Sid": "/_ReadWriteSuper"
+            },
+            {
+              "Action": "s3:GetObject*",
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Ref": "SsmParameterValuesampleorginstance1generatedroletestroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResDatar1",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Ref": "SsmParameterValuetestorgtestdomaingeneratedroletestroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Ref": "SsmParameterValuetestorgtestdomaingeneratedroledatascientistidC96584B6F00A464EAD1953AFF4B05118Parameter"
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResDatar4",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "bucketexchange21206A05",
+                        "Arn"
+                      ]
+                    },
+                    "/data/*"
+                  ]
+                ]
+              },
+              "Sid": "/data_Read"
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:PutObject",
+                "s3:PutObjectTagging",
+                "s3:DeleteObject"
+              ],
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResDatarw0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "bucketexchange21206A05",
+                        "Arn"
+                      ]
+                    },
+                    "/data/*"
+                  ]
+                ]
+              },
+              "Sid": "/data_ReadWrite"
+            },
+            {
+              "Action": "s3:PutObject",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "folderfunctionroleC7D41C6D",
+                    "Arn"
+                  ]
+                }
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "bucketexchange21206A05",
+                        "Arn"
+                      ]
+                    },
+                    "/data/"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": [
+                "s3:List*",
+                "s3:GetBucket*"
+              ],
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "lakeformationrole7FEE6C3C",
+                              "RoleId"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "replicationroleexchange3A6535A1",
+                              "RoleId"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResRootrws0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResRootrws1",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    "AROA1234567890:*",
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Ref": "SsmParameterValuesampleorginstance1generatedroletestroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResDatar1",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Ref": "SsmParameterValuetestorgtestdomaingeneratedroletestroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Ref": "SsmParameterValuetestorgtestdomaingeneratedroledatascientistidC96584B6F00A464EAD1953AFF4B05118Parameter"
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResDatar4",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResDatarw0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "bucketexchange21206A05",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::GetAtt": [
+                    "bucketexchange21206A05",
+                    "Arn"
+                  ]
+                }
+              ],
+              "Sid": "BucketAllow"
+            },
+            {
+              "Action": [
+                "s3:PutObject*",
+                "s3:GetObject*",
+                "s3:DeleteObject*"
+              ],
+              "Condition": {
+                "ForAnyValue:StringNotLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "lakeformationrole7FEE6C3C",
+                              "RoleId"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "replicationroleexchange3A6535A1",
+                              "RoleId"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResRootrws0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResRootrws1",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    "AROA1234567890:*",
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Ref": "SsmParameterValuesampleorginstance1generatedroletestroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResDatar1",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Ref": "SsmParameterValuetestorgtestdomaingeneratedroletestroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Ref": "SsmParameterValuetestorgtestdomaingeneratedroledatascientistidC96584B6F00A464EAD1953AFF4B05118Parameter"
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResDatar4",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResDatarw0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    }
+                  ],
+                  "aws:PrincipalArn": [
+                    {
+                      "Fn::GetAtt": [
+                        "folderfunctionroleC7D41C6D",
+                        "Arn"
+                      ]
+                    }
+                  ]
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "NotResource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "bucketexchange21206A05",
+                        "Arn"
+                      ]
+                    },
+                    "/inventory/*"
+                  ]
+                ]
+              },
+              "Sid": "BucketDeny"
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "DependsOn": [
+        "replicationpolicyexchangeB42ECEB7"
+      ],
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "AwsSolutions-S1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "NIST.800.53.R5-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "HIPAA.Security-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "PCI.DSS.321-S3BucketLoggingEnabled"
+            }
+          ]
+        }
+      }
+    },
+    "bucketexchangebucketexchangenamessm53FF10B7": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datalake-main/bucket/exchange/name",
+        "Tags": {
+          "mdaa_cdk_app": "datalake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datalake-main",
+          "mdaa_org": "test-org"
+        },
+        "Tier": "Advanced",
+        "Type": "String",
+        "Value": {
+          "Ref": "bucketexchange21206A05"
+        }
+      },
+      "DependsOn": [
+        "replicationpolicyexchangeB42ECEB7"
+      ]
+    },
+    "bucketexchangebucketexchangearnssm5B7329B7": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datalake-main/bucket/exchange/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datalake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datalake-main",
+          "mdaa_org": "test-org"
+        },
+        "Tier": "Advanced",
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bucketexchange21206A05",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "replicationpolicyexchangeB42ECEB7"
+      ]
+    },
+    "replicationpolicyexchangeB42ECEB7": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "Permissions for S3 to replicate objects out of the exchange data lake bucket.",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-datalake-main-exchan-3bf8b2d8",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetReplicationConfiguration",
+                "s3:ListBucket"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:s3:::test-org-test-env-test-domain-test-datalake-main-exchange"
+            },
+            {
+              "Action": [
+                "s3:GetObjectVersionForReplication",
+                "s3:GetObjectVersionAcl",
+                "s3:GetObjectVersionTagging"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:s3:::test-org-test-env-test-domain-test-datalake-main-exchange/outgoing/*"
+            },
+            {
+              "Action": [
+                "s3:ReplicateObject",
+                "s3:ReplicateTags"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:s3:::sample-dr-datalake-exchange/outgoing/*"
+            },
+            {
+              "Action": "kms:Decrypt",
+              "Condition": {
+                "StringEquals": {
+                  "kms:ViaService": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "s3.test-region.",
+                        {
+                          "Ref": "AWS::URLSuffix"
+                        }
+                      ]
+                    ]
+                  }
+                },
+                "StringLike": {
+                  "kms:EncryptionContext:aws:s3:arn": [
+                    "arn:test-partition:s3:::test-org-test-env-test-domain-test-datalake-main-exchange",
+                    "arn:test-partition:s3:::test-org-test-env-test-domain-test-datalake-main-exchange/outgoing/*"
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "cmk01DE03DA",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
+                "kms:Encrypt",
+                "kms:Decrypt"
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "kms:ViaService": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "s3.test-region.",
+                        {
+                          "Ref": "AWS::URLSuffix"
+                        }
+                      ]
+                    ]
+                  }
+                },
+                "StringLike": {
+                  "kms:EncryptionContext:aws:s3:arn": [
+                    "arn:test-partition:s3:::sample-dr-datalake-exchange",
+                    "arn:test-partition:s3:::sample-dr-datalake-exchange/outgoing/*"
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:kms:test-region:test-account-2:key/test-replication-key"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Ref": "replicationroleexchange3A6535A1"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts] Source reads (s3:GetObjectVersionForReplication, s3:GetObjectVersionAcl, s3:GetObjectVersionTagging) wildcard the object key within the configured prefixes on this bucket. Destination writes (s3:ReplicateObject, s3:ReplicateDelete, s3:ReplicateTags) wildcard the object key within the same prefixes on the destination bucket. Both are object-key wildcards inherent to replicating every object under a prefix, not actions lacking resource-level support. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "replicationpolicyexchangemanagedpolicyexchangereplicationarnssmA55CFEE4": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datalake-main/managed-policy/exchange-replication/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datalake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datalake-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "replicationpolicyexchangeB42ECEB7"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts] Source reads (s3:GetObjectVersionForReplication, s3:GetObjectVersionAcl, s3:GetObjectVersionTagging) wildcard the object key within the configured prefixes on this bucket. Destination writes (s3:ReplicateObject, s3:ReplicateDelete, s3:ReplicateTags) wildcard the object key within the same prefixes on the destination bucket. Both are object-key wildcards inherent to replicating every object under a prefix, not actions lacking resource-level support. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "replicationpolicyexchangemanagedpolicyexchangereplicationnamessm9C437945": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datalake-main/managed-policy/exchange-replication/name",
+        "Tags": {
+          "mdaa_cdk_app": "datalake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datalake-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "replicationpolicyexchangeB42ECEB7"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts] Source reads (s3:GetObjectVersionForReplication, s3:GetObjectVersionAcl, s3:GetObjectVersionTagging) wildcard the object key within the configured prefixes on this bucket. Destination writes (s3:ReplicateObject, s3:ReplicateDelete, s3:ReplicateTags) wildcard the object key within the same prefixes on the destination bucket. Both are object-key wildcards inherent to replicating every object under a prefix, not actions lacking resource-level support. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "datalakefolderexchangeData": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "datalakefoldercrproviderframeworkonEvent1599BF3D",
+            "Arn"
+          ]
+        },
+        "bucket_name": {
+          "Ref": "bucketexchange21206A05"
+        },
+        "folder_name": "/data"
+      },
+      "DependsOn": [
+        "bucketexchangePolicy84BC445D"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "replicationroleraw7500FFE0": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "s3.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "Role assumed by S3 to replicate objects out of the raw data lake bucket.",
+        "RoleName": "test-org-test-env-test-domain-test-datalake-main-raw-re-37003431",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datalake"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datalake-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "replicationrolerawrolerawreplicationarnssmB71F631D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datalake-main/role/raw-replication/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datalake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datalake-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "replicationroleraw7500FFE0",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "replicationrolerawrolerawreplicationidssmEAAFF959": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datalake-main/role/raw-replication/id",
+        "Tags": {
+          "mdaa_cdk_app": "datalake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datalake-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "replicationroleraw7500FFE0",
+            "RoleId"
+          ]
+        }
+      }
+    },
+    "replicationrolerawrolerawreplicationnamessm0E336C9D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datalake-main/role/raw-replication/name",
+        "Tags": {
+          "mdaa_cdk_app": "datalake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datalake-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "replicationroleraw7500FFE0"
+        }
+      }
     },
     "bucketrawE1DB2AD1": {
       "Type": "AWS::S3::Bucket",
@@ -2162,6 +3596,39 @@
           "IgnorePublicAcls": true,
           "RestrictPublicBuckets": true
         },
+        "ReplicationConfiguration": {
+          "Role": {
+            "Fn::GetAtt": [
+              "replicationroleraw7500FFE0",
+              "Arn"
+            ]
+          },
+          "Rules": [
+            {
+              "DeleteMarkerReplication": {
+                "Status": "Enabled"
+              },
+              "Destination": {
+                "Account": "test-account-2",
+                "Bucket": "arn:test-partition:s3:::sample-dr-datalake-raw",
+                "EncryptionConfiguration": {
+                  "ReplicaKmsKeyID": "arn:test-partition:kms:test-region:test-account-2:key/test-replication-key"
+                }
+              },
+              "Filter": {
+                "Prefix": "data/"
+              },
+              "Id": "replication-raw-data",
+              "Priority": 1,
+              "SourceSelectionCriteria": {
+                "SseKmsEncryptedObjects": {
+                  "Status": "Enabled"
+                }
+              },
+              "Status": "Enabled"
+            }
+          ]
+        },
         "Tags": [
           {
             "Key": "mdaa_cdk_app",
@@ -2188,23 +3655,14 @@
           "Status": "Enabled"
         }
       },
+      "DependsOn": [
+        "replicationpolicyrawECA01BAF"
+      ],
       "UpdateReplacePolicy": "Retain",
       "DeletionPolicy": "Retain",
       "Metadata": {
         "cdk_nag": {
           "rules_to_suppress": [
-            {
-              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
-              "id": "HIPAA.Security-S3BucketReplicationEnabled"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
-            },
             {
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
               "id": "AwsSolutions-S1"
@@ -2589,6 +4047,20 @@
                         [
                           {
                             "Fn::GetAtt": [
+                              "replicationroleraw7500FFE0",
+                              "RoleId"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
                               "RoleResRootrws0",
                               "id"
                             ]
@@ -2722,23 +4194,14 @@
           "Version": "2012-10-17"
         }
       },
+      "DependsOn": [
+        "replicationpolicyrawECA01BAF"
+      ],
       "UpdateReplacePolicy": "Retain",
       "DeletionPolicy": "Retain",
       "Metadata": {
         "cdk_nag": {
           "rules_to_suppress": [
-            {
-              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
-              "id": "HIPAA.Security-S3BucketReplicationEnabled"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
-            },
             {
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
               "id": "AwsSolutions-S1"
@@ -2770,11 +4233,15 @@
           "mdaa_module_name": "test-datalake-main",
           "mdaa_org": "test-org"
         },
+        "Tier": "Advanced",
         "Type": "String",
         "Value": {
           "Ref": "bucketrawE1DB2AD1"
         }
-      }
+      },
+      "DependsOn": [
+        "replicationpolicyrawECA01BAF"
+      ]
     },
     "bucketrawbucketrawarnssm8C51B661": {
       "Type": "AWS::SSM::Parameter",
@@ -2787,6 +4254,7 @@
           "mdaa_module_name": "test-datalake-main",
           "mdaa_org": "test-org"
         },
+        "Tier": "Advanced",
         "Type": "String",
         "Value": {
           "Fn::GetAtt": [
@@ -2794,7 +4262,10 @@
             "Arn"
           ]
         }
-      }
+      },
+      "DependsOn": [
+        "replicationpolicyrawECA01BAF"
+      ]
     },
     "invtableraw": {
       "Type": "AWS::Glue::Table",
@@ -2898,6 +4369,208 @@
         }
       }
     },
+    "replicationpolicyrawECA01BAF": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "Permissions for S3 to replicate objects out of the raw data lake bucket.",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-datalake-main-raw-re-37003431",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetReplicationConfiguration",
+                "s3:ListBucket"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:s3:::test-org-test-env-test-domain-test-datalake-main-raw"
+            },
+            {
+              "Action": [
+                "s3:GetObjectVersionForReplication",
+                "s3:GetObjectVersionAcl",
+                "s3:GetObjectVersionTagging"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:s3:::test-org-test-env-test-domain-test-datalake-main-raw/data/*"
+            },
+            {
+              "Action": [
+                "s3:ReplicateObject",
+                "s3:ReplicateTags",
+                "s3:ReplicateDelete"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:s3:::sample-dr-datalake-raw/data/*"
+            },
+            {
+              "Action": "kms:Decrypt",
+              "Condition": {
+                "StringEquals": {
+                  "kms:ViaService": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "s3.test-region.",
+                        {
+                          "Ref": "AWS::URLSuffix"
+                        }
+                      ]
+                    ]
+                  }
+                },
+                "StringLike": {
+                  "kms:EncryptionContext:aws:s3:arn": [
+                    "arn:test-partition:s3:::test-org-test-env-test-domain-test-datalake-main-raw",
+                    "arn:test-partition:s3:::test-org-test-env-test-domain-test-datalake-main-raw/data/*"
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "cmk01DE03DA",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
+                "kms:Encrypt",
+                "kms:Decrypt"
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "kms:ViaService": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "s3.test-region.",
+                        {
+                          "Ref": "AWS::URLSuffix"
+                        }
+                      ]
+                    ]
+                  }
+                },
+                "StringLike": {
+                  "kms:EncryptionContext:aws:s3:arn": [
+                    "arn:test-partition:s3:::sample-dr-datalake-raw",
+                    "arn:test-partition:s3:::sample-dr-datalake-raw/data/*"
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:kms:test-region:test-account-2:key/test-replication-key"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Ref": "replicationroleraw7500FFE0"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts] Source reads (s3:GetObjectVersionForReplication, s3:GetObjectVersionAcl, s3:GetObjectVersionTagging) wildcard the object key within the configured prefixes on this bucket. Destination writes (s3:ReplicateObject, s3:ReplicateDelete, s3:ReplicateTags) wildcard the object key within the same prefixes on the destination bucket. Both are object-key wildcards inherent to replicating every object under a prefix, not actions lacking resource-level support. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "replicationpolicyrawmanagedpolicyrawreplicationarnssm457C0DB1": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datalake-main/managed-policy/raw-replication/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datalake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datalake-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "replicationpolicyrawECA01BAF"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts] Source reads (s3:GetObjectVersionForReplication, s3:GetObjectVersionAcl, s3:GetObjectVersionTagging) wildcard the object key within the configured prefixes on this bucket. Destination writes (s3:ReplicateObject, s3:ReplicateDelete, s3:ReplicateTags) wildcard the object key within the same prefixes on the destination bucket. Both are object-key wildcards inherent to replicating every object under a prefix, not actions lacking resource-level support. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "replicationpolicyrawmanagedpolicyrawreplicationnamessm6B5A803F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datalake-main/managed-policy/raw-replication/name",
+        "Tags": {
+          "mdaa_cdk_app": "datalake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datalake-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "replicationpolicyrawECA01BAF"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts] Source reads (s3:GetObjectVersionForReplication, s3:GetObjectVersionAcl, s3:GetObjectVersionTagging) wildcard the object key within the configured prefixes on this bucket. Destination writes (s3:ReplicateObject, s3:ReplicateDelete, s3:ReplicateTags) wildcard the object key within the same prefixes on the destination bucket. Both are object-key wildcards inherent to replicating every object under a prefix, not actions lacking resource-level support. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "RoleResreplicationstandardized": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "replication-standardized",
+          "arn": "arn:test-partition:iam::test-account:role/sample-existing-replication"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
     "bucketstandardized3524AAEC": {
       "Type": "AWS::S3::Bucket",
       "Properties": {
@@ -2956,6 +4629,34 @@
           "IgnorePublicAcls": true,
           "RestrictPublicBuckets": true
         },
+        "ReplicationConfiguration": {
+          "Role": "arn:test-partition:iam::test-account:role/sample-existing-replication",
+          "Rules": [
+            {
+              "DeleteMarkerReplication": {
+                "Status": "Disabled"
+              },
+              "Destination": {
+                "Account": "test-account-2",
+                "Bucket": "arn:test-partition:s3:::sample-dr-datalake-standardized",
+                "EncryptionConfiguration": {
+                  "ReplicaKmsKeyID": "arn:test-partition:kms:test-region:test-account-2:key/test-replication-key"
+                }
+              },
+              "Filter": {
+                "Prefix": ""
+              },
+              "Id": "replication-standardized-all",
+              "Priority": 1,
+              "SourceSelectionCriteria": {
+                "SseKmsEncryptedObjects": {
+                  "Status": "Enabled"
+                }
+              },
+              "Status": "Enabled"
+            }
+          ]
+        },
         "Tags": [
           {
             "Key": "mdaa_cdk_app",
@@ -2982,23 +4683,14 @@
           "Status": "Enabled"
         }
       },
+      "DependsOn": [
+        "replicationpolicystandardized3D974D21"
+      ],
       "UpdateReplacePolicy": "Retain",
       "DeletionPolicy": "Retain",
       "Metadata": {
         "cdk_nag": {
           "rules_to_suppress": [
-            {
-              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
-              "id": "HIPAA.Security-S3BucketReplicationEnabled"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
-            },
             {
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
               "id": "AwsSolutions-S1"
@@ -3400,6 +5092,20 @@
                         [
                           {
                             "Fn::GetAtt": [
+                              "RoleResreplicationstandardized",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
                               "RoleResRootrws0",
                               "id"
                             ]
@@ -3558,6 +5264,20 @@
                         [
                           {
                             "Fn::GetAtt": [
+                              "RoleResreplicationstandardized",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
                               "RoleResRootrws0",
                               "id"
                             ]
@@ -3691,23 +5411,14 @@
           "Version": "2012-10-17"
         }
       },
+      "DependsOn": [
+        "replicationpolicystandardized3D974D21"
+      ],
       "UpdateReplacePolicy": "Retain",
       "DeletionPolicy": "Retain",
       "Metadata": {
         "cdk_nag": {
           "rules_to_suppress": [
-            {
-              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
-              "id": "HIPAA.Security-S3BucketReplicationEnabled"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
-            },
             {
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
               "id": "AwsSolutions-S1"
@@ -3739,11 +5450,15 @@
           "mdaa_module_name": "test-datalake-main",
           "mdaa_org": "test-org"
         },
+        "Tier": "Advanced",
         "Type": "String",
         "Value": {
           "Ref": "bucketstandardized3524AAEC"
         }
-      }
+      },
+      "DependsOn": [
+        "replicationpolicystandardized3D974D21"
+      ]
     },
     "bucketstandardizedbucketstandardizedarnssm3D5EB3C1": {
       "Type": "AWS::SSM::Parameter",
@@ -3756,6 +5471,7 @@
           "mdaa_module_name": "test-datalake-main",
           "mdaa_org": "test-org"
         },
+        "Tier": "Advanced",
         "Type": "String",
         "Value": {
           "Fn::GetAtt": [
@@ -3763,7 +5479,10 @@
             "Arn"
           ]
         }
-      }
+      },
+      "DependsOn": [
+        "replicationpolicystandardized3D974D21"
+      ]
     },
     "lfresourcestandardizedstandardizeddata": {
       "Type": "AWS::LakeFormation::Resource",
@@ -3789,6 +5508,191 @@
           ]
         },
         "UseServiceLinkedRole": false
+      }
+    },
+    "replicationpolicystandardized3D974D21": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "Permissions for S3 to replicate objects out of the standardized data lake bucket.",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-datalake-main-stand--484ecb7e",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetReplicationConfiguration",
+                "s3:ListBucket"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:s3:::test-org-test-env-test-domain-test-datalake-main-standardized"
+            },
+            {
+              "Action": [
+                "s3:GetObjectVersionForReplication",
+                "s3:GetObjectVersionAcl",
+                "s3:GetObjectVersionTagging"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:s3:::test-org-test-env-test-domain-test-datalake-main-standardized/*"
+            },
+            {
+              "Action": [
+                "s3:ReplicateObject",
+                "s3:ReplicateTags"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:s3:::sample-dr-datalake-standardized/*"
+            },
+            {
+              "Action": "kms:Decrypt",
+              "Condition": {
+                "StringEquals": {
+                  "kms:ViaService": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "s3.test-region.",
+                        {
+                          "Ref": "AWS::URLSuffix"
+                        }
+                      ]
+                    ]
+                  }
+                },
+                "StringLike": {
+                  "kms:EncryptionContext:aws:s3:arn": [
+                    "arn:test-partition:s3:::test-org-test-env-test-domain-test-datalake-main-standardized",
+                    "arn:test-partition:s3:::test-org-test-env-test-domain-test-datalake-main-standardized/*"
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "cmk01DE03DA",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
+                "kms:Encrypt",
+                "kms:Decrypt"
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "kms:ViaService": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "s3.test-region.",
+                        {
+                          "Ref": "AWS::URLSuffix"
+                        }
+                      ]
+                    ]
+                  }
+                },
+                "StringLike": {
+                  "kms:EncryptionContext:aws:s3:arn": [
+                    "arn:test-partition:s3:::sample-dr-datalake-standardized",
+                    "arn:test-partition:s3:::sample-dr-datalake-standardized/*"
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:kms:test-region:test-account-2:key/test-replication-key"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          "sample-existing-replication"
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts] Source reads (s3:GetObjectVersionForReplication, s3:GetObjectVersionAcl, s3:GetObjectVersionTagging) wildcard the object key within the configured prefixes on this bucket. Destination writes (s3:ReplicateObject, s3:ReplicateDelete, s3:ReplicateTags) wildcard the object key within the same prefixes on the destination bucket. Both are object-key wildcards inherent to replicating every object under a prefix, not actions lacking resource-level support. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "replicationpolicystandardizedmanagedpolicystandardizedreplicationarnssm25CBAD62": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datalake-main/managed-policy/standardized-replication/arn",
+        "Tags": {
+          "mdaa_cdk_app": "datalake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datalake-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "replicationpolicystandardized3D974D21"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts] Source reads (s3:GetObjectVersionForReplication, s3:GetObjectVersionAcl, s3:GetObjectVersionTagging) wildcard the object key within the configured prefixes on this bucket. Destination writes (s3:ReplicateObject, s3:ReplicateDelete, s3:ReplicateTags) wildcard the object key within the same prefixes on the destination bucket. Both are object-key wildcards inherent to replicating every object under a prefix, not actions lacking resource-level support. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "replicationpolicystandardizedmanagedpolicystandardizedreplicationnamessm42102801": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-datalake-main/managed-policy/standardized-replication/name",
+        "Tags": {
+          "mdaa_cdk_app": "datalake",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-datalake-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "replicationpolicystandardized3D974D21"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts] Source reads (s3:GetObjectVersionForReplication, s3:GetObjectVersionAcl, s3:GetObjectVersionTagging) wildcard the object key within the configured prefixes on this bucket. Destination writes (s3:ReplicateObject, s3:ReplicateDelete, s3:ReplicateTags) wildcard the object key within the same prefixes on the destination bucket. Both are object-key wildcards inherent to replicating every object under a prefix, not actions lacking resource-level support. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
       }
     },
     "datalakefolderstandardizedData": {
@@ -3824,6 +5728,12 @@
               {
                 "Fn::GetAtt": [
                   "bucketcurated81D6F3A3",
+                  "Arn"
+                ]
+              },
+              {
+                "Fn::GetAtt": [
+                  "bucketexchange21206A05",
                   "Arn"
                 ]
               },
@@ -3886,6 +5796,62 @@
           ]
         }
       }
+    },
+    "parametershare": {
+      "Type": "AWS::RAM::ResourceShare",
+      "Properties": {
+        "AllowExternalPrincipals": false,
+        "Name": "test-org-test-env-test-domain-test-datalake-main-datalake-parameters",
+        "Principals": [
+          "test-account-2"
+        ],
+        "ResourceArns": [
+          "arn:test-partition:ssm:test-region:test-account:parameter/test-org/test-domain/test-datalake-main/kms/arn",
+          "arn:test-partition:ssm:test-region:test-account:parameter/test-org/test-domain/test-datalake-main/kms/id",
+          "arn:test-partition:ssm:test-region:test-account:parameter/test-org/test-domain/test-datalake-main/bucket/curated/arn",
+          "arn:test-partition:ssm:test-region:test-account:parameter/test-org/test-domain/test-datalake-main/bucket/curated/name",
+          "arn:test-partition:ssm:test-region:test-account:parameter/test-org/test-domain/test-datalake-main/bucket/exchange/arn",
+          "arn:test-partition:ssm:test-region:test-account:parameter/test-org/test-domain/test-datalake-main/bucket/exchange/name",
+          "arn:test-partition:ssm:test-region:test-account:parameter/test-org/test-domain/test-datalake-main/bucket/raw/arn",
+          "arn:test-partition:ssm:test-region:test-account:parameter/test-org/test-domain/test-datalake-main/bucket/raw/name",
+          "arn:test-partition:ssm:test-region:test-account:parameter/test-org/test-domain/test-datalake-main/bucket/standardized/arn",
+          "arn:test-partition:ssm:test-region:test-account:parameter/test-org/test-domain/test-datalake-main/bucket/standardized/name"
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "datalake"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-datalake-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "DependsOn": [
+        "bucketcuratedbucketcuratedarnssm38D4998F",
+        "bucketcuratedbucketcuratednamessm63F4A613",
+        "bucketexchangebucketexchangearnssm5B7329B7",
+        "bucketexchangebucketexchangenamessm53FF10B7",
+        "bucketrawbucketrawarnssm8C51B661",
+        "bucketrawbucketrawnamessm224FC898",
+        "bucketstandardizedbucketstandardizedarnssm3D5EB3C1",
+        "bucketstandardizedbucketstandardizednamessm67035FC5",
+        "cmkkmsarnssm7AFB53BD",
+        "cmkkmsidssmF244AFE3"
+      ]
     }
   },
   "Outputs": {
@@ -3957,6 +5923,121 @@
         "Name": "test-org:test-domain:test-datalake-main:bucket:curated:arn"
       }
     },
+    "replicationroleexchangeroleexchangereplicationarnout6BC9DE8D": {
+      "Value": {
+        "Fn::GetAtt": [
+          "replicationroleexchange3A6535A1",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datalake-main:role:exchangereplication:arn"
+      }
+    },
+    "replicationroleexchangeroleexchangereplicationidout6A81D8BF": {
+      "Value": {
+        "Fn::GetAtt": [
+          "replicationroleexchange3A6535A1",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datalake-main:role:exchangereplication:id"
+      }
+    },
+    "replicationroleexchangeroleexchangereplicationnameout58A98C34": {
+      "Value": {
+        "Ref": "replicationroleexchange3A6535A1"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datalake-main:role:exchangereplication:name"
+      }
+    },
+    "bucketexchangebucketexchangenameout9B7D5179": {
+      "Value": {
+        "Ref": "bucketexchange21206A05"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datalake-main:bucket:exchange:name"
+      }
+    },
+    "bucketexchangebucketexchangearnout3A409425": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bucketexchange21206A05",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datalake-main:bucket:exchange:arn"
+      }
+    },
+    "replicationpolicyexchangemanagedpolicyexchangereplicationarnout8651B0BF": {
+      "Value": {
+        "Ref": "replicationpolicyexchangeB42ECEB7"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datalake-main:managed-policy:exchangereplication:arn"
+      }
+    },
+    "replicationpolicyexchangemanagedpolicyexchangereplicationnameout12F88F73": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "replicationpolicyexchangeB42ECEB7"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datalake-main:managed-policy:exchangereplication:name"
+      }
+    },
+    "replicationrolerawrolerawreplicationarnout9326B48B": {
+      "Value": {
+        "Fn::GetAtt": [
+          "replicationroleraw7500FFE0",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datalake-main:role:rawreplication:arn"
+      }
+    },
+    "replicationrolerawrolerawreplicationidout7E3A7372": {
+      "Value": {
+        "Fn::GetAtt": [
+          "replicationroleraw7500FFE0",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datalake-main:role:rawreplication:id"
+      }
+    },
+    "replicationrolerawrolerawreplicationnameoutADD5C746": {
+      "Value": {
+        "Ref": "replicationroleraw7500FFE0"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datalake-main:role:rawreplication:name"
+      }
+    },
     "bucketrawbucketrawnameout3B9B141F": {
       "Value": {
         "Ref": "bucketrawE1DB2AD1"
@@ -3976,6 +6057,42 @@
         "Name": "test-org:test-domain:test-datalake-main:bucket:raw:arn"
       }
     },
+    "replicationpolicyrawmanagedpolicyrawreplicationarnout69D59A38": {
+      "Value": {
+        "Ref": "replicationpolicyrawECA01BAF"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datalake-main:managed-policy:rawreplication:arn"
+      }
+    },
+    "replicationpolicyrawmanagedpolicyrawreplicationnameout699C71AE": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "replicationpolicyrawECA01BAF"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datalake-main:managed-policy:rawreplication:name"
+      }
+    },
     "bucketstandardizedbucketstandardizednameout87D74B72": {
       "Value": {
         "Ref": "bucketstandardized3524AAEC"
@@ -3993,6 +6110,42 @@
       },
       "Export": {
         "Name": "test-org:test-domain:test-datalake-main:bucket:standardized:arn"
+      }
+    },
+    "replicationpolicystandardizedmanagedpolicystandardizedreplicationarnout7900CC6C": {
+      "Value": {
+        "Ref": "replicationpolicystandardized3D974D21"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datalake-main:managed-policy:standardizedreplication:arn"
+      }
+    },
+    "replicationpolicystandardizedmanagedpolicystandardizedreplicationnameoutBA27E49A": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "replicationpolicystandardized3D974D21"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-datalake-main:managed-policy:standardizedreplication:name"
       }
     },
     "storagelensstoragelensarnoutFA098454": {

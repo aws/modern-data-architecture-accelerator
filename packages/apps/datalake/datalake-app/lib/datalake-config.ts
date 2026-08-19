@@ -5,7 +5,12 @@
 
 import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from '@aws-mdaa/app';
 
-import { AccessPolicyProps, BucketDefinition, InventoryDefinition } from '@aws-mdaa/datalake-l3-construct';
+import {
+  AccessPolicyProps,
+  BucketDefinition,
+  BucketReplicationDefinition,
+  InventoryDefinition,
+} from '@aws-mdaa/datalake-l3-construct';
 import { LifecycleConfigurationRuleProps, LifecycleTransitionProps } from '@aws-mdaa/s3-helpers';
 import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { Schema } from 'ajv';
@@ -111,6 +116,18 @@ export interface BucketConfig {
    * Validation: Optional; array of CorsRuleConfig
    */
   readonly corsRules?: CorsRuleConfig[];
+  /**
+   * Cross-account S3 replication into and/or out of this bucket. Set `outbound` when this
+   * bucket sends objects to a bucket in another account, `inbound` when it receives them,
+   * or both. MDAA only configures the side(s) it manages.
+   *
+   * Use cases: Cross-account DR copies; Sharing curated data with a consumer account; Data residency
+   *
+   * AWS: S3 ReplicationConfiguration, S3 bucket policy, IAM replication role, KMS key policy
+   *
+   * Validation: Optional; both sub-blocks default off
+   */
+  readonly replication?: BucketReplicationDefinition;
 }
 
 /**
@@ -510,6 +527,23 @@ export interface DataLakeConfigContents extends MdaaBaseConfigContents {
    * When true, creates a Storage Lens configuration covering all buckets defined in this app's config.
    */
   readonly storageLensEnabled?: boolean;
+  /**
+   * AWS accounts allowed to read this data lake's KMS key and bucket SSM parameters. A RAM share
+   * always names its principals, so only the accounts listed here can read them.
+   *
+   * Set this when a deployment in another account has to resolve identifiers it cannot derive -
+   * the two data lakes in an MDAA-to-MDAA replication pair each read the other's. The accounts
+   * must be in the same AWS Organization and region as this deployment, and the shared parameters
+   * move to the billed Advanced tier that RAM requires. The module README explains why each holds.
+   *
+   * Use cases: Replication between two MDAA data lakes; Sharing bucket and key identifiers with a consumer account
+   *
+   * AWS: SSM Advanced-tier parameters and a RAM resource share
+   *
+   * Validation: Optional; array of 12-digit AWS account IDs in this account's AWS Organization
+   * @default - no parameters are shared and all parameters stay in the Standard tier
+   */
+  readonly shareParametersWithAccounts?: string[];
 }
 
 export class DataLakeConfigParser extends MdaaAppConfigParser<DataLakeConfigContents> {
@@ -519,6 +553,7 @@ export class DataLakeConfigParser extends MdaaAppConfigParser<DataLakeConfigCont
   public readonly lifecycleConfigurations?: { [configName: string]: LifecycleConfigurationRuleProps[] };
   public readonly inventories?: { [key: string]: string };
   public readonly storageLensEnabled: boolean;
+  public readonly shareParametersWithAccounts?: string[];
 
   constructor(stack: Stack, props: MdaaAppConfigParserProps) {
     super(stack, props, configSchema as Schema);
@@ -531,6 +566,7 @@ export class DataLakeConfigParser extends MdaaAppConfigParser<DataLakeConfigCont
       : undefined;
 
     this.storageLensEnabled = this.configContents.storageLensEnabled ?? false;
+    this.shareParametersWithAccounts = this.configContents.shareParametersWithAccounts;
 
     this.buckets = Object.entries(this.configContents.buckets).map(zoneAndBucketConfig => {
       const bucketZone: string = zoneAndBucketConfig[0];
@@ -543,14 +579,12 @@ export class DataLakeConfigParser extends MdaaAppConfigParser<DataLakeConfigCont
         }
         return {
           ...this.accessPolicies[accessPolicyName],
-          ...{
-            name: accessPolicyName,
-          },
+
+          name: accessPolicyName,
         };
       });
       const lakeFormationLocations = Object.fromEntries(
-        Object.keys(configBucketProps.lakeFormationLocations || {}).map(lfLocationName => {
-          const lfLocation = (configBucketProps.lakeFormationLocations || {})[lfLocationName];
+        Object.entries(configBucketProps.lakeFormationLocations || {}).map(([lfLocationName, lfLocation]) => {
           return [
             lfLocationName,
             {
@@ -568,15 +602,14 @@ export class DataLakeConfigParser extends MdaaAppConfigParser<DataLakeConfigCont
 
       return {
         ...configBucketProps,
-        ...{
-          bucketZone: bucketZone,
-          accessPolicies: accessPolicies,
-          lakeFormationLocations: lakeFormationLocations,
-          lifecycleConfiguration: lifecycleConfiguration,
-          corsRules: configBucketProps.corsRules
-            ? DataLakeConfigParser.buildCorsRules(configBucketProps.corsRules)
-            : undefined,
-        },
+
+        bucketZone: bucketZone,
+        accessPolicies: accessPolicies,
+        lakeFormationLocations: lakeFormationLocations,
+        lifecycleConfiguration: lifecycleConfiguration,
+        corsRules: configBucketProps.corsRules
+          ? DataLakeConfigParser.buildCorsRules(configBucketProps.corsRules)
+          : undefined,
       };
     });
   }
@@ -598,9 +631,9 @@ export class DataLakeConfigParser extends MdaaAppConfigParser<DataLakeConfigCont
       accessPolicies[policyName] = {
         name: policyName,
         s3Prefix: s3Prefix,
-        readRoleRefs: readRoles.map(x => this.roles[x]).flat(),
-        readWriteRoleRefs: readWriteRoles.map(x => this.roles[x]).flat(),
-        readWriteSuperRoleRefs: readWriteSuperRoles.map(x => this.roles[x]).flat(),
+        readRoleRefs: readRoles.flatMap(x => this.roles[x]),
+        readWriteRoleRefs: readWriteRoles.flatMap(x => this.roles[x]),
+        readWriteSuperRoleRefs: readWriteSuperRoles.flatMap(x => this.roles[x]),
       };
     });
     return accessPolicies;

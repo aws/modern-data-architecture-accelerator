@@ -2795,6 +2795,7 @@
           "mdaa_module_name": "test-roles-main",
           "mdaa_org": "test-org"
         },
+        "Tier": "Advanced",
         "Type": "String",
         "Value": {
           "Fn::GetAtt": [
@@ -2815,6 +2816,7 @@
           "mdaa_module_name": "test-roles-main",
           "mdaa_org": "test-org"
         },
+        "Tier": "Advanced",
         "Type": "String",
         "Value": {
           "Fn::GetAtt": [
@@ -2822,6 +2824,62 @@
             "RoleId"
           ]
         }
+      }
+    },
+    "glueroleparametershare": {
+      "Type": "AWS::RAM::ResourceShare",
+      "Properties": {
+        "AllowExternalPrincipals": false,
+        "Name": "test-org-test-env-test-domain-test-roles-main-glue-role-params",
+        "Principals": [
+          "test-account-2"
+        ],
+        "ResourceArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:test-partition:ssm:test-region:test-account:parameter",
+                {
+                  "Ref": "gluerolegluerolessmgeneratedrolearn254BAB33"
+                }
+              ]
+            ]
+          },
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:test-partition:ssm:test-region:test-account:parameter",
+                {
+                  "Ref": "gluerolegluerolessmgeneratedroleidA92CE362"
+                }
+              ]
+            ]
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "roles"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-roles-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
       }
     },
     "datascientistE88C5724": {

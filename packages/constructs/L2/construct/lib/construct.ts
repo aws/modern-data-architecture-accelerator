@@ -63,8 +63,7 @@ export class MdaaParamAndOutput extends Construct {
     const skipCreateParamsContextString = this.node.tryGetContext(MdaaParamAndOutput.SKIP_CREATE_PARAMS);
     const skipCreateParamsContext =
       skipCreateParamsContextString != undefined ? /true/i.test(skipCreateParamsContextString) : undefined;
-    const createParamsProps =
-      props.createParams == undefined || (props.createParams != undefined && props.createParams.valueOf());
+    const createParamsProps = props.createParams == undefined || props.createParams?.valueOf();
     const createParams = skipCreateParamsContext == undefined || !skipCreateParamsContext ? createParamsProps : false;
 
     if (createParams) {
@@ -77,7 +76,7 @@ export class MdaaParamAndOutput extends Construct {
       });
     }
 
-    if (props.createOutputs == undefined || (props.createOutputs != undefined && props.createOutputs.valueOf())) {
+    if (props.createOutputs == undefined || props.createOutputs?.valueOf()) {
       const exportName = props.resourceId
         ? `${props.resourceType}:${props.resourceId.replace(/\W/g, '').replace(/_/g, '-')}:${props.name}`
         : `${props.resourceType}:${props.name}`;

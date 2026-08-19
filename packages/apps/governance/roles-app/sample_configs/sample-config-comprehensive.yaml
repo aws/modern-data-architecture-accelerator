@@ -168,6 +168,12 @@ generateRoles:
     suppressions:
       - id: 'AwsSolutions-IAM4'
         reason: 'AWSGlueServiceRole approved for use'
+    # (Optional) Accounts allowed to read this role's ARN and id parameters. Needed when a
+    # deployment in another account references the role and cannot build its ARN, since MDAA
+    # truncates a role name at 64 characters. Both accounts must be in the same region, and the
+    # shared parameters move to the billed Advanced tier. See SCHEMA.md.
+    shareParametersWithAccounts:
+      - '{{context:account-2}}'
 
   # ----------------------------------------------------------------
   # Federated role examples (SAML)

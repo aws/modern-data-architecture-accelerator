@@ -153,11 +153,30 @@
                 "lifecycleConfiguration": {
                     "description": "Name of a lifecycle configuration from the top-level lifecycleConfigurations\nto apply to this bucket.\n\nUse cases: Automated archival; Cost optimization; Data retention\n\nAWS: S3 lifecycle rules\n\nValidation: Optional; must match a key in lifecycleConfigurations if provided",
                     "type": "string"
+                },
+                "replication": {
+                    "$ref": "#/definitions/BucketReplicationDefinition",
+                    "description": "Cross-account S3 replication into and/or out of this bucket. Set `outbound` when this\nbucket sends objects to a bucket in another account, `inbound` when it receives them,\nor both. MDAA only configures the side(s) it manages.\n\nUse cases: Cross-account DR copies; Sharing curated data with a consumer account; Data residency\n\nAWS: S3 ReplicationConfiguration, S3 bucket policy, IAM replication role, KMS key policy\n\nValidation: Optional; both sub-blocks default off"
                 }
             },
             "required": [
                 "accessPolicies"
             ],
+            "type": "object"
+        },
+        "BucketReplicationDefinition": {
+            "additionalProperties": false,
+            "description": "Cross-account S3 replication for a data lake bucket. The sending side (`outbound`) and\nthe receiving side (`inbound`) are independent and both default off, so an MDAA bucket\ncan send, receive, or do both. Set only the side(s) MDAA manages; when the bucket at the\nother end is not managed by MDAA, wiring that end up remains the user's responsibility.\n\nUse cases: Cross-account DR copies; Sharing curated data with a consumer account; Data residency; Multi-account aggregation\n\nAWS: S3 ReplicationConfiguration, S3 bucket policy, IAM replication role, KMS key policy\n\nValidation: Optional; set outbound, inbound, or both",
+            "properties": {
+                "inbound": {
+                    "$ref": "#/definitions/InboundReplicationDefinition",
+                    "description": "Receiving side. MDAA grants an externally-owned replication role permission to replicate\ninto this bucket. No replication rules and no replication role are created here, because\nreplication rules always live on the sending bucket.\n\nUse cases: Receiving replicas from a non-MDAA source bucket; Completing the receiving end of an MDAA-to-MDAA pair\n\nAWS: S3 bucket policy statements and a KMS key policy grant\n\nValidation: Optional; sourceReplicationRoleArn required when set"
+                },
+                "outbound": {
+                    "$ref": "#/definitions/OutboundReplicationDefinition",
+                    "description": "Sending side. MDAA creates the replication rules and an MDAA-managed replication role\non this bucket, so matching objects written here are copied to a bucket in another account.\n\nUse cases: Replicating a data lake zone into a DR account; Publishing curated data to a consumer account\n\nAWS: S3 ReplicationConfiguration and an IAM replication role\n\nValidation: Optional; when set, destinationBucketArn, destinationAccount, destinationRegion and destinationKmsKeyArn are all required"
+                }
+            },
             "type": "object"
         },
         "CfnAutoScalingReplacingUpdate": {
@@ -1626,6 +1645,33 @@
             ],
             "type": "object"
         },
+        "InboundReplicationDefinition": {
+            "additionalProperties": false,
+            "description": "Receiving-side replication settings, granting an externally-owned replication role the\naccess it needs to write replicas into this bucket.\n\nUse cases: Receiving replicas from a non-MDAA bucket; Completing the receiving end of an MDAA-to-MDAA pair\n\nAWS: S3 bucket policy statements and a KMS key policy grant\n\nValidation: sourceReplicationRoleArn and sourceAccount required",
+            "properties": {
+                "prefixFilters": {
+                    "default": "- replication is permitted anywhere in the bucket",
+                    "description": "S3 prefixes the sending role may replicate into, which also bound what it may list. Worth\nsetting whenever the sending side writes under known prefixes, and especially when that side\nis not MDAA-managed: omitting it lets the external role write anywhere in the bucket and\nenumerate every key in it. Must cover the prefixes configured on the sending side or those\nobjects fail to replicate.\n\nUse cases: Confining incoming replicas to /data; Limiting what a non-MDAA sender can enumerate\n\nAWS: Resource ARNs on the bucket policy replication grant\n\nValidation: Optional; array of S3 prefixes",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "sourceAccount": {
+                    "description": "AWS account ID owning the sending bucket, checked at synth time against the account in\nsourceReplicationRoleArn so the two cannot silently disagree. Required, and deliberately\nredundant with the role ARN: stating the trusted account separately is what turns a mistyped\nARN into a synth failure rather than a grant to an unintended account.\n\nUse cases: Guarding against a mistyped replication role ARN\n\nAWS: No emitted resource; synth-time validation only\n\nValidation: Required; 12-digit AWS account ID; must match the account in sourceReplicationRoleArn",
+                    "type": "string"
+                },
+                "sourceReplicationRoleArn": {
+                    "description": "ARN of the replication role used by the sending bucket. This role is owned by the\nsending account, so it is granted by ARN rather than through MDAA's access policies,\nwhich resolve role names to IDs in the deploying account only.\n\nUse cases: Granting a partner account's replication role; Granting an MDAA source bucket's replication role\n\nAWS: Principal on the bucket policy and KMS key policy grants\n\nValidation: Required; IAM role ARN",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "sourceAccount",
+                "sourceReplicationRoleArn"
+            ],
+            "type": "object"
+        },
         "InventoryDefinition": {
             "additionalProperties": false,
             "description": "S3 inventory configuration for a specific prefix within a data lake bucket.\nGenerates automated inventory reports for governance, cost analysis, and compliance.\n\nUse cases: Prefix-scoped inventory; Cross-bucket inventory delivery; Compliance auditing\n\nAWS: S3 inventory configuration\n\nValidation: prefix required; destination fields optional",
@@ -2590,6 +2636,53 @@
             ],
             "type": "object"
         },
+        "OutboundReplicationDefinition": {
+            "additionalProperties": false,
+            "description": "Sending-side replication settings. Every field except prefixFilters is required: an S3\nbucket ARN carries neither account nor region, and because MDAA buckets always encrypt\nwith a CMK, S3 replicates nothing unless a destination replica key is supplied.\n\nUse cases: Cross-account DR; Cross-region DR; Publishing data to a consumer account\n\nAWS: S3 ReplicationConfiguration rules and an IAM replication role\n\nValidation: destinationBucketArn, destinationAccount, destinationRegion and destinationKmsKeyArn required; destinationKmsKeyArn must be a customer managed key in destinationRegion",
+            "properties": {
+                "deleteMarkerReplication": {
+                    "default": "false - delete markers are not replicated",
+                    "description": "Replicate delete markers, so a delete here also hides the object at the destination. Off by\ndefault, leaving the replica in place so the destination survives a delete at the source.\n\nUse cases: Mirroring deletions to a consumer account; Keeping a DR copy that survives a source delete\n\nAWS: S3 ReplicationRule DeleteMarkerReplication\n\nValidation: Optional; when true the replication role is also granted s3:ReplicateDelete",
+                    "type": "boolean"
+                },
+                "destinationAccount": {
+                    "description": "AWS account ID owning the destination bucket. Required because S3 bucket ARNs contain\nno account ID, and S3 needs it to confirm destination ownership.\n\nUse cases: Cross-account replication; Destination ownership verification\n\nAWS: S3 ReplicationRule Destination.Account\n\nValidation: Required; 12-digit AWS account ID",
+                    "type": "string"
+                },
+                "destinationBucketArn": {
+                    "description": "ARN of the destination bucket receiving the replicas. The bucket must exist and have\nversioning enabled; MDAA does not create it.\n\nUse cases: Targeting a DR bucket; Targeting a partner account's bucket\n\nAWS: S3 ReplicationRule Destination.Bucket\n\nValidation: Required; S3 bucket ARN, e.g. arn:aws:s3:::my-dr-bucket",
+                    "type": "string"
+                },
+                "destinationKmsKeyArn": {
+                    "description": "Customer managed KMS key encrypting the replicas, in the destination account and region.\nRequired, not optional: S3 does not replicate SSE-KMS encrypted objects unless the rule\nnames a replica key, and MDAA source buckets always encrypt with a CMK. AWS managed keys\ncannot be used, as they do not permit cross-account use.\n\nUse cases: Re-encrypting replicas under a destination-owned key\n\nAWS: S3 ReplicationRule Destination.EncryptionConfiguration.ReplicaKmsKeyID\n\nValidation: Required; KMS key ARN whose region matches destinationRegion",
+                    "type": "string"
+                },
+                "destinationRegion": {
+                    "description": "Region of the destination bucket. Used to scope the replication role's KMS grants to\nS3 in that region, and to check destinationKmsKeyArn is a key in the same region.\n\nUse cases: Cross-region DR; Data residency\n\nAWS: kms:ViaService condition on the replication role's destination key grant\n\nValidation: Required; AWS region name, e.g. us-west-2",
+                    "type": "string"
+                },
+                "prefixFilters": {
+                    "default": "- the whole bucket is replicated",
+                    "description": "S3 prefixes to replicate, one replication rule per entry. Omit to replicate the whole\nbucket, which is usually what a DR copy wants.\n\nUse cases: Replicating only /data while leaving scratch prefixes local; Whole-bucket DR\n\nAWS: S3 ReplicationRule Filter.Prefix\n\nValidation: Optional; array of S3 prefixes",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "replicationRole": {
+                    "$ref": "#/definitions/MdaaRoleRef",
+                    "default": "- MDAA creates a replication role for this bucket",
+                    "description": "Existing role S3 assumes to replicate out of this bucket, instead of MDAA creating one. Needed\nwhen the destination is another data lake in the same MDAA config: the destination names this\nrole in its policies and deploys first, so it cannot be a role this stack creates. Must be in\nthis bucket's account and assumable by s3.amazonaws.com; MDAA attaches the replication\npermissions as a managed policy.\n\nUse cases: Replicating between two MDAA deployments in one config; Reusing a centrally managed replication role\n\nAWS: S3 ReplicationConfiguration Role\n\nValidation: Optional; must resolve to a role ARN in this account"
+                }
+            },
+            "required": [
+                "destinationAccount",
+                "destinationBucketArn",
+                "destinationKmsKeyArn",
+                "destinationRegion"
+            ],
+            "type": "object"
+        },
         "Port": {
             "additionalProperties": false,
             "description": "Interface for classes that provide the connection-specification parts of a security group rule",
@@ -3287,6 +3380,14 @@
         "service_catalog_product_config": {
             "$ref": "#/definitions/MdaaServiceCatalogProductConfig",
             "description": "Q-ENHANCED-PROPERTY\nOptional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.\n\nUse cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access\n\nAWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning\n\nValidation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode"
+        },
+        "shareParametersWithAccounts": {
+            "default": "- no parameters are shared and all parameters stay in the Standard tier",
+            "description": "AWS accounts allowed to read this data lake's KMS key and bucket SSM parameters. A RAM share\nalways names its principals, so only the accounts listed here can read them.\n\nSet this when a deployment in another account has to resolve identifiers it cannot derive -\nthe two data lakes in an MDAA-to-MDAA replication pair each read the other's. The accounts\nmust be in the same AWS Organization and region as this deployment, and the shared parameters\nmove to the billed Advanced tier that RAM requires. The module README explains why each holds.\n\nUse cases: Replication between two MDAA data lakes; Sharing bucket and key identifiers with a consumer account\n\nAWS: SSM Advanced-tier parameters and a RAM resource share\n\nValidation: Optional; array of 12-digit AWS account IDs in this account's AWS Organization",
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
         },
         "storageLensEnabled": {
             "description": "Enable S3 Storage Lens for the data lake buckets.\nWhen true, creates a Storage Lens configuration covering all buckets defined in this app's config.",

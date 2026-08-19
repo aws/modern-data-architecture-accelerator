@@ -559,3 +559,82 @@ describe('additionalTrustedActions validation', () => {
     }).toThrow(/Invalid action 'iam:PassRole'/);
   });
 });
+
+// Sharing exists because a consumer in another account cannot reconstruct a role's ARN: MDAA
+// truncates a name at or over 64 characters with a hash of the untruncated name.
+describe('Generated Role Parameter Sharing', () => {
+  const testApp = new MdaaTestApp();
+
+  new RolesL3Construct(testApp.testStack, 'test-share-stack', {
+    generateRoles: [
+      {
+        name: 'shared-role',
+        trustedPrincipal: 'service:s3.amazonaws.com',
+        shareParametersWithAccounts: ['222222222222'],
+      },
+      {
+        name: 'private-role',
+        trustedPrincipal: 'this_account',
+      },
+      // An empty array is the other half of the guard's short-circuit: configured, but naming
+      // nobody, so it must behave exactly like the field being absent.
+      {
+        name: 'empty-share-role',
+        trustedPrincipal: 'this_account',
+        shareParametersWithAccounts: [],
+      },
+    ],
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+  });
+
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('An empty account list shares nothing and leaves the tier alone', () => {
+    // Still exactly one share - the empty-array role must not add a second.
+    template.resourceCountIs('AWS::RAM::ResourceShare', 1);
+    const params = Object.values(template.findResources('AWS::SSM::Parameter')).filter(param =>
+      String(param.Properties?.Name ?? '').includes('empty-share-role'),
+    );
+    expect(params.length).toBeGreaterThan(0);
+    params.forEach(param => expect(param.Properties?.Tier).toBeUndefined());
+  });
+
+  test('Share is confined to this account AWS Organization', () => {
+    // RAM defaults to allowing external principals, so the restriction has to be explicit.
+    template.hasResourceProperties('AWS::RAM::ResourceShare', {
+      AllowExternalPrincipals: false,
+    });
+  });
+
+  test('A sharing role gets one share, naming only the configured accounts', () => {
+    template.resourceCountIs('AWS::RAM::ResourceShare', 1);
+    template.hasResourceProperties('AWS::RAM::ResourceShare', { Principals: ['222222222222'] });
+    // Each ARN is a Join over the parameter's own Ref, which also makes the share depend on the
+    // parameters rather than racing them, so resolve the Refs back to parameter names.
+    const share = Object.values(template.findResources('AWS::RAM::ResourceShare'))[0];
+    const params = template.findResources('AWS::SSM::Parameter');
+    const sharedArns = share.Properties.ResourceArns as { 'Fn::Join': [string, [string, { Ref: string }]] }[];
+    const sharedNames = sharedArns.map(arn => params[arn['Fn::Join'][1][1].Ref].Properties.Name);
+    expect(sharedNames.sort()).toEqual([
+      '/test-org/test-domain/generated-role/shared-role/arn',
+      '/test-org/test-domain/generated-role/shared-role/id',
+    ]);
+  });
+
+  // RAM refuses to share a Standard-tier parameter, and an Advanced-tier parameter is billed, so
+  // only the shared role's parameters change tier.
+  test('Only the shared role publishes in the Advanced tier', () => {
+    const tierByName = Object.fromEntries(
+      Object.values(template.findResources('AWS::SSM::Parameter')).map(param => [
+        param.Properties?.Name,
+        param.Properties?.Tier,
+      ]),
+    );
+    expect(tierByName['/test-org/test-domain/generated-role/shared-role/arn']).toEqual('Advanced');
+    expect(tierByName['/test-org/test-domain/generated-role/shared-role/id']).toEqual('Advanced');
+    expect(tierByName['/test-org/test-domain/generated-role/private-role/arn']).toBeUndefined();
+    expect(tierByName['/test-org/test-domain/generated-role/private-role/id']).toBeUndefined();
+  });
+});

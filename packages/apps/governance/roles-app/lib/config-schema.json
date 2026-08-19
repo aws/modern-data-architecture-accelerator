@@ -826,6 +826,14 @@
                     },
                     "type": "array"
                 },
+                "shareParametersWithAccounts": {
+                    "default": "- no parameters are shared and all parameters stay in the Standard tier",
+                    "description": "AWS accounts allowed to read this role's generated-role ARN and id SSM parameters. A RAM share\nalways names its principals, so only the accounts listed here can read them.\n\nSet this when a deployment in another account must reference this role but cannot construct\nits ARN, since MDAA hash-truncates a role name at 64 characters. The accounts must be in the\nsame AWS Organization and region as this deployment, and the shared parameters move to the\nbilled Advanced tier that RAM requires. The module README explains why each holds.\n\nUse cases: Granting a role to a bucket or key policy in another account; Cross-account role references\n\nAWS: SSM Advanced-tier parameters and a RAM resource share\n\nValidation: Optional; array of 12-digit AWS account IDs in this account's AWS Organization",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "suppressions": {
                     "description": "Suppressions if required by the role configuration.",
                     "items": {

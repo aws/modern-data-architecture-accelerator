@@ -24,9 +24,11 @@ import {
   SamlProvider,
   ServicePrincipal,
 } from 'aws-cdk-lib/aws-iam';
+import { CfnResourceShare } from 'aws-cdk-lib/aws-ram';
+import { ParameterTier } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
-import { readFileSync } from 'fs';
-import { resolve } from 'path';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { parse } from 'yaml';
 
 /**
@@ -249,6 +251,23 @@ export interface GenerateRoleProps {
    * @default false
    */
   readonly verbatimRoleName?: boolean;
+  /**
+   * AWS accounts allowed to read this role's generated-role ARN and id SSM parameters. A RAM share
+   * always names its principals, so only the accounts listed here can read them.
+   *
+   * Set this when a deployment in another account must reference this role but cannot construct
+   * its ARN, since MDAA hash-truncates a role name at 64 characters. The accounts must be in the
+   * same AWS Organization and region as this deployment, and the shared parameters move to the
+   * billed Advanced tier that RAM requires. The module README explains why each holds.
+   *
+   * Use cases: Granting a role to a bucket or key policy in another account; Cross-account role references
+   *
+   * AWS: SSM Advanced-tier parameters and a RAM resource share
+   *
+   * Validation: Optional; array of 12-digit AWS account IDs in this account's AWS Organization
+   * @default - no parameters are shared and all parameters stay in the Standard tier
+   */
+  readonly shareParametersWithAccounts?: string[];
   /**
    * AWS managed policy names to attach (e.g. "service-role/AWSGlueServiceRole").
    *
@@ -511,17 +530,46 @@ export class RolesL3Construct extends MdaaL3Construct {
         MdaaNagSuppressions.addConfigResourceSuppressions(role, generateRole.suppressions, true);
       }
 
-      new MdaaStringParameter(role, `${generateRole.name}-ssm-generated-role-arn`, {
-        parameterName: this.props.naming.ssmPath(`generated-role/${generateRole.name}/arn`, false),
-        stringValue: role.roleArn,
-      });
-      new MdaaStringParameter(role, `${generateRole.name}-ssm-generated-role-id`, {
-        parameterName: this.props.naming.ssmPath(`generated-role/${generateRole.name}/id`, false),
-        stringValue: role.roleId,
-      });
+      // Advanced tier is what RAM requires in order to share a parameter, and an Advanced-tier
+      // parameter is billed, so the tier follows the sharing config rather than being set always.
+      const parameterTier = generateRole.shareParametersWithAccounts?.length ? ParameterTier.ADVANCED : undefined;
+      const roleParameters = [
+        new MdaaStringParameter(role, `${generateRole.name}-ssm-generated-role-arn`, {
+          parameterName: this.props.naming.ssmPath(`generated-role/${generateRole.name}/arn`, false),
+          stringValue: role.roleArn,
+          tier: parameterTier,
+        }),
+        new MdaaStringParameter(role, `${generateRole.name}-ssm-generated-role-id`, {
+          parameterName: this.props.naming.ssmPath(`generated-role/${generateRole.name}/id`, false),
+          stringValue: role.roleId,
+          tier: parameterTier,
+        }),
+      ];
+      this.shareRoleParameters(generateRole, roleParameters);
       return [generateRole.name, role];
     });
     return Object.fromEntries(generatedRoles || []);
+  }
+
+  /**
+   * Lets the configured accounts read this role's generated-role parameters, so a deployment there
+   * can reference the role without reproducing MDAA's role naming - which it cannot do reliably,
+   * since a name at or over 64 characters is truncated with a hash of the untruncated name.
+   */
+  private shareRoleParameters(generateRole: GenerateRoleWithNameProps, roleParameters: MdaaStringParameter[]) {
+    const accounts = generateRole.shareParametersWithAccounts;
+    if (!accounts || accounts.length == 0) {
+      return;
+    }
+    new CfnResourceShare(this.scope, `${generateRole.name}-parameter-share`, {
+      name: this.props.naming
+        .withResourceType(MdaaResourceType.RAM_RESOURCE_SHARE)
+        .resourceName(`${generateRole.name}-params`),
+      resourceArns: roleParameters.map(parameter => parameter.parameterArn),
+      principals: accounts,
+      // RAM defaults this to true, which lets the share reach accounts outside the organization.
+      allowExternalPrincipals: false,
+    });
   }
 
   private resolveTrustedPrincipal(ref: string, federationProviders: { [key: string]: ISamlProvider }): IPrincipal {

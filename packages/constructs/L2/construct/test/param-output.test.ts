@@ -4,7 +4,8 @@
  */
 
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
+import { ParameterTier } from 'aws-cdk-lib/aws-ssm';
 import { MdaaParamAndOutput, MdaaParamAndOutputProps } from '../lib';
 
 describe('MDAA Construct Compliance Tests', () => {
@@ -60,6 +61,44 @@ describe('MDAA Construct Compliance Tests', () => {
       Export: {
         Name: 'test-org:test-domain:test-module:test-type:test-name',
       },
+    });
+  });
+});
+
+describe('Parameter tier', () => {
+  const testApp = new MdaaTestApp();
+
+  new MdaaParamAndOutput(testApp.testStack, {
+    name: 'advanced-name',
+    resourceType: 'advanced-type',
+    value: 'advanced-val',
+    naming: testApp.naming,
+    createOutputs: false,
+    tier: ParameterTier.ADVANCED,
+  });
+
+  new MdaaParamAndOutput(testApp.testStack, {
+    name: 'default-name',
+    resourceType: 'default-type',
+    value: 'default-val',
+    naming: testApp.naming,
+    createOutputs: false,
+  });
+
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('tier reaches the published parameter', () => {
+    template.hasResourceProperties('AWS::SSM::Parameter', {
+      Name: testApp.naming.ssmPath('advanced-type/advanced-name'),
+      Tier: 'Advanced',
+    });
+  });
+
+  test('no Tier emitted when unset, leaving SSM to apply Standard', () => {
+    template.hasResourceProperties('AWS::SSM::Parameter', {
+      Name: testApp.naming.ssmPath('default-type/default-name'),
+      Tier: Match.absent(),
     });
   });
 });

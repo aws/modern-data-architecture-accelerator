@@ -3,7 +3,8 @@
 # Deploys a three-zone data lake (raw, standardized, curated) with
 # role-based access policies (admin/user/engineer), lifecycle
 # configurations with tiered storage transitions, S3 inventories,
-# LakeFormation locations, and EventBridge notifications.
+# LakeFormation locations, EventBridge notifications, and
+# cross-account replication (outbound on raw, inbound on curated).
 
 # See CONFIGURATION.md for role reference options (name, arn, id).
 # Logical role mappings. Each key is a logical role name used
@@ -193,6 +194,25 @@ buckets:
     # (Optional) Name of a lifecycle configuration from the top-level lifecycleConfigurations to
     # apply to this bucket.
     lifecycleConfiguration: SampleConfiguration1
+    # (Optional) Cross-account S3 replication. Both sides are independent and default off.
+    replication:
+      # Sending side: MDAA creates the replication rules and replication role on this bucket.
+      outbound:
+        # Destination bucket receiving the replicas. Must already exist with versioning enabled.
+        destinationBucketArn: arn:{{partition}}:s3:::sample-dr-datalake-raw
+        # Account owning the destination bucket. Required - S3 bucket ARNs carry no account ID.
+        destinationAccount: '{{context:account-2}}'
+        # Region of the destination bucket.
+        destinationRegion: '{{region}}'
+        # Customer managed key encrypting the replicas, in the destination account and region.
+        # Required: without it S3 replicates none of this bucket's SSE-KMS encrypted objects.
+        destinationKmsKeyArn: 'arn:{{partition}}:kms:{{region}}:{{context:account-2}}:key/test-replication-key'
+        # (Optional) Prefixes to replicate, one rule each. Omit to replicate the whole bucket.
+        prefixFilters:
+          - data
+        # (Optional) Replicate delete markers, so a delete here also hides the object at the
+        # destination. Off by default, which keeps the destination usable as a recovery point.
+        deleteMarkerReplication: true
 
   standardized:
     # (Optional) Create folder placeholder objects for each access policy prefix.
@@ -207,6 +227,18 @@ buckets:
       - Root
       - Data
     lifecycleConfiguration: SampleConfiguration2
+    # (Optional) Cross-account S3 replication. Both sides are independent and default off.
+    replication:
+      outbound:
+        destinationBucketArn: arn:{{partition}}:s3:::sample-dr-datalake-standardized
+        destinationAccount: '{{context:account-2}}'
+        destinationRegion: '{{region}}'
+        destinationKmsKeyArn: 'arn:{{partition}}:kms:{{region}}:{{context:account-2}}:key/test-replication-key'
+        # (Optional) Use an existing role instead of MDAA creating one. Needed when the
+        # destination is another MDAA data lake, which has to grant the role before this bucket
+        # is deployed. The role must be in this account and assumable by s3.amazonaws.com.
+        replicationRole:
+          arn: arn:{{partition}}:iam::{{account}}:role/sample-existing-replication
 
   curated:
     createFolderSkeleton: true
@@ -248,7 +280,52 @@ buckets:
           - ETag
         # (Optional) Time in seconds the browser caches the preflight response.
         maxAge: 3000
+    # (Optional) Cross-account S3 replication. Both sides are independent and default off.
+    replication:
+      # Receiving side: grants an externally-owned replication role access to write replicas
+      # here. No replication rules or role are created - those live on the sending bucket.
+      inbound:
+        # Replication role used by the sending bucket, granted by ARN.
+        sourceReplicationRoleArn: 'arn:{{partition}}:iam::{{context:account-2}}:role/sample-datalake-replication'
+        # Account owning the sending bucket, checked against the role ARN at synth so a mistyped
+        # ARN fails the build instead of granting an unintended account.
+        sourceAccount: '{{context:account-2}}'
+        # (Optional) Prefixes the sending role may replicate into. Omit to allow the whole bucket.
+        prefixFilters:
+          - data
+
+  # A bucket may send and receive at once, since outbound and inbound are additive rather than
+  # mutually exclusive - useful for a hub zone that both distributes and collects data.
+  exchange:
+    createFolderSkeleton: true
+    accessPolicies:
+      - Root
+      - Data
+    replication:
+      # Sending side, as on raw: MDAA creates the rules and the replication role here.
+      outbound:
+        destinationBucketArn: arn:{{partition}}:s3:::sample-dr-datalake-exchange
+        destinationAccount: '{{context:account-2}}'
+        destinationRegion: '{{region}}'
+        destinationKmsKeyArn: 'arn:{{partition}}:kms:{{region}}:{{context:account-2}}:key/test-replication-key'
+        prefixFilters:
+          - outgoing
+      # Receiving side, as on curated: an externally-owned role writes replicas in. Scoped to a
+      # different prefix than the outbound rules so replicas are not themselves re-replicated.
+      inbound:
+        sourceReplicationRoleArn: 'arn:{{partition}}:iam::{{context:account-2}}:role/sample-datalake-replication'
+        sourceAccount: '{{context:account-2}}'
+        prefixFilters:
+          - incoming
 
 # (Optional) Enable S3 Storage Lens for storage analytics
 # covering all buckets defined in this app's config.
 storageLensEnabled: true
+
+# (Optional) Accounts allowed to read this data lake's published SSM parameters. Every bucket's
+# arn and name plus the KMS key's arn and id are shared and moved to the billed Advanced tier -
+# not only the buckets that replicate. Needed when a deployment in another account has to resolve
+# those values itself, such as an MDAA data lake replicating into this one. Both accounts must be
+# in the same region and organization. See SCHEMA.md.
+shareParametersWithAccounts:
+  - '{{context:account-2}}'

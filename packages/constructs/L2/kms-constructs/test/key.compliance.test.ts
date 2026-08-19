@@ -5,6 +5,7 @@
 
 import { MdaaTestApp } from '@aws-mdaa/testing';
 import { Match, Template } from 'aws-cdk-lib/assertions';
+import { ParameterTier } from 'aws-cdk-lib/aws-ssm';
 import { MdaaKmsKey, MdaaKmsKeyProps } from '../lib';
 
 describe('MDAA Construct Compliance Tests', () => {
@@ -116,5 +117,38 @@ describe('MDAA Construct Compliance Tests', () => {
     template.hasResource('AWS::KMS::Key', {
       DeletionPolicy: 'Retain',
     });
+  });
+});
+
+describe('Parameter tier', () => {
+  // tier only takes effect where the construct publishes parameters, so createParams must be on.
+  function templateFor(tier?: ParameterTier): Template {
+    const app = new MdaaTestApp();
+    new MdaaKmsKey(app.testStack, 'tier-key', {
+      naming: app.naming,
+      alias: 'tier-key',
+      keyUserRoleIds: ['test-user-id1'],
+      createParams: true,
+      createOutputs: false,
+      tier: tier,
+    });
+    // checkCdkNagCompliance declares its own describe/test, so it runs at describe scope.
+    app.checkCdkNagCompliance(app.testStack);
+    return Template.fromStack(app.testStack);
+  }
+
+  const advancedTemplate = templateFor(ParameterTier.ADVANCED);
+  const defaultTemplate = templateFor();
+
+  test('tier is threaded through to the published arn and id parameters', () => {
+    const params = Object.values(advancedTemplate.findResources('AWS::SSM::Parameter'));
+    expect(params.length).toBeGreaterThan(0);
+    params.forEach(param => expect(param.Properties?.Tier).toEqual('Advanced'));
+  });
+
+  test('no Tier emitted when unset, leaving SSM to apply Standard', () => {
+    const params = Object.values(defaultTemplate.findResources('AWS::SSM::Parameter'));
+    expect(params.length).toBeGreaterThan(0);
+    params.forEach(param => expect(param.Properties?.Tier).toBeUndefined());
   });
 });

@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaRole } from '@aws-mdaa/iam-constructs';
+import { MdaaManagedPolicy, MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
-import { ENCRYPT_ACTIONS, IMdaaKmsKey, MdaaKmsKey } from '@aws-mdaa/kms-constructs';
+import { DECRYPT_ACTIONS, ENCRYPT_ACTIONS, IMdaaKmsKey, MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaLambdaFunction, MdaaLambdaRole } from '@aws-mdaa/lambda-constructs';
 import { IMdaaResourceNaming, MdaaResourceType } from '@aws-mdaa/naming';
@@ -19,12 +19,14 @@ import {
 } from '@aws-mdaa/s3-helpers';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import { Database } from '@aws-cdk/aws-glue-alpha';
-import { CustomResource, Duration } from 'aws-cdk-lib';
+import { Arn, ArnComponents, ArnFormat, CustomResource, Duration, Stack, Token } from 'aws-cdk-lib';
 import { Effect, IRole, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
-import { IKey } from 'aws-cdk-lib/aws-kms';
+import { IKey, Key } from 'aws-cdk-lib/aws-kms';
 import { CfnResource } from 'aws-cdk-lib/aws-lakeformation';
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
-import { Bucket, CfnBucket, CfnStorageLens, CorsRule, IBucket } from 'aws-cdk-lib/aws-s3';
+import { CfnResourceShare } from 'aws-cdk-lib/aws-ram';
+import { ParameterTier } from 'aws-cdk-lib/aws-ssm';
+import { Bucket, CfnBucket, CfnStorageLens, CorsRule, IBucket, ReplicationRule } from 'aws-cdk-lib/aws-s3';
 import { Provider } from 'aws-cdk-lib/custom-resources';
 import { MdaaNagSuppressions, MdaaParamAndOutput } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
@@ -90,6 +92,196 @@ export interface LakeFormationLocation {
   readonly write?: boolean;
 }
 
+/**
+ * Cross-account S3 replication for a data lake bucket. The sending side (`outbound`) and
+ * the receiving side (`inbound`) are independent and both default off, so an MDAA bucket
+ * can send, receive, or do both. Set only the side(s) MDAA manages; when the bucket at the
+ * other end is not managed by MDAA, wiring that end up remains the user's responsibility.
+ *
+ * Use cases: Cross-account DR copies; Sharing curated data with a consumer account; Data residency; Multi-account aggregation
+ *
+ * AWS: S3 ReplicationConfiguration, S3 bucket policy, IAM replication role, KMS key policy
+ *
+ * Validation: Optional; set outbound, inbound, or both
+ */
+export interface BucketReplicationDefinition {
+  /**
+   * Sending side. MDAA creates the replication rules and an MDAA-managed replication role
+   * on this bucket, so matching objects written here are copied to a bucket in another account.
+   *
+   * Use cases: Replicating a data lake zone into a DR account; Publishing curated data to a consumer account
+   *
+   * AWS: S3 ReplicationConfiguration and an IAM replication role
+   *
+   * Validation: Optional; when set, destinationBucketArn, destinationAccount, destinationRegion and destinationKmsKeyArn are all required
+   */
+  readonly outbound?: OutboundReplicationDefinition;
+  /**
+   * Receiving side. MDAA grants an externally-owned replication role permission to replicate
+   * into this bucket. No replication rules and no replication role are created here, because
+   * replication rules always live on the sending bucket.
+   *
+   * Use cases: Receiving replicas from a non-MDAA source bucket; Completing the receiving end of an MDAA-to-MDAA pair
+   *
+   * AWS: S3 bucket policy statements and a KMS key policy grant
+   *
+   * Validation: Optional; sourceReplicationRoleArn required when set
+   */
+  readonly inbound?: InboundReplicationDefinition;
+}
+
+/**
+ * Sending-side replication settings. Every field except prefixFilters is required: an S3
+ * bucket ARN carries neither account nor region, and because MDAA buckets always encrypt
+ * with a CMK, S3 replicates nothing unless a destination replica key is supplied.
+ *
+ * Use cases: Cross-account DR; Cross-region DR; Publishing data to a consumer account
+ *
+ * AWS: S3 ReplicationConfiguration rules and an IAM replication role
+ *
+ * Validation: destinationBucketArn, destinationAccount, destinationRegion and destinationKmsKeyArn required; destinationKmsKeyArn must be a customer managed key in destinationRegion
+ */
+export interface OutboundReplicationDefinition {
+  /**
+   * ARN of the destination bucket receiving the replicas. The bucket must exist and have
+   * versioning enabled; MDAA does not create it.
+   *
+   * Use cases: Targeting a DR bucket; Targeting a partner account's bucket
+   *
+   * AWS: S3 ReplicationRule Destination.Bucket
+   *
+   * Validation: Required; S3 bucket ARN, e.g. arn:aws:s3:::my-dr-bucket
+   */
+  readonly destinationBucketArn: string;
+  /**
+   * AWS account ID owning the destination bucket. Required because S3 bucket ARNs contain
+   * no account ID, and S3 needs it to confirm destination ownership.
+   *
+   * Use cases: Cross-account replication; Destination ownership verification
+   *
+   * AWS: S3 ReplicationRule Destination.Account
+   *
+   * Validation: Required; 12-digit AWS account ID
+   */
+  readonly destinationAccount: string;
+  /**
+   * Region of the destination bucket. Used to scope the replication role's KMS grants to
+   * S3 in that region, and to check destinationKmsKeyArn is a key in the same region.
+   *
+   * Use cases: Cross-region DR; Data residency
+   *
+   * AWS: kms:ViaService condition on the replication role's destination key grant
+   *
+   * Validation: Required; AWS region name, e.g. us-west-2
+   */
+  readonly destinationRegion: string;
+  /**
+   * Customer managed KMS key encrypting the replicas, in the destination account and region.
+   * Required, not optional: S3 does not replicate SSE-KMS encrypted objects unless the rule
+   * names a replica key, and MDAA source buckets always encrypt with a CMK. AWS managed keys
+   * cannot be used, as they do not permit cross-account use.
+   *
+   * Use cases: Re-encrypting replicas under a destination-owned key
+   *
+   * AWS: S3 ReplicationRule Destination.EncryptionConfiguration.ReplicaKmsKeyID
+   *
+   * Validation: Required; KMS key ARN whose region matches destinationRegion
+   */
+  readonly destinationKmsKeyArn: string;
+  /**
+   * S3 prefixes to replicate, one replication rule per entry. Omit to replicate the whole
+   * bucket, which is usually what a DR copy wants.
+   *
+   * Use cases: Replicating only /data while leaving scratch prefixes local; Whole-bucket DR
+   *
+   * AWS: S3 ReplicationRule Filter.Prefix
+   *
+   * Validation: Optional; array of S3 prefixes
+   * @default - the whole bucket is replicated
+   */
+  readonly prefixFilters?: string[];
+  /**
+   * Existing role S3 assumes to replicate out of this bucket, instead of MDAA creating one. Needed
+   * when the destination is another data lake in the same MDAA config: the destination names this
+   * role in its policies and deploys first, so it cannot be a role this stack creates. Must be in
+   * this bucket's account and assumable by s3.amazonaws.com; MDAA attaches the replication
+   * permissions as a managed policy.
+   *
+   * Use cases: Replicating between two MDAA deployments in one config; Reusing a centrally managed replication role
+   *
+   * AWS: S3 ReplicationConfiguration Role
+   *
+   * Validation: Optional; must resolve to a role ARN in this account
+   * @default - MDAA creates a replication role for this bucket
+   */
+  readonly replicationRole?: MdaaRoleRef;
+  /**
+   * Replicate delete markers, so a delete here also hides the object at the destination. Off by
+   * default, leaving the replica in place so the destination survives a delete at the source.
+   *
+   * Use cases: Mirroring deletions to a consumer account; Keeping a DR copy that survives a source delete
+   *
+   * AWS: S3 ReplicationRule DeleteMarkerReplication
+   *
+   * Validation: Optional; when true the replication role is also granted s3:ReplicateDelete
+   * @default false - delete markers are not replicated
+   */
+  readonly deleteMarkerReplication?: boolean;
+}
+
+/**
+ * Receiving-side replication settings, granting an externally-owned replication role the
+ * access it needs to write replicas into this bucket.
+ *
+ * Use cases: Receiving replicas from a non-MDAA bucket; Completing the receiving end of an MDAA-to-MDAA pair
+ *
+ * AWS: S3 bucket policy statements and a KMS key policy grant
+ *
+ * Validation: sourceReplicationRoleArn and sourceAccount required
+ */
+export interface InboundReplicationDefinition {
+  /**
+   * ARN of the replication role used by the sending bucket. This role is owned by the
+   * sending account, so it is granted by ARN rather than through MDAA's access policies,
+   * which resolve role names to IDs in the deploying account only.
+   *
+   * Use cases: Granting a partner account's replication role; Granting an MDAA source bucket's replication role
+   *
+   * AWS: Principal on the bucket policy and KMS key policy grants
+   *
+   * Validation: Required; IAM role ARN
+   */
+  readonly sourceReplicationRoleArn: string;
+  /**
+   * AWS account ID owning the sending bucket, checked at synth time against the account in
+   * sourceReplicationRoleArn so the two cannot silently disagree. Required, and deliberately
+   * redundant with the role ARN: stating the trusted account separately is what turns a mistyped
+   * ARN into a synth failure rather than a grant to an unintended account.
+   *
+   * Use cases: Guarding against a mistyped replication role ARN
+   *
+   * AWS: No emitted resource; synth-time validation only
+   *
+   * Validation: Required; 12-digit AWS account ID; must match the account in sourceReplicationRoleArn
+   */
+  readonly sourceAccount: string;
+  /**
+   * S3 prefixes the sending role may replicate into, which also bound what it may list. Worth
+   * setting whenever the sending side writes under known prefixes, and especially when that side
+   * is not MDAA-managed: omitting it lets the external role write anywhere in the bucket and
+   * enumerate every key in it. Must cover the prefixes configured on the sending side or those
+   * objects fail to replicate.
+   *
+   * Use cases: Confining incoming replicas to /data; Limiting what a non-MDAA sender can enumerate
+   *
+   * AWS: Resource ARNs on the bucket policy replication grant
+   *
+   * Validation: Optional; array of S3 prefixes
+   * @default - replication is permitted anywhere in the bucket
+   */
+  readonly prefixFilters?: string[];
+}
+
 export interface BucketDefinition {
   readonly bucketZone: string;
   /** Access policies defining role-based permissions per S3 prefix. */
@@ -108,6 +300,8 @@ export interface BucketDefinition {
   readonly defaultDeny?: boolean;
   /** Cross-origin resource sharing rules for the bucket. */
   readonly corsRules?: CorsRule[];
+  /** Cross-account replication into and/or out of this bucket. Both sides default off. */
+  readonly replication?: BucketReplicationDefinition;
 }
 
 export interface AccessPolicyProps {
@@ -144,6 +338,139 @@ export interface DataLakeL3ConstructProps extends MdaaL3ConstructProps {
   readonly buckets: BucketDefinition[];
   /** Enable S3 Storage Lens for the data lake buckets. */
   readonly storageLensEnabled?: boolean;
+  /**
+   * AWS accounts allowed to read the SSM parameters published by this data lake's KMS key and
+   * buckets. A RAM share always names its principals, so only these accounts can read them.
+   *
+   * The accounts must be in the same AWS Organization and region as the account this module
+   * deploys into, and the shared parameters move to the billed Advanced tier that RAM requires.
+   * The datalake module README explains why each holds.
+   *
+   * @default - no parameters are shared and all parameters stay in the Standard tier
+   */
+  readonly shareParametersWithAccounts?: string[];
+}
+
+/**
+ * The role S3 assumes to replicate out of a bucket, resolved to the two things the bucket needs:
+ * the role itself for the replication configuration, and its AROA id for the bucket's
+ * default-deny statement, which matches on aws:userId rather than on an ARN.
+ */
+interface ResolvedReplicationRole {
+  readonly role: IRole;
+  readonly roleId: string;
+}
+
+/**
+ * Enumerated rather than s3:Replicate*, so neither side widens as AWS adds actions. Delete is
+ * separate: a sender gets it only when replicating delete markers, a receiver always does.
+ */
+const REPLICATE_OBJECT_ACTIONS = ['s3:ReplicateObject', 's3:ReplicateTags'];
+const REPLICATE_DELETE_ACTION = 's3:ReplicateDelete';
+
+/**
+ * Replica-key actions, narrower than USER_ACTIONS: Encrypt to write the replica, Decrypt for the
+ * S3 Bucket Key integrity check. https://docs.aws.amazon.com/AmazonS3/latest/userguide/replication-config-for-kms-objects.html
+ */
+const REPLICA_KEY_ACTIONS = ['kms:Encrypt', 'kms:Decrypt'];
+
+/**
+ * Synth-time guards for replication settings that AWS would otherwise accept and then fail on,
+ * or accept and silently not replicate. Skipped for ARNs that are still unresolved tokens.
+ */
+class DataLakeReplicationValidator {
+  /**
+   * The replica key must live in the destination bucket's account and region, or replication
+   * fails at runtime.
+   */
+  public static validateOutbound(bucketZone: string, outbound: OutboundReplicationDefinition) {
+    const key = DataLakeReplicationValidator.arnComponents(outbound.destinationKmsKeyArn);
+    const keyRegion = key?.region;
+    const destinationRegion = DataLakeReplicationValidator.literal(outbound.destinationRegion);
+    if (keyRegion && destinationRegion && keyRegion != destinationRegion) {
+      throw new Error(
+        `Bucket '${bucketZone}': replication.outbound.destinationKmsKeyArn is a key in '${keyRegion}', but destinationRegion is '${destinationRegion}'. The replica key must be in the same region as the destination bucket.`,
+      );
+    }
+    const keyAccount = key?.account;
+    const destinationAccount = DataLakeReplicationValidator.literal(outbound.destinationAccount);
+    if (keyAccount && destinationAccount && keyAccount != destinationAccount) {
+      throw new Error(
+        `Bucket '${bucketZone}': replication.outbound.destinationKmsKeyArn is a key in account '${keyAccount}', but destinationAccount is '${destinationAccount}'. The replica key must be owned by the destination bucket's account, since an AWS managed key cannot be used across accounts.`,
+      );
+    }
+  }
+
+  /**
+   * S3 assumes the replication role as the source bucket owner, so a referenced role has to
+   * belong to this bucket's account. Skipped when either side is an unresolved token, which is
+   * the case for a role resolved from an SSM parameter.
+   */
+  public static validateReplicationRoleAccount(bucketZone: string, roleArn: string, account: string) {
+    const roleAccount = DataLakeReplicationValidator.arnComponents(roleArn)?.account;
+    if (roleAccount && !Token.isUnresolved(account) && roleAccount != account) {
+      throw new Error(
+        `Bucket '${bucketZone}': replication.outbound.replicationRole resolves to a role in account '${roleAccount}', but this bucket is deployed to account '${account}'. S3 assumes the replication role as the source bucket owner, so it must be in the same account as the bucket.`,
+      );
+    }
+  }
+
+  public static validateInbound(bucketZone: string, inbound: InboundReplicationDefinition) {
+    const roleAccount = DataLakeReplicationValidator.arnComponents(inbound.sourceReplicationRoleArn)?.account;
+    const sourceAccount = DataLakeReplicationValidator.literal(inbound.sourceAccount);
+    if (sourceAccount && roleAccount && roleAccount != sourceAccount) {
+      throw new Error(
+        `Bucket '${bucketZone}': replication.inbound.sourceAccount is '${sourceAccount}', but sourceReplicationRoleArn belongs to account '${roleAccount}'.`,
+      );
+    }
+  }
+
+  /**
+   * Rule ids are derived from the configured prefixes, so a repeated prefix - or two prefixes
+   * that differ only in characters the id strips - would collide and be rejected by S3.
+   */
+  /** S3 caps a replication rule id at 255 characters, so a long zone plus a long prefix fails. */
+  public static validateRuleIdLengths(bucketZone: string, rules: ReplicationRule[]) {
+    const tooLong = rules.map(rule => rule.id).filter(id => id != undefined && id.length > 255);
+    if (tooLong.length > 0) {
+      throw new Error(
+        `Bucket '${bucketZone}': replication rule id '${tooLong[0]}' is ${tooLong[0]?.length} characters, over the 255 S3 allows. Shorten the bucket zone or the prefix it is built from.`,
+      );
+    }
+  }
+
+  public static validateRuleIdsUnique(bucketZone: string, rules: ReplicationRule[]) {
+    const ids = rules.map(rule => rule.id);
+    const duplicates = [...new Set(ids.filter((id, index) => ids.indexOf(id) != index))];
+    if (duplicates.length > 0) {
+      throw new Error(
+        `Bucket '${bucketZone}': replication.outbound.prefixFilters produce duplicate replication rule ids (${duplicates.join(', ')}). Each prefix must be distinct in its alphanumeric characters.`,
+      );
+    }
+  }
+
+  /**
+   * Parsed ARN, or undefined for a token or unparseable value - nothing to compare, so validation
+   * is skipped. Token check first: Arn.split splits a token via Fn.select instead of failing.
+   */
+  private static arnComponents(arn: string): ArnComponents | undefined {
+    if (Token.isUnresolved(arn)) {
+      return undefined;
+    }
+    try {
+      return Arn.split(arn, ArnFormat.NO_RESOURCE_NAME);
+    } catch {
+      return undefined;
+    }
+  }
+
+  /**
+   * The value, or undefined when it is still a token. A config value sourced from an SSM
+   * parameter resolves at deploy time, so comparing it at synth would reject a valid config.
+   */
+  private static literal(value: string): string | undefined {
+    return Token.isUnresolved(value) ? undefined : value;
+  }
 }
 
 export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
@@ -209,6 +536,73 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
     );
 
     this.createStorageLens();
+    this.shareParameters();
+  }
+
+  /**
+   * Shares the parameters published by this data lake's KMS key and buckets with the configured
+   * accounts, so a deployment there can resolve values it cannot know in advance.
+   *
+   * The set shared is every parameter those two constructs publish, which is also exactly the set
+   * moved to the Advanced tier - RAM cannot share a Standard-tier parameter, and a parameter in
+   * the Advanced tier is billed, so tiering one without sharing it would be waste. ARNs are built
+   * from the same naming call that published the parameters rather than by searching the construct
+   * tree, so the set stays correct regardless of which scope the parameters were created in.
+   */
+  private shareParameters() {
+    const accounts = this.props.shareParametersWithAccounts;
+    if (!accounts || accounts.length == 0) {
+      return;
+    }
+    const sharedPaths = [
+      'kms/arn',
+      'kms/id',
+      ...this.props.buckets.flatMap(bucketDefinition =>
+        ['arn', 'name'].map(name => `bucket/${bucketDefinition.bucketZone}/${name}`),
+      ),
+    ];
+    const share = new CfnResourceShare(this.scope, 'parameter-share', {
+      name: this.props.naming.withResourceType(MdaaResourceType.RAM_RESOURCE_SHARE).resourceName('datalake-parameters'),
+      resourceArns: sharedPaths.map(path => this.parameterArn(path)),
+      principals: accounts,
+      // RAM defaults this to true, which lets the share reach accounts outside the organization.
+      allowExternalPrincipals: false,
+    });
+
+    // RAM rejects a share naming a resource that does not exist yet, and an ARN built from a string
+    // creates no dependency for CloudFormation to order on - unlike one built from a parameter's own
+    // Ref. Depend on the parameters themselves, located by name: which construct they hang off is
+    // not fixed, since @aws-mdaa/legacyParamScope moves them from the bucket and key up to this
+    // scope, and depending on the presumed parent would then order nothing.
+    const sharedNames = new Set(sharedPaths.map(path => this.props.naming.ssmPath(path)));
+    // Matched on MdaaParamAndOutput.paramName, which holds the literal path. The parameter's own
+    // parameterName is a token, and instanceof is unreliable here because the workspace resolves
+    // more than one copy of aws-cdk-lib. `param` is undefined when the parameter was not created,
+    // which is what @aws-mdaa/skipCreateParams does - the construct still exists and still knows
+    // its name, so the name alone would not reveal it.
+    const sharedParameters = this.scope.node
+      .findAll()
+      .map(construct => construct as Partial<MdaaParamAndOutput>)
+      .filter(construct => typeof construct.paramName == 'string' && sharedNames.has(construct.paramName))
+      .map(construct => construct.param)
+      .filter(parameter => parameter != undefined);
+    // Otherwise the share names an ARN that never gets created and RAM rejects it at deploy.
+    if (sharedParameters.length != sharedNames.size) {
+      throw new Error(
+        `shareParametersWithAccounts needs the ${sharedNames.size} parameters it shares to exist, but ${sharedParameters.length} were created. Parameter creation cannot be disabled on a data lake that shares its parameters.`,
+      );
+    }
+    sharedParameters.forEach(parameter => share.node.addDependency(parameter));
+  }
+
+  /** ARN of a parameter this module publishes, from the path the naming implementation gives it. */
+  private parameterArn(ssmPath: string): string {
+    return `arn:${this.partition}:ssm:${this.region}:${this.account}:parameter${this.props.naming.ssmPath(ssmPath)}`;
+  }
+
+  /** Advanced tier is what RAM requires to share a parameter, so it follows the sharing config. */
+  private get parameterTier(): ParameterTier | undefined {
+    return this.props.shareParametersWithAccounts?.length ? ParameterTier.ADVANCED : undefined;
   }
 
   private resolveAccessPolicy(accessPolicy: AccessPolicyProps): AccessPolicyResolved {
@@ -271,11 +665,23 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
     dataLakeFolderProvider: Provider,
     lakeFormationRole: MdaaRole,
   ): IBucket {
+    const replication = bucketDefinition.replication;
+    if (replication && !replication.outbound && !replication.inbound) {
+      throw new Error(
+        `Bucket '${bucketDefinition.bucketZone}': replication is set but neither outbound nor inbound is, so nothing would be configured. Remove the block or set a side.`,
+      );
+    }
+    const outbound = bucketDefinition.replication?.outbound;
+    const replicationRole = outbound ? this.resolveReplicationRole(bucketDefinition.bucketZone, outbound) : undefined;
+
     const bucket = new MdaaBucket(this.scope, `bucket-${bucketDefinition.bucketZone}`, {
       encryptionKey: encryptionKey,
       bucketName: bucketDefinition.bucketZone,
       naming: naming,
       corsRules: bucketDefinition.corsRules,
+      replicationRole: replicationRole?.role,
+      replicationRules: outbound ? this.createReplicationRules(bucketDefinition.bucketZone, outbound) : undefined,
+      tier: this.parameterTier,
     });
 
     this.createBucketInventories(bucketDefinition, bucket, glueUtilDatabase);
@@ -283,6 +689,22 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
 
     // Iterate over the accessPolicies and add to the bucket
     const bucketAllowIds: string[] = [lakeFormationRole.roleId];
+
+    if (outbound && replicationRole) {
+      this.grantOutboundReplication(bucketDefinition.bucketZone, bucket, outbound, replicationRole.role, encryptionKey);
+      // Source objects are read with s3:GetObjectVersion* actions, which match the
+      // s3:GetObject* pattern in the bucket-level default-deny statement.
+      bucketAllowIds.push(replicationRole.roleId);
+    }
+
+    if (bucketDefinition.replication?.inbound) {
+      this.grantInboundReplication(
+        bucketDefinition.bucketZone,
+        bucket,
+        bucketDefinition.replication.inbound,
+        encryptionKey,
+      );
+    }
 
     const folderCreatePrefixes: string[] = [];
     bucketDefinition.accessPolicies
@@ -302,7 +724,9 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
 
         // Add the ARNs from this loop to bucketAllowArns
         bucketAllowIds.push(
-          ...[...accessPolicy.readRoleIds, ...accessPolicy.readWriteRoleIds, ...accessPolicy.readWriteSuperRoleIds],
+          ...accessPolicy.readRoleIds,
+          ...accessPolicy.readWriteRoleIds,
+          ...accessPolicy.readWriteSuperRoleIds,
         );
         folderCreatePrefixes.push(
           ...this.createFolderPrefix(s3Prefix, bucketDefinition, accessPolicy, dataLakeFolderProvider, bucket),
@@ -318,6 +742,294 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
     this.addBucketEventBridgeNotification(bucketDefinition, bucket);
 
     return bucket;
+  }
+
+  /**
+   * The role S3 assumes to replicate out of this bucket, together with its AROA id - the id is
+   * needed to exempt the role from the bucket's default-deny statement, which matches on
+   * aws:userId.
+   *
+   * MDAA creates the role unless the config references an existing one. A reference is what makes
+   * an MDAA-to-MDAA pair deployable in one pass: the receiving data lake names this role in its
+   * bucket and key policies, and AWS rejects a policy naming a principal that does not resolve,
+   * so the role has to exist before the receiver - which rules out the role this stack would
+   * create, since this stack deploys after it.
+   */
+  private resolveReplicationRole(bucketZone: string, outbound: OutboundReplicationDefinition): ResolvedReplicationRole {
+    if (!outbound.replicationRole) {
+      const role = this.createReplicationRole(bucketZone);
+      return { role: role, roleId: role.roleId };
+    }
+    const resolved = this.props.roleHelper.resolveRoleRefWithRefId(
+      outbound.replicationRole,
+      `replication-${bucketZone}`,
+    );
+    DataLakeReplicationValidator.validateReplicationRoleAccount(bucketZone, resolved.arn(), this.account);
+    // Resolving the id may create the role-resolver custom resource, which reads IAM in the
+    // deploying account. That is consistent with the role having to be in this account anyway.
+    return { role: resolved.role(`replication-role-ref-${bucketZone}`), roleId: resolved.id() };
+  }
+
+  /**
+   * Role assumed by S3 to replicate objects out of this bucket. CDK grants an explicitly
+   * supplied replication role nothing, so grantOutboundReplication attaches every permission.
+   */
+  private createReplicationRole(bucketZone: string): MdaaRole {
+    return new MdaaRole(this.scope, `replication-role-${bucketZone}`, {
+      naming: this.props.naming,
+      roleName: `${bucketZone}-replication`,
+      assumedBy: new ServicePrincipal('s3.amazonaws.com'),
+      description: `Role assumed by S3 to replicate objects out of the ${bucketZone} data lake bucket.`,
+    });
+  }
+
+  /**
+   * One replication rule per configured prefix, or a single whole-bucket rule when no
+   * prefixes are configured. sseKmsEncryptedObjects is always enabled because MDAA buckets
+   * always encrypt with a CMK and S3 otherwise skips SSE-KMS objects entirely.
+   */
+  private createReplicationRules(bucketZone: string, outbound: OutboundReplicationDefinition): ReplicationRule[] {
+    DataLakeReplicationValidator.validateOutbound(bucketZone, outbound);
+
+    // fromBucketAttributes rather than fromBucketArn/fromBucketName: only this form conveys
+    // the account, which S3 requires to confirm cross-account destination ownership.
+    const destinationBucket = Bucket.fromBucketAttributes(this.scope, `replication-dest-${bucketZone}`, {
+      bucketArn: outbound.destinationBucketArn,
+      account: outbound.destinationAccount,
+      region: outbound.destinationRegion,
+    });
+    const destinationKey = Key.fromKeyArn(
+      this.scope,
+      `replication-dest-key-${bucketZone}`,
+      outbound.destinationKmsKeyArn,
+    );
+
+    const rules = this.replicationPrefixes(outbound.prefixFilters).map((prefix, index) => ({
+      id: `replication-${bucketZone}-${prefix ? prefix.replace(/[^a-zA-Z0-9]/g, '-') : 'all'}`,
+      priority: index + 1,
+      destination: destinationBucket,
+      // Trailing slash keeps the rule scope identical to the role's object-level grant;
+      // a bare prefix would also match sibling keys the role is not permitted to read.
+      filter: prefix ? { prefix: `${prefix}/` } : undefined,
+      kmsKey: destinationKey,
+      sseKmsEncryptedObjects: true,
+      deleteMarkerReplication: outbound.deleteMarkerReplication ?? false,
+    }));
+    DataLakeReplicationValidator.validateRuleIdsUnique(bucketZone, rules);
+    DataLakeReplicationValidator.validateRuleIdLengths(bucketZone, rules);
+    return rules;
+  }
+
+  /**
+   * Permissions an S3 replication role needs, per
+   * https://docs.aws.amazon.com/AmazonS3/latest/userguide/replication-config-for-kms-objects.html
+   */
+  private grantOutboundReplication(
+    bucketZone: string,
+    bucket: MdaaBucket,
+    outbound: OutboundReplicationDefinition,
+    replicationRole: IRole,
+    sourceKey: IMdaaKmsKey,
+  ) {
+    const sourcePrefixes = this.replicationPrefixes(outbound.prefixFilters);
+    // Built from naming rather than bucket.bucketArn: a Fn::GetAtt here would make the policy
+    // depend on the bucket, and the bucket has to depend on the policy (see addDependency below).
+    const sourceBucketArn = this.namedBucketArn(bucket);
+    const viaServices = [...new Set([this.s3ViaService(this.region), this.s3ViaService(outbound.destinationRegion)])];
+    const replicaKeyViaService = viaServices.length == 1 ? viaServices[0] : viaServices;
+
+    const statements = [
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        resources: [sourceBucketArn],
+        actions: ['s3:GetReplicationConfiguration', 's3:ListBucket'],
+      }),
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        resources: this.replicationObjectResources(sourceBucketArn, sourcePrefixes),
+        actions: ['s3:GetObjectVersionForReplication', 's3:GetObjectVersionAcl', 's3:GetObjectVersionTagging'],
+      }),
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        resources: this.replicationObjectResources(outbound.destinationBucketArn, sourcePrefixes),
+        actions: outbound.deleteMarkerReplication
+          ? [...REPLICATE_OBJECT_ACTIONS, REPLICATE_DELETE_ACTION]
+          : REPLICATE_OBJECT_ACTIONS,
+      }),
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        resources: [sourceKey.keyArn],
+        actions: DECRYPT_ACTIONS,
+        conditions: {
+          StringEquals: { 'kms:ViaService': this.s3ViaService(this.region) },
+          StringLike: {
+            'kms:EncryptionContext:aws:s3:arn': this.replicationEncryptionContext(sourceBucketArn, sourcePrefixes),
+          },
+        },
+      }),
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        resources: [outbound.destinationKmsKeyArn],
+        actions: REPLICA_KEY_ACTIONS,
+        conditions: {
+          // Which regional S3 endpoint appears on the Encrypt call to the replica key is not
+          // documented - every AWS example is same-region - so accept either end's. Pinning one
+          // with StringEquals fails closed, and the failure is a cross-region replication that
+          // copies nothing rather than an error. Same-region collapses back to a single value.
+          StringEquals: { 'kms:ViaService': replicaKeyViaService },
+          StringLike: {
+            'kms:EncryptionContext:aws:s3:arn': this.replicationEncryptionContext(
+              outbound.destinationBucketArn,
+              sourcePrefixes,
+            ),
+          },
+        },
+      }),
+    ];
+
+    // A managed policy naming the role, rather than statements added to the role, because the role
+    // may be one this module does not own: Role.fromRoleArn returns an immutable role when it can
+    // tell the ARN belongs to another account, and additions to an immutable role are dropped.
+    // Attaching by `roles` works for a created and a referenced role alike, and being a managed
+    // policy it raises no inline-policy findings.
+    const replicationPolicy = new MdaaManagedPolicy(this.scope, `replication-policy-${bucketZone}`, {
+      naming: this.props.naming,
+      managedPolicyName: `${bucketZone}-replication`,
+      description: `Permissions for S3 to replicate objects out of the ${bucketZone} data lake bucket.`,
+      roles: [replicationRole],
+      statements: statements,
+    });
+
+    // Without this the bucket - and so replication - becomes active before the policy attaches,
+    // and objects written in that window replicate as FAILED and are not retried. Depending on the
+    // policy resource rather than the construct keeps its SSM parameters out of the ordering, since
+    // those do not gate replication.
+    const replicationPolicyResource = replicationPolicy.node.defaultChild;
+    if (replicationPolicyResource) {
+      bucket.node.addDependency(replicationPolicyResource);
+    }
+
+    MdaaNagSuppressions.addCodeResourceSuppressions(
+      replicationPolicy,
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason:
+            'Source reads (s3:GetObjectVersionForReplication, s3:GetObjectVersionAcl, s3:GetObjectVersionTagging) wildcard the object key within the configured prefixes on this bucket. Destination writes (s3:ReplicateObject, s3:ReplicateDelete, s3:ReplicateTags) wildcard the object key within the same prefixes on the destination bucket. Both are object-key wildcards inherent to replicating every object under a prefix, not actions lacking resource-level support. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html',
+        },
+      ],
+      true,
+    );
+  }
+
+  /**
+   * Grants an externally-owned replication role the access needed to write replicas into this
+   * bucket. No replication rules or role are created here - those belong to the sending bucket.
+   */
+  private grantInboundReplication(
+    bucketZone: string,
+    bucket: MdaaBucket,
+    inbound: InboundReplicationDefinition,
+    encryptionKey: IMdaaKmsKey,
+  ) {
+    DataLakeReplicationValidator.validateInbound(bucketZone, inbound);
+
+    const prefixes = this.replicationPrefixes(inbound.prefixFilters);
+    const listPrefixes = prefixes
+      .filter((prefix): prefix is string => prefix != undefined)
+      .map(prefix => `${prefix}/*`);
+
+    // Enumerated rather than s3:Replicate*, so a future s3:Replicate action is not granted
+    // implicitly. These three are what AWS's cross-account destination policy calls for.
+    const objectStatement = new PolicyStatement({
+      sid: 'InboundReplicationObjects',
+      effect: Effect.ALLOW,
+      resources: this.replicationObjectResources(bucket.bucketArn, prefixes),
+      actions: [...REPLICATE_OBJECT_ACTIONS, REPLICATE_DELETE_ACTION],
+    });
+    objectStatement.addArnPrincipal(inbound.sourceReplicationRoleArn);
+    bucket.addToResourcePolicy(objectStatement);
+
+    // Bucket-scoped, so not narrowable to a prefix. No s3:PutBucketVersioning, which AWS's example
+    // grants: MDAA buckets are always versioned, so it would only let the external account suspend.
+    const bucketStatement = new PolicyStatement({
+      sid: 'InboundReplicationBucket',
+      effect: Effect.ALLOW,
+      resources: [bucket.bucketArn],
+      actions: ['s3:GetBucketVersioning', 's3:ListBucket'],
+      // s3:prefix bounds what the sender may enumerate to the prefixes it may write. Without it
+      // prefixFilters would scope writes but leave the whole bucket listable, and data lake key
+      // names routinely carry table names and partition values.
+      conditions: listPrefixes.length > 0 ? { StringLike: { 's3:prefix': listPrefixes } } : undefined,
+    });
+    bucketStatement.addArnPrincipal(inbound.sourceReplicationRoleArn);
+    bucket.addToResourcePolicy(bucketStatement);
+
+    // MdaaKmsKeyProps grants by role ID via aws:userId, which resolves in-account only, so an
+    // external role has to be granted by ARN directly on the key policy.
+    const keyStatement = new PolicyStatement({
+      sid: `inbound-replication-${bucketZone}`,
+      effect: Effect.ALLOW,
+      // In a KMS key policy, '*' means this key - not every key in the account.
+      resources: ['*'],
+      // kms:GenerateDataKey beyond what the outbound grant needs, deliberately: the sending
+      // bucket here is not MDAA-managed, so it may hold unencrypted objects, and S3 has to
+      // generate a data key to encrypt those replicas under this key. Without it they are
+      // configured for replication and then never arrive. An MDAA source cannot hit that path,
+      // since its own buckets always encrypt with a CMK.
+      actions: [...REPLICA_KEY_ACTIONS, 'kms:GenerateDataKey'],
+      conditions: {
+        StringEquals: { 'kms:ViaService': this.s3ViaService(this.region) },
+        StringLike: {
+          'kms:EncryptionContext:aws:s3:arn': this.replicationEncryptionContext(this.namedBucketArn(bucket), prefixes),
+        },
+      },
+    });
+    keyStatement.addArnPrincipal(inbound.sourceReplicationRoleArn);
+    encryptionKey.addToResourcePolicy(keyStatement);
+  }
+
+  /**
+   * S3's KMS ViaService value for a region, built from the stack's URL suffix rather than a
+   * literal - the suffix is amazonaws.com.cn in aws-cn, and a hardcoded commercial suffix would
+   * match nothing there, denying every KMS call and silently replicating no objects.
+   */
+  private s3ViaService(region: string): string {
+    return `s3.${region}.${Stack.of(this).urlSuffix}`;
+  }
+
+  /** Configured prefixes, stripped of surrounding slashes, or [undefined] for whole-bucket scope. */
+  private replicationPrefixes(prefixFilters?: string[]): (string | undefined)[] {
+    if (!prefixFilters || prefixFilters.length == 0) {
+      return [undefined];
+    }
+    return prefixFilters.map(prefix => MdaaBucket.formatS3Prefix(prefix));
+  }
+
+  /** Object-level ARNs covering the given prefixes, or the whole bucket when unscoped. */
+  private replicationObjectResources(bucketArn: string, prefixes: (string | undefined)[]): string[] {
+    return prefixes.map(prefix => (prefix ? `${bucketArn}/${prefix}/*` : `${bucketArn}/*`));
+  }
+
+  /**
+   * Bucket ARN built from the name the bucket was created with, rather than from its Arn attribute.
+   * A policy on the key that encrypts this bucket cannot reference the bucket resource without a
+   * CloudFormation dependency cycle, and this form references no resource at all.
+   */
+  private namedBucketArn(bucket: MdaaBucket): string {
+    const bucketName = (bucket.node.defaultChild as CfnBucket).bucketName;
+    if (!bucketName) {
+      throw new Error(`Bucket '${bucket.node.id}' has no configured name, which MDAA buckets always set.`);
+    }
+    return `arn:${this.partition}:s3:::${bucketName}`;
+  }
+
+  /**
+   * Encryption context S3 sets: the bucket ARN with S3 Bucket Keys enabled, the object ARN without.
+   * Both are allowed, since the bucket at the far end may not enable them.
+   */
+  private replicationEncryptionContext(bucketArn: string, prefixes: (string | undefined)[]): string[] {
+    return [bucketArn, ...this.replicationObjectResources(bucketArn, prefixes)];
   }
 
   private addBucketEventBridgeNotification(bucketDefinition: BucketDefinition, bucket: Bucket) {
@@ -409,8 +1121,7 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
   private createLakeFormationLocations(bucketDefinition: BucketDefinition, bucket: IBucket, lakeFormationRole: IRole) {
     //Add Lake Formation locations
     if (bucketDefinition.lakeFormationLocations) {
-      Object.keys(bucketDefinition.lakeFormationLocations).forEach(locationName => {
-        const locationProps = (bucketDefinition.lakeFormationLocations || {})[locationName];
+      Object.entries(bucketDefinition.lakeFormationLocations).forEach(([locationName, locationProps]) => {
         this.createLakeFormationLocation(
           locationName,
           locationProps,
@@ -425,8 +1136,7 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
   private createBucketInventories(bucketDefinition: BucketDefinition, bucket: Bucket, glueUtilDatabase: Database) {
     if (bucketDefinition.inventories) {
       const bucketInventories: BucketInventory[] = [];
-      Object.keys(bucketDefinition.inventories).forEach(invName => {
-        const inventoryDefinition = (bucketDefinition.inventories || {})[invName];
+      Object.entries(bucketDefinition.inventories).forEach(([invName, inventoryDefinition]) => {
         const inventory = this.createInventory(
           invName,
           inventoryDefinition,
@@ -688,6 +1398,7 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
     const kmsKey = new MdaaKmsKey(this.scope, 'cmk', {
       naming: this.props.naming,
       keyUserRoleIds: keyUserRoles,
+      tier: this.parameterTier,
     });
     kmsKey.addToResourcePolicy(S3ServiceEncryptPolicy);
     return kmsKey;

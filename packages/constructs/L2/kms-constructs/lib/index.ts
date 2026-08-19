@@ -8,6 +8,7 @@ import { MdaaResourceType } from '@aws-mdaa/naming';
 import { Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { Effect, PolicyDocument, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { IKey, Key, KeyProps, KeySpec, KeyUsage } from 'aws-cdk-lib/aws-kms';
+import { ParameterTier } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 
 export const ADMIN_ACTIONS = [
@@ -56,6 +57,14 @@ export interface MdaaKmsKeyProps extends MdaaConstructProps {
   readonly policy?: PolicyDocument;
 
   readonly pendingWindow?: Duration;
+
+  /**
+   * Tier for the SSM parameters this construct publishes. Only Advanced-tier parameters can be
+   * shared with another account through AWS RAM, and Advanced-tier parameters are billed, so
+   * leave this unset unless a parameter is being shared.
+   * @default - ParameterTier.STANDARD, as applied by SSM
+   */
+  readonly tier?: ParameterTier;
 }
 
 /**

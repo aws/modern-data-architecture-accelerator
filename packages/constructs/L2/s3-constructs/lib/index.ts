@@ -7,7 +7,7 @@ import * as mdaa_construct from '@aws-mdaa/construct'; //NOSONAR
 import { IMdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { MdaaResourceType } from '@aws-mdaa/naming';
 import { Fn, RemovalPolicy, Stack } from 'aws-cdk-lib';
-import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { Effect, IRole, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import {
   BlockPublicAccess,
   Bucket,
@@ -18,12 +18,30 @@ import {
   IntelligentTieringConfiguration,
   Inventory,
   LifecycleRule,
+  ReplicationRule,
 } from 'aws-cdk-lib/aws-s3';
+import { ParameterTier } from 'aws-cdk-lib/aws-ssm';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 const PUBLIC_ACCESS_BLOCK_MANAGED_EXTERNALLY_REASON =
   'publicAccessBlockManagedExternally is enabled. Block public access is managed externally via AWS account-level settings and/or SCPs. See https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html';
+
+/**
+ * CDK-nag suppressions applied only to buckets without a replication configuration, so the
+ * reason is read as scoped to this bucket rather than as a statement about MDAA as a whole.
+ * A bucket configured as a replication source satisfies these rules directly, so the
+ * suppressions are withheld rather than hiding a genuine finding.
+ *
+ * The reason text is deliberately unchanged from before replication support existed: it is
+ * embedded in the committed baselines of every module that creates a bucket, so rewording it
+ * churns those baselines without changing any deployed behaviour.
+ */
+export const REPLICATION_NAG_SUPPRESSIONS = [
+  { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA does not use bucket replication.' },
+  { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA does not use bucket replication.' },
+  { id: 'PCI.DSS.321-S3BucketReplicationEnabled', reason: 'MDAA does not use bucket replication.' },
+];
 
 /** CDK-nag suppressions to apply when publicAccessBlockManagedExternally is enabled. */
 export const PUBLIC_ACCESS_BLOCK_NAG_SUPPRESSIONS = [
@@ -68,6 +86,40 @@ export interface MdaaBucketProps extends mdaa_construct.MdaaConstructProps {
    * @default false
    */
   readonly publicAccessBlockManagedExternally?: boolean;
+
+  /**
+   * Replication rules making this bucket a replication source. Requires replicationRole.
+   *
+   * When set, the S3BucketReplicationEnabled nag suppressions are not applied, as the
+   * bucket now satisfies those rules on its own.
+   *
+   * Because this bucket always encrypts with a CMK, every rule must set both `kmsKey` and
+   * `sseKmsEncryptedObjects`, and the construct rejects rules that do not: S3 skips SSE-KMS
+   * encrypted objects unless the rule opts in and names a replica key, so an incomplete rule
+   * deploys cleanly and then replicates nothing. Granting the replication role decrypt on this
+   * bucket's key and encrypt on the replica key remains the caller's responsibility.
+   * @default - no replication configuration
+   */
+  readonly replicationRules?: ReplicationRule[];
+
+  /**
+   * Role assumed by S3 to replicate objects out of this bucket. Required whenever
+   * replicationRules is set, and the construct rejects rules without one: CDK would otherwise
+   * create its own role, which would miss MDAA naming and, more importantly, the bucket-policy
+   * exclusion a replication role needs - leaving a bucket that deploys and replicates nothing.
+   * CDK grants an explicitly supplied role nothing, so the caller attaches all replication
+   * permissions itself.
+   * @default - none; required when replicationRules is set
+   */
+  readonly replicationRole?: IRole;
+
+  /**
+   * Tier for the SSM parameters this construct publishes. Only Advanced-tier parameters can be
+   * shared with another account through AWS RAM, and Advanced-tier parameters are billed, so
+   * leave this unset unless a parameter is being shared.
+   * @default - ParameterTier.STANDARD, as applied by SSM
+   */
+  readonly tier?: ParameterTier;
 }
 
 /**
@@ -88,7 +140,35 @@ export class MdaaBucket extends Bucket implements IMdaaBucket {
   public static readonly PUBLIC_ACCESS_BLOCK_MANAGED_EXTERNALLY_CONTEXT_KEY =
     '@aws-mdaa/publicAccessBlockManagedExternally';
 
+  /**
+   * A replication rule on a CMK-encrypted bucket has to opt in to SSE-KMS objects and name a
+   * replica key, or S3 accepts the configuration and silently replicates nothing.
+   * https://docs.aws.amazon.com/AmazonS3/latest/userguide/replication-config-for-kms-objects.html
+   */
+  private static validateReplicationRules(props: MdaaBucketProps) {
+    if ((props.replicationRules?.length ?? 0) > 0 && !props.replicationRole) {
+      throw new Error(
+        `Bucket '${props.bucketName}': replicationRules requires replicationRole. Left to CDK, the role it creates is not exempted from the bucket's default-deny statement, so replication would be configured and copy nothing.`,
+      );
+    }
+    props.replicationRules?.forEach((rule, index) => {
+      const missing = [
+        ...(rule.sseKmsEncryptedObjects ? [] : ['sseKmsEncryptedObjects']),
+        ...(rule.kmsKey ? [] : ['kmsKey']),
+      ];
+      if (missing.length > 0) {
+        throw new Error(
+          `Bucket '${props.bucketName}': replication rule ${rule.id ?? index} is missing ${missing.join(
+            ' and ',
+          )}. Objects in this bucket are encrypted with a customer managed key, and S3 replicates SSE-KMS encrypted objects only when the rule opts in and names a replica key.`,
+        );
+      }
+    });
+  }
+
   private static setProps(props: MdaaBucketProps, scope: Construct): BucketProps {
+    MdaaBucket.validateReplicationRules(props);
+
     const uniqueBucketNamePrefixContext = scope.node.tryGetContext(MdaaBucket.UNIQUE_NAME_CONTEXT_KEY);
 
     const uniqueBucketNamePrefix =
@@ -139,12 +219,12 @@ export class MdaaBucket extends Bucket implements IMdaaBucket {
 
     this.policy?.applyRemovalPolicy(RemovalPolicy.RETAIN);
 
+    const replicationConfigured = (props.replicationRules?.length ?? 0) > 0;
+
     MdaaNagSuppressions.addCodeResourceSuppressions(
       this,
       [
-        { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA does not use bucket replication.' },
-        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA does not use bucket replication.' },
-        { id: 'PCI.DSS.321-S3BucketReplicationEnabled', reason: 'MDAA does not use bucket replication.' },
+        ...(replicationConfigured ? [] : REPLICATION_NAG_SUPPRESSIONS),
         {
           id: 'AwsSolutions-S1',
           reason: 'Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.',

@@ -16,7 +16,7 @@ This module deploys and integrates the following resources:
 
 **IAM Identity (Federation) Providers** - SAML identity providers for establishing federated assume-role trust into generated roles. New providers created from SAML metadata XML documents.
 
-**SSM Parameters** - Role ARN and Role ID stored in Parameter Store for each generated role, enabling cross-module reference via `generated-role-id:` shorthand.
+**SSM Parameters** - Role ARN and Role ID stored in Parameter Store for each generated role, enabling cross-module reference via `generated-role-id:` shorthand. A role can optionally share these with other accounts - see [Sharing a Role with Another Account](#sharing-a-role-with-another-account).
 
 ![Roles](../../../constructs/L3/governance/roles-l3-construct/docs/Roles.png)
 
@@ -46,6 +46,48 @@ This module is designed in alignment with MDAA security/compliance principles an
 - **Separation of Duties**:
   - Permission boundaries and CDK Nag rules help guide roles toward organizational security standards
   - SAML federation enables SSO integration with existing identity providers
+- **Cross-Account Parameter Sharing**:
+  - Opt-in and default-off; a role's parameters are shared only with the accounts its config names
+  - What is shared is the role's ARN and id, not any permission to assume it
+
+---
+
+## Sharing a Role with Another Account
+
+A deployment in another account sometimes has to name one of these roles - in a bucket policy, a KMS key policy, or as an S3 replication role - and it cannot build the ARN itself, because MDAA truncates a role name at 64 characters with a hash of the untruncated name. `shareParametersWithAccounts` lets the named accounts read the role's ARN and id parameters instead:
+
+```yaml
+generateRoles:
+  s3-replication:
+    trustedPrincipal: service:s3.amazonaws.com
+    shareParametersWithAccounts:
+      - '222222222222'
+```
+
+The consumer then references the parameter by its full ARN, and CloudFormation resolves it at deploy time:
+
+```yaml
+# in the consuming data lake's module config, not in this module's
+buckets:
+  curated:
+    accessPolicies: [Root]
+    replication:
+      inbound:
+        sourceReplicationRoleArn: 'ssm:arn:{{partition}}:ssm:{{region}}:{{context:roles_account}}:parameter/{{org}}/<domain>/generated-role/s3-replication/arn'
+        sourceAccount: '{{context:roles_account}}'
+```
+
+These parameter paths assume the default SSM layout. With the `@mdaaIncludeEnvInSsmPath` flag enabled, `env` is inserted after the domain - `parameter/{{org}}/<domain>/<env>/<module>/...`.
+
+Worth knowing before turning it on:
+
+- **Only the `generated-role/<name>/{arn,id}` parameters are shared.** The same role's conventional `<module>/role/<name>/{arn,id,name}` parameters stay Standard-tier and unshared, so a consumer following that path gets AccessDenied with no indication why.
+- **Only the accounts named here can read the parameters.** A RAM share always names its principals, and this module has no way to know which deployments consume the roles it creates, so it cannot be inferred.
+- **Sharing is confined to your AWS Organization.** The share sets `allowExternalPrincipals: false`, so only accounts in the same organization as the account this module deploys into can be named, and the deployment fails if one is not. Within the organization the share is accepted automatically, provided RAM sharing is enabled for it (`aws ram enable-sharing-with-aws-organization`). This keeps the share usable by a consumer deployed in the same `mdaa deploy` run, which is what it exists for; to hand a role ARN to an account in another organization, state it as a literal in that account's config.
+- **The role's parameters move to the Advanced tier**, which RAM requires in order to share them and which AWS bills. Roles without this field are unaffected and stay Standard-tier. Turning it on is a one-way change for the parameters it covers: AWS does not allow an Advanced-tier parameter to be moved back to Standard, so removing this field later leaves them Advanced and still billed until they are deleted and recreated out of band.
+- **The reading account must be in the same region.** A parameter reference is resolved by CloudFormation in the region of the stack reading it, and a parameter exists only in the region that published it.
+- **Sharing a parameter grants no access to the role.** It exposes the ARN and id, nothing else; who may assume the role is still governed entirely by its trust policy.
+- **The consuming account needs its own permission too.** The CloudFormation execution role there still needs `ssm:GetParameter*` on the shared parameter.
 
 ---
 

@@ -142,14 +142,17 @@ root_folder2
 ```yaml
 # All resources will be deployed to the default region specified in the environment or AWS configurations.
 # Can optionally specify a specific AWS Region Name.
-# Target region can be defined globally, per domain, per env, or per module, with lower-level specifications
-# overriding higher-level configs.
+# Target region can be defined globally, per domain, or per env, with lower-level specifications
+# overriding higher-level configs. Each module deploys to the region of the env in which it is
+# defined; a module which additionally needs resources in another region can use 'additional_stacks'.
 region: default
 
 # All resources will be deployed to the default account specified in the environment or AWS configurations.
 # Can optionally specify a specific AWS account number.
-# Target account can be defined globally, per domain, per env, or per module, with lower-level specifications
-# overriding higher-level configs.
+# Target account can be defined globally, per domain, or per env, with lower-level specifications
+# overriding higher-level configs. Each module deploys to the account of the env in which it is
+# defined; a module which additionally needs resources in another account can use
+# 'additional_accounts' or 'additional_stacks'.
 # Note that CDK trust must be established (using CDK Bootstrap) between the local account
 # and the target account (if not default).
 account: default
@@ -235,13 +238,13 @@ domains:
   shared:
     # All resources will be deployed to the default region specified in the environment or AWS configurations.
     # Can optionally specify a specific AWS Region Name.
-    # Target region can be defined globally, per domain, per env, or per module, with lower-level specifications
+    # Target region can be defined globally, per domain, or per env, with lower-level specifications
     # overriding higher-level configs.
     region: default
 
     # All resources will be deployed to the default account specified in the environment or AWS configurations.
     # Can optionally specify a specific AWS account number.
-    # Target account can be defined globally, per domain, per env, or per module, with lower-level specifications
+    # Target account can be defined globally, per domain, or per env, with lower-level specifications
     # overriding higher-level configs.
     # Note that CDK trust must be established (using CDK Bootstrap) between the local account
     # and the target account (if not default).
@@ -261,14 +264,14 @@ domains:
       dev:
         # All resources will be deployed to the default region specified in the environment or AWS configurations.
         # Can optionally specify a specific AWS Region Name.
-        # Target region can be defined globally, per domain, per env, or per module, with lower-level specifications
-        # overriding higher-level configs.
+        # Target region can be defined globally, per domain, or per env, with lower-level specifications
+        # overriding higher-level configs. All modules in this env deploy to this region.
         region: default
 
         # All resources will be deployed to the default account specified in the environment or AWS configurations.
         # Can optionally specify a specific AWS account number.
-        # Target account can be defined globally, per domain, per env, or per module, with lower-level specifications
-        # overriding higher-level configs.
+        # Target account can be defined globally, per domain, or per env, with lower-level specifications
+        # overriding higher-level configs. All modules in this env deploy to this account.
         # Note that CDK trust must be established (using CDK Bootstrap) between the local account
         # and the target account (if not default).
         account: default
@@ -685,6 +688,32 @@ config_key: ssm-org:/other_domain/other_module/some_path
 # This expands to ssm:/{{org}}/{{domain}}/other_module/some_path
 config_key: ssm-domain:/other_module/some_path
 ```
+
+Each of these forms is resolved by CloudFormation at deployment time, against the parameter store of the account and region the module deploys to. To reference a parameter held in another account, see [Cross-Account References](#cross-account-references).
+
+### Cross-Account References
+
+A module can consume the output of a module deployed to a different account. Reference the parameter by its full ARN instead of by path, keeping the `ssm:` prefix, and share the parameter with the consuming account through AWS Resource Access Manager (RAM).
+
+```yaml
+# ssm: prefix, then the full SSM parameter ARN including the account which owns
+# the parameter. The prefix is what marks the value as a reference to resolve -
+# without it the ARN is taken literally and injected as the config value itself.
+# Using {{partition}}/{{region}}/{{org}} and a context key for the account number
+# keeps the reference portable across deployments.
+config_key: ssm:arn:{{partition}}:ssm:{{region}}:{{context:producer_account}}:parameter/{{org}}/other_domain/other_module/some_path
+```
+
+These parameter paths assume the default SSM layout. With the `@mdaaIncludeEnvInSsmPath` flag enabled, `env` is inserted after the domain - `parameter/{{org}}/<domain>/<env>/<module>/...`.
+
+Requirements:
+
+- **The parameter must be shared via RAM.** Only SSM parameters in the `Advanced` tier can be shared, so MDAA modules which publish parameters for cross-account use create them in that tier and RAM-share them with the accounts named in their config. AWS does not allow an Advanced-tier parameter to be returned to Standard, so this is a one-way change: turning sharing off later leaves the parameters Advanced and still billed until they are deleted and recreated out of band. Where the producing module is not managed by MDAA, or does not share the parameter itself, creating the share is yours to do.
+- **The consuming account must normally be in the same AWS Organization as the producer.** Within an organization that has RAM sharing enabled, the share is accepted automatically. The data lake and roles modules restrict their shares to the organization (`allowExternalPrincipals: false`), so naming an account outside it fails the deployment. The other MDAA modules that share parameters - datazone, glue-catalog and sagemaker-project - do not set this, so an out-of-organization principal raises a RAM invitation that must be accepted in the consuming account before the reference resolves, as does a share you created yourself outside MDAA. To avoid cross-organization sharing entirely, state the value as a literal in config.
+- **Both ends must be in the same region.** The reference is resolved by CloudFormation in the region of the stack reading it, so an ARN naming a different region fails at deployment time - nothing catches it at synth. Cross-region references between separately deployed modules are not supported. A single module which needs resources in another region uses `additional_stacks` to create the stack there, and `allow_cross_reference_stack` to permit references between its stacks - the two are complementary rather than alternatives, and such a module generally needs both.
+- **The producing module must be deployed first.** MDAA deploys domains and environments in the order they are listed in the config and does not resolve dependencies between them, so list the producing domain ahead of the consuming one. A reference to a parameter which does not yet exist, or which has not been shared, fails at deployment time.
+
+The [SMUS Data Mesh](starter_kits/smus_data_mesh/README.md) starter kit is a complete example of the cross-account sharing itself, though it reads the shared value through the DataZone module's own `domainConfigSSMParam` rather than through an `ssm:`-prefixed reference: an enterprise account publishes its SageMaker Unified Studio domain config and shares it with two team accounts, which reference it by ARN from their own module configs.
 
 ### Configuration Sharing Across Domains, Envs, Modules
 

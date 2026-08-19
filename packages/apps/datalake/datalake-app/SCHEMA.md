@@ -6,16 +6,17 @@
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                             | Pattern | Type    | Deprecated | Definition                                          | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| -------------------------------------------------------------------- | ------- | ------- | ---------- | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [accessPolicies](#accessPolicies )                                 | No      | object  | No         | -                                                   | Named access policies defining role-based permissions per S3 prefix.<br />Policies are referenced by name in bucket configurations.<br /><br />Use cases: Reusable permission sets; Prefix-level read/write/super access<br /><br />AWS: S3 bucket policy rule sets<br /><br />Validation: Required; map of policy name to AccessPolicyConfig; policies referenced in buckets must be defined here                                                                                                                                                                                                                                                                                      |
-| + [buckets](#buckets )                                               | No      | object  | No         | -                                                   | Data lake bucket definitions keyed by zone name (e.g., 'raw', 'transformed', 'curated').<br />Each bucket gets its own S3 bucket with the specified access policies and features.<br /><br />Use cases: Multi-zone data lake; Raw/processed/curated separation; Zone-specific access<br /><br />AWS: S3 buckets with bucket policies, encryption, versioning<br /><br />Validation: Required; map of zone name to BucketConfig; zone names must be unique                                                                                                                                                                                                                               |
-| - [lifecycleConfigurations](#lifecycleConfigurations )               | No      | object  | No         | -                                                   | Named lifecycle configurations containing sets of lifecycle rules.<br />Referenced by name in bucket configurations.<br /><br />Use cases: Shared archival strategies; Environment-specific retention policies<br /><br />AWS: S3 lifecycle configuration rule collections<br /><br />Validation: Optional; map of config name to LifecycleConfigurationConfig                                                                                                                                                                                                                                                                                                                          |
-| - [nag_suppressions](#nag_suppressions )                             | No      | object  | No         | In #/definitions/MdaaNagSuppressionConfigs          | Q-ENHANCED-PROPERTY<br />Optional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.<br /><br />Use cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions<br /><br />AWS: CDK Nag suppressions for compliance rule management and security exception documentation<br /><br />Validation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management          |
-| + [roles](#roles )                                                   | No      | object  | No         | -                                                   | Named role references for use in access policies. Each key is a logical role name,<br />value is an array of physical IAM role references (ARN, name, ID, or SSM parameter).<br /><br />Use cases: Multi-role access patterns; Cross-account data access; SSO role mapping<br /><br />AWS: IAM role references for S3 bucket policies and LakeFormation permissions<br /><br />Validation: Required; map of role name to MdaaRoleRef[]; roles referenced in accessPolicies must be defined here                                                                                                                                                                                         |
-| - [sagemakerBlueprint](#sagemakerBlueprint )                         | No      | object  | No         | In #/definitions/MdaaSageMakerCustomBluePrintConfig | Q-ENHANCED-PROPERTY<br />Optional SageMaker blueprint configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a SageMaker blueprint instead of direct deployment for governed access and compliance.<br /><br />Use cases: Governed deployment; Self-service provisioning; SageMaker integration; Controlled access<br /><br />AWS: SageMaker blueprint configuration for governed infrastructure deployment and self-service provisioning<br /><br />Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables SageMaker deployment mode                         |
-| - [service_catalog_product_config](#service_catalog_product_config ) | No      | object  | No         | In #/definitions/MdaaServiceCatalogProductConfig    | Q-ENHANCED-PROPERTY<br />Optional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.<br /><br />Use cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access<br /><br />AWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning<br /><br />Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode |
-| - [storageLensEnabled](#storageLensEnabled )                         | No      | boolean | No         | -                                                   | Enable S3 Storage Lens for the data lake buckets.<br />When true, creates a Storage Lens configuration covering all buckets defined in this app's config.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| Property                                                             | Pattern | Type            | Deprecated | Definition                                          | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| -------------------------------------------------------------------- | ------- | --------------- | ---------- | --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [accessPolicies](#accessPolicies )                                 | No      | object          | No         | -                                                   | Named access policies defining role-based permissions per S3 prefix.<br />Policies are referenced by name in bucket configurations.<br /><br />Use cases: Reusable permission sets; Prefix-level read/write/super access<br /><br />AWS: S3 bucket policy rule sets<br /><br />Validation: Required; map of policy name to AccessPolicyConfig; policies referenced in buckets must be defined here                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| + [buckets](#buckets )                                               | No      | object          | No         | -                                                   | Data lake bucket definitions keyed by zone name (e.g., 'raw', 'transformed', 'curated').<br />Each bucket gets its own S3 bucket with the specified access policies and features.<br /><br />Use cases: Multi-zone data lake; Raw/processed/curated separation; Zone-specific access<br /><br />AWS: S3 buckets with bucket policies, encryption, versioning<br /><br />Validation: Required; map of zone name to BucketConfig; zone names must be unique                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| - [lifecycleConfigurations](#lifecycleConfigurations )               | No      | object          | No         | -                                                   | Named lifecycle configurations containing sets of lifecycle rules.<br />Referenced by name in bucket configurations.<br /><br />Use cases: Shared archival strategies; Environment-specific retention policies<br /><br />AWS: S3 lifecycle configuration rule collections<br /><br />Validation: Optional; map of config name to LifecycleConfigurationConfig                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| - [nag_suppressions](#nag_suppressions )                             | No      | object          | No         | In #/definitions/MdaaNagSuppressionConfigs          | Q-ENHANCED-PROPERTY<br />Optional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.<br /><br />Use cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions<br /><br />AWS: CDK Nag suppressions for compliance rule management and security exception documentation<br /><br />Validation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management                                                                                                                                                                                                                     |
+| + [roles](#roles )                                                   | No      | object          | No         | -                                                   | Named role references for use in access policies. Each key is a logical role name,<br />value is an array of physical IAM role references (ARN, name, ID, or SSM parameter).<br /><br />Use cases: Multi-role access patterns; Cross-account data access; SSO role mapping<br /><br />AWS: IAM role references for S3 bucket policies and LakeFormation permissions<br /><br />Validation: Required; map of role name to MdaaRoleRef[]; roles referenced in accessPolicies must be defined here                                                                                                                                                                                                                                                                                                                                                                                                    |
+| - [sagemakerBlueprint](#sagemakerBlueprint )                         | No      | object          | No         | In #/definitions/MdaaSageMakerCustomBluePrintConfig | Q-ENHANCED-PROPERTY<br />Optional SageMaker blueprint configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a SageMaker blueprint instead of direct deployment for governed access and compliance.<br /><br />Use cases: Governed deployment; Self-service provisioning; SageMaker integration; Controlled access<br /><br />AWS: SageMaker blueprint configuration for governed infrastructure deployment and self-service provisioning<br /><br />Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables SageMaker deployment mode                                                                                                                                                                                                                                    |
+| - [service_catalog_product_config](#service_catalog_product_config ) | No      | object          | No         | In #/definitions/MdaaServiceCatalogProductConfig    | Q-ENHANCED-PROPERTY<br />Optional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.<br /><br />Use cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access<br /><br />AWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning<br /><br />Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode                                                                                                                                                                                                            |
+| - [shareParametersWithAccounts](#shareParametersWithAccounts )       | No      | array of string | No         | -                                                   | AWS accounts allowed to read this data lake's KMS key and bucket SSM parameters. A RAM share<br />always names its principals, so only the accounts listed here can read them.<br /><br />Set this when a deployment in another account has to resolve identifiers it cannot derive -<br />the two data lakes in an MDAA-to-MDAA replication pair each read the other's. The accounts<br />must be in the same AWS Organization and region as this deployment, and the shared parameters<br />move to the billed Advanced tier that RAM requires. The module README explains why each holds.<br /><br />Use cases: Replication between two MDAA data lakes; Sharing bucket and key identifiers with a consumer account<br /><br />AWS: SSM Advanced-tier parameters and a RAM resource share<br /><br />Validation: Optional; array of 12-digit AWS account IDs in this account's AWS Organization |
+| - [storageLensEnabled](#storageLensEnabled )                         | No      | boolean         | No         | -                                                   | Enable S3 Storage Lens for the data lake buckets.<br />When true, creates a Storage Lens configuration covering all buckets defined in this app's config.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 
 ## <a name="accessPolicies"></a>1. Property `root > accessPolicies`
 
@@ -240,16 +241,17 @@ AWS: S3 bucket with bucket policy, inventory, EventBridge, LakeFormation integra
 
 Validation: accessPolicies required; all policy names must exist in parent accessPolicies config
 
-| Property                                                                                          | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                        |
-| ------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [accessPolicies](#buckets_additionalProperties_accessPolicies )                                 | No      | array of string | No         | -          | Access policy names to apply to this bucket. Each name must reference a policy<br />defined in the top-level accessPolicies configuration.<br /><br />Use cases: Role-based bucket access; Multi-policy composition per bucket<br /><br />AWS: S3 bucket policy statements derived from named access policies<br /><br />Validation: Required; array of strings; each must match a key in accessPolicies |
-| - [corsRules](#buckets_additionalProperties_corsRules )                                           | No      | array           | No         | -          | Cross-origin resource sharing rules for this bucket.<br />Required when web browsers or AWS services need cross-origin access.<br /><br />Use cases: SageMaker Ground Truth labeling; Web-based data applications; AWS service integrations<br /><br />AWS: S3 CORS configuration<br /><br />Validation: Optional; array of CorsRuleConfig                                                               |
-| - [createFolderSkeleton](#buckets_additionalProperties_createFolderSkeleton )                     | No      | boolean         | No         | -          | Create folder placeholder objects for each access policy prefix.<br /><br />Use cases: Pre-populated folder structure; Console navigation<br /><br />AWS: S3 zero-byte objects as folder markers<br /><br />Validation: Optional; boolean                                                                                                                                                                |
-| - [defaultDeny](#buckets_additionalProperties_defaultDeny )                                       | No      | boolean         | No         | -          | Deny access to any role not explicitly listed in access policies.<br /><br />Use cases: Secure-by-default bucket access; Explicit-only permissions<br /><br />AWS: S3 bucket policy deny statements<br /><br />Validation: Optional; boolean                                                                                                                                                             |
-| - [enableEventBridgeNotifications](#buckets_additionalProperties_enableEventBridgeNotifications ) | No      | boolean         | No         | -          | Enable EventBridge notifications for S3 data events on this bucket.<br /><br />Use cases: Event-driven data pipelines; Real-time processing triggers<br /><br />AWS: S3 EventBridge notification configuration<br /><br />Validation: Optional; boolean                                                                                                                                                  |
-| - [inventories](#buckets_additionalProperties_inventories )                                       | No      | object          | No         | -          | S3 inventory configurations for automated bucket content reporting.<br />Each entry generates inventory data for the specified prefix.<br /><br />Use cases: Data governance reporting; Cost analysis by prefix; Compliance auditing<br /><br />AWS: S3 inventory configuration<br /><br />Validation: Optional; map of inventory name to InventoryDefinition                                            |
-| - [lakeFormationLocations](#buckets_additionalProperties_lakeFormationLocations )                 | No      | object          | No         | -          | LakeFormation location registrations for fine-grained access control<br />at specific S3 prefixes within this bucket.<br /><br />Use cases: Table/column-level permissions; LakeFormation-governed data zones<br /><br />AWS: LakeFormation resource registration<br /><br />Validation: Optional; map of location name to LakeFormationLocationConfig                                                   |
-| - [lifecycleConfiguration](#buckets_additionalProperties_lifecycleConfiguration )                 | No      | string          | No         | -          | Name of a lifecycle configuration from the top-level lifecycleConfigurations<br />to apply to this bucket.<br /><br />Use cases: Automated archival; Cost optimization; Data retention<br /><br />AWS: S3 lifecycle rules<br /><br />Validation: Optional; must match a key in lifecycleConfigurations if provided                                                                                       |
+| Property                                                                                          | Pattern | Type            | Deprecated | Definition                                   | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [accessPolicies](#buckets_additionalProperties_accessPolicies )                                 | No      | array of string | No         | -                                            | Access policy names to apply to this bucket. Each name must reference a policy<br />defined in the top-level accessPolicies configuration.<br /><br />Use cases: Role-based bucket access; Multi-policy composition per bucket<br /><br />AWS: S3 bucket policy statements derived from named access policies<br /><br />Validation: Required; array of strings; each must match a key in accessPolicies                                                                                                                     |
+| - [corsRules](#buckets_additionalProperties_corsRules )                                           | No      | array           | No         | -                                            | Cross-origin resource sharing rules for this bucket.<br />Required when web browsers or AWS services need cross-origin access.<br /><br />Use cases: SageMaker Ground Truth labeling; Web-based data applications; AWS service integrations<br /><br />AWS: S3 CORS configuration<br /><br />Validation: Optional; array of CorsRuleConfig                                                                                                                                                                                   |
+| - [createFolderSkeleton](#buckets_additionalProperties_createFolderSkeleton )                     | No      | boolean         | No         | -                                            | Create folder placeholder objects for each access policy prefix.<br /><br />Use cases: Pre-populated folder structure; Console navigation<br /><br />AWS: S3 zero-byte objects as folder markers<br /><br />Validation: Optional; boolean                                                                                                                                                                                                                                                                                    |
+| - [defaultDeny](#buckets_additionalProperties_defaultDeny )                                       | No      | boolean         | No         | -                                            | Deny access to any role not explicitly listed in access policies.<br /><br />Use cases: Secure-by-default bucket access; Explicit-only permissions<br /><br />AWS: S3 bucket policy deny statements<br /><br />Validation: Optional; boolean                                                                                                                                                                                                                                                                                 |
+| - [enableEventBridgeNotifications](#buckets_additionalProperties_enableEventBridgeNotifications ) | No      | boolean         | No         | -                                            | Enable EventBridge notifications for S3 data events on this bucket.<br /><br />Use cases: Event-driven data pipelines; Real-time processing triggers<br /><br />AWS: S3 EventBridge notification configuration<br /><br />Validation: Optional; boolean                                                                                                                                                                                                                                                                      |
+| - [inventories](#buckets_additionalProperties_inventories )                                       | No      | object          | No         | -                                            | S3 inventory configurations for automated bucket content reporting.<br />Each entry generates inventory data for the specified prefix.<br /><br />Use cases: Data governance reporting; Cost analysis by prefix; Compliance auditing<br /><br />AWS: S3 inventory configuration<br /><br />Validation: Optional; map of inventory name to InventoryDefinition                                                                                                                                                                |
+| - [lakeFormationLocations](#buckets_additionalProperties_lakeFormationLocations )                 | No      | object          | No         | -                                            | LakeFormation location registrations for fine-grained access control<br />at specific S3 prefixes within this bucket.<br /><br />Use cases: Table/column-level permissions; LakeFormation-governed data zones<br /><br />AWS: LakeFormation resource registration<br /><br />Validation: Optional; map of location name to LakeFormationLocationConfig                                                                                                                                                                       |
+| - [lifecycleConfiguration](#buckets_additionalProperties_lifecycleConfiguration )                 | No      | string          | No         | -                                            | Name of a lifecycle configuration from the top-level lifecycleConfigurations<br />to apply to this bucket.<br /><br />Use cases: Automated archival; Cost optimization; Data retention<br /><br />AWS: S3 lifecycle rules<br /><br />Validation: Optional; must match a key in lifecycleConfigurations if provided                                                                                                                                                                                                           |
+| - [replication](#buckets_additionalProperties_replication )                                       | No      | object          | No         | In #/definitions/BucketReplicationDefinition | Cross-account S3 replication into and/or out of this bucket. Set \`outbound\` when this<br />bucket sends objects to a bucket in another account, \`inbound\` when it receives them,<br />or both. MDAA only configures the side(s) it manages.<br /><br />Use cases: Cross-account DR copies; Sharing curated data with a consumer account; Data residency<br /><br />AWS: S3 ReplicationConfiguration, S3 bucket policy, IAM replication role, KMS key policy<br /><br />Validation: Optional; both sub-blocks default off |
 
 #### <a name="buckets_additionalProperties_accessPolicies"></a>2.1.1. Property `root > buckets > additionalProperties > accessPolicies`
 
@@ -737,6 +739,397 @@ Use cases: Automated archival; Cost optimization; Data retention
 AWS: S3 lifecycle rules
 
 Validation: Optional; must match a key in lifecycleConfigurations if provided
+
+#### <a name="buckets_additionalProperties_replication"></a>2.1.9. Property `root > buckets > additionalProperties > replication`
+
+|                           |                                           |
+| ------------------------- | ----------------------------------------- |
+| **Type**                  | `object`                                  |
+| **Required**              | No                                        |
+| **Additional properties** | Not allowed                               |
+| **Defined in**            | #/definitions/BucketReplicationDefinition |
+
+**Description:** Cross-account S3 replication into and/or out of this bucket. Set `outbound` when this
+bucket sends objects to a bucket in another account, `inbound` when it receives them,
+or both. MDAA only configures the side(s) it manages.
+
+Use cases: Cross-account DR copies; Sharing curated data with a consumer account; Data residency
+
+AWS: S3 ReplicationConfiguration, S3 bucket policy, IAM replication role, KMS key policy
+
+Validation: Optional; both sub-blocks default off
+
+| Property                                                          | Pattern | Type   | Deprecated | Definition                                     | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ----------------------------------------------------------------- | ------- | ------ | ---------- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [inbound](#buckets_additionalProperties_replication_inbound )   | No      | object | No         | In #/definitions/InboundReplicationDefinition  | Receiving side. MDAA grants an externally-owned replication role permission to replicate<br />into this bucket. No replication rules and no replication role are created here, because<br />replication rules always live on the sending bucket.<br /><br />Use cases: Receiving replicas from a non-MDAA source bucket; Completing the receiving end of an MDAA-to-MDAA pair<br /><br />AWS: S3 bucket policy statements and a KMS key policy grant<br /><br />Validation: Optional; sourceReplicationRoleArn required when set    |
+| - [outbound](#buckets_additionalProperties_replication_outbound ) | No      | object | No         | In #/definitions/OutboundReplicationDefinition | Sending side. MDAA creates the replication rules and an MDAA-managed replication role<br />on this bucket, so matching objects written here are copied to a bucket in another account.<br /><br />Use cases: Replicating a data lake zone into a DR account; Publishing curated data to a consumer account<br /><br />AWS: S3 ReplicationConfiguration and an IAM replication role<br /><br />Validation: Optional; when set, destinationBucketArn, destinationAccount, destinationRegion and destinationKmsKeyArn are all required |
+
+##### <a name="buckets_additionalProperties_replication_inbound"></a>2.1.9.1. Property `root > buckets > additionalProperties > replication > inbound`
+
+|                           |                                            |
+| ------------------------- | ------------------------------------------ |
+| **Type**                  | `object`                                   |
+| **Required**              | No                                         |
+| **Additional properties** | Not allowed                                |
+| **Defined in**            | #/definitions/InboundReplicationDefinition |
+
+**Description:** Receiving side. MDAA grants an externally-owned replication role permission to replicate
+into this bucket. No replication rules and no replication role are created here, because
+replication rules always live on the sending bucket.
+
+Use cases: Receiving replicas from a non-MDAA source bucket; Completing the receiving end of an MDAA-to-MDAA pair
+
+AWS: S3 bucket policy statements and a KMS key policy grant
+
+Validation: Optional; sourceReplicationRoleArn required when set
+
+| Property                                                                                                  | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| --------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [prefixFilters](#buckets_additionalProperties_replication_inbound_prefixFilters )                       | No      | array of string | No         | -          | S3 prefixes the sending role may replicate into, which also bound what it may list. Worth<br />setting whenever the sending side writes under known prefixes, and especially when that side<br />is not MDAA-managed: omitting it lets the external role write anywhere in the bucket and<br />enumerate every key in it. Must cover the prefixes configured on the sending side or those<br />objects fail to replicate.<br /><br />Use cases: Confining incoming replicas to /data; Limiting what a non-MDAA sender can enumerate<br /><br />AWS: Resource ARNs on the bucket policy replication grant<br /><br />Validation: Optional; array of S3 prefixes |
+| + [sourceAccount](#buckets_additionalProperties_replication_inbound_sourceAccount )                       | No      | string          | No         | -          | AWS account ID owning the sending bucket, checked at synth time against the account in<br />sourceReplicationRoleArn so the two cannot silently disagree. Required, and deliberately<br />redundant with the role ARN: stating the trusted account separately is what turns a mistyped<br />ARN into a synth failure rather than a grant to an unintended account.<br /><br />Use cases: Guarding against a mistyped replication role ARN<br /><br />AWS: No emitted resource; synth-time validation only<br /><br />Validation: Required; 12-digit AWS account ID; must match the account in sourceReplicationRoleArn                                         |
+| + [sourceReplicationRoleArn](#buckets_additionalProperties_replication_inbound_sourceReplicationRoleArn ) | No      | string          | No         | -          | ARN of the replication role used by the sending bucket. This role is owned by the<br />sending account, so it is granted by ARN rather than through MDAA's access policies,<br />which resolve role names to IDs in the deploying account only.<br /><br />Use cases: Granting a partner account's replication role; Granting an MDAA source bucket's replication role<br /><br />AWS: Principal on the bucket policy and KMS key policy grants<br /><br />Validation: Required; IAM role ARN                                                                                                                                                                  |
+
+###### <a name="buckets_additionalProperties_replication_inbound_prefixFilters"></a>2.1.9.1.1. Property `root > buckets > additionalProperties > replication > inbound > prefixFilters`
+
+|              |                                                       |
+| ------------ | ----------------------------------------------------- |
+| **Type**     | `array of string`                                     |
+| **Required** | No                                                    |
+| **Default**  | `"- replication is permitted anywhere in the bucket"` |
+
+**Description:** S3 prefixes the sending role may replicate into, which also bound what it may list. Worth
+setting whenever the sending side writes under known prefixes, and especially when that side
+is not MDAA-managed: omitting it lets the external role write anywhere in the bucket and
+enumerate every key in it. Must cover the prefixes configured on the sending side or those
+objects fail to replicate.
+
+Use cases: Confining incoming replicas to /data; Limiting what a non-MDAA sender can enumerate
+
+AWS: Resource ARNs on the bucket policy replication grant
+
+Validation: Optional; array of S3 prefixes
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                              | Description |
+| -------------------------------------------------------------------------------------------- | ----------- |
+| [prefixFilters items](#buckets_additionalProperties_replication_inbound_prefixFilters_items) | -           |
+
+###### <a name="buckets_additionalProperties_replication_inbound_prefixFilters_items"></a>2.1.9.1.1.1. root > buckets > additionalProperties > replication > inbound > prefixFilters > prefixFilters items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="buckets_additionalProperties_replication_inbound_sourceAccount"></a>2.1.9.1.2. Property `root > buckets > additionalProperties > replication > inbound > sourceAccount`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** AWS account ID owning the sending bucket, checked at synth time against the account in
+sourceReplicationRoleArn so the two cannot silently disagree. Required, and deliberately
+redundant with the role ARN: stating the trusted account separately is what turns a mistyped
+ARN into a synth failure rather than a grant to an unintended account.
+
+Use cases: Guarding against a mistyped replication role ARN
+
+AWS: No emitted resource; synth-time validation only
+
+Validation: Required; 12-digit AWS account ID; must match the account in sourceReplicationRoleArn
+
+###### <a name="buckets_additionalProperties_replication_inbound_sourceReplicationRoleArn"></a>2.1.9.1.3. Property `root > buckets > additionalProperties > replication > inbound > sourceReplicationRoleArn`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** ARN of the replication role used by the sending bucket. This role is owned by the
+sending account, so it is granted by ARN rather than through MDAA's access policies,
+which resolve role names to IDs in the deploying account only.
+
+Use cases: Granting a partner account's replication role; Granting an MDAA source bucket's replication role
+
+AWS: Principal on the bucket policy and KMS key policy grants
+
+Validation: Required; IAM role ARN
+
+##### <a name="buckets_additionalProperties_replication_outbound"></a>2.1.9.2. Property `root > buckets > additionalProperties > replication > outbound`
+
+|                           |                                             |
+| ------------------------- | ------------------------------------------- |
+| **Type**                  | `object`                                    |
+| **Required**              | No                                          |
+| **Additional properties** | Not allowed                                 |
+| **Defined in**            | #/definitions/OutboundReplicationDefinition |
+
+**Description:** Sending side. MDAA creates the replication rules and an MDAA-managed replication role
+on this bucket, so matching objects written here are copied to a bucket in another account.
+
+Use cases: Replicating a data lake zone into a DR account; Publishing curated data to a consumer account
+
+AWS: S3 ReplicationConfiguration and an IAM replication role
+
+Validation: Optional; when set, destinationBucketArn, destinationAccount, destinationRegion and destinationKmsKeyArn are all required
+
+| Property                                                                                                 | Pattern | Type            | Deprecated | Definition                   | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| -------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [deleteMarkerReplication](#buckets_additionalProperties_replication_outbound_deleteMarkerReplication ) | No      | boolean         | No         | -                            | Replicate delete markers, so a delete here also hides the object at the destination. Off by<br />default, leaving the replica in place so the destination survives a delete at the source.<br /><br />Use cases: Mirroring deletions to a consumer account; Keeping a DR copy that survives a source delete<br /><br />AWS: S3 ReplicationRule DeleteMarkerReplication<br /><br />Validation: Optional; when true the replication role is also granted s3:ReplicateDelete                                                                                                                                                                                                                      |
+| + [destinationAccount](#buckets_additionalProperties_replication_outbound_destinationAccount )           | No      | string          | No         | -                            | AWS account ID owning the destination bucket. Required because S3 bucket ARNs contain<br />no account ID, and S3 needs it to confirm destination ownership.<br /><br />Use cases: Cross-account replication; Destination ownership verification<br /><br />AWS: S3 ReplicationRule Destination.Account<br /><br />Validation: Required; 12-digit AWS account ID                                                                                                                                                                                                                                                                                                                                |
+| + [destinationBucketArn](#buckets_additionalProperties_replication_outbound_destinationBucketArn )       | No      | string          | No         | -                            | ARN of the destination bucket receiving the replicas. The bucket must exist and have<br />versioning enabled; MDAA does not create it.<br /><br />Use cases: Targeting a DR bucket; Targeting a partner account's bucket<br /><br />AWS: S3 ReplicationRule Destination.Bucket<br /><br />Validation: Required; S3 bucket ARN, e.g. arn:aws:s3:::my-dr-bucket                                                                                                                                                                                                                                                                                                                                  |
+| + [destinationKmsKeyArn](#buckets_additionalProperties_replication_outbound_destinationKmsKeyArn )       | No      | string          | No         | -                            | Customer managed KMS key encrypting the replicas, in the destination account and region.<br />Required, not optional: S3 does not replicate SSE-KMS encrypted objects unless the rule<br />names a replica key, and MDAA source buckets always encrypt with a CMK. AWS managed keys<br />cannot be used, as they do not permit cross-account use.<br /><br />Use cases: Re-encrypting replicas under a destination-owned key<br /><br />AWS: S3 ReplicationRule Destination.EncryptionConfiguration.ReplicaKmsKeyID<br /><br />Validation: Required; KMS key ARN whose region matches destinationRegion                                                                                        |
+| + [destinationRegion](#buckets_additionalProperties_replication_outbound_destinationRegion )             | No      | string          | No         | -                            | Region of the destination bucket. Used to scope the replication role's KMS grants to<br />S3 in that region, and to check destinationKmsKeyArn is a key in the same region.<br /><br />Use cases: Cross-region DR; Data residency<br /><br />AWS: kms:ViaService condition on the replication role's destination key grant<br /><br />Validation: Required; AWS region name, e.g. us-west-2                                                                                                                                                                                                                                                                                                    |
+| - [prefixFilters](#buckets_additionalProperties_replication_outbound_prefixFilters )                     | No      | array of string | No         | -                            | S3 prefixes to replicate, one replication rule per entry. Omit to replicate the whole<br />bucket, which is usually what a DR copy wants.<br /><br />Use cases: Replicating only /data while leaving scratch prefixes local; Whole-bucket DR<br /><br />AWS: S3 ReplicationRule Filter.Prefix<br /><br />Validation: Optional; array of S3 prefixes                                                                                                                                                                                                                                                                                                                                            |
+| - [replicationRole](#buckets_additionalProperties_replication_outbound_replicationRole )                 | No      | object          | No         | In #/definitions/MdaaRoleRef | Existing role S3 assumes to replicate out of this bucket, instead of MDAA creating one. Needed<br />when the destination is another data lake in the same MDAA config: the destination names this<br />role in its policies and deploys first, so it cannot be a role this stack creates. Must be in<br />this bucket's account and assumable by s3.amazonaws.com; MDAA attaches the replication<br />permissions as a managed policy.<br /><br />Use cases: Replicating between two MDAA deployments in one config; Reusing a centrally managed replication role<br /><br />AWS: S3 ReplicationConfiguration Role<br /><br />Validation: Optional; must resolve to a role ARN in this account |
+
+###### <a name="buckets_additionalProperties_replication_outbound_deleteMarkerReplication"></a>2.1.9.2.1. Property `root > buckets > additionalProperties > replication > outbound > deleteMarkerReplication`
+
+|              |                                               |
+| ------------ | --------------------------------------------- |
+| **Type**     | `boolean`                                     |
+| **Required** | No                                            |
+| **Default**  | `"false - delete markers are not replicated"` |
+
+**Description:** Replicate delete markers, so a delete here also hides the object at the destination. Off by
+default, leaving the replica in place so the destination survives a delete at the source.
+
+Use cases: Mirroring deletions to a consumer account; Keeping a DR copy that survives a source delete
+
+AWS: S3 ReplicationRule DeleteMarkerReplication
+
+Validation: Optional; when true the replication role is also granted s3:ReplicateDelete
+
+###### <a name="buckets_additionalProperties_replication_outbound_destinationAccount"></a>2.1.9.2.2. Property `root > buckets > additionalProperties > replication > outbound > destinationAccount`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** AWS account ID owning the destination bucket. Required because S3 bucket ARNs contain
+no account ID, and S3 needs it to confirm destination ownership.
+
+Use cases: Cross-account replication; Destination ownership verification
+
+AWS: S3 ReplicationRule Destination.Account
+
+Validation: Required; 12-digit AWS account ID
+
+###### <a name="buckets_additionalProperties_replication_outbound_destinationBucketArn"></a>2.1.9.2.3. Property `root > buckets > additionalProperties > replication > outbound > destinationBucketArn`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** ARN of the destination bucket receiving the replicas. The bucket must exist and have
+versioning enabled; MDAA does not create it.
+
+Use cases: Targeting a DR bucket; Targeting a partner account's bucket
+
+AWS: S3 ReplicationRule Destination.Bucket
+
+Validation: Required; S3 bucket ARN, e.g. arn:aws:s3:::my-dr-bucket
+
+###### <a name="buckets_additionalProperties_replication_outbound_destinationKmsKeyArn"></a>2.1.9.2.4. Property `root > buckets > additionalProperties > replication > outbound > destinationKmsKeyArn`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Customer managed KMS key encrypting the replicas, in the destination account and region.
+Required, not optional: S3 does not replicate SSE-KMS encrypted objects unless the rule
+names a replica key, and MDAA source buckets always encrypt with a CMK. AWS managed keys
+cannot be used, as they do not permit cross-account use.
+
+Use cases: Re-encrypting replicas under a destination-owned key
+
+AWS: S3 ReplicationRule Destination.EncryptionConfiguration.ReplicaKmsKeyID
+
+Validation: Required; KMS key ARN whose region matches destinationRegion
+
+###### <a name="buckets_additionalProperties_replication_outbound_destinationRegion"></a>2.1.9.2.5. Property `root > buckets > additionalProperties > replication > outbound > destinationRegion`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Region of the destination bucket. Used to scope the replication role's KMS grants to
+S3 in that region, and to check destinationKmsKeyArn is a key in the same region.
+
+Use cases: Cross-region DR; Data residency
+
+AWS: kms:ViaService condition on the replication role's destination key grant
+
+Validation: Required; AWS region name, e.g. us-west-2
+
+###### <a name="buckets_additionalProperties_replication_outbound_prefixFilters"></a>2.1.9.2.6. Property `root > buckets > additionalProperties > replication > outbound > prefixFilters`
+
+|              |                                      |
+| ------------ | ------------------------------------ |
+| **Type**     | `array of string`                    |
+| **Required** | No                                   |
+| **Default**  | `"- the whole bucket is replicated"` |
+
+**Description:** S3 prefixes to replicate, one replication rule per entry. Omit to replicate the whole
+bucket, which is usually what a DR copy wants.
+
+Use cases: Replicating only /data while leaving scratch prefixes local; Whole-bucket DR
+
+AWS: S3 ReplicationRule Filter.Prefix
+
+Validation: Optional; array of S3 prefixes
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                               | Description |
+| --------------------------------------------------------------------------------------------- | ----------- |
+| [prefixFilters items](#buckets_additionalProperties_replication_outbound_prefixFilters_items) | -           |
+
+###### <a name="buckets_additionalProperties_replication_outbound_prefixFilters_items"></a>2.1.9.2.6.1. root > buckets > additionalProperties > replication > outbound > prefixFilters > prefixFilters items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="buckets_additionalProperties_replication_outbound_replicationRole"></a>2.1.9.2.7. Property `root > buckets > additionalProperties > replication > outbound > replicationRole`
+
+|                           |                                                       |
+| ------------------------- | ----------------------------------------------------- |
+| **Type**                  | `object`                                              |
+| **Required**              | No                                                    |
+| **Additional properties** | Not allowed                                           |
+| **Default**               | `"- MDAA creates a replication role for this bucket"` |
+| **Defined in**            | #/definitions/MdaaRoleRef                             |
+
+**Description:** Existing role S3 assumes to replicate out of this bucket, instead of MDAA creating one. Needed
+when the destination is another data lake in the same MDAA config: the destination names this
+role in its policies and deploys first, so it cannot be a role this stack creates. Must be in
+this bucket's account and assumable by s3.amazonaws.com; MDAA attaches the replication
+permissions as a managed policy.
+
+Use cases: Replicating between two MDAA deployments in one config; Reusing a centrally managed replication role
+
+AWS: S3 ReplicationConfiguration Role
+
+Validation: Optional; must resolve to a role ARN in this account
+
+| Property                                                                                     | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                |
+| -------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [arn](#buckets_additionalProperties_replication_outbound_replicationRole_arn )             | No      | string  | No         | -          | Full IAM role ARN for cross-account role references and explicit role identification.<br /><br />Use cases: Cross-account role references; Explicit role binding; Multi-account deployments<br /><br />AWS: Full IAM role ARN (arn:aws:iam::ACCOUNT:role/ROLE-NAME)<br /><br />Validation: Optional; must be a valid IAM role ARN if provided                                                    |
+| - [id](#buckets_additionalProperties_replication_outbound_replicationRole_id )               | No      | string  | No         | -          | IAM role unique identifier for role resolution using the role's AWS-generated ID.<br /><br />Use cases: Stable role references; Role resolution by unique ID; Immutable role binding<br /><br />AWS: IAM role unique ID (e.g., AROA...)<br /><br />Validation: Optional; must be a valid IAM role unique ID if provided                                                                          |
+| - [immutable](#buckets_additionalProperties_replication_outbound_replicationRole_immutable ) | No      | boolean | No         | -          | Flag indicating whether the referenced role should be treated as immutable and not modified by MDAA operations.<br /><br />Use cases: Pre-existing role protection; Externally managed roles; Read-only role references<br /><br />AWS: Controls whether MDAA attaches policies or modifies the referenced IAM role<br /><br />Validation: Optional boolean; defaults to false                   |
+| - [name](#buckets_additionalProperties_replication_outbound_replicationRole_name )           | No      | string  | No         | -          | IAM role name for role resolution within the same AWS account.<br /><br />Use cases: Same-account role references; Role name-based resolution; Local IAM role binding<br /><br />AWS: IAM role name resolved via GetRole within the deployment account<br /><br />Validation: Optional; must be a valid IAM role name; mutually preferred with arn/id for resolution                             |
+| - [refId](#buckets_additionalProperties_replication_outbound_replicationRole_refId )         | No      | string  | No         | -          | Unique identifier for the role reference within a configuration scope, enabling role lookup and deduplication.<br /><br />Use cases: Role reference identification; Configuration deduplication; Role lookup key<br /><br />AWS: Logical identifier for IAM role references within MDAA configuration<br /><br />Validation: Optional; must be unique within the configuration scope if provided |
+| - [sso](#buckets_additionalProperties_replication_outbound_replicationRole_sso )             | No      | boolean | No         | -          | Flag indicating the role should be resolved as an AWS SSO auto-generated role.<br /><br />Use cases: AWS IAM Identity Center integration; SSO permission set role binding; Federated access<br /><br />AWS: Resolves role via AWS SSO/Identity Center auto-generated role naming convention<br /><br />Validation: Optional boolean; defaults to false                                           |
+
+###### <a name="buckets_additionalProperties_replication_outbound_replicationRole_arn"></a>2.1.9.2.7.1. Property `root > buckets > additionalProperties > replication > outbound > replicationRole > arn`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Full IAM role ARN for cross-account role references and explicit role identification.
+
+Use cases: Cross-account role references; Explicit role binding; Multi-account deployments
+
+AWS: Full IAM role ARN (arn:aws:iam::ACCOUNT:role/ROLE-NAME)
+
+Validation: Optional; must be a valid IAM role ARN if provided
+
+###### <a name="buckets_additionalProperties_replication_outbound_replicationRole_id"></a>2.1.9.2.7.2. Property `root > buckets > additionalProperties > replication > outbound > replicationRole > id`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** IAM role unique identifier for role resolution using the role's AWS-generated ID.
+
+Use cases: Stable role references; Role resolution by unique ID; Immutable role binding
+
+AWS: IAM role unique ID (e.g., AROA...)
+
+Validation: Optional; must be a valid IAM role unique ID if provided
+
+###### <a name="buckets_additionalProperties_replication_outbound_replicationRole_immutable"></a>2.1.9.2.7.3. Property `root > buckets > additionalProperties > replication > outbound > replicationRole > immutable`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Flag indicating whether the referenced role should be treated as immutable and not modified by MDAA operations.
+
+Use cases: Pre-existing role protection; Externally managed roles; Read-only role references
+
+AWS: Controls whether MDAA attaches policies or modifies the referenced IAM role
+
+Validation: Optional boolean; defaults to false
+
+###### <a name="buckets_additionalProperties_replication_outbound_replicationRole_name"></a>2.1.9.2.7.4. Property `root > buckets > additionalProperties > replication > outbound > replicationRole > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** IAM role name for role resolution within the same AWS account.
+
+Use cases: Same-account role references; Role name-based resolution; Local IAM role binding
+
+AWS: IAM role name resolved via GetRole within the deployment account
+
+Validation: Optional; must be a valid IAM role name; mutually preferred with arn/id for resolution
+
+###### <a name="buckets_additionalProperties_replication_outbound_replicationRole_refId"></a>2.1.9.2.7.5. Property `root > buckets > additionalProperties > replication > outbound > replicationRole > refId`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Unique identifier for the role reference within a configuration scope, enabling role lookup and deduplication.
+
+Use cases: Role reference identification; Configuration deduplication; Role lookup key
+
+AWS: Logical identifier for IAM role references within MDAA configuration
+
+Validation: Optional; must be unique within the configuration scope if provided
+
+###### <a name="buckets_additionalProperties_replication_outbound_replicationRole_sso"></a>2.1.9.2.7.6. Property `root > buckets > additionalProperties > replication > outbound > replicationRole > sso`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Flag indicating the role should be resolved as an AWS SSO auto-generated role.
+
+Use cases: AWS IAM Identity Center integration; SSO permission set role binding; Federated access
+
+AWS: Resolves role via AWS SSO/Identity Center auto-generated role naming convention
+
+Validation: Optional boolean; defaults to false
 
 ## <a name="lifecycleConfigurations"></a>3. Property `root > lifecycleConfigurations`
 
@@ -1247,111 +1640,12 @@ Validation: Required; map of role name to MdaaRoleRef[]; roles referenced in acc
 
 #### <a name="roles_additionalProperties_items"></a>5.1.1. root > roles > additionalProperties > MdaaRoleRef
 
-|                           |                           |
-| ------------------------- | ------------------------- |
-| **Type**                  | `object`                  |
-| **Required**              | No                        |
-| **Additional properties** | Not allowed               |
-| **Defined in**            | #/definitions/MdaaRoleRef |
-
-| Property                                                    | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                |
-| ----------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| - [arn](#roles_additionalProperties_items_arn )             | No      | string  | No         | -          | Full IAM role ARN for cross-account role references and explicit role identification.<br /><br />Use cases: Cross-account role references; Explicit role binding; Multi-account deployments<br /><br />AWS: Full IAM role ARN (arn:aws:iam::ACCOUNT:role/ROLE-NAME)<br /><br />Validation: Optional; must be a valid IAM role ARN if provided                                                    |
-| - [id](#roles_additionalProperties_items_id )               | No      | string  | No         | -          | IAM role unique identifier for role resolution using the role's AWS-generated ID.<br /><br />Use cases: Stable role references; Role resolution by unique ID; Immutable role binding<br /><br />AWS: IAM role unique ID (e.g., AROA...)<br /><br />Validation: Optional; must be a valid IAM role unique ID if provided                                                                          |
-| - [immutable](#roles_additionalProperties_items_immutable ) | No      | boolean | No         | -          | Flag indicating whether the referenced role should be treated as immutable and not modified by MDAA operations.<br /><br />Use cases: Pre-existing role protection; Externally managed roles; Read-only role references<br /><br />AWS: Controls whether MDAA attaches policies or modifies the referenced IAM role<br /><br />Validation: Optional boolean; defaults to false                   |
-| - [name](#roles_additionalProperties_items_name )           | No      | string  | No         | -          | IAM role name for role resolution within the same AWS account.<br /><br />Use cases: Same-account role references; Role name-based resolution; Local IAM role binding<br /><br />AWS: IAM role name resolved via GetRole within the deployment account<br /><br />Validation: Optional; must be a valid IAM role name; mutually preferred with arn/id for resolution                             |
-| - [refId](#roles_additionalProperties_items_refId )         | No      | string  | No         | -          | Unique identifier for the role reference within a configuration scope, enabling role lookup and deduplication.<br /><br />Use cases: Role reference identification; Configuration deduplication; Role lookup key<br /><br />AWS: Logical identifier for IAM role references within MDAA configuration<br /><br />Validation: Optional; must be unique within the configuration scope if provided |
-| - [sso](#roles_additionalProperties_items_sso )             | No      | boolean | No         | -          | Flag indicating the role should be resolved as an AWS SSO auto-generated role.<br /><br />Use cases: AWS IAM Identity Center integration; SSO permission set role binding; Federated access<br /><br />AWS: Resolves role via AWS SSO/Identity Center auto-generated role naming convention<br /><br />Validation: Optional boolean; defaults to false                                           |
-
-##### <a name="roles_additionalProperties_items_arn"></a>5.1.1.1. Property `root > roles > additionalProperties > additionalProperties items > arn`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Full IAM role ARN for cross-account role references and explicit role identification.
-
-Use cases: Cross-account role references; Explicit role binding; Multi-account deployments
-
-AWS: Full IAM role ARN (arn:aws:iam::ACCOUNT:role/ROLE-NAME)
-
-Validation: Optional; must be a valid IAM role ARN if provided
-
-##### <a name="roles_additionalProperties_items_id"></a>5.1.1.2. Property `root > roles > additionalProperties > additionalProperties items > id`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** IAM role unique identifier for role resolution using the role's AWS-generated ID.
-
-Use cases: Stable role references; Role resolution by unique ID; Immutable role binding
-
-AWS: IAM role unique ID (e.g., AROA...)
-
-Validation: Optional; must be a valid IAM role unique ID if provided
-
-##### <a name="roles_additionalProperties_items_immutable"></a>5.1.1.3. Property `root > roles > additionalProperties > additionalProperties items > immutable`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Flag indicating whether the referenced role should be treated as immutable and not modified by MDAA operations.
-
-Use cases: Pre-existing role protection; Externally managed roles; Read-only role references
-
-AWS: Controls whether MDAA attaches policies or modifies the referenced IAM role
-
-Validation: Optional boolean; defaults to false
-
-##### <a name="roles_additionalProperties_items_name"></a>5.1.1.4. Property `root > roles > additionalProperties > additionalProperties items > name`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** IAM role name for role resolution within the same AWS account.
-
-Use cases: Same-account role references; Role name-based resolution; Local IAM role binding
-
-AWS: IAM role name resolved via GetRole within the deployment account
-
-Validation: Optional; must be a valid IAM role name; mutually preferred with arn/id for resolution
-
-##### <a name="roles_additionalProperties_items_refId"></a>5.1.1.5. Property `root > roles > additionalProperties > additionalProperties items > refId`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Unique identifier for the role reference within a configuration scope, enabling role lookup and deduplication.
-
-Use cases: Role reference identification; Configuration deduplication; Role lookup key
-
-AWS: Logical identifier for IAM role references within MDAA configuration
-
-Validation: Optional; must be unique within the configuration scope if provided
-
-##### <a name="roles_additionalProperties_items_sso"></a>5.1.1.6. Property `root > roles > additionalProperties > additionalProperties items > sso`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Flag indicating the role should be resolved as an AWS SSO auto-generated role.
-
-Use cases: AWS IAM Identity Center integration; SSO permission set role binding; Federated access
-
-AWS: Resolves role via AWS SSO/Identity Center auto-generated role naming convention
-
-Validation: Optional boolean; defaults to false
+|                           |                                                                                       |
+| ------------------------- | ------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                              |
+| **Required**              | No                                                                                    |
+| **Additional properties** | Not allowed                                                                           |
+| **Same definition as**    | [replicationRole](#buckets_additionalProperties_replication_outbound_replicationRole) |
 
 ## <a name="sagemakerBlueprint"></a>6. Property `root > sagemakerBlueprint`
 
@@ -1371,18 +1665,18 @@ AWS: SageMaker blueprint configuration for governed infrastructure deployment an
 
 Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables SageMaker deployment mode
 
-| Property                                                              | Pattern | Type            | Deprecated | Definition                                                                     | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| --------------------------------------------------------------------- | ------- | --------------- | ---------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [additionalAccounts](#sagemakerBlueprint_additionalAccounts )       | No      | object          | No         | -                                                                              | Q-ENHANCED-PROPERTY<br />Optional map of additional AWS accounts where the SageMaker blueprint should be enabled. Each entry maps a friendly account name to account-specific configuration including provisioning role ARN and optional parameters and authorized domain units.<br /><br />Use cases: Multi-account deployment; Cross-account provisioning; Account-specific configuration<br /><br />AWS: AWS SageMaker blueprint multi-account provisioning configuration<br /><br />Validation: Must be object with string keys and valid account configuration values if provided        |
-| - [authorizedDomainUnits](#sagemakerBlueprint_authorizedDomainUnits ) | No      | array of string | No         | -                                                                              | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [blueprintName](#sagemakerBlueprint_blueprintName )                 | No      | string          | No         | -                                                                              | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [description](#sagemakerBlueprint_description )                     | No      | string          | No         | -                                                                              | Q-ENHANCED-PROPERTY<br />Description for the SageMaker blueprint that will be visible to end users in the SageMaker console. Should be descriptive and user-friendly to facilitate blueprint discovery and selection.<br /><br />Use cases: Product identification; User-friendly naming; SageMaker console display<br /><br />AWS: AWS SageMaker blueprint name for user interface display<br /><br />Validation: Must be non-empty string suitable for SageMaker blueprint naming                                                                                                           |
-| - [domainBucketName](#sagemakerBlueprint_domainBucketName )           | No      | string          | No         | -                                                                              | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [domainConfig](#sagemakerBlueprint_domainConfig )                   | No      | object          | No         | In #/definitions/DomainConfig                                                  | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [domainConfigSSMParam](#sagemakerBlueprint_domainConfigSSMParam )   | No      | string          | No         | -                                                                              | Q-ENHANCED-PROPERTY<br />Optional SSM parameter reference for domain configuration enabling dynamic domain configuration management. Specifies the SSM parameter containing domain configuration data for flexible domain setup and configuration management.<br /><br />Use cases: Dynamic configuration; SSM parameter reference; Configuration management; Flexible setup<br /><br />AWS: AWS Systems Manager parameter for DataZone domain configuration reference<br /><br />Validation: Must be valid SSM parameter name if provided; parameter must contain valid domain configuration |
-| - [enabledRegions](#sagemakerBlueprint_enabledRegions )               | No      | array of string | No         | -                                                                              | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [parameters](#sagemakerBlueprint_parameters )                       | No      | object          | No         | -                                                                              | Q-ENHANCED-PROPERTY<br />Optional object containing named parameter configurations for the SageMaker blueprint. Enables parameterized blueprint deployment with validation rules and user input constraints.<br /><br />Use cases: Product parameterization; User input collection; Deployment customization<br /><br />AWS: AWS SageMaker blueprint parameters for user-configurable deployment options<br /><br />Validation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided<br />  *                                                       |
-| + [provisioningRole](#sagemakerBlueprint_provisioningRole )           | No      | object          | No         | Same as [roles_additionalProperties_items](#roles_additionalProperties_items ) | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| Property                                                              | Pattern | Type            | Deprecated | Definition                                                                                     | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| --------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [additionalAccounts](#sagemakerBlueprint_additionalAccounts )       | No      | object          | No         | -                                                                                              | Q-ENHANCED-PROPERTY<br />Optional map of additional AWS accounts where the SageMaker blueprint should be enabled. Each entry maps a friendly account name to account-specific configuration including provisioning role ARN and optional parameters and authorized domain units.<br /><br />Use cases: Multi-account deployment; Cross-account provisioning; Account-specific configuration<br /><br />AWS: AWS SageMaker blueprint multi-account provisioning configuration<br /><br />Validation: Must be object with string keys and valid account configuration values if provided        |
+| - [authorizedDomainUnits](#sagemakerBlueprint_authorizedDomainUnits ) | No      | array of string | No         | -                                                                                              | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [blueprintName](#sagemakerBlueprint_blueprintName )                 | No      | string          | No         | -                                                                                              | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [description](#sagemakerBlueprint_description )                     | No      | string          | No         | -                                                                                              | Q-ENHANCED-PROPERTY<br />Description for the SageMaker blueprint that will be visible to end users in the SageMaker console. Should be descriptive and user-friendly to facilitate blueprint discovery and selection.<br /><br />Use cases: Product identification; User-friendly naming; SageMaker console display<br /><br />AWS: AWS SageMaker blueprint name for user interface display<br /><br />Validation: Must be non-empty string suitable for SageMaker blueprint naming                                                                                                           |
+| - [domainBucketName](#sagemakerBlueprint_domainBucketName )           | No      | string          | No         | -                                                                                              | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [domainConfig](#sagemakerBlueprint_domainConfig )                   | No      | object          | No         | In #/definitions/DomainConfig                                                                  | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [domainConfigSSMParam](#sagemakerBlueprint_domainConfigSSMParam )   | No      | string          | No         | -                                                                                              | Q-ENHANCED-PROPERTY<br />Optional SSM parameter reference for domain configuration enabling dynamic domain configuration management. Specifies the SSM parameter containing domain configuration data for flexible domain setup and configuration management.<br /><br />Use cases: Dynamic configuration; SSM parameter reference; Configuration management; Flexible setup<br /><br />AWS: AWS Systems Manager parameter for DataZone domain configuration reference<br /><br />Validation: Must be valid SSM parameter name if provided; parameter must contain valid domain configuration |
+| - [enabledRegions](#sagemakerBlueprint_enabledRegions )               | No      | array of string | No         | -                                                                                              | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [parameters](#sagemakerBlueprint_parameters )                       | No      | object          | No         | -                                                                                              | Q-ENHANCED-PROPERTY<br />Optional object containing named parameter configurations for the SageMaker blueprint. Enables parameterized blueprint deployment with validation rules and user input constraints.<br /><br />Use cases: Product parameterization; User input collection; Deployment customization<br /><br />AWS: AWS SageMaker blueprint parameters for user-configurable deployment options<br /><br />Validation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided<br />  *                                                       |
+| + [provisioningRole](#sagemakerBlueprint_provisioningRole )           | No      | object          | No         | Same as [replicationRole](#buckets_additionalProperties_replication_outbound_replicationRole ) | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 
 ### <a name="sagemakerBlueprint_additionalAccounts"></a>6.1. Property `root > sagemakerBlueprint > additionalAccounts`
 
@@ -1414,13 +1708,13 @@ Validation: Must be object with string keys and valid account configuration valu
 | **Additional properties** | Not allowed                              |
 | **Defined in**            | #/definitions/AdditionalBlueprintAccount |
 
-| Property                                                                                                      | Pattern | Type            | Deprecated | Definition                                                                     | Title/Description |
-| ------------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ------------------------------------------------------------------------------ | ----------------- |
-| + [account](#sagemakerBlueprint_additionalAccounts_additionalProperties_account )                             | No      | string          | No         | -                                                                              | -                 |
-| - [authorizedDomainUnits](#sagemakerBlueprint_additionalAccounts_additionalProperties_authorizedDomainUnits ) | No      | array of string | No         | -                                                                              | -                 |
-| - [enabledRegions](#sagemakerBlueprint_additionalAccounts_additionalProperties_enabledRegions )               | No      | array of string | No         | -                                                                              | -                 |
-| - [parameters](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters )                       | No      | object          | No         | -                                                                              | -                 |
-| + [provisioningRole](#sagemakerBlueprint_additionalAccounts_additionalProperties_provisioningRole )           | No      | object          | No         | Same as [roles_additionalProperties_items](#roles_additionalProperties_items ) | -                 |
+| Property                                                                                                      | Pattern | Type            | Deprecated | Definition                                                                                     | Title/Description |
+| ------------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------------------------------------------------------------------------------------------- | ----------------- |
+| + [account](#sagemakerBlueprint_additionalAccounts_additionalProperties_account )                             | No      | string          | No         | -                                                                                              | -                 |
+| - [authorizedDomainUnits](#sagemakerBlueprint_additionalAccounts_additionalProperties_authorizedDomainUnits ) | No      | array of string | No         | -                                                                                              | -                 |
+| - [enabledRegions](#sagemakerBlueprint_additionalAccounts_additionalProperties_enabledRegions )               | No      | array of string | No         | -                                                                                              | -                 |
+| - [parameters](#sagemakerBlueprint_additionalAccounts_additionalProperties_parameters )                       | No      | object          | No         | -                                                                                              | -                 |
+| + [provisioningRole](#sagemakerBlueprint_additionalAccounts_additionalProperties_provisioningRole )           | No      | object          | No         | Same as [replicationRole](#buckets_additionalProperties_replication_outbound_replicationRole ) | -                 |
 
 ##### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_account"></a>6.1.1.1. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > account`
 
@@ -1728,12 +2022,12 @@ If you set the value to ``true``, the parameter value is masked with asterisks (
 
 ##### <a name="sagemakerBlueprint_additionalAccounts_additionalProperties_provisioningRole"></a>6.1.1.5. Property `root > sagemakerBlueprint > additionalAccounts > additionalProperties > provisioningRole`
 
-|                           |                                                                       |
-| ------------------------- | --------------------------------------------------------------------- |
-| **Type**                  | `object`                                                              |
-| **Required**              | Yes                                                                   |
-| **Additional properties** | Not allowed                                                           |
-| **Same definition as**    | [roles_additionalProperties_items](#roles_additionalProperties_items) |
+|                           |                                                                                       |
+| ------------------------- | ------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                              |
+| **Required**              | Yes                                                                                   |
+| **Additional properties** | Not allowed                                                                           |
+| **Same definition as**    | [replicationRole](#buckets_additionalProperties_replication_outbound_replicationRole) |
 
 ### <a name="sagemakerBlueprint_authorizedDomainUnits"></a>6.2. Property `root > sagemakerBlueprint > authorizedDomainUnits`
 
@@ -8152,12 +8446,12 @@ Validation: Must be object with string keys and valid MdaaServiceCatalogParamete
 
 ### <a name="sagemakerBlueprint_provisioningRole"></a>6.10. Property `root > sagemakerBlueprint > provisioningRole`
 
-|                           |                                                                       |
-| ------------------------- | --------------------------------------------------------------------- |
-| **Type**                  | `object`                                                              |
-| **Required**              | Yes                                                                   |
-| **Additional properties** | Not allowed                                                           |
-| **Same definition as**    | [roles_additionalProperties_items](#roles_additionalProperties_items) |
+|                           |                                                                                       |
+| ------------------------- | ------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                              |
+| **Required**              | Yes                                                                                   |
+| **Additional properties** | Not allowed                                                                           |
+| **Same definition as**    | [replicationRole](#buckets_additionalProperties_replication_outbound_replicationRole) |
 
 ## <a name="service_catalog_product_config"></a>7. Property `root > service_catalog_product_config`
 
@@ -8385,7 +8679,48 @@ Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables S
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-## <a name="storageLensEnabled"></a>8. Property `root > storageLensEnabled`
+## <a name="shareParametersWithAccounts"></a>8. Property `root > shareParametersWithAccounts`
+
+|              |                                                                             |
+| ------------ | --------------------------------------------------------------------------- |
+| **Type**     | `array of string`                                                           |
+| **Required** | No                                                                          |
+| **Default**  | `"- no parameters are shared and all parameters stay in the Standard tier"` |
+
+**Description:** AWS accounts allowed to read this data lake's KMS key and bucket SSM parameters. A RAM share
+always names its principals, so only the accounts listed here can read them.
+
+Set this when a deployment in another account has to resolve identifiers it cannot derive -
+the two data lakes in an MDAA-to-MDAA replication pair each read the other's. The accounts
+must be in the same AWS Organization and region as this deployment, and the shared parameters
+move to the billed Advanced tier that RAM requires. The module README explains why each holds.
+
+Use cases: Replication between two MDAA data lakes; Sharing bucket and key identifiers with a consumer account
+
+AWS: SSM Advanced-tier parameters and a RAM resource share
+
+Validation: Optional; array of 12-digit AWS account IDs in this account's AWS Organization
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                         | Description |
+| ----------------------------------------------------------------------- | ----------- |
+| [shareParametersWithAccounts items](#shareParametersWithAccounts_items) | -           |
+
+### <a name="shareParametersWithAccounts_items"></a>8.1. root > shareParametersWithAccounts > shareParametersWithAccounts items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+## <a name="storageLensEnabled"></a>9. Property `root > storageLensEnabled`
 
 |              |           |
 | ------------ | --------- |
