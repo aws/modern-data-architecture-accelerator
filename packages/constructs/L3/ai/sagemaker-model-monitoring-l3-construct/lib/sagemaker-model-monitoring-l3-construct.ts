@@ -10,7 +10,7 @@ import { MdaaResourceType } from '@aws-mdaa/naming';
 import { Construct } from 'constructs';
 import { MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
-import { Aws, CfnResource, Duration, Fn } from 'aws-cdk-lib';
+import { Annotations, Aws, CfnResource, Duration, Fn } from 'aws-cdk-lib';
 import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Rule, Schedule, RuleTargetInput } from 'aws-cdk-lib/aws-events';
 import { SfnStateMachine } from 'aws-cdk-lib/aws-events-targets';
@@ -41,6 +41,23 @@ import {
 
 const ENDPOINT_INPUT_LOCAL_PATH = '/opt/ml/processing/input/endpoint';
 const MONITOR_OUTPUT_LOCAL_PATH = '/opt/ml/processing/output';
+
+/**
+ * Synth-time deprecation notice emitted once per construct instance.
+ *
+ * SageMaker Model Monitor (data-quality, model-quality) and SageMaker Clarify
+ * (model-bias, model-explainability) entered maintenance mode on 2026-07-30: no new
+ * customer onboarding and no new features. Existing deployments continue to work.
+ * The MDAA team is targeting a replacement solution in the next release.
+ */
+const MODEL_MONITORING_DEPRECATION_WARNING =
+  'This module deploys SageMaker Model Monitor and SageMaker Clarify resources. ' +
+  'Both services entered maintenance mode on 2026-07-30 - no new customer onboarding and no new features ' +
+  '(existing deployments keep working). The MDAA team is targeting a replacement solution in the next ' +
+  'release, based on the open-source SageMaker AI monitoring stack (Evidently AI + CloudWatch + QuickSight) ' +
+  'and SHAP-based explainability. ' +
+  'See https://docs.aws.amazon.com/sagemaker/latest/dg/model-monitor-availability-change.html and ' +
+  'https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-availability-change.html.';
 
 interface MonitorClusterConfig {
   readonly instanceCount: number;
@@ -157,6 +174,13 @@ export class SageMakerModelMonitoringL3Construct extends MdaaL3Construct {
   constructor(scope: Construct, id: string, props: SageMakerModelMonitoringL3ConstructProps) {
     super(scope, id, props);
     this.props = props;
+
+    // Non-breaking deprecation signal: one clear warning per construct instance (not per
+    // resource). SageMaker Model Monitor and Clarify enter maintenance mode on 2026-07-30.
+    Annotations.of(this).addWarningV2(
+      '@aws-mdaa/sagemaker-model-monitoring:serviceMaintenance',
+      MODEL_MONITORING_DEPRECATION_WARNING,
+    );
 
     validateEndpointName(props.endpointName);
 

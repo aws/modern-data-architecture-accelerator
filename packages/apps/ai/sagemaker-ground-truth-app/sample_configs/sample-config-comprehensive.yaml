@@ -1,3 +1,9 @@
+# ⚠️ DEPRECATION NOTICE
+# This module is deprecated. SageMaker Ground Truth entered maintenance mode on 2026-07-30
+# (no new customer onboarding, no new features; existing deployments keep working). AWS has
+# not announced a managed replacement. Before using this as a deployment starting point,
+# review the migration alternatives in the "Deprecation Notice" section of the module README.
+
 # Prerequisites — external resources that must exist before deployment:
 #
 # Required:

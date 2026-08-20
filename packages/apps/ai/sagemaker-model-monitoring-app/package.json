@@ -1,6 +1,7 @@
 {
   "name": "@aws-mdaa/sagemaker-model-monitoring",
-  "description": "MDAA SageMaker Model Monitoring module",
+  "description": "[DEPRECATED] MDAA SageMaker Model Monitoring module",
+  "deprecated": "Amazon SageMaker Model Monitor and SageMaker Clarify services will no longer be open to new customers starting on July 30, 2026. Existing customers can continue to use the services as normal. The MDAA team is targeting a replacement solution in the next release.",
   "author": {
     "name": "Amazon Web Services",
     "url": "https://aws.amazon.com/solutions"

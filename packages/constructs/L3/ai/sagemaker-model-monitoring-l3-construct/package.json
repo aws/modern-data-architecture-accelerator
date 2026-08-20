@@ -1,8 +1,7 @@
 {
   "name": "@aws-mdaa/sagemaker-model-monitoring-l3-construct",
   "version": "1.7.0",
-  "description": "[DEPRECATED] MDAA SageMaker Model Monitoring L3 Construct",
-  "deprecated": "Amazon SageMaker Model Monitor service will no longer be open to new customers starting on July 30, 2026. Existing customers can continue to use the service as normal.",
+  "description": "MDAA SageMaker Model Monitoring L3 Construct",
   "license": "Apache-2.0",
   "author": {
     "name": "Amazon Web Services",

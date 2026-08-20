@@ -6,7 +6,7 @@
 import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
 import { MdaaResourceType } from '@aws-mdaa/naming';
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Match, Template } from 'aws-cdk-lib/assertions';
+import { Annotations, Match, Template } from 'aws-cdk-lib/assertions';
 import {
   SageMakerModelMonitoringL3Construct,
   SageMakerModelMonitoringL3ConstructProps,
@@ -646,6 +646,47 @@ describe('SageMaker Model Monitoring L3 Construct', () => {
           baselineOutputDataS3Uri: 's3://out-bucket/output/',
         });
       }).toThrow(/baselineTrainingDataS3Uri requires at least one of/);
+    });
+  });
+
+  describe('Deprecation Warning', () => {
+    test('Emits one service-maintenance deprecation warning per construct instance', () => {
+      const testApp = new MdaaTestApp();
+      const stack = testApp.testStack;
+      // Enable all four monitors so the construct emits multiple resources/schedules. This pins
+      // the "one warning per construct instance — not per resource" behavior: the count must stay
+      // at exactly 1 even though the construct now creates several monitor resources.
+      new SageMakerModelMonitoringL3Construct(stack, 'monitoring-deprecation', {
+        naming: testApp.naming,
+        roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+        endpointName: 'test-endpoint-deprecation',
+        monitors: {
+          dataQuality: { enabled: true, imageUri: TEST_MONITOR_IMAGE },
+          modelQuality: {
+            enabled: true,
+            problemType: 'BinaryClassification',
+            groundTruthS3Uri: 's3://bucket/ground-truth/',
+            imageUri: TEST_MONITOR_IMAGE,
+          },
+          modelBias: {
+            enabled: true,
+            groundTruthS3Uri: 's3://bucket/ground-truth/',
+            imageUri: TEST_CLARIFY_IMAGE,
+          },
+          modelExplainability: {
+            enabled: true,
+            imageUri: TEST_CLARIFY_IMAGE,
+          },
+        },
+      });
+
+      const warnings = Annotations.fromStack(stack).findWarning(
+        '*',
+        Match.stringLikeRegexp('.*maintenance mode on 2026-07-30.*'),
+      );
+      // One warning per construct instance — not per resource.
+      expect(warnings.length).toBe(1);
+      expect(warnings[0].entry.data).toContain('replacement solution in the next release');
     });
   });
 

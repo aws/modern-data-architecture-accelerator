@@ -2,6 +2,8 @@
 
 End-to-end ML lifecycle platform covering model training, deployment, and monitoring — deployed and governed through MDAA with CDK Nag compliance (AWS Solutions, NIST 800-53, HIPAA, PCI-DSS).
 
+> **⚠️ Deprecation Notice:** The model-quality monitoring step in this starter kit uses the [`@aws-mdaa/sagemaker-model-monitoring`](../../packages/apps/ai/sagemaker-model-monitoring-app/README.md) module, which is built on **SageMaker Model Monitor** — a service that **entered maintenance mode on 2026-07-30** (no new customer onboarding, no new features; existing deployments keep working). The MDAA team is **targeting a replacement solution in the next release**; adopt it when it ships. See the module README for details.
+
 > **[Deployment Instructions](#deployment)**
 
 ## Use Cases
@@ -90,7 +92,7 @@ See [USAGE](USAGE.md) for post-deployment instructions.
 | `@aws-mdaa/sagemaker-mlops` | Unified training + deploy CI/CD pipelines |
 | `@aws-mdaa/sagemaker-pipeline` | SageMaker Pipeline (deployed by seed code) |
 | `@aws-mdaa/sagemaker-endpoint` | SageMaker Endpoint (deployed by seed code) |
-| `@aws-mdaa/sagemaker-model-monitoring` | Model quality monitoring (deployed by seed code) |
+| `@aws-mdaa/sagemaker-model-monitoring` | Model quality monitoring (deployed by seed code) — **deprecated** (see notice above) |
 
 ## Troubleshooting
 

@@ -6,7 +6,7 @@
 import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
 import { MdaaResourceType } from '@aws-mdaa/naming';
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Annotations, Match, Template } from 'aws-cdk-lib/assertions';
 import {
   SageMakerGroundTruthL3Construct,
   SageMakerGroundTruthL3ConstructProps,
@@ -235,6 +235,37 @@ describe('SageMaker Ground Truth L3 Construct', () => {
           },
         });
       }).toThrow(/Unsupported task type.*3d_point_cloud_object_detection/);
+    });
+  });
+
+  describe('Deprecation Warning', () => {
+    test('Emits one service-maintenance deprecation warning per construct instance', () => {
+      const testApp = new MdaaTestApp();
+      const stack = testApp.testStack;
+      new SageMakerGroundTruthL3Construct(stack, 'GroundTruthDeprecation', {
+        naming: testApp.naming,
+        roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+        jobName: 'test-deprecation',
+        taskType: 'image_bounding_box',
+        labelingTaskConfig: {
+          taskTitle: 'Label bounding boxes',
+          taskDescription: 'Draw bounding boxes around objects',
+          taskKeywords: ['image', 'bounding box'],
+          workteamArn: 'arn:aws:sagemaker:us-east-1:123456789012:workteam/private-crowd/test-team',
+          categoriesS3Uri: 's3://test-bucket/categories.json',
+        },
+      });
+
+      const warnings = Annotations.fromStack(stack).findWarning(
+        '*',
+        Match.stringLikeRegexp('.*maintenance mode on 2026-07-30.*'),
+      );
+      // One warning per construct instance — not per resource.
+      expect(warnings.length).toBe(1);
+      // Assert on the stable acknowledgement id (addWarningV2 appends it as `[ack: <id>]`)
+      // so the test remains valid if the free-form warning wording changes.
+      expect(warnings[0].entry.data).toContain('[ack: @aws-mdaa/sagemaker-ground-truth:serviceMaintenance]');
+      expect(warnings[0].entry.data).toContain('AWS has not announced a managed replacement');
     });
   });
 });

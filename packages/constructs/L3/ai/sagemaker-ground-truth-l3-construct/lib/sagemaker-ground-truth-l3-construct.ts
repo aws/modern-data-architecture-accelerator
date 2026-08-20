@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Aws, Duration, RemovalPolicy, Stack } from 'aws-cdk-lib';
+import { Annotations, Aws, Duration, RemovalPolicy, Stack } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { INLINE_POLICY_SUPPRESSIONS, LAMBDA_SUPPRESSIONS } from './nag-constants';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
@@ -25,6 +25,14 @@ import * as logs from 'aws-cdk-lib/aws-logs';
 import * as scheduler from 'aws-cdk-lib/aws-scheduler';
 import * as sagemaker from 'aws-cdk-lib/aws-sagemaker';
 import * as path from 'path';
+
+/** Synth-time deprecation notice emitted once per construct instance. */
+const GROUND_TRUTH_DEPRECATION_WARNING =
+  'This module uses SageMaker Ground Truth, which entered maintenance mode on 2026-07-30 - ' +
+  'no new customer onboarding and no new features (existing deployments keep working). ' +
+  'AWS has not announced a managed replacement; evaluate third-party labeling platforms ' +
+  '(Label Studio, Labelbox, Scale AI), custom SageMaker Processing workflows, or Amazon ' +
+  'Mechanical Turk. See https://docs.aws.amazon.com/sagemaker/latest/dg/sms.html.';
 
 /**
  * Supported Ground Truth task types.
@@ -254,6 +262,13 @@ export class SageMakerGroundTruthL3Construct extends MdaaL3Construct {
   constructor(scope: Construct, id: string, props: SageMakerGroundTruthL3ConstructProps) {
     super(scope, id, props);
     this.props = props;
+
+    // Non-breaking deprecation signal: one clear warning per construct instance (not per
+    // resource). SageMaker Ground Truth enters maintenance mode on 2026-07-30.
+    Annotations.of(this).addWarningV2(
+      '@aws-mdaa/sagemaker-ground-truth:serviceMaintenance',
+      GROUND_TRUTH_DEPRECATION_WARNING,
+    );
 
     const jobName = props.jobName;
     const taskType = props.taskType;

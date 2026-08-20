@@ -1,6 +1,7 @@
 {
   "name": "@aws-mdaa/sagemaker-ground-truth",
-  "description": "MDAA SageMaker Ground Truth module",
+  "description": "[DEPRECATED] MDAA SageMaker Ground Truth module",
+  "deprecated": "Amazon SageMaker Ground Truth service will no longer be open to new customers starting on July 30, 2026. Existing customers can continue to use the service as normal.",
   "author": {
     "name": "Amazon Web Services",
     "url": "https://aws.amazon.com/solutions"

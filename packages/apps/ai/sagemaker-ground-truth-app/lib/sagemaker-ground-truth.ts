@@ -9,6 +9,9 @@ import { AppProps, Stack } from 'aws-cdk-lib';
 import { SageMakerGroundTruthConfigParser } from './sagemaker-ground-truth-config';
 import { SageMakerGroundTruthL3Construct } from '@aws-mdaa/sagemaker-ground-truth-l3-construct';
 
+/**
+ * @deprecated SageMaker Ground Truth is in maintenance mode (2026-07-30); see the module README for migration options.
+ */
 export class SageMakerGroundTruthApp extends MdaaCdkApp {
   constructor(props: AppProps = {}) {
     super(props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`));

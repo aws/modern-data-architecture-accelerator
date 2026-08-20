@@ -2,6 +2,17 @@
 
 > **Note:** This documentation is also available in a rendered format [here](https://aws.github.io/modern-data-architecture-accelerator/packages/apps/ai/sagemaker-ground-truth-app/index.html).
 
+> **⚠️ Deprecation Notice**
+>
+> **This module is deprecated.** It builds on **SageMaker Ground Truth**, which **entered maintenance mode on 2026-07-30** — AWS no longer onboards new customers and will not add new features. **Existing deployments continue to work**, so this is a non-breaking notice, not a removal.
+>
+> **Migration path:** AWS has **not** announced a managed replacement for Ground Truth. Evaluate the following alternatives:
+> - Third-party labeling platforms — [Label Studio](https://labelstud.io/), [Labelbox](https://labelbox.com/), [Scale AI](https://scale.com/).
+> - Custom annotation workflows using SageMaker Processing Jobs with a custom UI.
+> - [Amazon Mechanical Turk](https://www.mturk.com/) directly (still available).
+>
+> See the [SageMaker Ground Truth documentation](https://docs.aws.amazon.com/sagemaker/latest/dg/sms.html) for the retirement notice. This deprecation is delivered in phases (deprecate → replace → remove).
+
 Deploys a fully automated, continuous data labeling pipeline using SageMaker Ground Truth. Data uploaded to S3 is automatically detected, batched, and sent to human labelers via Ground Truth labeling jobs. Labeled results are persisted to a SageMaker Feature Group for downstream ML training pipelines. Use this module when you need continuous, hands-off data labeling with quality verification and Feature Store integration.
 
 ---

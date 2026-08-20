@@ -19,7 +19,7 @@ tag_config_data:
 
 # Failure to do so may result in global naming conflicts.
 # TODO: Set a globally unique organization name (used in S3 bucket names and resource prefixes)
-organization: "<YOUR_ORG_NAME>"
+organization: <YOUR_ORG_NAME>
 
 context:
   # SageMaker project identifiers

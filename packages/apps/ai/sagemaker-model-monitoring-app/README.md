@@ -2,6 +2,14 @@
 
 > **Note:** This documentation is also available in a rendered format [here](https://aws.github.io/modern-data-architecture-accelerator/packages/apps/ai/sagemaker-model-monitoring-app/index.html).
 
+> **⚠️ Deprecation Notice**
+>
+> **This module is deprecated.** It deploys **SageMaker Model Monitor** (data-quality, model-quality) and **SageMaker Clarify** (model-bias, model-explainability) resources. Both services **entered maintenance mode on 2026-07-30** — AWS no longer onboards new customers and will not add new features. **Existing deployments continue to work**, so this is a non-breaking notice, not a removal.
+>
+> **Migration path:** The MDAA team is **targeting a replacement solution in the next release**. It is expected to be based on the AWS-recommended open-source [SageMaker AI monitoring stack](https://github.com/aws-samples/sample-aiops-on-amazon-sagemakerai/tree/main/monitoring) (Evidently AI + EventBridge + Lambda), Amazon CloudWatch metrics/anomaly detection, Amazon QuickSight dashboards, and [SHAP](https://shap.readthedocs.io/en/latest/)-based explainability. **Adopt that replacement when it ships** rather than migrating ad hoc. For background, see the [Model Monitor availability change](https://docs.aws.amazon.com/sagemaker/latest/dg/model-monitor-availability-change.html) and the [Clarify availability change](https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-availability-change.html).
+>
+> This deprecation is delivered in phases (deprecate → replace → remove).
+
 Deploys SageMaker Model Monitor schedules for all four monitoring types — data quality, model quality, model bias, and model explainability — against a deployed real-time endpoint. Each monitor runs as a scheduled processing job that compares live inference traffic against baseline statistics and constraints, publishing violations to S3 and CloudWatch. Use this module when you need continuous monitoring of a production inference endpoint to detect data drift, model degradation, bias drift, or changes in feature attribution.
 
 ---
