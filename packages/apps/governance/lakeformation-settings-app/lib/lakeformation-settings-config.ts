@@ -8,7 +8,7 @@ import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { Schema } from 'ajv';
 import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
-import { IdentityCenterConfig } from '@aws-mdaa/lakeformation-settings-l3-construct';
+import { IdentityCenterConfig, S3TablesIntegrationConfig } from '@aws-mdaa/lakeformation-settings-l3-construct';
 
 export interface LakeFormationSettingsConfigContents extends MdaaBaseConfigContents {
   /**
@@ -96,6 +96,29 @@ export interface LakeFormationSettingsConfigContents extends MdaaBaseConfigConte
    * Validation: Optional; array of AWS account ID strings; requires createDataZoneAdminRole
    */
   readonly dataZoneAdminTrustAccounts?: string[];
+
+  /**
+   * Automates the S3 Tables "Enable integration" action so table buckets in this
+   * account and Region are queryable from AWS analytics services (Athena, Redshift,
+   * EMR, QuickSight) without a manual console step. When enabled, MDAA creates the
+   * `s3tablescatalog` Glue federated catalog, which registers the table bucket
+   * location with Lake Formation using IAM access controls. The integration is a
+   * single shared resource per account/Region, which is why it belongs in this
+   * account-level module.
+   *
+   * Access posture: the `s3tablescatalog` catalog is created with
+   * `IAM_ALLOWED_PRINCIPALS`/`ALL` default database and table permissions and full
+   * external table access, regardless of `iamAllowedPrincipalsDefault`. Access to the
+   * S3 Tables catalogs is therefore governed by IAM rather than fine-grained Lake
+   * Formation grants (this mirrors the S3 console "Enable integration" action).
+   *
+   * Use cases: Automated S3 Tables analytics enablement; Athena access to Iceberg tables
+   *
+   * AWS: Glue CreateCatalog (federated `aws:s3tables` catalog), Lake Formation location registration
+   *
+   * Validation: Optional; valid S3TablesIntegrationConfig with required enabled flag
+   */
+  readonly s3TablesIntegration?: S3TablesIntegrationConfig;
 }
 
 export class LakeFormationSettingsConfigParser extends MdaaAppConfigParser<LakeFormationSettingsConfigContents> {
@@ -107,6 +130,8 @@ export class LakeFormationSettingsConfigParser extends MdaaAppConfigParser<LakeF
   readonly dataZoneAdminTrustAccounts?: string[];
   /** Cross account sharing version. If not specified, defaults to latest. */
   public readonly crossAccountVersion?: string;
+  /** S3 Tables integration with AWS analytics services. */
+  public readonly s3TablesIntegration?: S3TablesIntegrationConfig;
 
   constructor(stack: Stack, props: MdaaAppConfigParserProps) {
     super(stack, props, configSchema as Schema);
@@ -118,5 +143,6 @@ export class LakeFormationSettingsConfigParser extends MdaaAppConfigParser<LakeF
     this.crossAccountVersion = this.configContents.crossAccountVersion;
     this.createDataZoneAdminRole = this.configContents.createDataZoneAdminRole;
     this.dataZoneAdminTrustAccounts = this.configContents.dataZoneAdminTrustAccounts;
+    this.s3TablesIntegration = this.configContents.s3TablesIntegration;
   }
 }

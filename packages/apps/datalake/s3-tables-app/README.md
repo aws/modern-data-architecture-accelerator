@@ -12,6 +12,7 @@ Deploys managed Apache Iceberg table buckets, namespaces, and tables via Amazon 
 - MDAA core infrastructure deployed (org, environment, domain context)
 - IAM roles defined for principals that require access to S3 Tables resources
 - **If bringing your own KMS key (`kmsKeyArn`):** the key policy must already grant the S3 Tables maintenance principal access, since MDAA cannot modify a key it does not own. Grant `kms:Decrypt` and `kms:GenerateDataKey` to service principal `maintenance.s3tables.amazonaws.com`, conditioned on `kms:EncryptionContext:aws:s3:arn` matching `<tableBucketArn>/*`. Without this grant, table creation fails with "Insufficient access to perform table maintenance". (MDAA-created keys receive this grant automatically.)
+- **To query tables from Athena, Redshift, EMR, or QuickSight:** the account/Region needs the S3 Tables analytics integration enabled once. Set `s3TablesIntegration.enabled: true` in the [LakeFormation Settings module](../../governance/lakeformation-settings-app/README.md) — it's account-level, so it's a one-time flag per account/Region no matter how many table buckets you deploy.
 
 ---
 

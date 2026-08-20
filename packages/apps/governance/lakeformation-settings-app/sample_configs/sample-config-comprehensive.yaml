@@ -62,3 +62,10 @@ iamIdentityCenter:
     - 'arn:{{partition}}:organizations::{{account}}:organization/o-exampleorgid'
     # Share with a specific organizational unit
     - 'arn:{{partition}}:organizations::{{account}}:ou/o-exampleorgid/ou-exampleouid'
+
+# (Optional) Enable S3 Tables integration with AWS analytics services. See SCHEMA.md for the full contract.
+s3TablesIntegration:
+  # (Required) Set true to enable the S3 Tables integration.
+  enabled: true
+  # (Optional) Set true only if this stack owns the integration and you want it removed on delete.
+  removeOnDelete: false

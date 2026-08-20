@@ -57,6 +57,10 @@
 
 - **S3 Lifecycle Policies** (`@aws-mdaa/athena-workgroup`, `@aws-mdaa/athena-workgroup-l3-construct`): Added optional `lifecycleConfiguration` to the athena-workgroup module, enabling S3 lifecycle rules on the workgroup results bucket. Rules without an explicit prefix are automatically scoped to the `athena-results/` prefix; rules with an explicit prefix are applied as-is. When omitted, the results bucket has no lifecycle rules (existing behavior preserved).
 
+#### Lake Formation Settings Module
+
+- **S3 Tables Analytics Integration** (`@aws-mdaa/lakeformation-settings`): Added optional `s3TablesIntegration` to automate the S3 Tables "Enable integration" action, creating the `s3tablescatalog` Glue catalog so S3 table buckets are queryable from AWS analytics services (Athena, Redshift, EMR, QuickSight). Opt-in, idempotent, and left in place on stack delete unless `removeOnDelete: true`.
+
 #### Audit Trail Module
 
 - **Non-S3 Data Events** (`@aws-mdaa/audit-trail`, `@aws-mdaa/audit-trail-l3-construct`): Added optional `dataEventSelectors` to each trail, capturing CloudTrail data events for any supported `resources.type` — `AWS::BedrockAgentCore::Runtime`, `AWS::Lambda::Function`, `AWS::DynamoDB::Table` — rather than S3 only. Each entry takes a required `resourceType` plus optional `resourceArns` (prefix-matched, to control cost) and `readWriteType`; CloudTrail allows one resource type per selector, so several types means several entries. This makes the trail prerequisite for the AgentCore Runtime module's `eventBridgeAlerts` expressible in config.

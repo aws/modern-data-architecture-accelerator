@@ -2,9 +2,9 @@
 
 > **Note:** This documentation is also available in a rendered format [here](https://aws.github.io/modern-data-architecture-accelerator/packages/apps/governance/lakeformation-settings-app/index.html).
 
-Configures account-level Lake Formation settings including administrator roles, default IAM Allowed Principals behavior, DataZone admin role creation, and IAM Identity Center integration. Use this module as a prerequisite when setting up Lake Formation-based data governance, to establish admin roles and control whether new Glue resources default to IAM or Lake Formation permissions.
+Configures account-level Lake Formation settings including administrator roles, default IAM Allowed Principals behavior, DataZone admin role creation, IAM Identity Center integration, and S3 Tables integration with AWS analytics services. Use this module as a prerequisite when setting up Lake Formation-based data governance, to establish admin roles and control whether new Glue resources default to IAM or Lake Formation permissions.
 
-> ⚠️ **Account-Level Module** — This module can only be deployed once per AWS account. A second deployment to the same account will fail. See [Account-Level Modules](../../../DEPLOYMENT.md#account-level-modules) for details.
+> ⚠️ **Account-Level Module** — This module can only be deployed once per AWS account. A second deployment to the same account will fail. See [Account-Level Modules](../../../../DEPLOYMENT.md#account-level-modules) for details.
 
 ---
 
@@ -18,6 +18,8 @@ This module deploys and integrates the following resources:
 
 **IAM Identity Center Configuration** (Optional) - Configures Lake Formation integration with IAM Identity Center for SSO-based access.
 
+**S3 Tables Integration** (Optional) - Automates the S3 Tables "Enable integration" action by creating the `s3tablescatalog` Glue federated catalog, making S3 table buckets in this account/Region queryable from AWS analytics services (Athena, Redshift, EMR, QuickSight) without a manual console step. Glue registers the table bucket location with Lake Formation using IAM (`IAM_ALLOWED_PRINCIPALS`) access controls. The `s3tablescatalog` catalog is created with `IAM_ALLOWED_PRINCIPALS`/`ALL` default database and table permissions and full external table access **regardless of this module's `iamAllowedPrincipalsDefault` setting** — so these catalogs are governed by IAM rather than fine-grained Lake Formation grants (this matches the S3 console "Enable integration" behavior, and does not change the default permissions applied to your other, non-S3-Tables, databases and tables). Because the integration is a single shared resource per account/Region, it is deliberately placed in this account-level module. On stack delete the integration is left in place by default (so queries for other deployments don't break); set `removeOnDelete: true` to tear it down. If the `s3tablescatalog` catalog already exists (for example it was enabled from the S3 console, or by an earlier deployment), MDAA treats that as success and leaves the existing catalog's permissions unchanged — it does not re-apply or verify the default permissions against an already-present catalog.
+
 ![LakeFormationSettings](../../../constructs/L3/governance/lakeformation-settings-l3-construct/docs/LakeFormationSettings.png)
 
 ---
@@ -29,6 +31,7 @@ This module deploys and integrates the following resources:
 - [DataZone](../datazone-app/README.md) — DataZone domains integrate with Lake Formation admin roles configured here
 - [SageMaker (Domain)](../sagemaker-app/README.md) — SageMaker domains integrate with Lake Formation admin roles configured here
 - [Glue Catalog Settings](../glue-catalog-app/README.md) — Configure Glue Catalog encryption alongside Lake Formation settings for the account
+- [S3 Tables](../../datalake/s3-tables-app/README.md) — Enable `s3TablesIntegration` here so S3 table buckets deployed by that module are queryable from AWS analytics services
 
 ---
 
@@ -76,7 +79,7 @@ Required properties only — Lake Formation admin roles and IAM Allowed Principa
 
 #### Comprehensive Configuration
 
-Covers Lake Formation admin roles, IAM permission defaults, cross-account sharing, DataZone integration, and IAM Identity Center integration for centralized data governance. Start here when evaluating all available options for admin roles, SSO integration, and cross-account DataZone governance.
+Covers Lake Formation admin roles, IAM permission defaults, cross-account sharing, DataZone integration, IAM Identity Center integration, and S3 Tables integration for centralized data governance. Start here when evaluating all available options for admin roles, SSO integration, cross-account DataZone governance, and automated S3 Tables analytics enablement.
 
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 

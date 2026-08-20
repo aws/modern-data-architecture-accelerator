@@ -2470,6 +2470,25 @@
             ],
             "type": "object"
         },
+        "S3TablesIntegrationConfig": {
+            "additionalProperties": false,
+            "description": "Automates the \"Enable integration\" action for Amazon S3 Tables so table\nbuckets in this account/Region are queryable from Athena, Redshift, EMR, and\nQuickSight without a manual console step. When enabled, MDAA creates the\n`s3tablescatalog` federated catalog in AWS Glue; Glue in turn registers the\ntable bucket location with Lake Formation using IAM (IAM_ALLOWED_PRINCIPALS)\naccess controls. The integration is a single, shared resource per\naccount/Region, which is why it lives in this account-level module.",
+            "properties": {
+                "enabled": {
+                    "description": "When true, creates the `s3tablescatalog` Glue federated catalog so S3 Tables\nare queryable from AWS analytics services without a manual console step.\n\nRegion/partition note: AWS offers the IAM-based-access-control form of this\nintegration only in a subset of Regions (elsewhere it additionally requires Lake\nFormation), and it is not available in every partition; in an unsupported\nRegion/partition the custom resource may report success while the integration is\nfunctionally incomplete. See the AWS S3 Tables documentation for the current list.\n\nUse cases: Automated S3 Tables analytics enablement; Athena/Redshift/EMR access to Iceberg tables\n\nAWS: Glue CreateCatalog (federated `aws:s3tables` catalog), Lake Formation location registration\n\nValidation: Required; boolean",
+                    "type": "boolean"
+                },
+                "removeOnDelete": {
+                    "default": false,
+                    "description": "When true, the `s3tablescatalog` catalog is deleted when the stack is deleted.\nDefaults to false so that deleting this stack does NOT break queries for other\nS3 Tables deployments sharing this account/Region integration. Only enable if\nthis stack owns the integration and you want it torn down on delete.\n\nUse cases: Full lifecycle ownership of the shared integration; ephemeral/test environments\n\nAWS: Glue DeleteCatalog on stack delete\n\nValidation: Optional; boolean",
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "enabled"
+            ],
+            "type": "object"
+        },
         "SecurityGroupReference": {
             "additionalProperties": false,
             "description": "A reference to a SecurityGroup resource.",
@@ -3007,6 +3026,10 @@
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",
             "description": "Q-ENHANCED-PROPERTY\nOptional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.\n\nUse cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions\n\nAWS: CDK Nag suppressions for compliance rule management and security exception documentation\n\nValidation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management"
+        },
+        "s3TablesIntegration": {
+            "$ref": "#/definitions/S3TablesIntegrationConfig",
+            "description": "Automates the S3 Tables \"Enable integration\" action so table buckets in this\naccount and Region are queryable from AWS analytics services (Athena, Redshift,\nEMR, QuickSight) without a manual console step. When enabled, MDAA creates the\n`s3tablescatalog` Glue federated catalog, which registers the table bucket\nlocation with Lake Formation using IAM access controls. The integration is a\nsingle shared resource per account/Region, which is why it belongs in this\naccount-level module.\n\nAccess posture: the `s3tablescatalog` catalog is created with\n`IAM_ALLOWED_PRINCIPALS`/`ALL` default database and table permissions and full\nexternal table access, regardless of `iamAllowedPrincipalsDefault`. Access to the\nS3 Tables catalogs is therefore governed by IAM rather than fine-grained Lake\nFormation grants (this mirrors the S3 console \"Enable integration\" action).\n\nUse cases: Automated S3 Tables analytics enablement; Athena access to Iceberg tables\n\nAWS: Glue CreateCatalog (federated `aws:s3tables` catalog), Lake Formation location registration\n\nValidation: Optional; valid S3TablesIntegrationConfig with required enabled flag"
         },
         "sagemakerBlueprint": {
             "$ref": "#/definitions/MdaaSageMakerCustomBluePrintConfig",
