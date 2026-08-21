@@ -61,6 +61,10 @@
 
 - **S3 Tables Analytics Integration** (`@aws-mdaa/lakeformation-settings`): Added optional `s3TablesIntegration` to automate the S3 Tables "Enable integration" action, creating the `s3tablescatalog` Glue catalog so S3 table buckets are queryable from AWS analytics services (Athena, Redshift, EMR, QuickSight). Opt-in, idempotent, and left in place on stack delete unless `removeOnDelete: true`.
 
+#### QuickSight Account Module
+
+- **Scoped Resource-Access Policies** (`@aws-mdaa/quicksight-account`, `@aws-mdaa/quicksight-account-l3-construct`): Added optional `customerManagedPolicies` to `resourceAccessRolePermissions`, allowing existing customer-managed policies to be attached to the QuickSight resource-access role (`aws-quicksight-service-role-v0`) for scoped least-privilege grants. When omitted, only the configured AWS-managed policies are attached (existing behavior preserved).
+
 #### Audit Trail Module
 
 - **Non-S3 Data Events** (`@aws-mdaa/audit-trail`, `@aws-mdaa/audit-trail-l3-construct`): Added optional `dataEventSelectors` to each trail, capturing CloudTrail data events for any supported `resources.type` — `AWS::BedrockAgentCore::Runtime`, `AWS::Lambda::Function`, `AWS::DynamoDB::Table` — rather than S3 only. Each entry takes a required `resourceType` plus optional `resourceArns` (prefix-matched, to control cost) and `readWriteType`; CloudTrail allows one resource type per selector, so several types means several entries. This makes the trail prerequisite for the AgentCore Runtime module's `eventBridgeAlerts` expressible in config.

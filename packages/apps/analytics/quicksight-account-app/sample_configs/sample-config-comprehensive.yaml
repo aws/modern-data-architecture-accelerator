@@ -138,3 +138,11 @@ account:
     # ARNs because AWS-managed policies are never cross-account.
     awsManagedPolicies:
       - 'service-role/AWSQuicksightAthenaAccess'
+    # (Optional) Existing customer-managed policy names to attach to the resource-access role
+    # for scoped least-privilege grants (e.g. athena:GetTableMetadata / athena:ListTableMetadata
+    # on a specific data catalog). QuickSight discovers this role by its fixed name, so it cannot
+    # be swapped for a customer-supplied role; scoped permissions are attached as policies here.
+    # Author the policy in the roles module (or out-of-band) and reference it by name; it must
+    # already exist when this module deploys.
+    customerManagedPolicies:
+      - 'my-quicksight-athena-metadata-policy'

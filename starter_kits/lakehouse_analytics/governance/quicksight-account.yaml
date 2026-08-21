@@ -40,3 +40,12 @@ account:
     # name (not full ARN) since AWS-managed policies are never cross-account.
     awsManagedPolicies:
       - 'service-role/AWSQuicksightAthenaAccess'
+
+    # (Optional) Existing customer-managed policies to attach to the service role by name,
+    # for scoped least-privilege grants that the AWS-managed policy above does not cover.
+    # aws-quicksight-service-role-v0 is a fixed-name role QuickSight discovers by convention,
+    # so it cannot use the bring-your-own-role pattern — attach scoped permissions as policies
+    # here. Author the policy in the roles module (governance/roles.yaml) and reference it by
+    # name; it must already exist when this module deploys.
+    # customerManagedPolicies:
+    #   - 'my-quicksight-scoped-policy'

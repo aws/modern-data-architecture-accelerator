@@ -332,4 +332,64 @@ describe('QS Resource Access Role Managed-Policy-Only Tests', () => {
     });
     expect(Object.keys(policies)).toHaveLength(0);
   });
+
+  test('Attaches only the AWS-managed ARN when customerManagedPolicies is unset (no customer-managed ARN)', () => {
+    const roles = template.findResources('AWS::IAM::Role', {
+      Properties: { RoleName: 'aws-quicksight-service-role-v0' },
+    });
+    const [role] = Object.values(roles);
+    expect(role.Properties.ManagedPolicyArns).toEqual([
+      'arn:test-partition:iam::aws:policy/service-role/AWSQuicksightAthenaAccess',
+    ]);
+  });
+});
+
+describe('QS Resource Access Role Customer-Managed-Policy Tests', () => {
+  const testApp = new MdaaTestApp();
+  const constructProps: QuickSightAccountL3ConstructProps = {
+    qsAccount: {
+      edition: 'ENTERPRISE',
+      authenticationMethod: 'IAM_AND_QUICKSIGHT',
+      notificationEmail: 'test@example.com',
+      vpcId: 'vpc-abcd1234',
+      subnetIds: ['test-subnet-id1', 'test-subnet-id2'],
+      resourceAccessRolePermissions: {
+        awsManagedPolicies: ['service-role/AWSQuicksightAthenaAccess'],
+        customerManagedPolicies: ['my-scoped-athena-metadata-policy', 'my-second-scoped-policy'],
+      },
+    },
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+  };
+
+  new QuickSightAccountL3Construct(testApp.testStack, 'test-stack', constructProps);
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('Attaches the AWS-managed and all customer-managed policy ARNs to the resource-access role', () => {
+    template.hasResourceProperties('AWS::IAM::Role', {
+      RoleName: 'aws-quicksight-service-role-v0',
+      ManagedPolicyArns: Match.arrayWith([
+        'arn:test-partition:iam::aws:policy/service-role/AWSQuicksightAthenaAccess',
+        'arn:test-partition:iam::test-account:policy/my-scoped-athena-metadata-policy',
+        'arn:test-partition:iam::test-account:policy/my-second-scoped-policy',
+      ]),
+    });
+  });
+
+  // Pins the deliberate design choice in attachResourceAccessRolePermissions: each customer-managed
+  // policy is imported with the policy name (not the array index) as its construct ID. Attaching two
+  // policies must therefore import two distinct references and produce two distinct ARNs, so
+  // reordering the config array never changes the CloudFormation logical IDs.
+  test('Attaches one ARN per configured customer-managed policy name', () => {
+    const roles = template.findResources('AWS::IAM::Role', {
+      Properties: { RoleName: 'aws-quicksight-service-role-v0' },
+    });
+    const [role] = Object.values(roles);
+    const arns = role.Properties.ManagedPolicyArns as string[];
+    expect(arns).toContain('arn:test-partition:iam::test-account:policy/my-scoped-athena-metadata-policy');
+    expect(arns).toContain('arn:test-partition:iam::test-account:policy/my-second-scoped-policy');
+    // AWS-managed + two customer-managed = three attachments, no dedup/collision on construct IDs.
+    expect(arns).toHaveLength(3);
+  });
 });

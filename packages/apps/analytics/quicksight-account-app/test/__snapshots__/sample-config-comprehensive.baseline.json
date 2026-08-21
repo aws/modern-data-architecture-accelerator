@@ -1053,6 +1053,9 @@
           "resourceAccessRolePermissions": {
             "awsManagedPolicies": [
               "service-role/AWSQuicksightAthenaAccess"
+            ],
+            "customerManagedPolicies": [
+              "my-quicksight-athena-metadata-policy"
             ]
           },
           "accountName": "test-org-test-env-test-domain-test-quicksight-56d456c0"
@@ -1078,7 +1081,8 @@
         },
         "Description": "QuickSight default resource-access service role",
         "ManagedPolicyArns": [
-          "arn:test-partition:iam::aws:policy/service-role/AWSQuicksightAthenaAccess"
+          "arn:test-partition:iam::aws:policy/service-role/AWSQuicksightAthenaAccess",
+          "arn:test-partition:iam::test-account:policy/my-quicksight-athena-metadata-policy"
         ],
         "Path": "/service-role/",
         "RoleName": "aws-quicksight-service-role-v0",

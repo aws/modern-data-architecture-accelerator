@@ -167,14 +167,15 @@ export interface AccountProps {
   /**
    * Permissions to attach to the account-level QuickSight resource-access role
    * (`aws-quicksight-service-role-v0`) created by this module, so QuickSight data sources can
-   * reach the underlying AWS resources (Athena/S3/KMS). This module owns the role, so it
-   * attaches both the AWS-managed policies and the customer-managed S3/KMS policy here in one
-   * place. See {@link ResourceAccessRolePermissionsProps}.
+   * reach the underlying AWS resources (Athena/S3/KMS). This module owns the role, so it attaches
+   * both AWS-managed policies and customer-managed policies here in one place. See
+   * {@link ResourceAccessRolePermissionsProps}.
    *
-   * Use cases: Granting an Athena data source the AWS-managed Athena policy plus scoped access
-   * to its workgroup results bucket and the KMS-encrypted data lake it queries
+   * Use cases: Granting an Athena data source the AWS-managed Athena policy, or a scoped
+   * customer-managed policy (e.g. athena:GetTableMetadata / athena:ListTableMetadata on a specific
+   * data catalog) for least-privilege access
    *
-   * AWS: AWS-managed policies plus an IAM ManagedPolicy attached to the QuickSight resource-access role
+   * AWS: AWS-managed and customer-managed policies attached to the QuickSight resource-access role
    *
    * Validation: Optional; all sub-properties optional
    */
@@ -199,14 +200,16 @@ export interface AccountProps {
  * QuickSight data sources can reach the underlying AWS resources (Athena, S3, KMS).
  *
  * QuickSight assumes a single account-wide role (`aws-quicksight-service-role-v0`, created by
- * this module) to access AWS services on your behalf. Because this module owns the role, it
- * attaches both the AWS-managed policies (e.g. AWSQuicksightAthenaAccess) and a dedicated
- * customer-managed policy scoping S3/KMS access to the configured resources.
+ * this module) to access AWS services on your behalf. Because this module owns the role — and
+ * because QuickSight discovers it by its fixed name and will only assume a role with that exact
+ * identity (so it cannot be swapped for a customer-supplied role) — this module attaches both
+ * AWS-managed policies (e.g. AWSQuicksightAthenaAccess) and customer-managed policies (for scoped
+ * least-privilege grants) to it here.
  *
  * Use cases: Granting an Athena data source access to its workgroup results bucket and the
- * KMS-encrypted data lake it queries
+ * KMS-encrypted data lake it queries, or scoped Athena metadata access via a customer-managed policy
  *
- * AWS: AWS-managed policies plus an IAM ManagedPolicy attached to the QuickSight resource-access role
+ * AWS: AWS-managed and customer-managed policies attached to the QuickSight resource-access role
  *
  * Validation: all sub-properties optional
  */
@@ -229,6 +232,23 @@ export interface ResourceAccessRolePermissionsProps {
    * Validation: Optional; array of AWS managed policy names
    */
   readonly awsManagedPolicies?: string[];
+  /**
+   * Existing customer-managed policy names to attach to the QuickSight resource-access role.
+   * Because QuickSight discovers this role by its fixed name (`aws-quicksight-service-role-v0`)
+   * and will only assume a role with that exact identity, the role cannot be swapped for a
+   * customer-supplied one; scoped least-privilege permissions must therefore be attached to it as
+   * customer-managed policies. Author the policy in the `roles` module (or out-of-band) and
+   * reference it here by name — matching the `customerManagedPolicies` convention in that module.
+   * Attachment is by the policy's deployed name, so the policy must already exist when this module deploys.
+   *
+   * Use cases: Granting scoped Athena metadata access (e.g. athena:GetTableMetadata,
+   * athena:ListTableMetadata on a specific data catalog) without attaching a broad AWS-managed policy
+   *
+   * AWS: Customer-managed policies attached to the QuickSight resource-access role
+   *
+   * Validation: Optional; array of existing customer-managed policy names
+   */
+  readonly customerManagedPolicies?: string[];
 }
 
 /**
@@ -739,9 +759,10 @@ export class QuickSightAccountL3Construct extends MdaaL3Construct {
   }
 
   /**
-   * Attaches AWS-managed policies (e.g. AWSQuicksightAthenaAccess) to the account-level
-   * resource-access role. Only this module can attach AWS-managed policies, since it owns the
-   * role. Data-source-specific S3/KMS grants are attached by the consuming data source module
+   * Attaches AWS-managed and customer-managed policies (e.g. AWSQuicksightAthenaAccess, or a scoped
+   * Athena-metadata policy) to the account-level resource-access role. Only this module can attach
+   * policies to the role, since it owns it and QuickSight discovers the role by its fixed name.
+   * Data-source-specific S3/KMS grants are attached by the consuming data source module
    * (`@aws-mdaa/quicksight-project`), because those resources are created by modules that deploy
    * after this one.
    */
@@ -755,6 +776,17 @@ export class QuickSightAccountL3Construct extends MdaaL3Construct {
     const awsManagedPolicies = config.awsManagedPolicies || [];
     awsManagedPolicies.forEach(policyName => {
       role.addManagedPolicy(MdaaManagedPolicy.fromAwsManagedPolicyNameWithPartition(this, policyName));
+    });
+
+    // Attach customer-managed policies by name, mirroring the customerManagedPolicies convention in
+    // the roles module. Routes through MdaaManagedPolicy.fromManagedPolicyName for consistency with
+    // the AWS-managed line above (both attachment paths use the MDAA wrapper). Referencing by name
+    // avoids a hard CFN dependency on the policy's stack; the policy must already exist when this
+    // module deploys. The construct ID is derived from the name (not the array index) so reordering
+    // the config does not change CloudFormation logical IDs.
+    const customerManagedPolicies = config.customerManagedPolicies || [];
+    customerManagedPolicies.forEach(policyName => {
+      role.addManagedPolicy(MdaaManagedPolicy.fromManagedPolicyNameWithPartition(this, policyName));
     });
 
     if (awsManagedPolicies.length > 0) {

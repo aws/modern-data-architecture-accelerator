@@ -171,4 +171,37 @@ describe('MDAA Construct Compliance Tests', () => {
       // Lines 175-177 covered by existing policy case
     });
   });
+
+  describe('fromManagedPolicyNameWithPartition', () => {
+    test('creates new policy using the deploying account and stack partition', () => {
+      const testApp = new MdaaTestApp();
+
+      const managedPolicy = MdaaManagedPolicy.fromManagedPolicyNameWithPartition(
+        testApp.testStack,
+        'my-scoped/policy-name',
+      );
+      expect(managedPolicy).toBeDefined();
+
+      // Customer-managed policy ARN must use the deploying account (not 'aws')
+      // and the stack partition, unlike an AWS-managed policy.
+      const stack = testApp.testStack;
+      expect(managedPolicy.managedPolicyArn).toEqual(
+        `arn:${stack.partition}:iam::${stack.account}:policy/my-scoped/policy-name`,
+      );
+
+      // Construct ID is derived from the sanitized name: '/' and '-' replaced with '--'.
+      expect(stack.node.tryFindChild('my--scoped--policy--name')).toBeDefined();
+    });
+
+    test('returns existing policy on second call', () => {
+      const testApp = new MdaaTestApp();
+
+      // First call creates the policy
+      const first = MdaaManagedPolicy.fromManagedPolicyNameWithPartition(testApp.testStack, 'my-cached-policy');
+
+      // Second call with the same name should return the cached child
+      const second = MdaaManagedPolicy.fromManagedPolicyNameWithPartition(testApp.testStack, 'my-cached-policy');
+      expect(second).toBe(first);
+    });
+  });
 });

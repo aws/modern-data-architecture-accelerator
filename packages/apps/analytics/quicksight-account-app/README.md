@@ -14,7 +14,7 @@ This module deploys and integrates the following resources:
 
 **QuickSight Service Role** - The account-level QuickSight resource-access role (`aws-quicksight-service-role-v0`) used by QuickSight to access the AWS services its data sources query.
 
-- When `resourceAccessRolePermissions` is configured, this module attaches the specified AWS-managed policies (e.g., `AWSQuicksightAthenaAccess`) and a scoped customer-managed S3/KMS policy to the role.
+- When `resourceAccessRolePermissions` is configured, this module attaches the specified AWS-managed policies (e.g., `AWSQuicksightAthenaAccess`) and any customer-managed policies (referenced by name, e.g. a scoped `athena:GetTableMetadata` grant) to the role. Data-source-specific S3/KMS grants are not attached here — those are attached by the consuming `@aws-mdaa/quicksight-project` module, which owns the data sources.
 
 **QuickSight Security Group** - Security group for QuickSight VPC connection, controlling network access to VPC-connected data sources such as Redshift.
 

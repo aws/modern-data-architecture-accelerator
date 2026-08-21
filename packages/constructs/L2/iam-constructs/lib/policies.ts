@@ -133,4 +133,35 @@ export class MdaaManagedPolicy extends ManagedPolicy {
 
     return ManagedPolicy.fromManagedPolicyArn(scope, constructId, arn);
   }
+
+  /**
+   * Imports an existing customer-managed policy by name, mirroring cdk
+   * ManagedPolicy.fromManagedPolicyName but formatting the ARN with the stack's
+   * literal partition, for consistency with fromAwsManagedPolicyNameWithPartition.
+   * A distinct method name is used because JSII forbids overriding the base
+   * ManagedPolicy.fromManagedPolicyName with a different parameter count. The account for a
+   * customer-managed policy is the deploying account (unlike AWS-managed policies,
+   * whose account is 'aws'). This only imports a reference — it creates no resource.
+   * The construct ID is derived from a sanitized fragment of the name (not an array
+   * index) so callers can attach several policies without index-driven logical IDs.
+   */
+  public static fromManagedPolicyNameWithPartition(scope: Construct, managedPolicyName: string): IManagedPolicy {
+    const constructId = managedPolicyName.replace(/[/-]/g, '--');
+
+    const existing = scope.node.tryFindChild(constructId);
+    if (existing) {
+      return existing as IManagedPolicy;
+    }
+
+    const arn = Arn.format({
+      partition: Stack.of(scope).partition,
+      service: 'iam',
+      region: '', // no region for managed policy
+      account: Stack.of(scope).account, // customer-managed policies live in the deploying account
+      resource: 'policy',
+      resourceName: managedPolicyName,
+    });
+
+    return ManagedPolicy.fromManagedPolicyArn(scope, constructId, arn);
+  }
 }
