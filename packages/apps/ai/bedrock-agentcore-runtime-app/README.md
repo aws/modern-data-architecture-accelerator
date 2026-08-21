@@ -60,6 +60,7 @@ This module is designed in alignment with MDAA security/compliance principles an
   - The app client has OAuth disabled unless a hosted UI is explicitly configured, so no implicit grant or default callback URL is created
   - SRP is always available and the plaintext-password auth flow is enabled only where no alternative exists — a hosted-UI deployment signs in through the authorization code grant instead
   - The pool is retained on stack deletion with Cognito deletion protection enabled, so an identity store cannot be destroyed by tearing down the stack
+  - **Runtime does not validate that a caller owns the session it names** — a valid token plus another user's session ID is accepted. Session-to-user binding is an application responsibility under the AgentCore shared responsibility model; see [Session-to-user binding](#session-to-user-binding) for where the check belongs and a race-free pattern
 - **Observability & Monitoring**:
   - Agent spans are routed to the runtime's own log group rather than the account-shared `aws/spans` group, bringing span content (prompts, model I/O, tool arguments and results) inside the same CMK encryption, retention, and PII-masking boundary as the agent's logs (see [Observability & Tracing](#observability--tracing))
   - Optional CloudWatch alarms on error rate and throttle count for production incident detection (see [Alarms](#cloudwatch-alarms))
@@ -68,12 +69,34 @@ This module is designed in alignment with MDAA security/compliance principles an
 
 ### Organization-Level Prerequisites
 
-The controls above are what this module deploys. The org-level guardrails around them — SCPs, CloudTrail data events, cross-account telemetry aggregation — are documented in [AgentCore Security Prerequisites](https://github.com/aws-samples/sample-config-modern-data-architecture-accelerator/blob/main/agentic_app/AGENTCORE_SECURITY_PREREQUISITES.md), alongside the AgentCore sample configuration.
+The controls above are what this module deploys. The org-level guardrails around them — SCPs, CloudTrail data events, cross-account telemetry aggregation — are documented in [AgentCore Security Prerequisites](https://github.com/aws-samples/sample-config-modern-data-architecture-accelerator/blob/main/agentic_app/security-best-practices/YOUR-RESPONSIBILITIES.md), alongside the AgentCore sample configuration.
 
 Two items from it affect how this module behaves:
 
 - **CloudTrail data events are off by default.** `InvokeAgentRuntime` is a data event, so until they are enabled there is no invocation audit trail and the `auth-failure` [EventBridge rule](#eventbridge-alerting) matches nothing. Enable them with the audit-trail module's [`dataEventSelectors`](../../governance/audit-trail-app/README.md#data-event-selectors), using `resourceType: AWS::BedrockAgentCore::Runtime`.
 - **SCPs do not restrict OAuth/JWT callers.** For a runtime using `customJwtAuthorizer` the resource-based policy is the perimeter, which is what [`enforceVpcOnly`](#vpc-only-enforcement-variant) generates.
+
+### Containment and Incident Response
+
+Stopping a misbehaving agent is an out-of-band operator action against a deployed runtime, so this module ships no kill switch — [`eventBridgeAlerts`](#eventbridge-alerting) exposes `targetLambdaArn` for a remediation function you write. An operator mid-incident should not have to follow a link to find the options, so they are listed here in the order to reach for them:
+
+| #   | Mechanism                                                                                                                    | Scope                               |
+| --- | ---------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| 1   | **IAM/SCP deny** on `bedrock-agentcore:InvokeAgentRuntime*`                                                                  | A role, an account, or an OU        |
+| 2   | **Remove the invocation path** — `DeleteAgentRuntimeEndpoint`, or `UpdateAgentRuntime` to an authorizer admitting no callers | One runtime                         |
+| 3   | **Cut egress** — modify the security group or VPC routing                                                                    | One runtime's network               |
+| 4   | **`StopRuntimeSession`**                                                                                                     | One session, by `runtimeSessionId`  |
+| 5   | **`forceAuthentication: true`** on `GetResourceOauth2Token` — agent-code change, not an operator action                      | Forces a fresh 3LO; revokes nothing |
+| 6   | **Shorten the inbound token lifetime** (preventive)                                                                          | Every future token                  |
+| 7   | **Rotate IdP signing keys** (break glass)                                                                                    | Every token from that IdP           |
+
+Three things to settle before an incident, not during one:
+
+- **There is no single-token revocation API.** JWT validation is offline against a cached JWKS, so disabling a user or client at your IdP does not invalidate tokens already issued — they stay valid until `exp`. The smallest unit you can actually cut off out of band is a single live session (4) or the agent's IAM role; no documented API revokes a stored user+agent credential.
+- **Mechanism 1 does not reach OAuth/JWT callers**, for the same reason SCPs do not (above). On a `customJwtAuthorizer` runtime the first response has to be 2 or 3 instead, so know which inbound mode each of your runtimes uses.
+- **Mechanism 6 caps how long an agent can run.** It shortens maximum invocation length as well as the revocation gap — read [Session Lifecycle and Token Expiry](#session-lifecycle-and-token-expiry) before tightening it, and on the `cognito` path note the knob is `idTokenValidityMinutes`.
+
+Decision detail for each mechanism — when it fits, who needs the permission, and what to test in advance — is in [YOUR-RESPONSIBILITIES.md § 5](https://github.com/aws-samples/sample-config-modern-data-architecture-accelerator/blob/main/agentic_app/security-best-practices/YOUR-RESPONSIBILITIES.md#5-containment-and-incident-response), which is the canonical list. One correction worth carrying: **there is no "disable runtime" action** despite AgentCore enablement material implying one — neither AgentCore API has any `Disable*`/`Enable*` operation, and `UpdateAgentRuntime` exposes no such field. Mechanism 2 is that intent's real form.
 
 ---
 
@@ -85,8 +108,8 @@ On the JWT path, exactly one of two fields names the identity provider. They dif
 
 | Field          | Who creates the IdP | When to use                                                          |
 | -------------- | ------------------- | -------------------------------------------------------------------- |
-| `discoveryUrl` | You                 | You already run an OIDC-compliant IdP (Cognito, Okta, Entra ID, ...)  |
-| `cognito`      | MDAA                | You want an IdP deployed and configured alongside the runtime         |
+| `discoveryUrl` | You                 | You already run an OIDC-compliant IdP (Cognito, Okta, Entra ID, ...) |
+| `cognito`      | MDAA                | You want an IdP deployed and configured alongside the runtime        |
 
 Specifying both fails at synth; so does specifying neither.
 
@@ -114,19 +137,19 @@ authorizerConfiguration:
 
 Defaults applied to the pool and client:
 
-| Setting             | Default                                              | Why                                                                          |
-| ------------------- | ---------------------------------------------------- | ---------------------------------------------------------------------------- |
-| Feature plan        | `PLUS` with threat protection `ENFORCED`             | Cognito acts on detected risk rather than only recording it                   |
-| Password policy     | 8+ chars, upper/lower/digit/symbol                   | CDK-nag `AwsSolutions-COG1`                                                   |
-| User creation       | Administrators only                                  | A runtime's callers are provisioned deliberately                              |
-| Account recovery    | Email only                                           | SMS recovery is vulnerable to SIM-swap                                        |
-| MFA                 | `required` (TOTP)                                    | Compliance-clean by default; see [MFA enrolment](#mfa-enrolment) before deploying |
-| Token validity      | 15 minutes (ID and access)                           | AgentCore guidance for agentic workloads; Cognito's own default is 60 minutes |
-| Refresh token       | 1 day                                                | Cognito's 30-day default would let a leaked refresh token mint access tokens for a month |
-| Auth flows          | SRP always; plaintext password only without `hostedUi` | `USER_PASSWORD_AUTH` sends the password itself, so it is enabled only where no alternative exists |
-| Client secret       | None                                                 | The caller authenticates as a user, so a shared secret binds no identity      |
-| OAuth               | Disabled unless `hostedUi` is configured             | Avoids CDK's implicit grant and `https://example.com` callback defaults       |
-| Removal policy      | `retain`, with deletion protection                   | A wrongly destroyed identity store loses every user record irrecoverably       |
+| Setting          | Default                                                | Why                                                                                               |
+| ---------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| Feature plan     | `PLUS` with threat protection `ENFORCED`               | Cognito acts on detected risk rather than only recording it                                       |
+| Password policy  | 8+ chars, upper/lower/digit/symbol                     | CDK-nag `AwsSolutions-COG1`                                                                       |
+| User creation    | Administrators only                                    | A runtime's callers are provisioned deliberately                                                  |
+| Account recovery | Email only                                             | SMS recovery is vulnerable to SIM-swap                                                            |
+| MFA              | `required` (TOTP)                                      | Compliance-clean by default; see [MFA enrolment](#mfa-enrolment) before deploying                 |
+| Token validity   | 15 minutes (ID and access)                             | AgentCore guidance for agentic workloads; Cognito's own default is 60 minutes                     |
+| Refresh token    | 1 day                                                  | Cognito's 30-day default would let a leaked refresh token mint access tokens for a month          |
+| Auth flows       | SRP always; plaintext password only without `hostedUi` | `USER_PASSWORD_AUTH` sends the password itself, so it is enabled only where no alternative exists |
+| Client secret    | None                                                   | The caller authenticates as a user, so a shared secret binds no identity                          |
+| OAuth            | Disabled unless `hostedUi` is configured               | Avoids CDK's implicit grant and `https://example.com` callback defaults                           |
+| Removal policy   | `retain`, with deletion protection                     | A wrongly destroyed identity store loses every user record irrecoverably                          |
 
 Token validity is configurable from 5 to 60 minutes via `idTokenValidityMinutes`. That range is an MDAA policy choice — Cognito itself permits 5 minutes to 1 day, and the 60-minute cap keeps this module from being configured less securely than an unconfigured pool.
 
@@ -134,21 +157,21 @@ Each branch has its own sample config, because they are mutually exclusive and c
 
 **Federation requires `hostedUi`.** Cognito signs federated users in only through the hosted-UI Login and Authorize endpoints — never `InitiateAuth` — so `cognito.federation` without `cognito.hostedUi` is rejected at synth rather than deploying an identity provider no caller could reach.
 
-| Config | Demonstrates |
-| ------ | ------------ |
-| [sample-config-cognito.yaml](sample_configs/sample-config-cognito.yaml) | Pool defaults, hosted UI, and SAML federation |
+| Config                                                                                      | Demonstrates                                      |
+| ------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| [sample-config-cognito.yaml](sample_configs/sample-config-cognito.yaml)                     | Pool defaults, hosted UI, and SAML federation     |
 | [sample-config-cognito-hosted-ui.yaml](sample_configs/sample-config-cognito-hosted-ui.yaml) | Hosted-UI authorization code grant, no federation |
-| [sample-config-cognito-oidc.yaml](sample_configs/sample-config-cognito-oidc.yaml) | OIDC enterprise federation |
+| [sample-config-cognito-oidc.yaml](sample_configs/sample-config-cognito-oidc.yaml)           | OIDC enterprise federation                        |
 
 ### MFA enrolment
 
 **Read this before deploying with the default `mfa: required`.** TOTP from an authenticator app is the only second factor this pool enables, and Cognito requires every user to register one before they can obtain their first token. Who drives that registration depends on your configuration — and one case cannot do it at all:
 
-| Your callers | Configure | Who enrols the user |
-| ------------ | --------- | ------------------- |
-| People signing in through a browser | `hostedUi` (any `mfa`) | Cognito's managed login prompts for MFA setup and shows the QR code |
-| People signing in through your own UI | `mfa: required`, no `hostedUi` | **Your application** — see the flow below |
-| A service, job, or agent with no human present | `mfa: optional` | Nobody. MFA does not apply |
+| Your callers                                   | Configure                      | Who enrols the user                                                 |
+| ---------------------------------------------- | ------------------------------ | ------------------------------------------------------------------- |
+| People signing in through a browser            | `hostedUi` (any `mfa`)         | Cognito's managed login prompts for MFA setup and shows the QR code |
+| People signing in through your own UI          | `mfa: required`, no `hostedUi` | **Your application** — see the flow below                           |
+| A service, job, or agent with no human present | `mfa: optional`                | Nobody. MFA does not apply                                          |
 
 If you configure `hostedUi`, you have nothing further to do: MDAA creates the hosted-UI domain and a managed-login branding style, and managed login then prompts each user through TOTP registration. (The branding style is required — Cognito activates managed login only for a client that has one, and assigns a default solely through the console, not the API.) Otherwise your application implements it, which is four calls threading a session through:
 
@@ -169,11 +192,138 @@ MDAA therefore populates `allowedAudience` on the `cognito` path, never sets `al
 
 Tokens must carry user context: AgentCore Identity binds on `iss`+`sub` throughout, so tokens minted from one shared client with no user context collapse every caller into a single identity and reuse the same Token Vault credentials across users. A user-context token from this pool has `sub` populated.
 
+### Session-to-user binding
+
+Everything above establishes _who the caller is_. It does not establish _which session they may use_ — **AgentCore does not check that a caller owns the session it names.** Runtime validates the token's signature, issuer, and configured claim filters, and stops there. So a caller holding a valid JWT and another user's `runtimeSessionId` is admitted:
+
+| Request element                               | Value                                           | Runtime's check                    |
+| --------------------------------------------- | ----------------------------------------------- | ---------------------------------- |
+| `Authorization`                               | User A's valid token                            | Signature and claims verified ✓    |
+| `X-Amzn-Bedrock-AgentCore-Runtime-Session-Id` | User B's session ID                             | **Not compared against the token** |
+| Outcome                                       | Accepted — user A resumes user B's conversation |                                    |
+
+This is deliberate, and documented as your responsibility:
+
+> AgentCore does not enforce session-to-user mappings - your client backend should maintain the relationship between users and their session IDs. Additionally, your client backend should implement logic for user to session lifecycle management like maximum number of sessions per user.
+>
+> — [Use isolated sessions for agents](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-sessions.html)
+
+[Security best practices for AgentCore Runtime](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-security-best-practices.html) lists session-to-user mapping enforcement under **Your responsibilities** in the shared responsibility model. Treat it as durable: no public AWS source indicates native enforcement is planned.
+
+**Where the check runs.** Two options, and they cost differently:
+
+|                                                     | MDAA configuration needed                                              | Agent code needed                                                                      |
+| --------------------------------------------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| **Your client backend** — the documented pattern    | None                                                                   | None                                                                                   |
+| **Inside the agent** — optional defence in depth    | `requestHeaderConfiguration.requestHeaderAllowlist: ['Authorization']` | Entrypoint signature `def invoke(payload, context)`, reading `context.request_headers` |
+
+The agent-side option needs **both**, and neither is a default: without the allowlist the inbound JWT never reaches the container, and without the second entrypoint parameter the agent cannot read request headers. See [Propagate a JWT token to AgentCore Runtime](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-oauth.html). Runtime has already validated the signature by then, so the agent decodes the claims without re-verifying them.
+
+**The pattern:**
+
+1. Generate session IDs that are unguessable and **at least 33 characters** — the documented minimum. Use the hyphenated UUID v4 string (`str(uuid.uuid4())`, 36 chars); `uuid.uuid4().hex` is only 32 characters and is rejected at invoke time.
+2. Persist the `runtimeSessionId` → `userId` mapping in a backend store; DynamoDB is a natural fit.
+3. On every invocation, confirm the caller's `sub` matches the recorded owner.
+4. Reject a mismatch with 403.
+5. Cap concurrent sessions per user — 5 is a reasonable starting point.
+6. Remove mappings on sign-out and when a session idles out.
+
+**Registration has to be a conditional write.** A read-then-write is a race in which two concurrent first invocations both find no owner and both claim the session, and it also lets anyone who learns a session ID before its first use pre-claim it.
+
+```python
+def claim_or_verify_session(jwt_claims: dict, session_id: str) -> bool:
+    """True if the caller owns this session. Safe under concurrent first invocations."""
+    user_id = jwt_claims["sub"]
+    try:
+        # Succeeds only if nobody has claimed this session yet.
+        table.put_item(
+            Item={"session_id": session_id, "user_id": user_id},
+            ConditionExpression="attribute_not_exists(session_id)",
+        )
+        return True
+    except table.meta.client.exceptions.ConditionalCheckFailedException:
+        # Already claimed — the caller must be the recorded owner.
+        existing = table.get_item(Key={"session_id": session_id}, ConsistentRead=True)
+        return existing.get("Item", {}).get("user_id") == user_id
+```
+
 ### Operational notes
 
 - **The pool is retained by default** and carries Cognito deletion protection, so deleting the stack leaves it behind. Set `removalPolicy: destroy` for ephemeral deployments that should tear down cleanly — that deletes the pool and every user record in it.
 - **Cognito domain prefixes are globally unique per region.** The naming-derived default for `hostedUi` can collide with another account's pool; if deployment reports the domain already exists, set `cognitoDomainPrefix` explicitly.
 - **The pool and runtime deploy in one stack.** This is required, not merely convenient: the runtime validates the discovery URL at synth time, and a CloudFormation dynamic reference (`{{resolve:ssm:...}}`) does not match the required pattern — so publishing the URL to SSM for a separate stack to reference back cannot work. An unresolved CDK token does match.
+
+---
+
+## Session Lifecycle and Token Expiry
+
+Four separate limits bound a long-running agent. Readers routinely conflate them, and **three default to 15 minutes while being unrelated mechanisms with different failure modes** — merging them leads to wrong conclusions about all of them.
+
+| Limit                                              | What it bounds                                              | Where it comes from                                                                                                              | Default     |
+| -------------------------------------------------- | ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| `min(inbound token remaining TTL, WAT TTL)`        | A single invocation                                         | WAT TTL is fixed by the service; the inbound half is [`idTokenValidityMinutes`](#mdaa-managed-idp-cognito) on the `cognito` path | 15 min each |
+| Request timeout (service quota)                    | A single synchronous invocation                             | AgentCore service quota — not adjustable by any means                                                                            | 15 min      |
+| `lifecycleConfiguration.idleRuntimeSessionTimeout` | The gap between invocations before the microVM is torn down | MDAA config, 60–28800 seconds                                                                                                    | 15 min      |
+| `lifecycleConfiguration.maxLifetime`               | The whole session compute lifecycle                         | MDAA config, 60–28800 seconds                                                                                                    | 8 hours     |
+
+The [request timeout](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/bedrock-agentcore-limits.html) is the one limit you cannot raise, and for a synchronous invocation it — not the WAT TTL — is the documented ceiling. It applies to synchronous requests only: streaming connections may run 60 minutes and asynchronous jobs 8 hours, and in both of those the WAT TTL binds first instead.
+
+The `min(inbound token remaining TTL, WAT TTL)` bound is a design assumption rather than documented behaviour — public docs do not state that an in-flight invocation is truncated when the inbound token's `exp` passes. Size tokens as if it were, but do not rely on it as an enforcement mechanism.
+
+`lifecycleConfiguration` is optional — omit it and the AgentCore defaults above apply. See [SCHEMA.md](SCHEMA.md#lifecycleConfiguration) for the property reference.
+
+### Workload access tokens
+
+A **workload access token (WAT)** is AgentCore-specific rather than an industry concept, so it is worth stating plainly. Runtime mints one by exchanging your inbound IdP JWT (via `GetWorkloadAccessTokenForJWT`), binding agent identity to user identity from the token's `iss` and `sub` claims, and delivers it to your container in the `WorkloadAccessToken` payload header. Its only use is calling first-party AgentCore Identity services such as the Token Vault and credential providers — per public docs, workload access tokens "are exclusively for accessing AWS first-party AgentCore services and cannot be used for external services."
+
+**Its TTL is 15 minutes and fixed.** The developer guide states the figure directly — the WAT is "short-lived (15-minute TTL), cryptographically signed by the AgentCore Identity service, and opaque to all participants" ([Policy sessions and identity propagation](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy-session-based-temporal.html)) — and no AgentCore API exposes it for configuration. The preventive design advice below holds regardless.
+
+**Expiry surfaces as a misleading error.** A call to `GetResourceOauth2Token` fails with:
+
+```
+AccessDeniedException: Token has expired. Please generate a new token.
+```
+
+This refers to **the WAT authenticating that call**, not to the OAuth2 token being retrieved. Reading it as an expired third-party credential is an easy and costly detour.
+
+> **Not the same string as the `AccessDenied` CloudTrail value.** [EventBridge Alerting](#eventbridge-alerting) warns at length that CloudTrail records IAM denials as `AccessDenied` and never as `AccessDeniedException`. Both are correct and they describe different layers: `AccessDeniedException` is the SDK error your agent code catches, `AccessDenied` is the normalised value in a CloudTrail record. Catch the former in code; never put it in `errorCodes`.
+
+### Handling expiry: client re-invocation
+
+This is the supported path for this module:
+
+1. The agent catches `AccessDeniedException: Token has expired`
+2. It stops work and returns the condition to the client
+3. The client re-invokes with the **same session ID** and a currently-valid JWT
+4. Runtime injects a fresh WAT
+5. The agent resumes
+
+**Step 5 carries a precondition, and it is the pattern's real failure mode.** Session context survives re-invocation only while the session is still alive. Public docs state the microVM is terminated after `idleRuntimeSessionTimeout` or `maxLifetime`, and that "any data stored in memory or written to disk persists only for the compute lifecycle." So if the re-invoke round trip — including any human re-authentication — outlasts the idle timeout, in-memory state is gone. Two consequences:
+
+- Size `idleRuntimeSessionTimeout` against expected re-invoke latency, not only against cost
+- Durable filesystem state requires configured session storage, and structured state belongs in AgentCore Memory. Neither is present by default
+
+**In-process re-minting is not available to this module.** A pattern circulates in which the agent catches the exception and calls `GetWorkloadAccessTokenForJWT` from inside its own code. For Runtime-managed agents such as the ones this module deploys, the developer guide rules that out:
+
+> **Security by design** – Runtime-managed agent identities cannot retrieve workload access tokens directly, preventing token extraction and misuse
+>
+> — [Get workload access token](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/get-workload-access-token.html)
+
+The same page gives the error for this case: _"WorkloadIdentity is linked to a service and cannot retrieve an access token by the caller."_ MDAA runtimes have service-created workload identities, so in-process re-minting most likely applies only to self-hosted agents. The execution role does grant all three `GetWorkloadAccessToken*` actions, but IAM permission is not the binding constraint here — the service-managed-identity restriction is.
+
+### Designing within the window
+
+These recommendations hold regardless of the open questions below:
+
+- Size the inbound JWT TTL to exceed your longest expected invocation
+- Break long tasks into sub-tasks, each comfortably under the **WAT TTL** — that is the 15-minute limit at issue here, not the idle timeout
+- Pre-fetch every credential the agent needs early in execution
+- Move work that may exceed the window into an async workflow
+
+**Two behaviours are not specified.** Design so that neither answer matters, rather than assuming one:
+
+- Whether Runtime re-mints the WAT mid-invocation or injects it once per invocation. Public docs say only that generation happens "when an agent is invoked", and a practitioner reading the WAT fresh on every use — no caching — reports expiry _within_ a single invocation.
+- Whether a Runtime-managed identity can re-mint at all. The restriction quoted above suggests not.
 
 ---
 
@@ -408,7 +558,7 @@ Where alarms detect _statistical_ conditions (a rate or a count over a period), 
 
 **Prerequisite: a CloudTrail trail** in the account/region logging the AgentCore events you want to match. CloudTrail delivers API-call events to the default event bus, which is what these rules match. Management events (the lifecycle APIs such as `UpdateAgentRuntime`) are logged by default on any trail; **data events (invocation) are off by default** and must be enabled explicitly. A rule whose events are not covered by a trail will never match.
 
-Deploy the trail with the [audit-trail](../../governance/audit-trail-app/README.md) module. The two rules have different requirements: `config-change` matches management events, so any trail satisfies it, while `auth-failure` matches an invocation **data** event and needs a `dataEventSelectors` entry for `AWS::BedrockAgentCore::Runtime`. See [Enabling EventBridge alerting on AgentCore invocations](../../governance/audit-trail-app/README.md#enabling-eventbridge-alerting-on-agentcore-invocations) for a worked trail config, and [Data Event Selectors](../../governance/audit-trail-app/README.md#data-event-selectors) for the property reference, cost scoping, and the EventBridge delivery lag. For enabling data events on a trail MDAA does not own, see [AgentCore Security Prerequisites](https://github.com/aws-samples/sample-config-modern-data-architecture-accelerator/blob/main/agentic_app/AGENTCORE_SECURITY_PREREQUISITES.md#2-cloudtrail-data-events).
+Deploy the trail with the [audit-trail](../../governance/audit-trail-app/README.md) module. The two rules have different requirements: `config-change` matches management events, so any trail satisfies it, while `auth-failure` matches an invocation **data** event and needs a `dataEventSelectors` entry for `AWS::BedrockAgentCore::Runtime`. See [Enabling EventBridge alerting on AgentCore invocations](../../governance/audit-trail-app/README.md#enabling-eventbridge-alerting-on-agentcore-invocations) for a worked trail config, and [Data Event Selectors](../../governance/audit-trail-app/README.md#data-event-selectors) for the property reference, cost scoping, and the EventBridge delivery lag. For enabling data events on a trail MDAA does not own, see [AgentCore Security Prerequisites](https://github.com/aws-samples/sample-config-modern-data-architecture-accelerator/blob/main/agentic_app/security-best-practices/YOUR-RESPONSIBILITIES.md#3-cloudtrail-data-events).
 
 **Keep `includeManagementEvents: true` on that trail.** Advanced event selectors replace a trail's default selectors, so a trail carrying only data selectors logs no control plane events at all — which silences `config-change` while leaving it deployed and apparently healthy.
 
@@ -416,7 +566,7 @@ Rules are a **keyed map**. Each key becomes part of the rule's resource name, so
 
 - `errorCodes` — CloudTrail `errorCode` values (e.g. `AccessDenied`), for detecting repeated auth failures.
 
-  > **These are CloudTrail `errorCode` values, not SDK exception names — and for authorization failures the two differ.** An IAM denial is returned to the caller as `AccessDeniedException`, but CloudTrail records it as plain **`AccessDenied`**. **Do not configure `AccessDeniedException`** — a rule using it will never match.
+  > **These are CloudTrail `errorCode` values, not SDK exception names — and for authorization failures the two differ.** An IAM denial is returned to the caller as `AccessDeniedException`, but CloudTrail records it as plain **`AccessDenied`**. **Do not configure `AccessDeniedException`** — a rule using it will never match. The exception name is not fictional; agent code catches exactly that string on [workload access token](#workload-access-tokens) expiry. It is simply not what lands in a CloudTrail record.
   >
   > Service-specific API errors _do_ keep the suffix (`ResourceNotFoundException`, `ValidationException`), so the distinction is between IAM's normalized denial and a service's own error — not a per-error quirk. Confirm the exact value in a real record before adding a code:
   >

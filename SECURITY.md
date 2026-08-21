@@ -101,4 +101,4 @@ MDAA L2 Constructs implement resource-level compliance with CDK Nag rulesets. Th
 
 Organization-level controls assumed by particular services, published alongside the sample configurations that deploy them.
 
-- [**AgentCore Security Prerequisites**](https://github.com/aws-samples/sample-config-modern-data-architecture-accelerator/blob/main/agentic_app/AGENTCORE_SECURITY_PREREQUISITES.md)
+- [**AgentCore Security Prerequisites**](https://github.com/aws-samples/sample-config-modern-data-architecture-accelerator/blob/main/agentic_app/security-best-practices/YOUR-RESPONSIBILITIES.md)
