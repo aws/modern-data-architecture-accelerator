@@ -1537,10 +1537,14 @@ prerelease_publish_s3:
 # =============================================================================
 # Pipeline 4: Release Pipeline (main branch, manual trigger)
 # =============================================================================
-# Manually triggered on main. Versions, builds, tests, packages, and publishes
-# release artifacts to production CodeArtifact repos and S3. Includes git push
-# and rollback capabilities.
-# Stage order: pre_release -> release_publish -> post_release
+# Started by a single manual trigger on main (release_version_package). Versions, builds,
+# tests and packages the release, validates the resulting commit from a pristine checkout,
+# then publishes to production CodeArtifact repos and S3.
+#
+# Two operator actions on the happy path: release_version_package starts the release,
+# confirm_push_to_git authorizes the irreversible push. cornerstone_build_distributions and
+# rollback_release keep their own manual triggers.
+# Stage order: pre_release -> release_validate -> release_publish -> post_release
 # =============================================================================
 
 # Build the base Docker image for release pipelines
@@ -1557,11 +1561,14 @@ release_base_image:
 
 # --- pre_release stage ---
 
-# Version, build, test, and package the release (manual trigger)
+# Version, build, test, and package the release. The only manual gate that starts a release;
+# the confirmation lives here because this is the job that creates the version.
 release_version_package:
   extends: .size_3xlarge
   interruptible: false
   when: manual
+  # No variable interpolation: GitLab does not expand CI/CD variables in manual_confirmation.
+  manual_confirmation: 'This will create a new version at the VERSION_BUMP_LEVEL and RELEASE_TYPE set on this pipeline (confirm those pipeline variables before continuing) and, once validate_release_commit passes, publish it to CodeArtifact and S3. Pushing to git stays a separate confirmation. Continue?'
   environment: release
   tags:
     - arch:amd64
@@ -1628,67 +1635,23 @@ release_version_package:
     - rm -rf .nx/workspace-data/d/
     - ./scripts/build/package_repo.sh
 
-# Manual confirmation gate to proceed with the release
-release:
-  extends: .size_medium
-  interruptible: false
-  tags:
-    - arch:amd64
-  environment: release
-  when: manual
-  manual_confirmation: 'Are you sure you want to create a $VERSION_BUMP_LEVEL $RELEASE_TYPE version?'
-  except:
-    variables:
-      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
-    refs:
-      - tags
-  only:
-    refs:
-      - main
-  stage: pre_release
-  dependencies: []
-  needs:
-    - release_version_package
-  allow_failure: false
-  script:
-    - echo "Releasing "
-
 # --- release_validate stage ---
 
-# Validate the exact version-bumped commit that will be pushed to main, from a
-# pristine checkout. release_version_package builds and tests against a dirty tree
-# (version_release.sh removes package-lock.json and regenerates it with a lenient
-# `npm install` on top of an already-populated node_modules), and the resulting
-# commit is pushed straight to main without ever being installed from the
-# regenerated lockfile. This job closes that gap: it takes the version-bumped
-# tracked files (from release_version_package artifacts), wipes all dependency and
-# nx state, and proves the commit is releasable via a strict `npm ci` + full build
-# + schema-drift check + full TypeScript test suite (Python and starter-kit suites
-# run in their own jobs, matching release_version_package's test surface).
+# Validate the version-bumped commit from a pristine checkout. release_version_package builds
+# against a dirty tree and never installs from the lockfile it regenerates, so this is the only
+# proof that the tree landing on main is releasable.
 #
-# This gate deliberately protects only the IRREVERSIBLE, customer-facing release
-# actions: the push to main / CodeCommit (confirm_push_to_git, prerelease_push_git,
-# release_push_git) and the Cornerstone S3 distribution upload
-# (cornerstone_build_distributions). It intentionally does NOT gate the
-# release_publish_npm/pip/s3 jobs: those publish to INTERNAL CodeArtifact (not the
-# public/customer artifact), are recoverable via the rollback_release* jobs and
-# delete_codeartifact_version.sh, and the public NPM publish is a separate manual
-# operator step performed off a validated main. Gating them would add a second full
-# build/test pass for no protection those properties don't already provide.
-#
-# Depends only on release_version_package (not the `release` confirmation gate) so it
-# auto-runs as soon as the version-bumped tree exists — the earliest possible failure
-# signal — and so cornerstone_build_distributions can gate on it without inheriting
-# the release confirmation it does not require today.
+# It is the sole automatic gate between the manual trigger and everything downstream, so it
+# gates all of it: the publishes, the git pushes, and the Cornerstone upload. Gating the
+# publishes matters because rollback_release needs all four publish jobs to succeed, leaving it
+# unplayable in exactly the partial-publish case where recovery is needed.
 validate_release_commit:
   extends: .size_3xlarge
   interruptible: false
   tags:
     - arch:amd64
-  # No `environment:` — this is build/test validation, not a deployment. Mirrors the
-  # merge-pipeline build jobs (feature_merge_lint) which use DEV_ROLE_ARN without an
-  # environment, and avoids coupling this auto-running gate to any Protected Environment
-  # deployment-approval rule on `release`.
+  # No `environment:` — build/test validation, not a deployment, and it must not inherit the
+  # Protected Environment approval on `release` that release_version_package carries.
   except:
     variables:
       - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
@@ -1709,6 +1672,9 @@ validate_release_commit:
   variables:
     AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
     AWS_DEFAULT_REGION: us-east-1
+    # Same full suite and pod size as release_version_package, so the same cap. Without it
+    # test_repo.sh derives parallelism from KUBERNETES_CPU_REQUEST (32).
+    BUILD_CONCURRENCY: '8'
   script:
     - ./scripts/publish/validate_release_commit.sh
 
@@ -1749,7 +1715,7 @@ release_publish_npm_prerelease:
   dependencies:
     - release_version_package
   needs:
-    - release
+    - validate_release_commit
     - release_version_package
     - prerelease_analyze
   allow_failure: false
@@ -1787,7 +1753,7 @@ release_npm_readiness_check:
   dependencies:
     - release_version_package
   needs:
-    - release
+    - validate_release_commit
     - release_version_package
     - prerelease_analyze
     - release_publish_npm_prerelease
@@ -1843,7 +1809,7 @@ release_publish_npm:
   dependencies:
     - release_version_package
   needs:
-    - release
+    - validate_release_commit
     - release_version_package
     - prerelease_analyze
     - release_npm_readiness_check # Wait for readiness check
@@ -1893,7 +1859,7 @@ release_publish_pip:
   dependencies:
     - release_version_package
   needs:
-    - release
+    - validate_release_commit
     - release_version_package
     - prerelease_analyze
   allow_failure: false
@@ -1939,7 +1905,7 @@ release_publish_s3:
   dependencies:
     - release_version_package
   needs:
-    - release
+    - validate_release_commit
     - release_version_package
     - prerelease_analyze
   allow_failure: false
@@ -1971,7 +1937,6 @@ confirm_push_to_git:
   stage: post_release
   dependencies: []
   needs:
-    - release
     - release_version_package
     - validate_release_commit
     - release_publish_s3
@@ -2102,7 +2067,6 @@ rollback_release:
   stage: post_release
   dependencies: []
   needs:
-    - release
     - release_version_package
     - release_publish_s3
     - release_publish_pip

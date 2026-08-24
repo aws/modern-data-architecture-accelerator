@@ -83,8 +83,8 @@ echo "✅ All tarballs validated — no path traversal found."
 
 # Use jsii to build JSII Packages. `package` has no nx.json targetDefaults entry, so
 # nx would otherwise default to 3 concurrent jsii-pacmak runs across ~90 packages,
-# leaving most of the runner idle. Only release_version_package sets BUILD_CONCURRENCY, to
-# this same 8, so the default covers every other packaging job.
+# leaving most of the runner idle. release_version_package is the only job that both runs this
+# script and sets BUILD_CONCURRENCY, at this same 8, so the default covers the others.
 npx nx run-many -t package --all --parallel="${BUILD_CONCURRENCY:-8}"
 
 

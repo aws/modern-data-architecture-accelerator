@@ -77,16 +77,43 @@ if [ -f "installer/package.json" ]; then
   ( cd installer && npm version "$NEW_VERSION" --no-git-tag-version --allow-same-version )
 fi
 
+# The installer's jest snapshot pins the release/v<version> branch default that
+# mdaa-installer-stack.ts derives from the ROOT version, so it has to move with the bump.
+INSTALLER_SNAPSHOT="installer/test/__snapshots__/mdaa-installer.snapshot.test.ts.snap"
+if [ -f "$INSTALLER_SNAPSHOT" ]; then
+  echo "Restamping installer snapshot branch default to release/v$NEW_VERSION"
+  sed -i "s|release/v${CURRENT_VERSION}|release/v${NEW_VERSION}|g" "$INSTALLER_SNAPSHOT"
+  if grep -q "release/v${CURRENT_VERSION}" "$INSTALLER_SNAPSHOT"; then
+    echo "ERROR: $INSTALLER_SNAPSHOT still references release/v${CURRENT_VERSION}." >&2
+    exit 1
+  fi
+  # A snapshot already off CURRENT_VERSION makes the sed a no-op, which the residue check
+  # above cannot see.
+  if ! grep -q "release/v${NEW_VERSION}" "$INSTALLER_SNAPSHOT"; then
+    echo "ERROR: $INSTALLER_SNAPSHOT does not pin release/v${NEW_VERSION}; regenerate it on main with" >&2
+    echo "  ( cd installer && npm ci && npm run test:snapshot:update )" >&2
+    exit 1
+  fi
+fi
+
 # Update version in solution-manifest.yaml
 if [ -f "solution-manifest.yaml" ]; then
   echo "Updating solution-manifest.yaml version from v$CURRENT_VERSION to v$NEW_VERSION"
-  sed -i "s/version: v${CURRENT_VERSION}/version: v${NEW_VERSION}/" solution-manifest.yaml
+  sed -i "s|^version: v${CURRENT_VERSION}$|version: v${NEW_VERSION}|" solution-manifest.yaml
+  if ! grep -q "^version: v${NEW_VERSION}$" solution-manifest.yaml; then
+    echo "ERROR: solution-manifest.yaml was not stamped to v${NEW_VERSION}; it reads '$(grep '^version:' solution-manifest.yaml || echo 'no version line')'." >&2
+    exit 1
+  fi
 fi
 
-# Update version badge in README.md
+# The version badge is optional, so warn rather than fail when it is absent.
 if [ -f "README.md" ]; then
-  echo "Updating README.md version badge from $CURRENT_VERSION to $NEW_VERSION"
-  sed -i "s/version-${CURRENT_VERSION}-green/version-${NEW_VERSION}-green/" README.md
+  if grep -q "version-${CURRENT_VERSION}-green" README.md; then
+    echo "Updating README.md version badge from $CURRENT_VERSION to $NEW_VERSION"
+    sed -i "s/version-${CURRENT_VERSION}-green/version-${NEW_VERSION}-green/" README.md
+  else
+    echo "WARNING: README.md has no version-${CURRENT_VERSION}-green badge; skipping." >&2
+  fi
 fi
 
 # Substitute the CHANGELOG release placeholders with the new version and today's UTC date.
@@ -116,19 +143,28 @@ npm install
 # deployment/cdk-solution-helper, and the custom_aspect test fixture carry
 # deliberately independent versions. Runs after `npm install` because the lockfile
 # `npm query --package-lock-only` needs was removed at the top of this script.
+# Materialized rather than expanded inline in the `for` list: a failing command substitution
+# there does not trip `set -e`, and npm writes its JSON error object to stdout where jq renders
+# it as "null" and exits 0. The floor catches an empty or truncated enumeration.
 STALE_PACKAGES=""
-for pkg_dir in $(npm query .workspace --package-lock-only --expect-results | jq -r '.[].location') installer; do
+WORKSPACE_DIRS=$(npm query .workspace --package-lock-only --expect-results | jq -r '.[].location')
+WORKSPACE_COUNT=$(printf '%s\n' "$WORKSPACE_DIRS" | grep -c . || true)
+if [ "$WORKSPACE_COUNT" -lt 100 ]; then
+  echo "ERROR: npm query enumerated only $WORKSPACE_COUNT workspaces; expected the full set." >&2
+  exit 1
+fi
+while IFS= read -r pkg_dir; do
   [ -f "$pkg_dir/package.json" ] || continue
   pkg_version=$(jq -r '.version // empty' "$pkg_dir/package.json")
   if [ "$pkg_version" != "$NEW_VERSION" ]; then
     STALE_PACKAGES="${STALE_PACKAGES} ${pkg_dir}(${pkg_version:-none})"
   fi
-done
+done < <(printf '%s\ninstaller\n' "$WORKSPACE_DIRS")
 if [ -n "$STALE_PACKAGES" ]; then
   echo "ERROR: these packages were not bumped to ${NEW_VERSION}:${STALE_PACKAGES}" >&2
   echo "The version sed is keyed on the current version string, so a package that had" >&2
   echo "already drifted cannot self-correct and must be re-synced manually." >&2
   exit 1
 fi
-echo "Verified all workspace packages and installer are at ${NEW_VERSION}."
+echo "Verified ${WORKSPACE_COUNT} workspace packages and the installer are at ${NEW_VERSION}."
 
