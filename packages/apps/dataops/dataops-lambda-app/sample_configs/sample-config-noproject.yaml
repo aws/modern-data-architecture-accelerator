@@ -4,6 +4,15 @@
 
 # (Optional) KMS key ARN for encrypting DataOps resources and data.
 # Auto-resolved from project when projectName is set.
+#
+# If you add a `queues:` section to a standalone config like this one, this key's
+# policy must grant the function execution roles kms:Decrypt (to consume) and
+# kms:GenerateDataKey (to produce), because queues are CMK-encrypted. This module
+# cannot grant them - the key is referenced by ARN, so its policy is not modifiable
+# from this stack. A DataOps Project key already carries an SQS-scoped statement
+# covering both; an arbitrary key does not, and the shortfall surfaces only at
+# runtime as a KMS AccessDenied. See the module README, "KMS access is a
+# prerequisite, not something this module grants".
 kmsArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/test-key-id
 # (Optional) S3 bucket name for project storage (scripts, artifacts,
 # temp files). Auto-resolved from project when projectName is set.

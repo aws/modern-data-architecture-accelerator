@@ -29,6 +29,7 @@
     "@aws-mdaa/eventbridge-helper": "1.7.0",
     "@aws-mdaa/l3-construct": "1.7.0",
     "@aws-mdaa/naming": "1.7.0",
+    "@aws-mdaa/sqs-constructs": "1.7.0",
     "@aws-mdaa/testing": "1.7.0",
     "@types/jest": "29.5.14",
     "@types/node": "22.9.0",
@@ -50,6 +51,7 @@
     "@aws-mdaa/eventbridge-helper": "1.7.0",
     "@aws-mdaa/l3-construct": "1.7.0",
     "@aws-mdaa/naming": "1.7.0",
+    "@aws-mdaa/sqs-constructs": "1.7.0",
     "aws-cdk-lib": "2.261.0",
     "constructs": "10.6.0"
   },
@@ -64,6 +66,7 @@
     "@aws-mdaa/l3-construct": "1.7.0",
     "@aws-mdaa/lambda-constructs": "1.7.0",
     "@aws-mdaa/naming": "1.7.0",
+    "@aws-mdaa/sqs-constructs": "1.7.0",
     "aws-cdk-lib": "2.261.0",
     "cdk-nag": "2.37.55",
     "constructs": "10.6.0",

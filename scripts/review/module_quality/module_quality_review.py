@@ -26,6 +26,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -88,6 +89,11 @@ L3 construct source:
 {l3_source}
 ```
 
+Architecture diagram state:
+```
+{diagram_state}
+```
+
 Code diff (lib/ changes in this MR):
 ```diff
 {code_diff}
@@ -113,6 +119,13 @@ Review the following aspects:
    - Are mutually exclusive branches covered by separate config files?
    - Do sample configs use template variables (not hardcoded accounts/regions)?
    - Do sample configs have proper inline documentation comments?
+
+4. Architecture diagram currency — see the steering file's "Architecture Diagram Currency" section
+   - If the .drawio changed, was the sibling .png re-exported in the same change?
+     (A .drawio change confined to <mxfile> host/agent/version/etag/modified attributes
+     is metadata-only and needs no re-export.)
+   - Does the diagram depict the resources this MR adds or re-wires in the L3 construct?
+     Compare the labels in "Architecture diagram state" against the L3 construct source.
 
 DO NOT flag these concerns (they are handled by other agents):
 - Spelling, grammar, prose quality, cross-references → Documentation Quality agent
@@ -256,6 +269,46 @@ def collect_l3_source(package_root: str, max_chars: int = 15000) -> str:
     )
 
 
+def collect_diagram_state(package_root: str) -> str:
+    """Describe the L3 construct's architecture diagram pair for the currency check.
+
+    Reports which of docs/*.drawio and docs/*.png exist, which of them changed on
+    this branch, and the labels the .drawio depicts.
+    """
+    l3_root = resolve_l3_construct_root(package_root)
+    if not l3_root:
+        return "(no matching L3 construct found)"
+
+    docs_dir = PROJECT_ROOT / l3_root / "docs"
+    if not docs_dir.is_dir():
+        return f"(no docs/ directory in {l3_root} -- missing diagram, not a currency failure)"
+
+    drawios = sorted(docs_dir.glob("*.drawio"))
+    pngs = sorted(docs_dir.glob("*.png"))
+
+    lines = [f"Diagram directory: {l3_root}/docs/"]
+    lines.append(f"  .drawio present: {[p.name for p in drawios] or 'NONE'}")
+    lines.append(f"  .png present:    {[p.name for p in pngs] or 'NONE'}")
+
+    # Which diagram files this branch touched. Binary PNGs show as a rename/binary
+    # change, so presence in --name-only is the signal that it was re-exported.
+    changed = subprocess.run(
+        ["git", "diff", _target_ref(), "--name-only", "--", f"{l3_root}/docs/"],
+        capture_output=True, text=True, cwd=str(PROJECT_ROOT),
+    ).stdout.split()
+    lines.append(f"  changed on this branch: {[Path(c).name for c in changed] or 'NONE'}")
+
+    for drawio in drawios:
+        try:
+            content = drawio.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        labels = sorted(set(re.findall(r'value="([^"]{2,60})"', content)))
+        lines.append(f"  labels depicted in {drawio.name}: {labels or 'NONE'}")
+
+    return "\n".join(lines)
+
+
 def assess_package(pkg: dict) -> dict:
     """Run Kiro module quality assessment for a single package."""
     name = pkg["name"]
@@ -272,6 +325,7 @@ def assess_package(pkg: dict) -> dict:
         sample_configs=collect_sample_configs(root),
         config_interfaces=collect_config_interfaces(root),
         l3_source=collect_l3_source(root),
+        diagram_state=collect_diagram_state(root),
         code_diff=collect_code_diff(root),
         output_file="{output_file}",
     )

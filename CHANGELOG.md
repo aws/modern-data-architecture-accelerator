@@ -25,6 +25,11 @@
 
 - Added an optional `lineage` section (usable on jobs and templates) that emits OpenLineage events to an Amazon DataZone / SageMaker Unified Studio domain, mirroring the Glue console's "Generate lineage events" toggle. Requires Glue 5.0+ (enforced at synth). The module grants the job execution role the lineage permission it needs unless `lineage.manageExecutionRolePolicy` is `false` — see the [module README](packages/apps/dataops/dataops-job-app/README.md#datazone-data-lineage) for the grant details and prerequisites. Existing configurations are unaffected (backwards compatible).
 
+#### DataOps Lambda Module
+
+- Added an optional `queues` section creating CMK-encrypted standard or FIFO queues, each with a redrive dead letter queue. Functions consume a queue via `sqsEventSources` or produce to one via `queueUrlEnvironment`, and the queue permissions each direction needs are granted for you — see the [module README](packages/apps/dataops/dataops-lambda-app/README.md#sqs-queues-and-event-sources). Existing configurations are unaffected (backwards compatible).
+- `sqsEventSources` and `queueUrlEnvironment` also appear on Bedrock Builder function definitions, which reuse this module's function config type. Bedrock Builder has no `queues` section, so leaving them unset is harmless, but setting either one fails synthesis with `references undefined queue "..." ... Available queues: none`.
+
 #### DataOps MWAA Module
 
 - New `@aws-mdaa/dataops-mwaa` module: Amazon Managed Workflows for Apache Airflow (MWAA) deployment with enterprise security — multiple named environments per module, KMS encryption (project or dedicated key), VPC isolation with a private web server by default, and execution roles created externally in the Roles module (as with Glue Jobs)

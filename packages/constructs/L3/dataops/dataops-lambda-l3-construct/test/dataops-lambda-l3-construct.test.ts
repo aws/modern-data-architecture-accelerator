@@ -28,6 +28,96 @@ describe('LambdaFunctionL3Construct', () => {
 
     expect(construct).toBeDefined();
     expect(construct.functionsMap).toEqual({});
+    expect(construct.queuesMap).toEqual({});
+    template.resourceCountIs('AWS::SQS::Queue', 0);
+  });
+
+  test('lowercases an uppercase queue name, keyed by the name as written', () => {
+    const props: LambdaFunctionL3ConstructProps = {
+      roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+      naming: testApp.naming,
+      kmsArn: 'arn:aws:kms:us-east-1:123456789012:key/test-key-id',
+      queues: { MyQueue: {} },
+    };
+
+    const construct = new LambdaFunctionL3Construct(testApp.testStack, 'TestLambda', props);
+    template = Template.fromStack(testApp.testStack);
+
+    // References from sqsEventSources and queueUrlEnvironment use the key as written, while the
+    // generated physical name is lowercased.
+    expect(construct.queuesMap['MyQueue']).toBeDefined();
+    template.hasResourceProperties('AWS::SQS::Queue', {
+      QueueName: 'test-org-test-env-test-domain-test-module-myqueue',
+    });
+  });
+
+  test('truncates an over-long queue name to a hash within the SQS limit', () => {
+    const longQueueName = 'queue-with-a-name-long-enough-to-exceed-the-sqs-eighty-character-limit';
+    const props: LambdaFunctionL3ConstructProps = {
+      roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+      naming: testApp.naming,
+      kmsArn: 'arn:aws:kms:us-east-1:123456789012:key/test-key-id',
+      queues: { [longQueueName]: {} },
+    };
+
+    new LambdaFunctionL3Construct(testApp.testStack, 'TestLambda', props);
+    template = Template.fromStack(testApp.testStack);
+
+    for (const queue of Object.values(template.findResources('AWS::SQS::Queue'))) {
+      const queueName = queue.Properties.QueueName as string;
+      expect(queueName.length).toBeLessThanOrEqual(80);
+      expect(queueName).toMatch(/^[A-Za-z0-9_-]+$/);
+    }
+  });
+
+  test('creates queues without any functions', () => {
+    const props: LambdaFunctionL3ConstructProps = {
+      roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+      naming: testApp.naming,
+      kmsArn: 'arn:aws:kms:us-east-1:123456789012:key/test-key-id',
+      queues: {
+        'standalone-queue': { visibilityTimeoutSeconds: 60 },
+      },
+    };
+
+    const construct = new LambdaFunctionL3Construct(testApp.testStack, 'TestLambda', props);
+    template = Template.fromStack(testApp.testStack);
+
+    expect(construct.queuesMap['standalone-queue']).toBeDefined();
+    // The queue and its dead letter queue
+    template.resourceCountIs('AWS::SQS::Queue', 2);
+    template.resourceCountIs('AWS::Lambda::EventSourceMapping', 0);
+  });
+
+  test('creates queues and event source mappings with overrideScope', () => {
+    const props: LambdaFunctionL3ConstructProps = {
+      roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+      naming: testApp.naming,
+      kmsArn: 'arn:aws:kms:us-east-1:123456789012:key/test-key-id',
+      overrideScope: true,
+      queues: {
+        'override-queue': { visibilityTimeoutSeconds: 60 },
+      },
+      functions: [
+        {
+          functionName: 'override-consumer',
+          srcDir: './test/src/lambda/test',
+          handler: 'index.handler',
+          roleArn: 'arn:aws:iam::123456789012:role/test-role',
+          runtime: 'nodejs18.x',
+          timeoutSeconds: 30,
+          sqsEventSources: { 'override-queue': {} },
+          queueUrlEnvironment: { QUEUE_URL: 'override-queue' },
+        },
+      ],
+    };
+
+    const construct = new LambdaFunctionL3Construct(testApp.testStack, 'TestLambda', props);
+    template = Template.fromStack(testApp.testStack);
+
+    expect(construct.queuesMap['override-queue']).toBeDefined();
+    expect(construct.functionsMap['override-consumer']).toBeDefined();
+    template.resourceCountIs('AWS::Lambda::EventSourceMapping', 1);
   });
 
   test('creates lambda function', () => {

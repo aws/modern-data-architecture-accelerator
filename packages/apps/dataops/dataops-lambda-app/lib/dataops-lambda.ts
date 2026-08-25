@@ -23,6 +23,7 @@ export class LambdaFunctionCDKApp extends MdaaCdkApp {
     const constructProps: LambdaFunctionL3ConstructProps = {
       kmsArn: appConfig.kmsArn,
       layers: appConfig.layers,
+      queues: appConfig.queues,
       functions: appConfig.functions,
       ...l3ConstructProps,
     };

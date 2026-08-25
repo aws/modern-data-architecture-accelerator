@@ -7,6 +7,9 @@ globs:
   - 'packages/apps/**/lib/*-config.ts'
   - 'packages/constructs/**/README.md'
   - 'packages/utilities/**/README.md'
+  - 'packages/constructs/**/docs/*.drawio'
+  - 'packages/constructs/**/docs/*.png'
+  - 'packages/constructs/L3/**/lib/*.ts'
 ---
 
 # Module Quality - Steering Guide
@@ -41,7 +44,7 @@ For each module, read:
 2. **Config schema** (`lib/config-schema.json`) — source of truth for all properties
 3. **Existing sample configs** (`sample_configs/sample-config*.yaml`) — current coverage
 4. **L3 construct source** (`packages/constructs/L3/{category}/{module}-l3-construct/lib/`) — discover deployed AWS resources and compliance controls from the code
-5. **L3 construct docs/** — verify architecture diagram exists
+5. **L3 construct docs/** — verify the architecture diagram exists and is current per "Architecture Diagram Currency" below
 
 Do NOT rely on a static resource reference table. Discover AWS services and resources by reading the L3 construct source code — look for CDK resource instantiations, MDAA helper construct usage, and CloudFormation resource types.
 
@@ -357,8 +360,8 @@ Do not add `govcloudMode`, `regionMode`, or similar boolean/enum flags that gate
 ### Severity Classification for CI Agent
 
 - **HIGH:** Missing README, missing comprehensive sample config, required README section missing (Deployed Resources, Security/Compliance, MDAA Config), required config property with no JSDoc (users can't configure without reading source), required property that should have a default, use of `any`/`unknown`/untyped `object` in a config-exposed interface where a specific type is feasible, README states a behavior the construct source contradicts (a limitation the code no longer has, a validation it does not perform, a default it does not apply)
-- **MEDIUM:** README section non-conforming (wrong format, compliance language in Deployed Resources), README prose written for the MR rather than a first-time reader (narrates the development process, argues against an alternative the reader never saw, or repeats one rationale as emphasis), schema property not exercised in any sample config, sample config not referenced in README, inconsistent property naming, missing template variables (hardcoded account/region), sample config missing inline documentation comments, sample config comment that duplicates the property's JSDoc or explains design rationale rather than what to set (see "Comment Length and Schema Duplication"), array-with-name-property pattern where a named map would be more user-friendly, missing schema-level validation for constraints that are currently only enforced in code, `additionalProperties: true` on objects that have a known fixed set of keys, singular config object pattern (`clusterConfig`) where a named map (`clusters:`) should support multiple resources, property names missing units (`queryTimeout` instead of `queryTimeoutMs`), redundant `Config` suffix on property names, raw ARN arrays where MDAA Role Refs should be used, infrastructure properties (VPC/subnets) at root level instead of nested in resource config, regional service-availability gating flags (`govcloudMode`)
-- **LOW:** Missing architecture diagram, missing Related Modules section, style issues in sample config comments, enum value not exercised (but covered by other configs), weak JSDoc that restates the property name, opportunities to tighten string types to enums or patterns
+- **MEDIUM:** README section non-conforming (wrong format, compliance language in Deployed Resources), README prose written for the MR rather than a first-time reader (narrates the development process, argues against an alternative the reader never saw, or repeats one rationale as emphasis), schema property not exercised in any sample config, sample config not referenced in README, inconsistent property naming, missing template variables (hardcoded account/region), sample config missing inline documentation comments, sample config comment that duplicates the property's JSDoc or explains design rationale rather than what to set (see "Comment Length and Schema Duplication"), array-with-name-property pattern where a named map would be more user-friendly, missing schema-level validation for constraints that are currently only enforced in code, `additionalProperties: true` on objects that have a known fixed set of keys, singular config object pattern (`clusterConfig`) where a named map (`clusters:`) should support multiple resources, property names missing units (`queryTimeout` instead of `queryTimeoutMs`), redundant `Config` suffix on property names, raw ARN arrays where MDAA Role Refs should be used, infrastructure properties (VPC/subnets) at root level instead of nested in resource config, regional service-availability gating flags (`govcloudMode`), `.drawio` modified without re-exporting its sibling `.png`, MR introduces a resource type the module's architecture diagram does not depict
+- **LOW:** Missing architecture diagram, `.png` modified without a corresponding `.drawio` change, missing Related Modules section, style issues in sample config comments, enum value not exercised (but covered by other configs), weak JSDoc that restates the property name, opportunities to tighten string types to enums or patterns
 
 ### Rules for CI Agent Findings
 
@@ -370,6 +373,26 @@ Do not add `govcloudMode`, `regionMode`, or similar boolean/enum flags that gate
 - For L3 construct changes that affect the app module, check if the README's Deployed Resources and Security/Compliance sections still accurately reflect the construct's behavior.
 - Order findings: HIGH first, then MEDIUM, then LOW.
 - Use only ASCII characters in all string values.
+
+## Architecture Diagram Currency
+
+Each L3 construct's diagram is a pair: an editable `docs/{module}.drawio` source and an exported `docs/{module}.png` that the app and construct READMEs embed. Only the PNG is rendered to readers, so a `.drawio` edited without re-exporting leaves the published diagram silently wrong.
+
+When auditing architecture diagrams, verify these patterns:
+
+### Source and export stay in sync
+
+A changed `docs/*.drawio` must have its sibling `docs/*.png` regenerated in the same change. A binary PNG appears in a diff as `Binary files ... differ` — that is the signal it was re-exported.
+
+A `.png` that changes with no corresponding `.drawio` change means the export has no reproducible source, unless the module has no `.drawio` at all.
+
+Editor metadata alone changes nothing visible and needs no re-export. Treat a `.drawio` change as metadata-only when it is confined to the `<mxfile>` element's `host=`, `agent=`, `version=`, `etag=`, or `modified=` attributes. A change to any `value=`, geometry, style, or to the set of `mxCell` elements is visible and does require re-export.
+
+### The diagram depicts the module's resources
+
+Adding, removing, or re-wiring AWS resources in an L3 construct — a new resource type, a new trigger or event source, a new queue, table, or role — should be reflected in the diagram. Judge against what the diagram depicts, read from its labels (`grep -o 'value="[^"]*"' <module>.drawio`).
+
+Resources that a component-level diagram would not show are out of scope: log groups, metric filters, nag suppressions. A module with no `docs/` directory has a missing diagram, which is a separate finding rather than a currency failure.
 
 ## Config Schema Design Quality Checks
 

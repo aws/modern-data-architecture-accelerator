@@ -1054,6 +1054,13 @@
                     },
                     "type": "array"
                 },
+                "queueUrlEnvironment": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Environment variables to be populated with the URL of a queue declared under the module's\n`queues` section, mapped from environment variable name to queue key. Producers need the URL\nat runtime, and the queue is deployed alongside the function, so the URL is injected directly\nrather than through an SSM lookup.",
+                    "type": "object"
+                },
                 "reservedConcurrentExecutions": {
                     "description": "Reserved concurrent executions for capacity management.",
                     "type": "number"
@@ -1069,6 +1076,10 @@
                 "runtime": {
                     "description": "Lambda runtime (e.g., python3.13, nodejs22.x).",
                     "type": "string"
+                },
+                "sqsEventSources": {
+                    "$ref": "#/definitions/NamedSqsEventSourceProps",
+                    "description": "SQS event sources which poll a queue declared under the module's `queues` section and invoke\nthis function with batches of messages, keyed by queue name."
                 },
                 "srcDir": {
                     "description": "Source code directory path containing Lambda function code.",
@@ -2922,6 +2933,20 @@
             },
             "type": "object"
         },
+        "NamedSqsEventSourceProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/SqsEventSourceProps"
+            },
+            "description": "Map of queue key to event source configuration. The key names a queue declared under the module's\n`queues` section, so a function cannot bind to the same queue twice.",
+            "type": "object"
+        },
+        "NamedSqsQueueProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/SqsQueueProps"
+            },
+            "description": "Map of queue key to queue configuration. The key identifies the queue within the module config:\nit is the suffix of the generated queue name, and the value referenced by a function's\n`sqsEventSources` and `queueUrlEnvironment` entries.\n\nKeys must satisfy the SQS queue name rules, which are validated at synthesis time:\n\n- Only alphanumeric characters, hyphens and underscores. A '.' is rejected, including the '.fifo'\n  suffix -- set `fifo: true` and the suffix is appended to the generated name for you.\n- Uppercase characters are lowercased in the generated name.\n- Keys must be unique against each other and against every function name, because a queue's dead\n  letter queue and a function's async-invoke dead letter queue are both named '<key>-dlq'.\n\nThe generated name is `<org>-<env>-<domain>-<module>-<key>`, capped at the SQS limit of 80\ncharacters. A key long enough to exceed the cap has its tail replaced by a hash, which keeps the\nname unique and stable but no longer readable, so keep keys short relative to that budget.",
+            "type": "object"
+        },
         "Node": {
             "additionalProperties": false,
             "description": "Represents the construct node in the scope tree.",
@@ -3055,6 +3080,20 @@
                 "conditions",
                 "principalJson"
             ],
+            "type": "object"
+        },
+        "QueueDlqProps": {
+            "additionalProperties": false,
+            "description": "Redrive configuration for the dead letter queue automatically created alongside each queue.\n\nControls how many failed deliveries a message tolerates before SQS moves it to the DLQ,\nwhere it can be inspected and replayed without blocking the source queue.\n\nUse cases: Poison message isolation; Controlled reprocessing; Partial failure handling\n\nAWS: SQS redrive policy on the source queue, targeting the generated dead letter queue\n\nValidation: Optional; maxReceiveCount must be a number between 1 and 1000",
+            "properties": {
+                "maxReceiveCount": {
+                    "default": 5,
+                    "description": "Number of failed deliveries after which a message is moved to the dead letter queue.\nAWS recommends at least 5, so that Lambda retries a transient failure several times\nbefore the message is set aside.\n\nValidation: Optional; number between 1 and 1000",
+                    "maximum": 1000,
+                    "minimum": 1,
+                    "type": "number"
+                }
+            },
             "type": "object"
         },
         "QueueReference": {
@@ -3227,6 +3266,98 @@
             "required": [
                 "securityGroupId"
             ],
+            "type": "object"
+        },
+        "SqsEventFilterPattern": {
+            "additionalProperties": {},
+            "description": "Event filter pattern restricting which messages are delivered to the consuming function.\nMessages that do not match are dropped from the queue without invoking the function.",
+            "type": "object"
+        },
+        "SqsEventSourceProps": {
+            "additionalProperties": false,
+            "description": "Binding between a function and a queue declared in the same module config, creating a Lambda\nevent source mapping which polls the queue and invokes the function with batches of messages.\n\nUse cases: Queue-driven data processing; Batched transformation; Partial failure handling\n\nAWS: Lambda event source mapping with an SQS event source\n\nValidation: Optional properties only; the binding's key must name a queue declared under the\nmodule's `queues` section",
+            "properties": {
+                "batchSize": {
+                    "default": 10,
+                    "description": "Maximum number of messages delivered to the function in a single invocation. Batches above 10\nrequire maxBatchingWindowSeconds to also be set.",
+                    "type": "number"
+                },
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the event source mapping polls the queue. Set to false to deploy the mapping in a\nstopped state and enable it later.",
+                    "type": "boolean"
+                },
+                "filterCriteria": {
+                    "default": "- all messages are delivered",
+                    "description": "Filter patterns restricting which messages are delivered to the function. A message is\ndelivered if it matches any one of the patterns.",
+                    "items": {
+                        "$ref": "#/definitions/SqsEventFilterPattern"
+                    },
+                    "type": "array"
+                },
+                "maxBatchingWindowSeconds": {
+                    "default": "0 seconds - invoke as soon as batchSize messages are available",
+                    "description": "Maximum seconds to gather messages before invoking the function, trading latency for fewer,\nlarger batches.",
+                    "type": "number"
+                },
+                "maxConcurrency": {
+                    "default": "- unlimited, bounded only by account concurrency",
+                    "description": "Maximum concurrent function invocations this event source will drive, applying backpressure\nso that a queue backlog cannot exhaust account concurrency.",
+                    "type": "number"
+                },
+                "reportBatchItemFailures": {
+                    "default": false,
+                    "description": "Whether the function reports individual message failures, so that only the failed messages\nreturn to the queue instead of the entire batch. Requires the function to return a\nbatchItemFailures payload.",
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
+        },
+        "SqsQueueProps": {
+            "additionalProperties": false,
+            "description": "SQS queue configuration for buffering and decoupling Lambda producers from consumers.\n\nEach queue is encrypted with the project KMS key, denies non-SSL access, and is created with\na redrive dead letter queue. Queue name, ARN, and URL are published as SSM parameters so other\nmodules can reference the queue.\n\nUse cases: Ingestion buffering; Producer/consumer decoupling; Backpressure; Message-level retry\n\nAWS: SQS queue with CMK encryption and a redrive dead letter queue\n\nValidation: Optional properties only; visibilityTimeoutSeconds must be at least the timeout of\nevery function consuming the queue as an event source",
+            "properties": {
+                "contentBasedDeduplication": {
+                    "default": false,
+                    "description": "Whether to deduplicate messages by content instead of requiring an explicit deduplication ID\non each send. Only applies to FIFO queues, and implies `fifo`.",
+                    "type": "boolean"
+                },
+                "deliveryDelaySeconds": {
+                    "default": "0 seconds, as applied by SQS",
+                    "description": "Seconds to delay delivery of every message sent to the queue.",
+                    "type": "number"
+                },
+                "dlq": {
+                    "$ref": "#/definitions/QueueDlqProps",
+                    "default": "- a dead letter queue with a maxReceiveCount of 5",
+                    "description": "Redrive configuration for the dead letter queue created alongside this queue. A dead letter\nqueue is always created, so that queues satisfy the AwsSolutions-SQS3 rule without a\nper-deployment suppression."
+                },
+                "fifo": {
+                    "default": false,
+                    "description": "Whether this is a first-in-first-out (FIFO) queue. The '.fifo' suffix SQS requires is appended\nto the generated queue name automatically and must not be included in the queue key.",
+                    "type": "boolean"
+                },
+                "maxMessageSizeBytes": {
+                    "default": "262144 bytes (256 KiB), as applied by SQS",
+                    "description": "Maximum size in bytes of a single message.",
+                    "type": "number"
+                },
+                "receiveMessageWaitTimeSeconds": {
+                    "default": "0 seconds, as applied by SQS",
+                    "description": "Seconds a receive call waits for a message to arrive before returning empty (long polling).",
+                    "type": "number"
+                },
+                "retentionPeriodSeconds": {
+                    "default": "345600 seconds (4 days), as applied by SQS",
+                    "description": "Seconds a message is retained before SQS discards it.",
+                    "type": "number"
+                },
+                "visibilityTimeoutSeconds": {
+                    "default": "30 seconds, as applied by SQS",
+                    "description": "Seconds a message stays invisible to other consumers after being received. Must be at least\nthe timeout of every function consuming this queue as an event source, otherwise Lambda\nrejects the event source mapping. AWS recommends six times the function timeout.",
+                    "type": "number"
+                }
+            },
             "type": "object"
         },
         "Stack": {
@@ -3780,6 +3911,10 @@
         "projectName": {
             "description": "DataOps project name for Lambda function resource autowiring.\n\nUse cases: Project integration; Shared permissions and infrastructure\n\nAWS: DataOps project reference\n\nValidation: Optional; must match an existing deployed project",
             "type": "string"
+        },
+        "queues": {
+            "$ref": "#/definitions/NamedSqsQueueProps",
+            "description": "SQS queues created by this module, keyed by queue name. Each queue is encrypted with the\nproject KMS key and gets a redrive dead letter queue. Functions bind to these queues as\nevent sources, or receive their URLs as environment variables in order to produce to them.\n\nUse cases: Ingestion buffering; Producer/consumer decoupling; Backpressure; Message-level retry\n\nAWS: SQS queues with CMK encryption and redrive dead letter queues\n\nValidation: Optional; keys are unique queue names, values must be valid SqsQueueProps"
         },
         "sagemakerBlueprint": {
             "$ref": "#/definitions/MdaaSageMakerCustomBluePrintConfig",

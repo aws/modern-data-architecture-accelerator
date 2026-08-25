@@ -1912,6 +1912,13 @@
                     },
                     "type": "array"
                 },
+                "queueUrlEnvironment": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Environment variables to be populated with the URL of a queue declared under the module's\n`queues` section, mapped from environment variable name to queue key. Producers need the URL\nat runtime, and the queue is deployed alongside the function, so the URL is injected directly\nrather than through an SSM lookup.",
+                    "type": "object"
+                },
                 "reservedConcurrentExecutions": {
                     "description": "Reserved concurrent executions for capacity management.",
                     "type": "number"
@@ -1927,6 +1934,10 @@
                 "runtime": {
                     "description": "Lambda runtime (e.g., python3.13, nodejs22.x).",
                     "type": "string"
+                },
+                "sqsEventSources": {
+                    "$ref": "#/definitions/NamedSqsEventSourceProps",
+                    "description": "SQS event sources which poll a queue declared under the module's `queues` section and invoke\nthis function with batches of messages, keyed by queue name."
                 },
                 "srcDir": {
                     "description": "Source code directory path containing Lambda function code.",
@@ -4222,6 +4233,13 @@
             "description": "Named collection of SharePoint data sources for configuration mapping",
             "type": "object"
         },
+        "NamedSqsEventSourceProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/SqsEventSourceProps"
+            },
+            "description": "Map of queue key to event source configuration. The key names a queue declared under the module's\n`queues` section, so a function cannot bind to the same queue twice.",
+            "type": "object"
+        },
         "NamedVectorStoreProps": {
             "additionalProperties": {
                 "anyOf": [
@@ -4766,6 +4784,51 @@
                 "siteUrls",
                 "tenantId"
             ],
+            "type": "object"
+        },
+        "SqsEventFilterPattern": {
+            "additionalProperties": {},
+            "description": "Event filter pattern restricting which messages are delivered to the consuming function.\nMessages that do not match are dropped from the queue without invoking the function.",
+            "type": "object"
+        },
+        "SqsEventSourceProps": {
+            "additionalProperties": false,
+            "description": "Binding between a function and a queue declared in the same module config, creating a Lambda\nevent source mapping which polls the queue and invokes the function with batches of messages.\n\nUse cases: Queue-driven data processing; Batched transformation; Partial failure handling\n\nAWS: Lambda event source mapping with an SQS event source\n\nValidation: Optional properties only; the binding's key must name a queue declared under the\nmodule's `queues` section",
+            "properties": {
+                "batchSize": {
+                    "default": 10,
+                    "description": "Maximum number of messages delivered to the function in a single invocation. Batches above 10\nrequire maxBatchingWindowSeconds to also be set.",
+                    "type": "number"
+                },
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the event source mapping polls the queue. Set to false to deploy the mapping in a\nstopped state and enable it later.",
+                    "type": "boolean"
+                },
+                "filterCriteria": {
+                    "default": "- all messages are delivered",
+                    "description": "Filter patterns restricting which messages are delivered to the function. A message is\ndelivered if it matches any one of the patterns.",
+                    "items": {
+                        "$ref": "#/definitions/SqsEventFilterPattern"
+                    },
+                    "type": "array"
+                },
+                "maxBatchingWindowSeconds": {
+                    "default": "0 seconds - invoke as soon as batchSize messages are available",
+                    "description": "Maximum seconds to gather messages before invoking the function, trading latency for fewer,\nlarger batches.",
+                    "type": "number"
+                },
+                "maxConcurrency": {
+                    "default": "- unlimited, bounded only by account concurrency",
+                    "description": "Maximum concurrent function invocations this event source will drive, applying backpressure\nso that a queue backlog cannot exhaust account concurrency.",
+                    "type": "number"
+                },
+                "reportBatchItemFailures": {
+                    "default": false,
+                    "description": "Whether the function reports individual message failures, so that only the failed messages\nreturn to the queue instead of the entire batch. Requires the function to return a\nbatchItemFailures payload.",
+                    "type": "boolean"
+                }
+            },
             "type": "object"
         },
         "Stack": {

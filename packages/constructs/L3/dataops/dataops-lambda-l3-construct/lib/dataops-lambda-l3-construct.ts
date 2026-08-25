@@ -31,9 +31,11 @@ import {
   LayerVersion,
   Runtime,
 } from 'aws-cdk-lib/aws-lambda';
+import { MdaaSqsQueue } from '@aws-mdaa/sqs-constructs';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
-import { ArnPrincipal } from 'aws-cdk-lib/aws-iam';
+import { ArnPrincipal, IRole, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { NamedSqsEventSourceProps, NamedSqsQueueProps, SqsQueueHelper } from './sqs-queues';
 
 /**
  * VPC configuration for Lambda function deployment.
@@ -286,6 +288,20 @@ export interface FunctionOptions {
   readonly roleArn: string;
   /** EventBridge configuration for event-driven execution. */
   readonly eventBridge?: EventBridgeProps;
+  /**
+   * SQS event sources which poll a queue declared under the module's `queues` section and invoke
+   * this function with batches of messages, keyed by queue name.
+   */
+  readonly sqsEventSources?: NamedSqsEventSourceProps;
+  /**
+   * Environment variables to be populated with the URL of a queue declared under the module's
+   * `queues` section, mapped from environment variable name to queue key. Producers need the URL
+   * at runtime, and the queue is deployed alongside the function, so the URL is injected directly
+   * rather than through an SSM lookup.
+   */
+  readonly queueUrlEnvironment?: {
+    [envVarName: string]: string;
+  };
   /** VPC configuration for network deployment. */
   readonly vpcConfig?: VpcConfigProps;
   /** Maximum event age in seconds (60-21600). */
@@ -348,6 +364,11 @@ export interface LambdaFunctionL3ConstructProps extends MdaaL3ConstructProps {
   readonly layers?: LayerProps[];
   /** Lambda function definitions for deployment. */
   readonly functions?: FunctionProps[];
+  /**
+   * SQS queue definitions, keyed by queue name. Functions bind to these queues as event sources
+   * and receive their URLs as environment variables.
+   */
+  readonly queues?: NamedSqsQueueProps;
   readonly overrideScope?: boolean;
 }
 
@@ -355,6 +376,14 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
   protected readonly props: LambdaFunctionL3ConstructProps;
   private readonly kmsKey: IKey;
   public readonly functionsMap: { [name: string]: LambdaFunction } = {};
+  public readonly queuesMap: { [name: string]: MdaaSqsQueue } = {};
+  /**
+   * One queue policy statement per queue and grant type, shared across every function granted it.
+   * Sharing keeps the statement sids unique within each queue policy, which IAM requires.
+   */
+  private readonly queueGrantStatements: { [statementKey: string]: PolicyStatement } = {};
+  /** Grants already applied, so a queue referenced twice by one function is not granted twice. */
+  private readonly appliedQueueGrants = new Set<string>();
 
   constructor(scope: Construct, id: string, props: LambdaFunctionL3ConstructProps) {
     super(scope, id, props);
@@ -365,11 +394,26 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
     }
     this.kmsKey = MdaaKmsKey.fromKeyArn(props.overrideScope ? this : this.scope, 'project-kms', this.props.kmsArn);
 
+    // Validated before anything is created, so that queue misconfigurations which AWS would only
+    // reject at deploy time fail synthesis instead.
+    this.validateQueues();
+    this.validateSqsEventSources();
+
     const generatedLayers = Object.fromEntries(
       this.props.layers?.map(layerProps => {
         return [layerProps.layerName, this.createLambdaLayer(layerProps)];
       }) || [],
     );
+
+    for (const [queueName, queueProps] of Object.entries(this.props.queues || {})) {
+      this.queuesMap[queueName] = SqsQueueHelper.createQueue(
+        this.props.overrideScope ? this : this.scope,
+        this.props.naming,
+        queueName,
+        queueProps,
+        this.kmsKey,
+      );
+    }
 
     // Build our functions!
     for (const functionProps of this.props.functions || []) {
@@ -429,7 +473,7 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
       retryAttempts: functionProps.retryAttempts,
       maxEventAge: functionProps.maxEventAgeSeconds ? Duration.seconds(functionProps.maxEventAgeSeconds) : undefined,
       timeout: functionProps.timeoutSeconds ? Duration.seconds(functionProps.timeoutSeconds) : undefined,
-      environment: functionProps.environment,
+      environment: this.createFunctionEnvironment(functionProps),
       reservedConcurrentExecutions: functionProps.reservedConcurrentExecutions,
       memorySize: functionProps.memorySizeMB,
       ephemeralStorageSize: functionProps.ephemeralStorageSizeMB
@@ -440,6 +484,12 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
     const lambdaFunction = this.createDockerOrLambdaFunction(lambdaOptions, functionProps, generatedLayersByName);
 
     this.addFunctionPermissions(functionProps, lambdaFunction);
+
+    //The event sources are added before the inline policy removal below, so that the identity
+    //policy SqsEventSource implicitly grants is removed along with it. The grant the function
+    //actually relies on is added to the queue resource policy instead.
+    this.addSqsEventSources(functionProps, lambdaFunction, role);
+    this.addSqsSendPermissions(functionProps, role);
 
     //An inline policy to allow the Lambda role to write to DLQ is automatically added,
     //but this triggers Nags. Instead, we use the Queue Resource policy,
@@ -454,6 +504,171 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
     this.createObservabilityResources(functionProps, lambdaFunction);
 
     return lambdaFunction;
+  }
+
+  /**
+   * Validate each queue's own configuration, and that every SQS queue this module generates has a
+   * distinct name.
+   *
+   * Queue names derive from user-supplied config keys, and both a queue's redrive dead letter queue
+   * and a function's async-invoke dead letter queue are named '<key>-dlq'. A queue key equal to a
+   * function name therefore renders two queues with one physical name, which synthesizes cleanly
+   * and fails on deploy. The same applies to a queue key equal to '<functionName>-dlq'.
+   */
+  private validateQueues(): void {
+    const nameSources: { [queueName: string]: string } = {};
+    const claimName = (queueName: string, source: string) => {
+      const claimedBy = nameSources[queueName];
+      if (claimedBy) {
+        throw new Error(
+          `Queue name "${queueName}" would be generated for both ${claimedBy} and ${source}. ` +
+            `SQS queue names must be unique - rename one of them.`,
+        );
+      }
+      nameSources[queueName] = source;
+    };
+
+    for (const [queueName, queueProps] of Object.entries(this.props.queues || {})) {
+      SqsQueueHelper.validateQueueProps(queueName, queueProps);
+      // The '.fifo' suffix is part of a FIFO queue's physical name, so it has to be part of the
+      // comparison. Without it, a FIFO queue and a function whose async-invoke dead letter queue
+      // shares its base name are reported as colliding when the physical names differ -- the FIFO
+      // queue's is '<name>-dlq.fifo' and the function's is '<name>-dlq'.
+      const nameSuffix = SqsQueueHelper.nameSuffix(queueProps);
+      claimName(`${queueName}${nameSuffix}`, `queue "${queueName}"`);
+      claimName(
+        `${queueName}${SqsQueueHelper.DLQ_SUFFIX}${nameSuffix}`,
+        `the dead letter queue of queue "${queueName}"`,
+      );
+    }
+
+    for (const functionProps of this.props.functions || []) {
+      const functionName = functionProps.functionName;
+      claimName(`${functionName}${SqsQueueHelper.DLQ_SUFFIX}`, `the dead letter queue of function "${functionName}"`);
+      if (functionProps.eventBridge) {
+        claimName(
+          `${functionName}-events${SqsQueueHelper.DLQ_SUFFIX}`,
+          `the EventBridge dead letter queue of function "${functionName}"`,
+        );
+      }
+    }
+  }
+
+  /**
+   * Validate every SQS event source binding before any resource is created
+   */
+  private validateSqsEventSources(): void {
+    for (const functionProps of this.props.functions || []) {
+      for (const queueName of Object.keys(functionProps.sqsEventSources || {})) {
+        SqsQueueHelper.validateVisibilityTimeout(
+          this.props.queues || {},
+          queueName,
+          functionProps.functionName,
+          functionProps.timeoutSeconds,
+        );
+      }
+    }
+  }
+
+  /**
+   * Combine the configured environment variables with any queue URLs to be injected.
+   * Returns the configured environment untouched when no queue URL is requested, so that
+   * functions which use no queues render exactly as before.
+   */
+  private createFunctionEnvironment(functionProps: FunctionProps): { [key: string]: string } | undefined {
+    if (!functionProps.queueUrlEnvironment) {
+      return functionProps.environment;
+    }
+
+    const queueUrlEnvironment = Object.fromEntries(
+      Object.entries(functionProps.queueUrlEnvironment).map(([envVarName, queueName]) => [
+        envVarName,
+        SqsQueueHelper.resolveQueue(this.queuesMap, queueName, functionProps.functionName).queueUrl,
+      ]),
+    );
+
+    return { ...functionProps.environment, ...queueUrlEnvironment };
+  }
+
+  /**
+   * Bind the function to each configured queue as an event source, granting the consume
+   * permissions on the queue resource policy
+   */
+  private addSqsEventSources(functionProps: FunctionProps, lambdaFunction: LambdaFunction, role: IRole): void {
+    for (const [queueName, eventSourceProps] of Object.entries(functionProps.sqsEventSources || {})) {
+      const queue = SqsQueueHelper.resolveQueue(this.queuesMap, queueName, functionProps.functionName);
+      this.grantOnQueue(queue, role, 'ConsumeMessages', SqsQueueHelper.CONSUME_ACTIONS);
+      lambdaFunction.addEventSource(SqsQueueHelper.createEventSource(queue, eventSourceProps));
+    }
+  }
+
+  /**
+   * Grant send permissions on every queue whose URL is injected into the function.
+   *
+   * A function given a queue's URL is a producer for that queue, so it needs `sqs:SendMessage` in
+   * order to use it.
+   *
+   * No KMS grant is emitted, for two reasons. First, it is not needed against a DataOps Project
+   * key: alongside the role-scoped key-user statement, the project adds an `sqsEncryption`
+   * statement granting `kms:GenerateDataKey` and `kms:Decrypt` to any principal in the account
+   * acting through SQS (`kms:CallerAccount` plus `kms:ViaService`), which covers both producing to
+   * and consuming from a CMK-encrypted queue regardless of whether the execution role is a
+   * registered key user. That is the same statement the module's pre-existing async-invoke dead
+   * letter queues already depend on. Second, one could not be emitted usefully anyway: the key is
+   * imported by ARN, so `addToResourcePolicy` is a no-op on it and `grantDecrypt`/`grantEncrypt`
+   * fall back to an identity policy on the role -- which this module deletes to avoid the
+   * IAMNoInlinePolicy findings, and which would reintroduce them if added afterwards.
+   *
+   * When `kmsArn` points at a key not managed by a DataOps Project, that statement is not
+   * guaranteed, and the key's policy must grant the execution role `kms:Decrypt` for consumers or
+   * `kms:GenerateDataKey` for producers. An imported key's policy cannot be inspected at synthesis
+   * time, so this cannot be validated here -- see the module README.
+   */
+  private addSqsSendPermissions(functionProps: FunctionProps, role: IRole): void {
+    for (const queueName of new Set(Object.values(functionProps.queueUrlEnvironment || {}))) {
+      const queue = SqsQueueHelper.resolveQueue(this.queuesMap, queueName, functionProps.functionName);
+      this.grantOnQueue(queue, role, 'SendMessages', SqsQueueHelper.SEND_ACTIONS);
+    }
+  }
+
+  /**
+   * Grant a function's execution role actions on a queue, via the queue resource policy.
+   *
+   * The grant deliberately does not use identity-based policies. This module removes the inline
+   * policy CDK adds to each execution role, in order to avoid the IAMNoInlinePolicy findings, so an
+   * identity-based grant would either be dropped by that removal or reintroduce the findings it
+   * exists to prevent. Lambda validates a consumer's effective permissions when creating the event
+   * source mapping, and a resource policy grant satisfies that validation.
+   *
+   * All functions granted the same actions on the same queue share one statement, with a role added
+   * as a principal. Emitting a statement per function would instead require folding the function
+   * name into the sid to keep sids unique, and two function names differing only in non-alphanumeric
+   * characters would then collide on a sanitized sid and be rejected by IAM at deploy.
+   *
+   * Note that `SqsEventSource` also grants consume permissions implicitly, and where it lands
+   * depends on how the role was referenced: for a resolved same-account role ARN it produces only an
+   * identity policy, which this module removes, whereas for a role ARN carrying an unresolved
+   * account (an `ssm:` reference, for instance) CDK cannot rule out cross-account access and
+   * additionally writes a statement to the queue policy. That statement is therefore sometimes a
+   * near-duplicate of the consume grant here, but it cannot be relied on in its place.
+   */
+  private grantOnQueue(queue: MdaaSqsQueue, role: IRole, sid: string, actions: string[]): void {
+    const statementKey = `${queue.node.id}:${sid}`;
+    const grantKey = `${statementKey}:${role.roleArn}`;
+    if (this.appliedQueueGrants.has(grantKey)) {
+      return;
+    }
+    this.appliedQueueGrants.add(grantKey);
+
+    const existingStatement = this.queueGrantStatements[statementKey];
+    if (existingStatement) {
+      existingStatement.addPrincipals(role);
+      return;
+    }
+    const statement = SqsQueueHelper.createGrantStatement(sid, actions);
+    statement.addPrincipals(role);
+    queue.addToResourcePolicy(statement);
+    this.queueGrantStatements[statementKey] = statement;
   }
 
   /**

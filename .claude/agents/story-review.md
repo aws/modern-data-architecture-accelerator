@@ -64,7 +64,7 @@ Spawn these in parallel using the Agent tool:
 | Compliance | `agent_rules/review-compliance.md` | L2/L3 construct `lib/` files |
 | Architecture | `agent_rules/review-architecture.md` | All `lib/` files, `package.json`, `tsconfig.json` |
 | Testing | `agent_rules/review-testing-standards.md` | Test files, their corresponding source files, AND new L3 construct `lib/` files (to verify required test files exist) |
-| Module Quality | `agent_rules/review-module-quality.md` | App module files (config, README, sample configs, schema) |
+| Module Quality | `agent_rules/review-module-quality.md` | App module files (config, README, sample configs, schema), L3 construct `lib/` files, and any `docs/*.drawio` or `docs/*.png` |
 | Documentation | `agent_rules/review-documentation.md` | CHANGELOG.md, SCHEMA.md, mkdocs.yml, markdown files + summary of user-impacting code changes (even when no docs files are in the diff) |
 | Diff Risk | `agent_rules/review-diff-risk.md` | Baseline `.json` files |
 | Coding Standards | `agent_rules/developer-coding-standards.md` | All changed `.ts`, `.py`, `requirements.txt`, `package.json` files |
@@ -89,8 +89,13 @@ Spawn these in parallel using the Agent tool:
 > - The module's `README.md`
 > - All files in the module's `sample_configs/` directory (run `ls packages/apps/{category}/{module}-app/sample_configs/`)
 > - The module's `lib/config-schema.json`
+> - The backing L3 construct's `docs/` directory (run `ls packages/constructs/L3/{category}/{module}-l3-construct/docs/`)
 >
-> Check whether the README is still accurate and complete given the changes (new sample configs referenced, Deployed Resources up to date, Security/Compliance section current). Apply ONLY the rules from the steering file. Report findings as a list with: risk level (HIGH/MEDIUM/LOW), file path, line number if possible, and one-sentence detail. If no issues found, say "No findings."
+> Check whether the README is still accurate and complete given the changes (new sample configs referenced, Deployed Resources up to date, Security/Compliance section current).
+>
+> Also apply the steering file's "Architecture Diagram Currency" section. Run `git diff origin/main --stat -- packages/constructs/L3/{category}/{module}-l3-construct/docs/` to see which diagram files this branch changed (a re-exported PNG shows as `Bin` or `Binary files differ`), and `grep -o 'value="[^"]*"' <module>.drawio` to see what the diagram depicts. Then judge two things: if the `.drawio` changed, was the sibling `.png` re-exported alongside it; and if this branch adds or re-wires AWS resources in the L3 construct, does the diagram already depict them.
+>
+> Apply ONLY the rules from the steering file. Report findings as a list with: risk level (HIGH/MEDIUM/LOW), file path, line number if possible, and one-sentence detail. If no issues found, say "No findings."
 
 **Testing sub-agent additional instruction:**
 

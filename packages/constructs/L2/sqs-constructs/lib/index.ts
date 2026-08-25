@@ -4,7 +4,7 @@
  */
 
 import { MdaaParamAndOutput, MdaaConstructProps } from '@aws-mdaa/construct'; //NOSONAR
-import { MdaaResourceType } from '@aws-mdaa/naming';
+import { IMdaaResourceNaming, MdaaResourceType } from '@aws-mdaa/naming';
 import { IMdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
@@ -90,15 +90,55 @@ export interface MdaaSqsQueueProps extends MdaaConstructProps {
  * Specifically, we ensure the Queue will be encrypted through use of a KMS key.
  */
 export class MdaaSqsQueue extends Queue {
+  /** SQS limits queue names to 80 characters, inclusive of the '.fifo' suffix on FIFO queues. */
+  private static readonly MAX_QUEUE_NAME_LENGTH = 80;
+  private static readonly FIFO_SUFFIX = '.fifo';
+
   private static setProps(props: MdaaSqsQueueProps): QueueProps {
     const sqsNaming = props.naming.withResourceType(MdaaResourceType.SQS_QUEUE);
     const overrideProps = {
       // KMS mode is already inferred from the required encryptionMasterKey prop, but this is belt and suspenders
       encryption: QueueEncryption.KMS,
-      queueName: sqsNaming.resourceName(props.queueName, 80),
+      queueName: MdaaSqsQueue.generateQueueName(sqsNaming, props),
     };
     return { ...props, ...overrideProps };
   }
+
+  /**
+   * Generates the queue name, appending the '.fifo' suffix required of FIFO queues.
+   *
+   * The suffix is appended after naming truncation rather than being embedded in the configured
+   * name, because `resourceName` truncation replaces the tail of the name with a '-<hash>'
+   * suffix — which would destroy a '.fifo' suffix whenever the generated name reaches the
+   * 80 character limit.
+   */
+  private static generateQueueName(sqsNaming: IMdaaResourceNaming, props: MdaaSqsQueueProps): string {
+    if (!MdaaSqsQueue.isFifo(props)) {
+      return sqsNaming.resourceName(props.queueName, MdaaSqsQueue.MAX_QUEUE_NAME_LENGTH);
+    }
+    const suffixLength = MdaaSqsQueue.FIFO_SUFFIX.length;
+    // Tolerate a configured name which already carries the suffix, so it is not doubled up.
+    const baseName = props.queueName.endsWith(MdaaSqsQueue.FIFO_SUFFIX)
+      ? props.queueName.slice(0, -suffixLength)
+      : props.queueName;
+    const truncatedName = sqsNaming.resourceName(baseName, MdaaSqsQueue.MAX_QUEUE_NAME_LENGTH - suffixLength);
+    return `${truncatedName}${MdaaSqsQueue.FIFO_SUFFIX}`;
+  }
+
+  /**
+   * Determines whether the queue is FIFO, mirroring the inference the underlying CDK Queue
+   * applies, so that the generated name always agrees with the rendered FifoQueue property.
+   */
+  private static isFifo(props: MdaaSqsQueueProps): boolean {
+    return (
+      props.fifo ??
+      (props.queueName.endsWith(MdaaSqsQueue.FIFO_SUFFIX) ||
+        props.contentBasedDeduplication === true ||
+        props.deduplicationScope !== undefined ||
+        props.fifoThroughputLimit !== undefined)
+    );
+  }
+
   constructor(scope: Construct, id: string, props: MdaaSqsQueueProps) {
     super(scope, id, MdaaSqsQueue.setProps(props));
     const enforceSslStatement = new PolicyStatement({

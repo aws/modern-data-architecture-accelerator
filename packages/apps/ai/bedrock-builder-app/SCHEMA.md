@@ -2123,31 +2123,33 @@ AWS: LambdaInterceptorConfiguration Arn (resolved from the deployed function)
 
 Validation: exactly one of lambdaFunction / lambdaArn; FunctionProps (functionName, srcDir, handler, runtime, roleArn, ...)
 
-| Property                                                                                                                           | Pattern | Type            | Deprecated | Definition                        | Title/Description                                                                              |
-| ---------------------------------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | --------------------------------- | ---------------------------------------------------------------------------------------------- |
-| - [additionalResourcePermissions](#gateways_additionalProperties_interceptors_items_lambdaFunction_additionalResourcePermissions ) | No      | object          | No         | -                                 | Additional resource permissions mapped by SID.                                                 |
-| - [alarms](#gateways_additionalProperties_interceptors_items_lambdaFunction_alarms )                                               | No      | array           | No         | -                                 | CloudWatch alarms for monitoring and alerting. Custom metrics validated against metricFilters. |
-| - [description](#gateways_additionalProperties_interceptors_items_lambdaFunction_description )                                     | No      | string          | No         | -                                 | Optional function description.                                                                 |
-| - [dockerBuild](#gateways_additionalProperties_interceptors_items_lambdaFunction_dockerBuild )                                     | No      | boolean         | No         | -                                 | When true, srcDir must contain a Dockerfile for container image deployment.                    |
-| - [environment](#gateways_additionalProperties_interceptors_items_lambdaFunction_environment )                                     | No      | object          | No         | -                                 | Environment variables for function configuration.                                              |
-| - [ephemeralStorageSizeMB](#gateways_additionalProperties_interceptors_items_lambdaFunction_ephemeralStorageSizeMB )               | No      | number          | No         | -                                 | The size of the function's /tmp directory in MB.                                               |
-| - [eventBridge](#gateways_additionalProperties_interceptors_items_lambdaFunction_eventBridge )                                     | No      | object          | No         | In #/definitions/EventBridgeProps | EventBridge configuration for event-driven execution.                                          |
-| + [functionName](#gateways_additionalProperties_interceptors_items_lambdaFunction_functionName )                                   | No      | string          | No         | -                                 | Lambda function name.                                                                          |
-| - [generatedLayerNames](#gateways_additionalProperties_interceptors_items_lambdaFunction_generatedLayerNames )                     | No      | array of string | No         | -                                 | Generated layer names to attach to the function.                                               |
-| - [grantInvoke](#gateways_additionalProperties_interceptors_items_lambdaFunction_grantInvoke )                                     | No      | string          | No         | -                                 | Principal ARN granted Lambda invoke permissions.                                               |
-| - [handler](#gateways_additionalProperties_interceptors_items_lambdaFunction_handler )                                             | No      | string          | No         | -                                 | Lambda function handler (e.g., 'index.handler').                                               |
-| - [layerArns](#gateways_additionalProperties_interceptors_items_lambdaFunction_layerArns )                                         | No      | object          | No         | -                                 | Existing layer version ARNs mapped by name.                                                    |
-| - [logInsightsQueries](#gateways_additionalProperties_interceptors_items_lambdaFunction_logInsightsQueries )                       | No      | array           | No         | -                                 | CloudWatch Logs Insights saved queries for log analysis.                                       |
-| - [maxEventAgeSeconds](#gateways_additionalProperties_interceptors_items_lambdaFunction_maxEventAgeSeconds )                       | No      | number          | No         | -                                 | Maximum event age in seconds (60-21600).                                                       |
-| - [memorySizeMB](#gateways_additionalProperties_interceptors_items_lambdaFunction_memorySizeMB )                                   | No      | number          | No         | -                                 | Memory allocation in MB (128-10240).                                                           |
-| - [metricFilters](#gateways_additionalProperties_interceptors_items_lambdaFunction_metricFilters )                                 | No      | array           | No         | -                                 | CloudWatch metric filters for custom metric extraction.                                        |
-| - [reservedConcurrentExecutions](#gateways_additionalProperties_interceptors_items_lambdaFunction_reservedConcurrentExecutions )   | No      | number          | No         | -                                 | Reserved concurrent executions for capacity management.                                        |
-| - [retryAttempts](#gateways_additionalProperties_interceptors_items_lambdaFunction_retryAttempts )                                 | No      | number          | No         | -                                 | Maximum retry attempts for failed executions (0-2).                                            |
-| + [roleArn](#gateways_additionalProperties_interceptors_items_lambdaFunction_roleArn )                                             | No      | string          | No         | -                                 | IAM role ARN for Lambda function execution.                                                    |
-| - [runtime](#gateways_additionalProperties_interceptors_items_lambdaFunction_runtime )                                             | No      | string          | No         | -                                 | Lambda runtime (e.g., python3.13, nodejs22.x).                                                 |
-| + [srcDir](#gateways_additionalProperties_interceptors_items_lambdaFunction_srcDir )                                               | No      | string          | No         | -                                 | Source code directory path containing Lambda function code.                                    |
-| - [timeoutSeconds](#gateways_additionalProperties_interceptors_items_lambdaFunction_timeoutSeconds )                               | No      | number          | No         | -                                 | Function timeout in seconds.                                                                   |
-| - [vpcConfig](#gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig )                                         | No      | object          | No         | In #/definitions/VpcConfigProps   | VPC configuration for network deployment.                                                      |
+| Property                                                                                                                           | Pattern | Type            | Deprecated | Definition                                | Title/Description                                                                                                                                                                                                                                                                                                                        |
+| ---------------------------------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [additionalResourcePermissions](#gateways_additionalProperties_interceptors_items_lambdaFunction_additionalResourcePermissions ) | No      | object          | No         | -                                         | Additional resource permissions mapped by SID.                                                                                                                                                                                                                                                                                           |
+| - [alarms](#gateways_additionalProperties_interceptors_items_lambdaFunction_alarms )                                               | No      | array           | No         | -                                         | CloudWatch alarms for monitoring and alerting. Custom metrics validated against metricFilters.                                                                                                                                                                                                                                           |
+| - [description](#gateways_additionalProperties_interceptors_items_lambdaFunction_description )                                     | No      | string          | No         | -                                         | Optional function description.                                                                                                                                                                                                                                                                                                           |
+| - [dockerBuild](#gateways_additionalProperties_interceptors_items_lambdaFunction_dockerBuild )                                     | No      | boolean         | No         | -                                         | When true, srcDir must contain a Dockerfile for container image deployment.                                                                                                                                                                                                                                                              |
+| - [environment](#gateways_additionalProperties_interceptors_items_lambdaFunction_environment )                                     | No      | object          | No         | -                                         | Environment variables for function configuration.                                                                                                                                                                                                                                                                                        |
+| - [ephemeralStorageSizeMB](#gateways_additionalProperties_interceptors_items_lambdaFunction_ephemeralStorageSizeMB )               | No      | number          | No         | -                                         | The size of the function's /tmp directory in MB.                                                                                                                                                                                                                                                                                         |
+| - [eventBridge](#gateways_additionalProperties_interceptors_items_lambdaFunction_eventBridge )                                     | No      | object          | No         | In #/definitions/EventBridgeProps         | EventBridge configuration for event-driven execution.                                                                                                                                                                                                                                                                                    |
+| + [functionName](#gateways_additionalProperties_interceptors_items_lambdaFunction_functionName )                                   | No      | string          | No         | -                                         | Lambda function name.                                                                                                                                                                                                                                                                                                                    |
+| - [generatedLayerNames](#gateways_additionalProperties_interceptors_items_lambdaFunction_generatedLayerNames )                     | No      | array of string | No         | -                                         | Generated layer names to attach to the function.                                                                                                                                                                                                                                                                                         |
+| - [grantInvoke](#gateways_additionalProperties_interceptors_items_lambdaFunction_grantInvoke )                                     | No      | string          | No         | -                                         | Principal ARN granted Lambda invoke permissions.                                                                                                                                                                                                                                                                                         |
+| - [handler](#gateways_additionalProperties_interceptors_items_lambdaFunction_handler )                                             | No      | string          | No         | -                                         | Lambda function handler (e.g., 'index.handler').                                                                                                                                                                                                                                                                                         |
+| - [layerArns](#gateways_additionalProperties_interceptors_items_lambdaFunction_layerArns )                                         | No      | object          | No         | -                                         | Existing layer version ARNs mapped by name.                                                                                                                                                                                                                                                                                              |
+| - [logInsightsQueries](#gateways_additionalProperties_interceptors_items_lambdaFunction_logInsightsQueries )                       | No      | array           | No         | -                                         | CloudWatch Logs Insights saved queries for log analysis.                                                                                                                                                                                                                                                                                 |
+| - [maxEventAgeSeconds](#gateways_additionalProperties_interceptors_items_lambdaFunction_maxEventAgeSeconds )                       | No      | number          | No         | -                                         | Maximum event age in seconds (60-21600).                                                                                                                                                                                                                                                                                                 |
+| - [memorySizeMB](#gateways_additionalProperties_interceptors_items_lambdaFunction_memorySizeMB )                                   | No      | number          | No         | -                                         | Memory allocation in MB (128-10240).                                                                                                                                                                                                                                                                                                     |
+| - [metricFilters](#gateways_additionalProperties_interceptors_items_lambdaFunction_metricFilters )                                 | No      | array           | No         | -                                         | CloudWatch metric filters for custom metric extraction.                                                                                                                                                                                                                                                                                  |
+| - [queueUrlEnvironment](#gateways_additionalProperties_interceptors_items_lambdaFunction_queueUrlEnvironment )                     | No      | object          | No         | -                                         | Environment variables to be populated with the URL of a queue declared under the module's<br />\`queues\` section, mapped from environment variable name to queue key. Producers need the URL<br />at runtime, and the queue is deployed alongside the function, so the URL is injected directly<br />rather than through an SSM lookup. |
+| - [reservedConcurrentExecutions](#gateways_additionalProperties_interceptors_items_lambdaFunction_reservedConcurrentExecutions )   | No      | number          | No         | -                                         | Reserved concurrent executions for capacity management.                                                                                                                                                                                                                                                                                  |
+| - [retryAttempts](#gateways_additionalProperties_interceptors_items_lambdaFunction_retryAttempts )                                 | No      | number          | No         | -                                         | Maximum retry attempts for failed executions (0-2).                                                                                                                                                                                                                                                                                      |
+| + [roleArn](#gateways_additionalProperties_interceptors_items_lambdaFunction_roleArn )                                             | No      | string          | No         | -                                         | IAM role ARN for Lambda function execution.                                                                                                                                                                                                                                                                                              |
+| - [runtime](#gateways_additionalProperties_interceptors_items_lambdaFunction_runtime )                                             | No      | string          | No         | -                                         | Lambda runtime (e.g., python3.13, nodejs22.x).                                                                                                                                                                                                                                                                                           |
+| - [sqsEventSources](#gateways_additionalProperties_interceptors_items_lambdaFunction_sqsEventSources )                             | No      | object          | No         | In #/definitions/NamedSqsEventSourceProps | SQS event sources which poll a queue declared under the module's \`queues\` section and invoke<br />this function with batches of messages, keyed by queue name.                                                                                                                                                                         |
+| + [srcDir](#gateways_additionalProperties_interceptors_items_lambdaFunction_srcDir )                                               | No      | string          | No         | -                                         | Source code directory path containing Lambda function code.                                                                                                                                                                                                                                                                              |
+| - [timeoutSeconds](#gateways_additionalProperties_interceptors_items_lambdaFunction_timeoutSeconds )                               | No      | number          | No         | -                                         | Function timeout in seconds.                                                                                                                                                                                                                                                                                                             |
+| - [vpcConfig](#gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig )                                         | No      | object          | No         | In #/definitions/VpcConfigProps           | VPC configuration for network deployment.                                                                                                                                                                                                                                                                                                |
 
 ###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_additionalResourcePermissions"></a>5.1.4.1.3.1. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > additionalResourcePermissions`
 
@@ -3655,7 +3657,31 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 
 **Description:** CloudWatch metric unit (e.g., Count, Milliseconds).
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_reservedConcurrentExecutions"></a>5.1.4.1.3.17. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > reservedConcurrentExecutions`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_queueUrlEnvironment"></a>5.1.4.1.3.17. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > queueUrlEnvironment`
+
+|                           |                                                                                                                                                                  |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                                         |
+| **Required**              | No                                                                                                                                                               |
+| **Additional properties** | [Each additional property must conform to the schema](#gateways_additionalProperties_interceptors_items_lambdaFunction_queueUrlEnvironment_additionalProperties) |
+
+**Description:** Environment variables to be populated with the URL of a queue declared under the module's
+`queues` section, mapped from environment variable name to queue key. Producers need the URL
+at runtime, and the queue is deployed alongside the function, so the URL is injected directly
+rather than through an SSM lookup.
+
+| Property                                                                                                         | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#gateways_additionalProperties_interceptors_items_lambdaFunction_queueUrlEnvironment_additionalProperties ) | No      | string | No         | -          | -                 |
+
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_queueUrlEnvironment_additionalProperties"></a>5.1.4.1.3.17.1. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > queueUrlEnvironment > additionalProperties`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_reservedConcurrentExecutions"></a>5.1.4.1.3.18. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > reservedConcurrentExecutions`
 
 |              |          |
 | ------------ | -------- |
@@ -3664,7 +3690,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 
 **Description:** Reserved concurrent executions for capacity management.
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_retryAttempts"></a>5.1.4.1.3.18. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > retryAttempts`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_retryAttempts"></a>5.1.4.1.3.19. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > retryAttempts`
 
 |              |          |
 | ------------ | -------- |
@@ -3673,7 +3699,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 
 **Description:** Maximum retry attempts for failed executions (0-2).
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_roleArn"></a>5.1.4.1.3.19. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > roleArn`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_roleArn"></a>5.1.4.1.3.20. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > roleArn`
 
 |              |          |
 | ------------ | -------- |
@@ -3682,7 +3708,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 
 **Description:** IAM role ARN for Lambda function execution.
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_runtime"></a>5.1.4.1.3.20. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > runtime`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_runtime"></a>5.1.4.1.3.21. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > runtime`
 
 |              |          |
 | ------------ | -------- |
@@ -3691,7 +3717,154 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 
 **Description:** Lambda runtime (e.g., python3.13, nodejs22.x).
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_srcDir"></a>5.1.4.1.3.21. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > srcDir`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_sqsEventSources"></a>5.1.4.1.3.22. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > sqsEventSources`
+
+|                           |                                                                                                                                                              |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Type**                  | `object`                                                                                                                                                     |
+| **Required**              | No                                                                                                                                                           |
+| **Additional properties** | [Each additional property must conform to the schema](#gateways_additionalProperties_interceptors_items_lambdaFunction_sqsEventSources_additionalProperties) |
+| **Defined in**            | #/definitions/NamedSqsEventSourceProps                                                                                                                       |
+
+**Description:** SQS event sources which poll a queue declared under the module's `queues` section and invoke
+this function with batches of messages, keyed by queue name.
+
+| Property                                                                                                     | Pattern | Type   | Deprecated | Definition                           | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ------------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [](#gateways_additionalProperties_interceptors_items_lambdaFunction_sqsEventSources_additionalProperties ) | No      | object | No         | In #/definitions/SqsEventSourceProps | Binding between a function and a queue declared in the same module config, creating a Lambda<br />event source mapping which polls the queue and invokes the function with batches of messages.<br /><br />Use cases: Queue-driven data processing; Batched transformation; Partial failure handling<br /><br />AWS: Lambda event source mapping with an SQS event source<br /><br />Validation: Optional properties only; the binding's key must name a queue declared under the<br />module's \`queues\` section |
+
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_sqsEventSources_additionalProperties"></a>5.1.4.1.3.22.1. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > sqsEventSources > SqsEventSourceProps`
+
+|                           |                                   |
+| ------------------------- | --------------------------------- |
+| **Type**                  | `object`                          |
+| **Required**              | No                                |
+| **Additional properties** | Not allowed                       |
+| **Defined in**            | #/definitions/SqsEventSourceProps |
+
+**Description:** Binding between a function and a queue declared in the same module config, creating a Lambda
+event source mapping which polls the queue and invokes the function with batches of messages.
+
+Use cases: Queue-driven data processing; Batched transformation; Partial failure handling
+
+AWS: Lambda event source mapping with an SQS event source
+
+Validation: Optional properties only; the binding's key must name a queue declared under the
+module's `queues` section
+
+| Property                                                                                                                                                      | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                  |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [batchSize](#gateways_additionalProperties_interceptors_items_lambdaFunction_sqsEventSources_additionalProperties_batchSize )                               | No      | number  | No         | -          | Maximum number of messages delivered to the function in a single invocation. Batches above 10<br />require maxBatchingWindowSeconds to also be set.                                                                |
+| - [enabled](#gateways_additionalProperties_interceptors_items_lambdaFunction_sqsEventSources_additionalProperties_enabled )                                   | No      | boolean | No         | -          | Whether the event source mapping polls the queue. Set to false to deploy the mapping in a<br />stopped state and enable it later.                                                                                  |
+| - [filterCriteria](#gateways_additionalProperties_interceptors_items_lambdaFunction_sqsEventSources_additionalProperties_filterCriteria )                     | No      | array   | No         | -          | Filter patterns restricting which messages are delivered to the function. A message is<br />delivered if it matches any one of the patterns.                                                                       |
+| - [maxBatchingWindowSeconds](#gateways_additionalProperties_interceptors_items_lambdaFunction_sqsEventSources_additionalProperties_maxBatchingWindowSeconds ) | No      | number  | No         | -          | Maximum seconds to gather messages before invoking the function, trading latency for fewer,<br />larger batches.                                                                                                   |
+| - [maxConcurrency](#gateways_additionalProperties_interceptors_items_lambdaFunction_sqsEventSources_additionalProperties_maxConcurrency )                     | No      | number  | No         | -          | Maximum concurrent function invocations this event source will drive, applying backpressure<br />so that a queue backlog cannot exhaust account concurrency.                                                       |
+| - [reportBatchItemFailures](#gateways_additionalProperties_interceptors_items_lambdaFunction_sqsEventSources_additionalProperties_reportBatchItemFailures )   | No      | boolean | No         | -          | Whether the function reports individual message failures, so that only the failed messages<br />return to the queue instead of the entire batch. Requires the function to return a<br />batchItemFailures payload. |
+
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_sqsEventSources_additionalProperties_batchSize"></a>5.1.4.1.3.22.1.1. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > sqsEventSources > additionalProperties > batchSize`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `10`     |
+
+**Description:** Maximum number of messages delivered to the function in a single invocation. Batches above 10
+require maxBatchingWindowSeconds to also be set.
+
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_sqsEventSources_additionalProperties_enabled"></a>5.1.4.1.3.22.1.2. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > sqsEventSources > additionalProperties > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+**Description:** Whether the event source mapping polls the queue. Set to false to deploy the mapping in a
+stopped state and enable it later.
+
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_sqsEventSources_additionalProperties_filterCriteria"></a>5.1.4.1.3.22.1.3. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > sqsEventSources > additionalProperties > filterCriteria`
+
+|              |                                  |
+| ------------ | -------------------------------- |
+| **Type**     | `array`                          |
+| **Required** | No                               |
+| **Default**  | `"- all messages are delivered"` |
+
+**Description:** Filter patterns restricting which messages are delivered to the function. A message is
+delivered if it matches any one of the patterns.
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                                                                     | Description                                                                                  |
+| --------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| [SqsEventFilterPattern](#gateways_additionalProperties_interceptors_items_lambdaFunction_sqsEventSources_additionalProperties_filterCriteria_items) | Event filter pattern restricting which messages are delivered to the consuming function. ... |
+
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_sqsEventSources_additionalProperties_filterCriteria_items"></a>5.1.4.1.3.22.1.3.1. root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > sqsEventSources > additionalProperties > filterCriteria > SqsEventFilterPattern
+
+|                           |                                                                                                                                                                                                        |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Type**                  | `object`                                                                                                                                                                                               |
+| **Required**              | No                                                                                                                                                                                                     |
+| **Additional properties** | [Each additional property must conform to the schema](#gateways_additionalProperties_interceptors_items_lambdaFunction_sqsEventSources_additionalProperties_filterCriteria_items_additionalProperties) |
+| **Defined in**            | #/definitions/SqsEventFilterPattern                                                                                                                                                                    |
+
+**Description:** Event filter pattern restricting which messages are delivered to the consuming function.
+Messages that do not match are dropped from the queue without invoking the function.
+
+| Property                                                                                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#gateways_additionalProperties_interceptors_items_lambdaFunction_sqsEventSources_additionalProperties_filterCriteria_items_additionalProperties ) | No      | object | No         | -          | -                 |
+
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_sqsEventSources_additionalProperties_filterCriteria_items_additionalProperties"></a>5.1.4.1.3.22.1.3.1.1. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > sqsEventSources > additionalProperties > filterCriteria > filterCriteria items > additionalProperties`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_sqsEventSources_additionalProperties_maxBatchingWindowSeconds"></a>5.1.4.1.3.22.1.4. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > sqsEventSources > additionalProperties > maxBatchingWindowSeconds`
+
+|              |                                                                    |
+| ------------ | ------------------------------------------------------------------ |
+| **Type**     | `number`                                                           |
+| **Required** | No                                                                 |
+| **Default**  | `"0 seconds - invoke as soon as batchSize messages are available"` |
+
+**Description:** Maximum seconds to gather messages before invoking the function, trading latency for fewer,
+larger batches.
+
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_sqsEventSources_additionalProperties_maxConcurrency"></a>5.1.4.1.3.22.1.5. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > sqsEventSources > additionalProperties > maxConcurrency`
+
+|              |                                                      |
+| ------------ | ---------------------------------------------------- |
+| **Type**     | `number`                                             |
+| **Required** | No                                                   |
+| **Default**  | `"- unlimited, bounded only by account concurrency"` |
+
+**Description:** Maximum concurrent function invocations this event source will drive, applying backpressure
+so that a queue backlog cannot exhaust account concurrency.
+
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_sqsEventSources_additionalProperties_reportBatchItemFailures"></a>5.1.4.1.3.22.1.6. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > sqsEventSources > additionalProperties > reportBatchItemFailures`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `false`   |
+
+**Description:** Whether the function reports individual message failures, so that only the failed messages
+return to the queue instead of the entire batch. Requires the function to return a
+batchItemFailures payload.
+
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_srcDir"></a>5.1.4.1.3.23. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > srcDir`
 
 |              |          |
 | ------------ | -------- |
@@ -3700,7 +3873,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 
 **Description:** Source code directory path containing Lambda function code.
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_timeoutSeconds"></a>5.1.4.1.3.22. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > timeoutSeconds`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_timeoutSeconds"></a>5.1.4.1.3.24. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > timeoutSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -3709,7 +3882,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 
 **Description:** Function timeout in seconds.
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig"></a>5.1.4.1.3.23. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig"></a>5.1.4.1.3.25. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig`
 
 |                           |                              |
 | ------------------------- | ---------------------------- |
@@ -3727,7 +3900,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 | + [subnetIds](#gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_subnetIds )                               | No      | array of string | No         | -                                           | Subnet IDs for Lambda function ENI placement.                            |
 | + [vpcId](#gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_vpcId )                                       | No      | string          | No         | -                                           | VPC ID for Lambda function deployment.                                   |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules"></a>5.1.4.1.3.23.1. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules"></a>5.1.4.1.3.25.1. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules`
 
 |                           |                                          |
 | ------------------------- | ---------------------------------------- |
@@ -3744,7 +3917,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 | - [prefixList](#gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_prefixList ) | No      | array | No         | -          | Prefix list rules for security group traffic control defining managed prefix list-based access restrictions     |
 | - [sg](#gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_sg )                 | No      | array | No         | -          | Security group rules for cross-security group traffic control defining security group-based access restrictions |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4"></a>5.1.4.1.3.23.1.1. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4"></a>5.1.4.1.3.25.1.1. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4`
 
 |              |         |
 | ------------ | ------- |
@@ -3765,7 +3938,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 | ------------------------------------------------------------------------------------------------------------------------------ | ----------- |
 | [MdaaCidrPeer](#gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items) | -           |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items"></a>5.1.4.1.3.23.1.1.1. root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > MdaaCidrPeer
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items"></a>5.1.4.1.3.25.1.1.1. root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > MdaaCidrPeer
 
 |                           |                            |
 | ------------------------- | -------------------------- |
@@ -3783,7 +3956,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 | - [suppressions](#gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions ) | No      | array  | No         | -          | -                                                                                             |
 | - [toPort](#gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_toPort )             | No      | number | No         | -          | The ending port number for the security group rule defining the upper bound of the port range |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_cidr"></a>5.1.4.1.3.23.1.1.1.1. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > cidr`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_cidr"></a>5.1.4.1.3.25.1.1.1.1. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > cidr`
 
 |              |          |
 | ------------ | -------- |
@@ -3792,28 +3965,28 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 
 **Description:** CIDR block specification for network access control in security group rules enabling IP
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_description"></a>5.1.4.1.3.23.1.1.1.2. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > description`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_description"></a>5.1.4.1.3.25.1.1.1.2. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > description`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_port"></a>5.1.4.1.3.23.1.1.1.3. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > port`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_port"></a>5.1.4.1.3.25.1.1.1.3. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > port`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_protocol"></a>5.1.4.1.3.23.1.1.1.4. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > protocol`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_protocol"></a>5.1.4.1.3.25.1.1.1.4. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > protocol`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions"></a>5.1.4.1.3.23.1.1.1.5. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions"></a>5.1.4.1.3.25.1.1.1.5. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions`
 
 |              |         |
 | ------------ | ------- |
@@ -3832,7 +4005,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
 | [NagPackSuppression](#gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items) | Interface for creating a rule suppression |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items"></a>5.1.4.1.3.23.1.1.1.5.1. root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > NagPackSuppression
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items"></a>5.1.4.1.3.25.1.1.1.5.1. root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > NagPackSuppression
 
 |                           |                                  |
 | ------------------------- | -------------------------------- |
@@ -3849,7 +4022,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 | + [id](#gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_id )               | No      | string | No         | -          | The id of the rule to ignore                          |
 | + [reason](#gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_reason )       | No      | string | No         | -          | The reason to ignore the rule (minimum 10 characters) |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo"></a>5.1.4.1.3.23.1.1.1.5.1.1. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo"></a>5.1.4.1.3.25.1.1.1.5.1.1. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo`
 
 |              |         |
 | ------------ | ------- |
@@ -3870,7 +4043,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
 | [NagPackSuppressionAppliesTo](#gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items) | A granular suppression |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items"></a>5.1.4.1.3.23.1.1.1.5.1.1.1. root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo > NagPackSuppressionAppliesTo
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items"></a>5.1.4.1.3.25.1.1.1.5.1.1.1. root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo > NagPackSuppressionAppliesTo
 
 |                           |                                           |
 | ------------------------- | ----------------------------------------- |
@@ -3886,7 +4059,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 | [RegexAppliesTo](#gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i0) |
 | [item 1](#gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i1)         |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i0"></a>5.1.4.1.3.23.1.1.1.5.1.1.1.1. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo > appliesTo items > anyOf > RegexAppliesTo`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i0"></a>5.1.4.1.3.25.1.1.1.5.1.1.1.1. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo > appliesTo items > anyOf > RegexAppliesTo`
 
 |                           |                              |
 | ------------------------- | ---------------------------- |
@@ -3901,7 +4074,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------ |
 | + [regex](#gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i0_regex ) | No      | string | No         | -          | An ECMA-262 regex string |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i0_regex"></a>5.1.4.1.3.23.1.1.1.5.1.1.1.1.1. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo > appliesTo items > anyOf > item 0 > regex`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i0_regex"></a>5.1.4.1.3.25.1.1.1.5.1.1.1.1.1. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo > appliesTo items > anyOf > item 0 > regex`
 
 |              |          |
 | ------------ | -------- |
@@ -3910,14 +4083,14 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 
 **Description:** An ECMA-262 regex string
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i1"></a>5.1.4.1.3.23.1.1.1.5.1.1.1.2. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo > appliesTo items > anyOf > item 1`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_appliesTo_items_anyOf_i1"></a>5.1.4.1.3.25.1.1.1.5.1.1.1.2. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > appliesTo > appliesTo items > anyOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_id"></a>5.1.4.1.3.23.1.1.1.5.1.2. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > id`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_id"></a>5.1.4.1.3.25.1.1.1.5.1.2. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > id`
 
 |              |          |
 | ------------ | -------- |
@@ -3926,7 +4099,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 
 **Description:** The id of the rule to ignore
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_reason"></a>5.1.4.1.3.23.1.1.1.5.1.3. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > reason`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_suppressions_items_reason"></a>5.1.4.1.3.25.1.1.1.5.1.3. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > suppressions > suppressions items > reason`
 
 |              |          |
 | ------------ | -------- |
@@ -3935,7 +4108,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 
 **Description:** The reason to ignore the rule (minimum 10 characters)
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_toPort"></a>5.1.4.1.3.23.1.1.1.6. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > toPort`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_ipv4_items_toPort"></a>5.1.4.1.3.25.1.1.1.6. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > ipv4 > ipv4 items > toPort`
 
 |              |          |
 | ------------ | -------- |
@@ -3944,7 +4117,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 
 **Description:** The ending port number for the security group rule defining the upper bound of the port range
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_prefixList"></a>5.1.4.1.3.23.1.2. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > prefixList`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_prefixList"></a>5.1.4.1.3.25.1.2. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > prefixList`
 
 |              |         |
 | ------------ | ------- |
@@ -3965,7 +4138,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 | ------------------------------------------------------------------------------------------------------------------------------------------ | ----------- |
 | [MdaaPrefixListPeer](#gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_prefixList_items) | -           |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_prefixList_items"></a>5.1.4.1.3.23.1.2.1. root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > prefixList > MdaaPrefixListPeer
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_prefixList_items"></a>5.1.4.1.3.25.1.2.1. root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > prefixList > MdaaPrefixListPeer
 
 |                           |                                  |
 | ------------------------- | -------------------------------- |
@@ -3983,21 +4156,21 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 | - [suppressions](#gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_prefixList_items_suppressions ) | No      | array  | No         | -          | -                                                                                             |
 | - [toPort](#gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_prefixList_items_toPort )             | No      | number | No         | -          | The ending port number for the security group rule defining the upper bound of the port range |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_prefixList_items_description"></a>5.1.4.1.3.23.1.2.1.1. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > description`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_prefixList_items_description"></a>5.1.4.1.3.25.1.2.1.1. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > description`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_prefixList_items_port"></a>5.1.4.1.3.23.1.2.1.2. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > port`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_prefixList_items_port"></a>5.1.4.1.3.25.1.2.1.2. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > port`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_prefixList_items_prefixList"></a>5.1.4.1.3.23.1.2.1.3. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > prefixList`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_prefixList_items_prefixList"></a>5.1.4.1.3.25.1.2.1.3. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > prefixList`
 
 |              |          |
 | ------------ | -------- |
@@ -4006,14 +4179,14 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 
 **Description:** Prefix list identifier for managed IP range access control in security group rules enabling
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_prefixList_items_protocol"></a>5.1.4.1.3.23.1.2.1.4. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > protocol`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_prefixList_items_protocol"></a>5.1.4.1.3.25.1.2.1.4. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > protocol`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_prefixList_items_suppressions"></a>5.1.4.1.3.23.1.2.1.5. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > suppressions`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_prefixList_items_suppressions"></a>5.1.4.1.3.25.1.2.1.5. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > suppressions`
 
 |              |         |
 | ------------ | ------- |
@@ -4032,7 +4205,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
 | [NagPackSuppression](#gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_prefixList_items_suppressions_items) | Interface for creating a rule suppression |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_prefixList_items_suppressions_items"></a>5.1.4.1.3.23.1.2.1.5.1. root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > suppressions > NagPackSuppression
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_prefixList_items_suppressions_items"></a>5.1.4.1.3.25.1.2.1.5.1. root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > suppressions > NagPackSuppression
 
 |                           |                                                                                                                                                                                                                                                                       |
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -4043,7 +4216,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 
 **Description:** Interface for creating a rule suppression
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_prefixList_items_toPort"></a>5.1.4.1.3.23.1.2.1.6. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > toPort`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_prefixList_items_toPort"></a>5.1.4.1.3.25.1.2.1.6. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > prefixList > prefixList items > toPort`
 
 |              |          |
 | ------------ | -------- |
@@ -4052,7 +4225,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 
 **Description:** The ending port number for the security group rule defining the upper bound of the port range
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_sg"></a>5.1.4.1.3.23.1.3. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > sg`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_sg"></a>5.1.4.1.3.25.1.3. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > sg`
 
 |              |         |
 | ------------ | ------- |
@@ -4073,7 +4246,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 | ------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
 | [MdaaSecurityGroupPeer](#gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_sg_items) | -           |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_sg_items"></a>5.1.4.1.3.23.1.3.1. root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > sg > MdaaSecurityGroupPeer
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_sg_items"></a>5.1.4.1.3.25.1.3.1. root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > sg > MdaaSecurityGroupPeer
 
 |                           |                                     |
 | ------------------------- | ----------------------------------- |
@@ -4091,28 +4264,28 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 | - [suppressions](#gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_sg_items_suppressions ) | No      | array  | No         | -          | -                                                                                             |
 | - [toPort](#gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_sg_items_toPort )             | No      | number | No         | -          | The ending port number for the security group rule defining the upper bound of the port range |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_sg_items_description"></a>5.1.4.1.3.23.1.3.1.1. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > sg > sg items > description`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_sg_items_description"></a>5.1.4.1.3.25.1.3.1.1. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > sg > sg items > description`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_sg_items_port"></a>5.1.4.1.3.23.1.3.1.2. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > sg > sg items > port`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_sg_items_port"></a>5.1.4.1.3.25.1.3.1.2. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > sg > sg items > port`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_sg_items_protocol"></a>5.1.4.1.3.23.1.3.1.3. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > sg > sg items > protocol`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_sg_items_protocol"></a>5.1.4.1.3.25.1.3.1.3. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > sg > sg items > protocol`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_sg_items_sgId"></a>5.1.4.1.3.23.1.3.1.4. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > sg > sg items > sgId`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_sg_items_sgId"></a>5.1.4.1.3.25.1.3.1.4. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > sg > sg items > sgId`
 
 |              |          |
 | ------------ | -------- |
@@ -4121,7 +4294,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 
 **Description:** Security group identifier for security group-based access control in network rules enabling
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_sg_items_suppressions"></a>5.1.4.1.3.23.1.3.1.5. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > sg > sg items > suppressions`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_sg_items_suppressions"></a>5.1.4.1.3.25.1.3.1.5. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > sg > sg items > suppressions`
 
 |              |         |
 | ------------ | ------- |
@@ -4140,7 +4313,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
 | [NagPackSuppression](#gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_sg_items_suppressions_items) | Interface for creating a rule suppression |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_sg_items_suppressions_items"></a>5.1.4.1.3.23.1.3.1.5.1. root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > sg > sg items > suppressions > NagPackSuppression
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_sg_items_suppressions_items"></a>5.1.4.1.3.25.1.3.1.5.1. root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > sg > sg items > suppressions > NagPackSuppression
 
 |                           |                                                                                                                                                                                                                                                                       |
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -4151,7 +4324,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 
 **Description:** Interface for creating a rule suppression
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_sg_items_toPort"></a>5.1.4.1.3.23.1.3.1.6. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > sg > sg items > toPort`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupEgressRules_sg_items_toPort"></a>5.1.4.1.3.25.1.3.1.6. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupEgressRules > sg > sg items > toPort`
 
 |              |          |
 | ------------ | -------- |
@@ -4160,7 +4333,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 
 **Description:** The ending port number for the security group rule defining the upper bound of the port range
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupId"></a>5.1.4.1.3.23.2. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupId`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_securityGroupId"></a>5.1.4.1.3.25.2. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > securityGroupId`
 
 |              |          |
 | ------------ | -------- |
@@ -4169,7 +4342,7 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 
 **Description:** Optional security group ID. If omitted, a new security group is created.
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_subnetIds"></a>5.1.4.1.3.23.3. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > subnetIds`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_subnetIds"></a>5.1.4.1.3.25.3. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > subnetIds`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -4190,14 +4363,14 @@ Validation: metricName and metricNamespace required; metricValue must be valid e
 | ------------------------------------------------------------------------------------------------------------- | ----------- |
 | [subnetIds items](#gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_subnetIds_items) | -           |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_subnetIds_items"></a>5.1.4.1.3.23.3.1. root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > subnetIds > subnetIds items
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_subnetIds_items"></a>5.1.4.1.3.25.3.1. root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > subnetIds > subnetIds items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_vpcId"></a>5.1.4.1.3.23.4. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > vpcId`
+###### <a name="gateways_additionalProperties_interceptors_items_lambdaFunction_vpcConfig_vpcId"></a>5.1.4.1.3.25.4. Property `root > gateways > additionalProperties > interceptors > interceptors items > lambdaFunction > vpcConfig > vpcId`
 
 |              |          |
 | ------------ | -------- |

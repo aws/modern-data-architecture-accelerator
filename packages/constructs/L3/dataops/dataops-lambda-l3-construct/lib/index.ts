@@ -4,3 +4,4 @@
  */
 
 export * from './dataops-lambda-l3-construct';
+export * from './sqs-queues';
