@@ -7,7 +7,7 @@ vectorStores:
     subnetIds:
       - "{{context:data_subnet_id_1}}"
       - "{{context:data_subnet_id_2}}"
-    # OpenSearch Serverless collection engine version for the vector store
+    # Aurora PostgreSQL engine version for the pgvector vector store
     engineVersion: '16.13'
 
 # Knowledge base configuration

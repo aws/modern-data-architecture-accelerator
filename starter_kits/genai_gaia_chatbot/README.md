@@ -14,7 +14,7 @@ This starter kit deploys a production-ready GenAI chatbot backend using Amazon B
 ## Capabilities
 
 - Cognito User Pool with email/password or enterprise SSO authentication
-- Bedrock Knowledge Base with OpenSearch Serverless vector store
+- Bedrock Knowledge Base with an Aurora PostgreSQL (pgvector) vector store
 - Bedrock Guardrails for content filtering and PII protection
 - KMS-encrypted S3 data lake for document storage
 - REST API (API Gateway) for session management, feedback, and admin operations

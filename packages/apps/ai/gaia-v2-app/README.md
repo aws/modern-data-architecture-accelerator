@@ -381,3 +381,37 @@ gaia:
     domainName: "{{context:domain_name}}"
     acmCertArn: arn:aws:acm:us-east-1:{{account}}:certificate/a1b2c3d4-e5f6-4789-a012-3456789abcde
 ```
+
+***
+
+## Teardown
+
+**Deleting the chatbot stack normally takes about 20 minutes.** The stack owns the `chatbot-api-sg` security group used by its VPC-attached Lambdas, and Lambda releases the attached [VPC network interfaces](https://docs.aws.amazon.com/lambda/latest/dg/foundation-networking.html#configuration-vpc-enis) asynchronously — up to 20 minutes after the functions themselves are gone. CloudFormation waits for that before it can delete the security group, so a single Lambda sits in `DELETE_IN_PROGRESS` for most of the run with no other output.
+
+That wait is expected, not a hang. Stopping the CLI does not stop the deletion — CloudFormation continues server-side — but **do not start deleting resources by hand**: Lambda needs the function execution role to release its interfaces, so removing the roles first orphans them. MDAA destroys the `roles` module last for this reason.
+
+If CloudFormation stops waiting before Lambda finishes, the stack fails with:
+
+```
+DependencyViolation: resource sg-xxxxxxxx has a dependent object
+```
+
+Wait 20–30 minutes and re-run `destroy` — it succeeds once the interfaces are released. To check first, confirm the list is empty or every interface reports `available`:
+
+```bash
+aws ec2 describe-network-interfaces \
+  --filters Name=group-id,Values=<sg-id> \
+  --query "NetworkInterfaces[].[NetworkInterfaceId,Status]" \
+  --output table
+```
+
+### Retained resources
+
+These survive teardown by design and must be deleted manually:
+
+| Retained | Notes |
+|---|---|
+| 3 DynamoDB tables | Chat sessions, user feedback, service interruption. **Deletion protection is enabled**, so chat history persists until you disable it and delete them. |
+| Cognito user pool | User records persist. |
+| 4 S3 buckets | Client and admin UI website buckets, plus a logging bucket for each. |
+| KMS key, 2 log groups | Regional WAF and REST API access logs. |

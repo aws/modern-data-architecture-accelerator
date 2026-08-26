@@ -122,7 +122,7 @@ You should see your MDAA stacks listed with a successful status.
 
 ## CLI Actions Reference
 
-The MDAA CLI supports four primary actions. Each action operates on the modules defined in your `mdaa.yaml` configuration file.
+The MDAA CLI supports five primary actions. Each action operates on the modules defined in your `mdaa.yaml` configuration file.
 
 | Action | Description | Example Command |
 |---|---|---|
@@ -130,6 +130,7 @@ The MDAA CLI supports four primary actions. Each action operates on the modules 
 | `synth` | Synthesize CloudFormation templates without deploying | `npx @aws-mdaa/cli synth -c <path to mdaa.yaml>` |
 | `diff` | Show the difference between deployed and pending changes | `npx @aws-mdaa/cli diff -c <path to mdaa.yaml>` |
 | `deploy` | Deploy all configured modules to your AWS account(s) | `npx @aws-mdaa/cli deploy -c <path to mdaa.yaml>` |
+| `destroy` | Destroy all deployed modules | `npx @aws-mdaa/cli destroy -c <path to mdaa.yaml>` |
 
 > **Tip:** Run `list` and `synth` before `deploy` to preview what will be created in your account.
 
@@ -137,7 +138,7 @@ The MDAA CLI supports four primary actions. Each action operates on the modules 
 
 ## Filtering Options
 
-You can scope any CLI action to a subset of your configuration using filters. Filters work with all actions (`list`, `synth`, `diff`, `deploy`).
+You can scope any CLI action to a subset of your configuration using filters. Filters work with all actions (`list`, `synth`, `diff`, `deploy`, `destroy`).
 
 ### Filter by Environment
 
@@ -275,6 +276,42 @@ If you need the same account-level settings shared across multiple domains or en
 
 ---
 
+## Teardown
+
+Remove a deployment with the `destroy` action:
+
+```bash
+npx @aws-mdaa/cli destroy -c mdaa.yaml
+```
+
+Modules are destroyed in reverse deployment order. Filters apply as they do to `deploy`.
+
+Resources with a `retain` removal policy survive teardown and must be deleted manually — across MDAA that typically means S3 buckets, KMS keys, DynamoDB tables, RDS clusters, and Cognito user pools. Some also carry deletion protection, which has to be turned off before the resource can be deleted. Check the module README for the specifics, and expect retained storage to keep billing until you remove it.
+
+### Security group `DependencyViolation` on destroy
+
+A module with VPC-attached Lambdas takes up to 20 minutes to delete. Lambda releases [VPC network interfaces](https://docs.aws.amazon.com/lambda/latest/dg/foundation-networking.html#configuration-vpc-enis) asynchronously, and CloudFormation waits for that before deleting a security group the stack created — so a Lambda sitting in `DELETE_IN_PROGRESS` with no other output is expected, not a hang.
+
+If CloudFormation stops waiting first, the stack fails with:
+
+```
+DependencyViolation: resource sg-xxxxxxxx has a dependent object
+```
+
+1. Wait 20–30 minutes, then re-run `destroy`.
+2. If it fails again, confirm the interfaces are released — the list is empty or every interface reports `available` — then delete any leftovers and re-run `destroy`:
+
+   ```bash
+   aws ec2 describe-network-interfaces \
+     --filters Name=group-id,Values=<sg-id> \
+     --query "NetworkInterfaces[].[NetworkInterfaceId,Status]" \
+     --output table
+   ```
+
+> **Do not delete the IAM roles first.** Lambda needs the function execution role to release its interfaces. MDAA destroys the `roles` module last for this reason.
+
+---
+
 ## Troubleshooting
 
 ### Common Deployment Errors
@@ -288,6 +325,7 @@ If you need the same account-level settings shared across multiple domains or en
 | `Resource already exists` on `/account-module-lock/<module>` SSM parameter | An account-level module (e.g., Glue Catalog, LakeFormation Settings, Macie Session, QuickSight Account) is already deployed to this account by another stack | Account-level modules can only be deployed once per account. Remove the existing deployment first, or share the single deployment across domains. See [Account-Level Modules](#account-level-modules) |
 | `Rate exceeded` or throttling errors | AWS API rate limits hit during large deployments | Re-run the deploy command — CDK will skip already-completed stacks and resume where it left off |
 | Stack stuck in `ROLLBACK_COMPLETE` | A previous deployment failed and the stack could not be cleaned up | Delete the failed stack manually (`aws cloudformation delete-stack --stack-name <name>`) and redeploy |
+| `DependencyViolation: resource sg-... has a dependent object` during `destroy` | Lambda VPC ENIs are still detaching from a security group the stack owns | Wait 20–30 minutes and re-run `destroy`. See [Security group `DependencyViolation` on destroy](#security-group-dependencyviolation-on-destroy) |
 
 ### Debugging Tips
 
@@ -299,7 +337,7 @@ If you need the same account-level settings shared across multiple domains or en
 ```bash
 aws cloudformation describe-stack-events \
   --stack-name <failed-stack-name> \
-  --query "StackEvents[?ResourceStatus=='CREATE_FAILED'].[LogicalResourceId, ResourceStatusReason]" \
+  --query "StackEvents[?ResourceStatus=='CREATE_FAILED' || ResourceStatus=='DELETE_FAILED'].[LogicalResourceId, PhysicalResourceId, ResourceStatusReason]" \
   --output table
 ```
 

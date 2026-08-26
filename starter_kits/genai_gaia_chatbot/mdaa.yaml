@@ -89,7 +89,7 @@ context:
   # TODO: Set private subnet ID 2
   app_subnet_id_2: <YOUR_SUBNET_ID_2>
 
-  # Data subnets - for OpenSearch Serverless (can be same as app subnets)
+  # Data subnets - for the Aurora PostgreSQL vector store (can be same as app subnets)
   # TODO: Set private subnet ID 1
   data_subnet_id_1: <YOUR_SUBNET_ID_1>
   # TODO: Set private subnet ID 2

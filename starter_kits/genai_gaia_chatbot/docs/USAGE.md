@@ -11,7 +11,7 @@ Once deployed, you should see the following in your AWS account:
 | Resource | Deployed Name / SSM Path | Config Reference |
 |----------|--------------------------|------------------|
 | Bedrock Knowledge Base | `<org>-dev-gaia-bedrock-builder-bedrock-knowledge-base`<br>`/<org>/gaia/bedrock-builder/knowledge-base/bedrock-knowledge-base/name` | `knowledgeBases.bedrock-knowledge-base` in [`config/bedrock-builder.yaml`](../config/bedrock-builder.yaml) |
-| OpenSearch Serverless Collection | `<org>-dev-gaia-bedrock-builder-knowledge-base-vector-store`<br>`/<org>/gaia/bedrock-builder/collection/knowledge-base-vector-store/name` | `vectorStores.knowledge-base-vector-store` in [`config/bedrock-builder.yaml`](../config/bedrock-builder.yaml) |
+| Aurora PostgreSQL Serverless v2 Cluster (pgvector vector store) | `<org>-dev-gaia-bedrock-builder-knowledge-base-vector-store`<br>`/<org>/gaia/bedrock-builder/cluster/knowledge-base-vector-store/endpoint` | `vectorStores.knowledge-base-vector-store` in [`config/bedrock-builder.yaml`](../config/bedrock-builder.yaml) |
 | S3 Bucket | `<org>-dev-gaia-datalake-knowledge-base`<br>`/<org>/gaia/datalake/bucket/knowledge-base/name` | `buckets.knowledge-base` in [`config/datalake.yaml`](../config/datalake.yaml) |
 | CloudFront Distribution | `<org>-dev-gaia-gaia-chatbot`<br>`/<org>/gaia/gaia-chatbot/distribution/name` | configured in [`config/gaia.yaml`](../config/gaia.yaml) |
 | Cognito User Pool | `<org>-dev-gaia-gaia-chatbot`<br>`/<org>/gaia/gaia-chatbot/user-pool/name` | `auth` in [`config/gaia.yaml`](../config/gaia.yaml) |
@@ -169,3 +169,44 @@ Uses AWS AppSync Events for streaming chat responses.
 | `config/bedrock-builder.yaml` | Knowledge base and guardrails |
 | `config/roles.yaml` | IAM roles and policies |
 | `config/datalake.yaml` | S3 buckets and access policies |
+
+---
+
+## Teardown
+
+```bash
+npx @aws-mdaa/cli destroy -c mdaa.yaml
+```
+
+**Expect the chatbot stack to take about 20 minutes.** Its Lambdas run in your VPC, and Lambda takes up to 20 minutes to release the network interfaces attached to the `chatbot-api-sg` security group. CloudFormation waits for that, so one Lambda sits in `DELETE_IN_PROGRESS` with no other output. That is expected, not a hang — let it finish, and do not start deleting resources by hand.
+
+Teardown can fail on that security group:
+
+```
+DependencyViolation: resource sg-xxxxxxxx has a dependent object
+```
+
+Wait 20–30 minutes and re-run `destroy`. **Do not delete the IAM roles first** — Lambda needs the function execution role to release its interfaces.
+
+### What teardown leaves behind
+
+These are retained by design. The Aurora cluster is the one to watch: it keeps billing until you delete it.
+
+| Module | Retained |
+|---|---|
+| `bedrock-builder` | Aurora PostgreSQL Serverless v2 cluster and its 2 instances — the knowledge base vector store |
+| `gaia-chatbot` | 3 DynamoDB tables (chat sessions, user feedback, service interruption), Cognito user pool, 4 S3 buckets (client and admin UI, plus logging) |
+| `datalake` | Knowledge base S3 bucket — uploaded documents survive |
+
+Each module also retains its KMS key and log groups.
+
+**Deletion protection is enabled** on the Aurora cluster and all three DynamoDB tables, so they cannot be deleted until you turn it off:
+
+```bash
+aws rds modify-db-cluster --db-cluster-identifier <id> --no-deletion-protection --apply-immediately
+aws dynamodb update-table --table-name <name> --no-deletion-protection-enabled
+```
+
+Chat history, user feedback, and Cognito user records all survive teardown as a result.
+
+Manual cleanup steps: [Deployment Guide](../../../DEPLOYMENT.md#teardown).
