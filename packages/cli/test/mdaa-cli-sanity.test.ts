@@ -6,7 +6,7 @@
 import { DuplicateAccountLevelModulesException } from '../lib/exceptions';
 import { getMdaaConfig } from '../lib/module-service';
 import { findDuplicates } from '../lib/utils';
-import { MdaaDeploy } from '../lib/mdaa-cli';
+import { MdaaDeploy } from '../lib/mdaa-deploy';
 import { createConfig, isAccountLevelModule } from './testing_utils';
 import { ConfigurationElement } from '@aws-mdaa/config';
 

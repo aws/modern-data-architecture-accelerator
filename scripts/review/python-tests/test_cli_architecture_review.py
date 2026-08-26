@@ -64,7 +64,7 @@ class TestPromptAndConfig:
         source = collect_full_source()
         assert "lib/config-field-policy.ts" in source
         assert "lib/shell-command.ts" in source
-        assert "lib/mdaa-cli.ts" in source
+        assert "lib/mdaa-deploy.ts" in source
 
     def test_security_tests_cover_validators_and_sinks(self):
         # The test/ glob must surface the validator/sink tests and the compile-time

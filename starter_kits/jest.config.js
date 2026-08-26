@@ -12,7 +12,7 @@ module.exports = {
     '^.+\\.tsx?$': 'ts-jest',
   },
   setupFiles: [path.resolve(__dirname, '../jest.setup.js')],
-  testTimeout: 600000,
+  testTimeout: 900000,
   coverageThreshold: {
     global: {
       branches: 0,

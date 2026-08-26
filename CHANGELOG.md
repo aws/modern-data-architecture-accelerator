@@ -2,7 +2,15 @@
 
 ## [NEXT_RELEASE_VERSION] - NEXT_RELEASE_DATE
 
+### Changed
+
+- **Terraform config now cascades child-over-parent** (`@aws-mdaa/cli`): when `terraform` keys are set at more than one level of the config hierarchy (global, domain, environment, module), the more specific level now wins. Previously the parent level won, which was inconsistent with every other cascaded field (`context`, `tag_config_data`, `custom_aspects`, `custom_naming`, `permissions_boundary_arn`). Projects that set the same `terraform.*` key — for example `terraform.override.*` — at both a parent and a child level will resolve to the opposite value than in 1.7.0, which can retarget Terraform state; re-check those configs before deploying.
+
 ### New Features
+
+- **`mdaa init` CLI command** — scaffold new MDAA configuration projects from starter kits with interactive prompts, or enhance existing config directories with AI steering files, JSON schemas, and module documentation. Supports Kiro, Claude Code, and GitHub Copilot out of the box. Pins `mdaa_version` in the generated `mdaa.yaml` to ensure deploy uses the same version as the schemas.
+
+- **`mdaa upgrade` CLI command** — upgrade `mdaa_version` in an existing project and refresh all `.mdaa/` assets (schemas, docs, steering). Old version directories are pruned automatically. Usage: `npx @aws-mdaa/cli@<new-version> upgrade`.
 
 #### CLI
 

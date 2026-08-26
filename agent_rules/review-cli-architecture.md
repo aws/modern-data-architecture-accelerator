@@ -157,7 +157,7 @@ or a value pushed into a command-argument array).
 This section is used by the automated CLI Architecture Review CI agent. When invoked, Kiro
 receives the `packages/cli` code diff, the full source of the security-critical files
 (`config-field-policy.ts`, `shell-command.ts`, `safe-command.ts`, the config interfaces,
-and the sink files `mdaa-cli.ts` / `utils.ts` / `package-helper.ts`), and the relevant
+and the sink files `mdaa-deploy.ts` / `config-resolver.ts` / `utils.ts` / `package-helper.ts`), and the relevant
 test files, and must produce structured JSON findings.
 
 ### JSON Output Schema

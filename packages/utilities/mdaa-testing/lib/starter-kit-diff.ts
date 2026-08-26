@@ -7,7 +7,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as os from 'node:os';
 import { Writable } from 'node:stream';
-import { spawnSync } from 'node:child_process';
+import { spawnSync, type SpawnSyncReturns } from 'node:child_process';
 import * as cxapi from 'aws-cdk-lib/cx-api';
 import { fullDiff, formatDifferences } from '@aws-cdk/cloudformation-diff';
 import { expect, test } from '@jest/globals';
@@ -253,6 +253,19 @@ const SYNTH_ENV = {
 };
 
 /**
+ * 15-minute cap on a single module synth, shared by the `spawnSync` timeout and the jest
+ * timeout of the test that drives it. The etl-job synth normally completes in ~50s, but
+ * under heavy CI runner contention it can balloon past a tighter cap and get SIGTERM'd
+ * (spawnSync returns `status: null`), producing a flaky failure. 900s gives generous
+ * headroom while still bounding a genuinely hung synth.
+ *
+ * One constant for both so the jest timeout cannot drift below the subprocess timeout —
+ * jest would then kill the test first, and the "killed by SIGTERM (ETIMEDOUT)" diagnostic
+ * in {@link synthFailureMessage} would never be reached.
+ */
+export const SYNTH_TIMEOUT_MS = 900_000;
+
+/**
  * Discover the directory the CDK CLI runs from for a given module by invoking
  * mdaa in --testing mode (which prints the command it would run, prefixed with
  * `cd '<modulePath>' && npx cdk synth ...`) without executing any synth.
@@ -317,7 +330,20 @@ export function seedCdkContext(
 
 /** Build the failure message for a non-zero mdaa synth exit. */
 export function synthFailureMessage(
-  result: { status: number | null; stderr?: Buffer | null; stdout?: Buffer | null },
+  result: {
+    status: number | null;
+    stderr?: Buffer | null;
+    stdout?: Buffer | null;
+    /**
+     * Set when the child was killed — SIGTERM for a spawnSync timeout, SIGKILL for an OOM kill.
+     * Derived from `SpawnSyncReturns` rather than written as `NodeJS.Signals`: that namespace is
+     * a type-only global from `@types/node`, invisible to eslint's scope analysis, so naming it
+     * directly trips `no-undef`.
+     */
+    signal?: SpawnSyncReturns<Buffer>['signal'];
+    /** Set when the child could not be spawned, or `ETIMEDOUT` when the timeout fired */
+    error?: Error & { code?: string };
+  },
   kitWorkDir: string,
   extraArgs: string,
 ): string {
@@ -327,10 +353,22 @@ export function synthFailureMessage(
   // cause (not just the trailing wrapper) is visible in CI logs.
   const stderr = result.stderr ? result.stderr.toString().slice(-8000) : '';
   const stdout = result.stdout ? result.stdout.toString().slice(-8000) : '';
+  // `status: null` on its own cannot tell a timeout from an OOM kill: a spawnSync timeout
+  // reports SIGTERM with error.code ETIMEDOUT, while the runner's memory limit reports
+  // SIGKILL. Raising the timeout only helps the former, so the message has to say which.
+  const errorCode = result.error?.code ? ` (${result.error.code})` : '';
+  const killedBy = `killed by ${result.signal ?? 'unknown signal'}${errorCode}`;
+  const cause = result.signal || result.error ? killedBy : `exit ${result.status}`;
+  const hint =
+    result.signal === 'SIGKILL' && !result.error?.code
+      ? '  Hint: SIGKILL with no ETIMEDOUT is an out-of-memory kill, not a timeout — raise ' +
+        'KUBERNETES_MEMORY_LIMIT for this kit rather than the synth timeout.\n'
+      : '';
   return (
-    `CDK synth failed (exit ${result.status}):\n` +
+    `CDK synth failed (${cause}):\n` +
     `  Command: mdaa synth ${extraArgs}\n` +
     `  Working dir: ${kitWorkDir}\n` +
+    hint +
     (stderr ? `  stderr (tail):\n${stderr}\n` : '') +
     (stdout ? `  stdout (tail):\n${stdout}\n` : '')
   );
@@ -368,7 +406,7 @@ export function runMdaaCli(
           NODE_OPTIONS: `--require "${synthSetup}"`,
         },
         stdio: ['pipe', 'pipe', 'pipe'],
-        timeout: 300_000,
+        timeout: SYNTH_TIMEOUT_MS,
       },
     );
 
@@ -755,7 +793,7 @@ export function baselineModuleSynth(
 ): void {
   const { baselinesDir } = resolveKitDirs(kitName);
 
-  test(`${domain}/${module} synth baseline`, async () => {
+  const runBaseline = async () => {
     const { Toolkit, DiffMethod, NonInteractiveIoHost } = await import('@aws-cdk/toolkit-lib');
     const { workDir, kitWorkDir } = prepareKit(kitName, context);
 
@@ -789,7 +827,11 @@ export function baselineModuleSynth(
     } finally {
       fs.rmSync(workDir, { recursive: true, force: true });
     }
-  }, 300_000);
+  };
+
+  // The same constant as the runMdaaCli spawnSync cap, so jest cannot kill the test before
+  // the synth subprocess timeout fires on a genuinely hung synth — and the two cannot drift.
+  test(`${domain}/${module} synth baseline`, runBaseline, SYNTH_TIMEOUT_MS);
 }
 
 /** Find the cloud assembly directory (deepest directory containing manifest.json). */

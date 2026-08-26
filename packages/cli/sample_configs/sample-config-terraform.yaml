@@ -38,15 +38,10 @@
 #
 # NOT covered:
 #   * apply (-auto-approve) and the validate/destroy branch -- one action per config.
-#   * `terraform` at two config levels. computeEffectiveTerraformConfig calls
-#     `_.mergeWith(child, parent.terraform)` with arguments inverted relative to every
-#     other merge helper, so the parent overwrites the child, and it mutates the caller's
-#     object in place (determineEnvEffectiveConfig guards the same hazard with
-#     `mergeWith({}, …)`; this call site does not). Needs `terraform:` at two levels,
-#     which requires terraform.override.
-#   * `terraform.override` -- crashes under --testing with ENOENT, because
-#     createTerraformOverride writes mdaa_override.tf.json into a directory whose
-#     `mkdir -p` goes through execCmd, which testMode no-ops.
+#   * `terraform` at two config levels, and `terraform.override` generally. Neither shows
+#     up in a command baseline: the override is written to mdaa_override.tf.json rather
+#     than interpolated into any command. terraform-hierarchy.test.ts covers the cascade
+#     by running the CLI and reading that file instead.
 region: us-east-1
 organization: test-org
 

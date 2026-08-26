@@ -153,6 +153,47 @@ describe('synthFailureMessage', () => {
     expect(msg).not.toContain('stderr (tail):');
     expect(msg).not.toContain('stdout (tail):');
   });
+
+  test('names the signal instead of the exit status when the child was killed', () => {
+    const msg = synthFailureMessage({ status: null, signal: 'SIGTERM' }, '/work', '');
+    expect(msg).toContain('killed by SIGTERM');
+    expect(msg).not.toContain('exit null');
+  });
+
+  test('appends the error code so a timeout is distinguishable from a bare kill', () => {
+    const msg = synthFailureMessage(
+      { status: null, signal: 'SIGTERM', error: Object.assign(new Error('timed out'), { code: 'ETIMEDOUT' }) },
+      '/work',
+      '',
+    );
+    expect(msg).toContain('killed by SIGTERM (ETIMEDOUT)');
+  });
+
+  test('falls back to "unknown signal" when an error is set but no signal is reported', () => {
+    const msg = synthFailureMessage(
+      { status: null, signal: null, error: Object.assign(new Error('spawn failed'), { code: 'ENOENT' }) },
+      '/work',
+      '',
+    );
+    expect(msg).toContain('killed by unknown signal (ENOENT)');
+  });
+
+  test('hints at the memory limit for a SIGKILL with no error code (an OOM kill)', () => {
+    const msg = synthFailureMessage({ status: null, signal: 'SIGKILL' }, '/work', '');
+    expect(msg).toContain('killed by SIGKILL');
+    expect(msg).toContain('out-of-memory kill');
+    expect(msg).toContain('KUBERNETES_MEMORY_LIMIT');
+  });
+
+  test('suppresses the memory hint when SIGKILL carries an error code', () => {
+    const msg = synthFailureMessage(
+      { status: null, signal: 'SIGKILL', error: Object.assign(new Error('timed out'), { code: 'ETIMEDOUT' }) },
+      '/work',
+      '',
+    );
+    expect(msg).toContain('killed by SIGKILL (ETIMEDOUT)');
+    expect(msg).not.toContain('KUBERNETES_MEMORY_LIMIT');
+  });
 });
 
 describe('findFiles', () => {

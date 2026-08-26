@@ -102,6 +102,26 @@ for pkg_dir in $(discover_packages); do
     continue
   fi
 
+  # Assets-only packages ship bundled content plus a stub entrypoint: there is no source
+  # to lint and nothing to unit test, so the canonical test/lint scripts cannot pass. They
+  # are listed explicitly rather than skipped by absence of a test script, which used to let
+  # a package escape every check — including the packaging properties that do apply.
+  _is_assets_only=false
+  if [[ "$pkg_dir" == "packages/utilities/init-assets" ]]; then
+    _is_assets_only=true
+  fi
+
+  if [ "$_is_assets_only" = true ]; then
+    # Packaging properties still apply: what ships, and that it isn't governed by .gitignore
+    if [ ! -f "${pkg_dir}/.npmignore" ]; then
+      fail "$pkg_dir" "Property 9 - .npmignore file is missing"
+    elif ! grep -q '^!\*\.js$' "${pkg_dir}/.npmignore"; then
+      fail "$pkg_dir" "Property 9 - .npmignore must contain '!*.js' to include compiled JavaScript"
+    fi
+
+    continue
+  fi
+
   test_val=$(read_script "$pkg_json" "test")
   if [ "$test_val" = "__MISSING__" ]; then
     continue

@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { ShellCommand } from '../lib/shell-command';
 import { shellQuote } from '../lib/platform-utils';
-import { MdaaDeploy } from '../lib/mdaa-cli';
+import { MdaaDeploy } from '../lib/mdaa-deploy';
 import * as packageHelper from '../lib/package-helper';
 
 // A corpus of values that carry shell meaning if left un-quoted. Every one of
@@ -171,7 +171,7 @@ describe('command-builder shell-injection guard (backstop to compile-time SafeCo
 
   // `unsafeCommand()` is the single audited escape hatch. Pin its call sites so a
   // new, unreviewed bypass can't be added silently: it may appear only in
-  // mdaa-cli.ts, only at the hook-command sink and the `--cdk-pushdown` mapping.
+  // mdaa-deploy.ts, only at the hook-command sink and the `--cdk-pushdown` mapping.
   //
   // Match on file + invocation count + a loose signature (the argument name) so a
   // cosmetic reformat, rename, or Prettier rewrap does NOT read as a security
@@ -191,11 +191,11 @@ describe('command-builder shell-injection guard (backstop to compile-time SafeCo
         callSites.push({ file: fileName, arg: match[1] });
       }
     }
-    // Exactly the two sanctioned sinks, both in mdaa-cli.ts: the transformed hook
+    // Exactly the two sanctioned sinks, both in mdaa-deploy.ts: the transformed hook
     // command, and each operator-supplied `--cdk-pushdown` arg.
     expect(callSites).toEqual([
-      { file: 'mdaa-cli.ts', arg: 'transformedHookCommand' },
-      { file: 'mdaa-cli.ts', arg: 'arg' },
+      { file: 'mdaa-deploy.ts', arg: 'transformedHookCommand' },
+      { file: 'mdaa-deploy.ts', arg: 'arg' },
     ]);
   });
 });
@@ -453,6 +453,20 @@ describe('remaining command sinks neutralize injection payloads', () => {
     // --prefix, so the payload is inside the quotes, never bare.
     expect(updateCmd).toContain("--prefix '/test/wd$(id)");
     expect(updateCmd).not.toMatch(/--prefix [^']*\$\(id\)/);
+  });
+
+  it('single-quotes an injection payload in the npm-view version-resolution sink (init-schemas.ts)', () => {
+    // resolveVersionConstraint() in init-schemas.ts gates real input through a
+    // semver-range regex before it reaches this sink, so a metacharacter-bearing
+    // payload never arrives here in practice. This test isolates the sink itself
+    // — reproducing the exact ShellCommand construction from resolveVersionConstraint
+    // — so its quoting is pinned independently of that upstream validator, per
+    // invariant 2 (every sink quotes its input by construction).
+    const payload = '1.7.0$(id)';
+    const cmd = ShellCommand.for('npm').flags('view').arg(`@aws-mdaa/cli@${payload}`).flags('version').build();
+    expect(cmd).toContain(shellQuote(`@aws-mdaa/cli@${payload}`));
+    // Never bare: the `$(id)` must sit inside the single-quoted token, not outside it.
+    expect(cmd).not.toMatch(/\$\(id\)(?!')/);
   });
 });
 

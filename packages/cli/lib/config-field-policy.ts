@@ -77,7 +77,10 @@ const NAMING_CLASS_PATTERN = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
 // it admits full node-semver range syntax (comparators, `*`, `|`, spaces, `^`/`~`,
 // dist-tags). Shell-significant chars here are made inert by sink quoting; this
 // only excludes the substitution/chaining/break-out set and `/` (never in a specifier).
-const MDAA_VERSION_PATTERN = /^[A-Za-z0-9._~^+|*<>= -]+$/;
+// Exported because `mdaa init`/`mdaa upgrade` read `mdaa_version` directly out of
+// mdaa.yaml without going through `MdaaCliConfig` (see {@link ./init-version}), and
+// the two readers must not drift on what a legal pin is.
+export const MDAA_VERSION_PATTERN = /^[A-Za-z0-9._~^+|*<>= -]+$/;
 
 function validateName(value: string, context: string): void {
   if (!NAME_PATTERN.test(value)) {

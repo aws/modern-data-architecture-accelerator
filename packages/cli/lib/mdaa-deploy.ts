@@ -19,8 +19,8 @@ import {
   logExecutionError,
   logImmediate,
 } from './command-utils';
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import {
   isWindows,
   setEnvCmd,
@@ -47,7 +47,6 @@ import {
   MdaaDomainConfig,
   MdaaEnvironmentConfig,
   MdaaModuleConfig,
-  TerraformConfig,
 } from './mdaa-cli-config-parser';
 import { Deployment } from './deployment-types';
 import { getMdaaConfig } from './module-service';
@@ -61,6 +60,16 @@ import {
 import { findDuplicates, generateContextCdkParams, isBoolean } from './utils';
 import { ShellCommand } from './shell-command';
 import { SafeCommand, staticCommand, unsafeCommand, joinCommands } from './safe-command';
+import {
+  computeEffectiveContext,
+  computeEffectiveCustomAspects,
+  computeEffectiveCustomNaming,
+  computeEffectiveMdaaVersion,
+  computeEffectivePermissionsBoundaryArn,
+  computeEffectiveTagConfig,
+  computeEffectiveTagConfigFiles,
+  computeEffectiveTerraformConfig,
+} from './config-resolver';
 
 /** Default MDAA configuration file name */
 const DEFAULT_CONFIG_FILE = './mdaa.yaml';
@@ -733,6 +742,9 @@ export class MdaaDeploy {
           key: `${this.config.contents.organization}-${moduleConfig.domainName}-${moduleConfig.envName}-${moduleConfig.moduleName}`,
         };
       }
+      // The working-dir copy is created by a shelled `mkdir -p` that testMode no-ops, so
+      // ensure the directory here rather than failing the write with ENOENT.
+      fs.mkdirSync(path.dirname(overridePath), { recursive: true });
       fs.writeFileSync(overridePath, JSON.stringify(mdaaTfOverride));
     }
   }
@@ -935,7 +947,9 @@ export class MdaaDeploy {
       return;
     }
 
-    const { stdout, exitCode } = executeCommandWithCapture(cmd);
+    const { stdout, stderr, exitCode, signal } = executeCommandWithCapture(cmd);
+    // cdk writes some of its diff commentary to stderr, so the artifact keeps both
+    const output = stdout + stderr;
 
     // Write diff output to file (always, so output is preserved for debugging)
     const diffOutPath = path.join(
@@ -944,21 +958,21 @@ export class MdaaDeploy {
       this.modulePrefix(moduleDeploymentConfig),
     );
     this.execCmd(mkdirpCmd(diffOutPath));
-    fs.writeFileSync(path.join(diffOutPath, 'diff.txt'), stdout);
+    fs.writeFileSync(path.join(diffOutPath, 'diff.txt'), output);
 
     const modulePrefix = this.modulePrefix(moduleDeploymentConfig);
 
     // cdk diff exits 1 when differences exist (normal) and >= 2 on actual errors.
-    // Fail fast on real errors, consistent with how deploy/synth behave.
-    if (exitCode >= 2) {
-      console.error(
-        `Module ${modulePrefix}: Diff command failed (exit code ${exitCode}) - see ${diffOutPath}/diff.txt`,
-      );
-      throw new Error(`Diff failed for module ${modulePrefix} with exit code ${exitCode}`);
+    // Fail fast on real errors, consistent with how deploy/synth behave. A negative
+    // code means the child was killed or never ran, which is likewise not a diff result.
+    if (exitCode >= 2 || exitCode < 0) {
+      const cause = signal ? `killed by ${signal}` : `exit code ${exitCode}`;
+      console.error(`Module ${modulePrefix}: Diff command failed (${cause}) - see ${diffOutPath}/diff.txt`);
+      throw new Error(`Diff failed for module ${modulePrefix} (${cause})`);
     }
 
     // Print summary to console
-    const hasChanges = exitCode === 1 || !stdout.includes('There were no differences');
+    const hasChanges = exitCode === 1 || !output.includes('There were no differences');
     if (hasChanges) {
       console.log(`Module ${modulePrefix}: Changes detected - see ${diffOutPath}/diff.txt`);
     } else {
@@ -1237,16 +1251,16 @@ export class MdaaDeploy {
       ...globalEffectiveConfig,
       domainName: domainName,
       envTemplates: { ...globalEffectiveConfig.envTemplates, ...domain.env_templates },
-      effectiveContext: this.computeEffectiveContext(globalEffectiveConfig, domain.context),
-      effectiveTagConfig: this.computeEffectiveTagConfig(globalEffectiveConfig, domain.tag_config_data),
-      tagConfigFiles: this.computeEffectiveTagConfigFiles(globalEffectiveConfig, domain.tag_configs),
-      effectiveMdaaVersion: this.computeEffectiveMdaaVersion(globalEffectiveConfig, this.config.contents.mdaa_version),
-      customAspects: this.computeEffectiveCustomAspects(globalEffectiveConfig, domain.custom_aspects),
-      customNaming: this.computeEffectiveCustomNaming(globalEffectiveConfig, domain.custom_naming),
-      terraform: this.computeEffectiveTerraformConfig(globalEffectiveConfig, domain.terraform),
+      effectiveContext: computeEffectiveContext(globalEffectiveConfig, domain.context),
+      effectiveTagConfig: computeEffectiveTagConfig(globalEffectiveConfig, domain.tag_config_data),
+      tagConfigFiles: computeEffectiveTagConfigFiles(globalEffectiveConfig, domain.tag_configs),
+      effectiveMdaaVersion: computeEffectiveMdaaVersion(globalEffectiveConfig, domain.mdaa_version),
+      customAspects: computeEffectiveCustomAspects(globalEffectiveConfig, domain.custom_aspects),
+      customNaming: computeEffectiveCustomNaming(globalEffectiveConfig, domain.custom_naming),
+      terraform: computeEffectiveTerraformConfig(globalEffectiveConfig, domain.terraform),
       deployAccount: domain.account ?? globalEffectiveConfig.deployAccount,
       deployRegion: domain.region ?? globalEffectiveConfig.deployRegion,
-      permissionsBoundaryArn: this.computeEffectivePermissionsBoundaryArn(
+      permissionsBoundaryArn: computeEffectivePermissionsBoundaryArn(
         globalEffectiveConfig,
         domain.permissions_boundary_arn,
       ),
@@ -1264,14 +1278,14 @@ export class MdaaDeploy {
       deployAccount: env.account ?? domainEffectiveConfig.deployAccount,
       deployRegion: env.region ?? domainEffectiveConfig.deployRegion,
       useBootstrap: env.use_bootstrap == undefined || env.use_bootstrap,
-      effectiveContext: this.computeEffectiveContext(domainEffectiveConfig, env.context),
-      effectiveTagConfig: this.computeEffectiveTagConfig(domainEffectiveConfig, env.tag_config_data),
-      tagConfigFiles: this.computeEffectiveTagConfigFiles(domainEffectiveConfig, env.tag_configs),
-      effectiveMdaaVersion: this.computeEffectiveMdaaVersion(domainEffectiveConfig, env.mdaa_version),
-      customAspects: this.computeEffectiveCustomAspects(domainEffectiveConfig, env.custom_aspects),
-      customNaming: this.computeEffectiveCustomNaming(domainEffectiveConfig, env.custom_naming),
-      terraform: this.computeEffectiveTerraformConfig(domainEffectiveConfig, env.terraform),
-      permissionsBoundaryArn: this.computeEffectivePermissionsBoundaryArn(
+      effectiveContext: computeEffectiveContext(domainEffectiveConfig, env.context),
+      effectiveTagConfig: computeEffectiveTagConfig(domainEffectiveConfig, env.tag_config_data),
+      tagConfigFiles: computeEffectiveTagConfigFiles(domainEffectiveConfig, env.tag_configs),
+      effectiveMdaaVersion: computeEffectiveMdaaVersion(domainEffectiveConfig, env.mdaa_version),
+      customAspects: computeEffectiveCustomAspects(domainEffectiveConfig, env.custom_aspects),
+      customNaming: computeEffectiveCustomNaming(domainEffectiveConfig, env.custom_naming),
+      terraform: computeEffectiveTerraformConfig(domainEffectiveConfig, env.terraform),
+      permissionsBoundaryArn: computeEffectivePermissionsBoundaryArn(
         domainEffectiveConfig,
         env.permissions_boundary_arn,
       ),
@@ -1308,64 +1322,17 @@ export class MdaaDeploy {
       allow_cross_reference_stack: mdaaModule.allow_cross_reference_stack,
       additionalStacks: additionalStacks,
       mdaaCompliant: mdaaModule.mdaa_compliant,
-      effectiveContext: this.computeEffectiveContext(envEffectiveConfig, mdaaModule.context),
-      effectiveTagConfig: this.computeEffectiveTagConfig(envEffectiveConfig, mdaaModule.tag_config_data),
-      effectiveMdaaVersion: this.computeEffectiveMdaaVersion(envEffectiveConfig, mdaaModule.mdaa_version),
-      tagConfigFiles: this.computeEffectiveTagConfigFiles(envEffectiveConfig, mdaaModule.tag_configs),
-      customAspects: this.computeEffectiveCustomAspects(envEffectiveConfig, mdaaModule.custom_aspects),
-      customNaming: this.computeEffectiveCustomNaming(envEffectiveConfig, mdaaModule.custom_naming),
-      terraform: this.computeEffectiveTerraformConfig(envEffectiveConfig, mdaaModule.terraform),
+      effectiveContext: computeEffectiveContext(envEffectiveConfig, mdaaModule.context),
+      effectiveTagConfig: computeEffectiveTagConfig(envEffectiveConfig, mdaaModule.tag_config_data),
+      effectiveMdaaVersion: computeEffectiveMdaaVersion(envEffectiveConfig, mdaaModule.mdaa_version),
+      tagConfigFiles: computeEffectiveTagConfigFiles(envEffectiveConfig, mdaaModule.tag_configs),
+      customAspects: computeEffectiveCustomAspects(envEffectiveConfig, mdaaModule.custom_aspects),
+      customNaming: computeEffectiveCustomNaming(envEffectiveConfig, mdaaModule.custom_naming),
+      terraform: computeEffectiveTerraformConfig(envEffectiveConfig, mdaaModule.terraform),
       deployAccount: envEffectiveConfig.deployAccount,
       deployRegion: envEffectiveConfig.deployRegion,
       predeploy: mdaaModule.predeploy,
       postdeploy: mdaaModule.postdeploy,
-    };
-  }
-
-  private computeEffectiveTerraformConfig(
-    parent: EffectiveConfig,
-    child?: TerraformConfig,
-  ): TerraformConfig | undefined {
-    // nosemgrep
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const _ = require('lodash');
-    return _.mergeWith(child, parent.terraform);
-  }
-
-  private computeEffectiveCustomNaming(
-    parent: EffectiveConfig,
-    child?: MdaaCustomNaming,
-  ): MdaaCustomNaming | undefined {
-    return child ?? parent.customNaming;
-  }
-
-  private computeEffectiveCustomAspects(parent: EffectiveConfig, child?: MdaaCustomAspect[]): MdaaCustomAspect[] {
-    return [...(parent.customAspects ?? []), ...(child ?? [])];
-  }
-
-  private computeEffectiveTagConfigFiles(parent: EffectiveConfig, child?: string[]): string[] {
-    return [...(parent.tagConfigFiles ?? []), ...(child ?? [])];
-  }
-
-  private computeEffectiveMdaaVersion(parent: EffectiveConfig, child?: string): string | undefined {
-    return child || parent.effectiveMdaaVersion;
-  }
-
-  private computeEffectivePermissionsBoundaryArn(parent: EffectiveConfig, child?: string): string | undefined {
-    return child ?? parent.permissionsBoundaryArn;
-  }
-
-  private computeEffectiveTagConfig(parent: EffectiveConfig, child?: TagElement): TagElement {
-    return {
-      ...parent.effectiveTagConfig,
-      ...child,
-    };
-  }
-
-  private computeEffectiveContext(parent: EffectiveConfig, child?: ConfigurationElement): ConfigurationElement {
-    return {
-      ...parent.effectiveContext,
-      ...child,
     };
   }
 

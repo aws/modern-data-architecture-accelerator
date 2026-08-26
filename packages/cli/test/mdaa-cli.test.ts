@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaDeploy } from '../lib/mdaa-cli';
+import { MdaaDeploy } from '../lib/mdaa-deploy';
 import * as fs from 'fs';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports

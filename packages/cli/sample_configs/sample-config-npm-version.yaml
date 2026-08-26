@@ -9,9 +9,6 @@
 # install-prefix hash; and `-c log_suppressions`.
 #
 # DEFECTS pinned by this baseline (fix the CLI and regenerate, never edit a baseline):
-#   * mdaa_version at DOMAIN level is ignored -- computeDomainEffectiveConfig passes
-#     `this.config.contents.mdaa_version` where every sibling field passes
-#     `domain.<field>`, so module-a resolves to 1.0.0-global, not 2.0.0-domain.
 #   * An npm-packaged custom_naming.naming_module is installed, then discarded:
 #     createCdkCommand (inside prepCdkModule) emits the raw package name because it runs
 #     before computeEnvDeployStages builds the installed path. The CDK app receives a
@@ -38,14 +35,14 @@ log_suppressions: true
 
 domains:
   npm-domain:
-    # Ignored by the CLI -- see the domain-level defect above.
+    # Domain level, between global and env.
     mdaa_version: '2.0.0-domain'
     environments:
       env-inherits-domain:
         account: default
         use_bootstrap: false
         modules:
-          # Resolves to 1.0.0-global, not the 2.0.0-domain set above.
+          # Inherits 2.0.0-domain from the domain level above.
           mod-inherits-domain:
             module_path: '@not-a-real-scope/module-a'
           # Module level wins over domain and global.

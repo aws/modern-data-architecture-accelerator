@@ -2,7 +2,8 @@
 #
 # Pins the global -> domain -> env -> module merge semantics implemented by
 # computeDomainEffectiveConfig / computeEnvEffectiveConfig /
-# computeModuleEffectiveConfig (lib/mdaa-cli.ts). Every mergeable field is set at
+# computeModuleEffectiveConfig (lib/mdaa-deploy.ts, cascade helpers in
+# lib/config-resolver.ts). Every mergeable field is set at
 # EVERY level with a level-distinguishable value, so the committed command
 # baseline records which level won for each field:
 #
@@ -11,19 +12,16 @@
 #   custom_aspects                 ACCUMULATE (computeEffectiveCustomAspects)
 #   custom_naming                  REPLACE    (computeEffectiveCustomNaming, child ?? parent)
 #   mdaa_version                   child || parent  (falsy '' falls through, unlike ??)
-#                                  -- but only at the global/env/module levels; the
-#                                     DOMAIN level is ignored, see KNOWN DEFECT 1 below
 #   permissions_boundary_arn       child ?? parent
+#   terraform                      shallow-merge, child key wins (see
+#                                  terraform-hierarchy.test.ts — not visible in a
+#                                  command baseline)
 #
 # 2 domains x 2 envs x 2 modules also pins deploy ordering and per-module emission. All
 # modules use @aws-mdaa/roles as an inert stand-in; module_configs paths are resolved but
 # never opened under --testing, so they need not exist.
 #
 # DEFECTS pinned by this baseline (fix the CLI and regenerate, never edit a baseline):
-#   * mdaa_version at DOMAIN level is ignored: computeDomainEffectiveConfig passes
-#     `this.config.contents.mdaa_version` where every sibling field passes
-#     `domain.<field>`. domain-a sets 2.0.0-domain, yet domain-a/env-2/* install
-#     1.0.0-global. The env and module levels win correctly, so only the domain is dead.
 #   * Any mdaa_version forces a LOCAL workspace package onto the npm-install path:
 #     prepNpmPackage tests the VERSIONED specifier against the workspace map, and
 #     '@aws-mdaa/roles@4.0.0-module' is not a key even though '@aws-mdaa/roles' is. Hence

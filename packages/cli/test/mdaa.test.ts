@@ -29,7 +29,7 @@ describe('MDAA CLI', () => {
   });
 
   test('MdaaDeploy is importable', () => {
-    const { MdaaDeploy } = require('../lib/mdaa-cli');
+    const { MdaaDeploy } = require('../lib/mdaa-deploy');
     expect(MdaaDeploy).toBeDefined();
   });
 });

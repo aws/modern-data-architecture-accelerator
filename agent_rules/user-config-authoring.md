@@ -7,9 +7,7 @@ globs:
 
 # MDAA Configuration Authoring Standards
 
-When creating or editing MDAA configuration files (`mdaa.yaml`, module configs, starter kits), follow these guidelines. Full reference: #[[file:CONFIGURATION.md]].
-
-**Not applicable to `packages/cli/sample_configs/`.** Those files are CLI command baseline fixtures, not deployable configs. They deliberately hardcode values and carry adversarial shell payloads, and must not use SSM references — those resolve inside a construct scope during synth and throw during CLI config resolution. See [CLI](../TESTING.md#cli) in `TESTING.md` before editing one.
+When creating or editing MDAA configuration files (`mdaa.yaml`, module configs, starter kits), follow these guidelines. Full reference: [the MDAA configuration guide](../CONFIGURATION.md).
 
 ## Finding the Right Module
 
@@ -29,7 +27,7 @@ Each config file references its JSON schema via the `# yaml-language-server: $sc
 
 ## 1. Use dynamic references instead of hardcoded values
 
-Never hardcode account IDs, regions, ARNs, or cross-module values. Use the dynamic reference system described in the [Dynamic References](../CONFIGURATION.md#dynamic-references) section of CONFIGURATION.md.
+Never hardcode account IDs, regions, ARNs, or cross-module values. Use the dynamic reference system described in the [Dynamic References](../CONFIGURATION.md#dynamic-references) section of the configuration guide.
 
 Preferred patterns, in order:
 
@@ -55,26 +53,23 @@ catalogKeyAlias: glue-catalog-key
 catalogKeyAlias: glue-catalog-key
 ```
 
-### Keep them short, and don't restate the schema
+### Keep them short
 
-One or two lines per property. The config interface's JSDoc is the canonical description — it generates `config-schema.json` and `SCHEMA.md`, so a comment that paraphrases it creates a second copy that goes stale on the next schema change.
-
-A sample-config comment answers only "what do I set here, and what happens if I do?" Rationale, security background, version prerequisites, and warnings about neighbouring properties belong in the JSDoc and the module README.
+One or two lines per property, answering "what do I set here, and what happens if I do?". The module's JSON schema and README carry the rest — rationale, security background, version prerequisites, and warnings about neighbouring properties — so a comment that restates them creates a second copy that goes stale.
 
 ```yaml
 # Good — actionable at the point of use, points at the canonical source
 # (Optional) Env vars for the container. MDAA injects
 # UNIFIED_TRACES_DESTINATION_ENABLED: 'true' (spans -> this agent's own
-# protected log group); a value set here wins. See SCHEMA.md for the full contract.
+# protected log group); a value set here wins. See the module schema for the full contract.
 environmentVariables:
   ENVIRONMENT: test
 
-# Bad — 15 lines restating the JSDoc: why the default exists, which PII it
+# Bad — 15 lines restating the schema: why the default exists, which PII it
 # protects, the ADOT version floor, and a warning about OTEL_* variables.
-# All of that is already in the config interface and the README.
 ```
 
-Signs a comment has outgrown a sample config: it explains _why_ a default was chosen, names a threat or compliance control, cites a dependency version, or warns against a property that isn't in this file. Cut to the actionable sentence and let the schema carry the rest.
+Signs a comment has outgrown a config file: it explains _why_ a default was chosen, names a threat or compliance control, cites a dependency version, or warns against a property that isn't in this file. Cut to the actionable sentence and let the schema carry the rest.
 
 For module entries in `mdaa.yaml`, include a comment describing the module's purpose:
 
@@ -138,15 +133,9 @@ Lines marked `# TODO: Review the below...` contain commented-out CDK Nag suppres
 
 ## 7. Deploying
 
-- `npx mdaa ls` — list stacks that will be deployed
-- `npx mdaa synth` — synthesize CloudFormation templates for review
-- `npx mdaa deploy` — deploy all modules
-- `npx mdaa diff` — show what will change on next deploy
+- `npx @aws-mdaa/cli ls` — list stacks that will be deployed
+- `npx @aws-mdaa/cli synth` — synthesize CloudFormation templates for review
+- `npx @aws-mdaa/cli deploy` — deploy all modules
+- `npx @aws-mdaa/cli diff` — show what will change on next deploy
 
-## 8. Adding a new config field: extend the comprehensive sample by default
-
-When you add a new optional config field to a module, **add it to the existing comprehensive sample config** (and let its baseline regenerate) rather than creating a new standalone `sample-config-<feature>.yaml`. Most fields are purely additive (like `dataProtection`, `logRetentionDays`, `alarms`) and belong alongside the other options in the comprehensive config, which exists to demonstrate every available option together.
-
-**Only create a new dedicated sample config when the new field is incompatible with the comprehensive sample** — i.e. it is mutually exclusive with at least one field already present there, so the two cannot coexist in one valid config. Examples in the AgentCore Runtime module: `codePath` (mutually exclusive with the comprehensive config's `containerUri`) and `enforceVpcOnly` variants. In those cases the standalone config + its own `baselineDiffTestApp` entry + baseline are required, because the branch cannot be exercised from the comprehensive config.
-
-This complements the testing-standards rule "mutually exclusive config branches each have dedicated sample configs and tests": that rule is the _exception_, and extending the comprehensive config is the _default_. Internal mutually-exclusive branches of an otherwise-additive field (e.g. `alarms.notificationTopicArn` vs `alarms.createNotificationTopic`) are covered by L3 construct unit tests, not by separate app-level sample configs.
+Add `@<version>` to match the version pinned in `mdaa.yaml` (e.g. `npx @aws-mdaa/cli@1.7.0 deploy`).

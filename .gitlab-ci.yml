@@ -1027,6 +1027,15 @@ feature_build_test:
   allow_failure: false
   variables:
     NX_RUN_ALL: 'true'
+    # Bound nx package-level parallelism and per-process heap to avoid OOMKills.
+    # Without BUILD_CONCURRENCY, test_repo.sh falls back to the pod CPU request
+    # (32 on .size_3xlarge), spawning 32 uncapped Node processes that exceed the
+    # 64Gi limit. Mirrors feature_merge_build_test. Jest workers are already
+    # capped at 1 per package via --maxWorkers in test_repo.sh. `npm run build`
+    # is unaffected: build_repo.sh runs `nx run-many -t build --all` with no
+    # --parallel, so nx uses its own default there.
+    BUILD_CONCURRENCY: '8'
+    NODE_OPTIONS: '--max-old-space-size=3072'
   script:
     - npm run build
     - ./scripts/ci/check_schema_drift.sh

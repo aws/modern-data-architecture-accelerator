@@ -1,0 +1,23 @@
+# The root .gitignore is a bare `*.js`, so index.js is not tracked in git. npm falls back
+# to .gitignore when no .npmignore exists, which would exclude it from the tarball — this
+# file exists to stop that. `files` in package.json is the actual allowlist.
+
+# Don't include original .ts files when doing `npm pack`
+*.ts
+*.tsbuildinfo
+tsconfig.json
+
+# dev-related files
+coverage
+test/
+
+# pack output
+*.tgz
+
+# Include the entrypoint, the bundled assets, and the bundling script that `prepack` runs
+!*.js
+!docs/**
+!steering/**
+!scripts/**
+
+jest.config.js

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaDeploy } from '../lib/mdaa-cli';
+import { MdaaDeploy } from '../lib/mdaa-deploy';
 import { ModuleDeploymentConfig } from '../lib/config-types';
 import { staticCommand } from '../lib/safe-command';
 import { itintegration } from './testing_utils';

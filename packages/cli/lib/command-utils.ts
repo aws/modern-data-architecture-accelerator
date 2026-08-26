@@ -27,11 +27,26 @@ export function executeCommand(cmd: SafeCommand): void {
 }
 
 export interface CapturedOutput {
+  /** Child stdout only — kept separate so callers parsing output aren't fed warnings */
   stdout: string;
+  stderr: string;
+  /**
+   * Child exit status, or -1 when the child was killed by a signal or never ran. A
+   * signal-killed child reports `status: null`, which must not read as success.
+   */
   exitCode: number;
+  /** Set when the child was killed by a signal (including a timeout's SIGTERM) */
+  signal: string | null;
+  /** Set when the child could not be spawned, or was killed by a timeout (ETIMEDOUT) */
+  error?: Error;
 }
 
-export function executeCommandWithCapture(cmd: SafeCommand): CapturedOutput {
+export interface CaptureOptions {
+  /** Kill the child after this many ms. Unbounded when omitted. */
+  readonly timeoutMs?: number;
+}
+
+export function executeCommandWithCapture(cmd: SafeCommand, options?: CaptureOptions): CapturedOutput {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { spawnSync } = require('node:child_process');
 
@@ -41,15 +56,19 @@ export function executeCommandWithCapture(cmd: SafeCommand): CapturedOutput {
     encoding: 'utf-8',
     env: process.env,
     stdio: ['inherit', 'pipe', 'pipe'],
+    ...(options?.timeoutMs ? { timeout: options.timeoutMs } : {}),
   };
   const result = spawnSync(cmd, spawnOptions); // NOSONAR
 
-  // Combine stdout and stderr
-  const output = (result.stdout || '') + (result.stderr || '');
-
+  const signal = result.signal ?? null;
   return {
-    stdout: output,
-    exitCode: result.status ?? 0,
+    stdout: result.stdout || '',
+    stderr: result.stderr || '',
+    // `status` is null for a signal kill and for a spawn failure; treating either as 0
+    // would report a killed child as a successful one and cache its partial output.
+    exitCode: result.status ?? (signal || result.error ? -1 : 0),
+    signal,
+    error: result.error,
   };
 }
 

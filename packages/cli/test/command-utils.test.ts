@@ -110,7 +110,7 @@ describe('executeCommandWithCapture', () => {
     );
   });
 
-  it('should combine stdout and stderr in output', () => {
+  it('should keep stdout and stderr separate so callers parsing stdout are not fed warnings', () => {
     mockSpawnSync.mockReturnValue({
       stdout: 'stdout content',
       stderr: 'stderr content',
@@ -119,8 +119,51 @@ describe('executeCommandWithCapture', () => {
 
     const result = executeCommandWithCapture(staticCommand('some-command'));
 
-    expect(result.stdout).toBe('stdout contentstderr content');
+    expect(result.stdout).toBe('stdout content');
+    expect(result.stderr).toBe('stderr content');
     expect(result.exitCode).toBe(0);
+  });
+
+  it('should report a signal-killed child as a failure, not a success', () => {
+    // A killed child has status null; reading that as 0 would treat its partial
+    // output as a complete, successful result.
+    mockSpawnSync.mockReturnValue({
+      stdout: 'partial',
+      stderr: '',
+      status: null,
+      signal: 'SIGKILL',
+    });
+
+    const result = executeCommandWithCapture(staticCommand('killed-command'));
+
+    expect(result.exitCode).toBe(-1);
+    expect(result.signal).toBe('SIGKILL');
+  });
+
+  it('should report a child that could not be spawned as a failure', () => {
+    const error = new Error('spawn ENOENT');
+    mockSpawnSync.mockReturnValue({ stdout: '', stderr: '', status: null, error });
+
+    const result = executeCommandWithCapture(staticCommand('missing-binary'));
+
+    expect(result.exitCode).toBe(-1);
+    expect(result.error).toBe(error);
+  });
+
+  it('should pass a timeout through to spawnSync when one is given', () => {
+    mockSpawnSync.mockReturnValue({ stdout: 'out', stderr: '', status: 0 });
+
+    executeCommandWithCapture(staticCommand('slow-command'), { timeoutMs: 30_000 });
+
+    expect(mockSpawnSync).toHaveBeenCalledWith('slow-command', expect.objectContaining({ timeout: 30_000 }));
+  });
+
+  it('should not set a timeout when none is given', () => {
+    mockSpawnSync.mockReturnValue({ stdout: 'out', stderr: '', status: 0 });
+
+    executeCommandWithCapture(staticCommand('command'));
+
+    expect(mockSpawnSync.mock.calls[0][1]).not.toHaveProperty('timeout');
   });
 
   it('should return non-zero exit code on command failure', () => {
@@ -132,7 +175,8 @@ describe('executeCommandWithCapture', () => {
 
     const result = executeCommandWithCapture(staticCommand('failing-command'));
 
-    expect(result.stdout).toBe('partial outputerror message');
+    expect(result.stdout).toBe('partial output');
+    expect(result.stderr).toBe('error message');
     expect(result.exitCode).toBe(1);
   });
 
@@ -149,7 +193,7 @@ describe('executeCommandWithCapture', () => {
     expect(result.exitCode).toBe(0);
   });
 
-  it('should default to exit code 0 when status is null', () => {
+  it('should default to exit code 0 when status is null with no signal or error', () => {
     mockSpawnSync.mockReturnValue({
       stdout: 'output',
       stderr: '',
@@ -159,5 +203,6 @@ describe('executeCommandWithCapture', () => {
     const result = executeCommandWithCapture(staticCommand('command'));
 
     expect(result.exitCode).toBe(0);
+    expect(result.signal).toBeNull();
   });
 });

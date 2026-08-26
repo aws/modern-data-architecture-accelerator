@@ -14,6 +14,8 @@ mdaa <action> [options]
 
 ### Actions
 
+- `init` - Scaffold a new MDAA config project from a starter kit, or enhance an existing config directory with schemas, docs, and AI steering
+- `upgrade` - Upgrade `mdaa_version` in `mdaa.yaml` and refresh all `.mdaa/` assets (schemas, docs, steering)
 - `synth` - Synthesize CloudFormation templates for all modules
 - `diff` - Show differences between current code and deployed stacks (or baseline templates)
 - `deploy` - Deploy all modules to AWS
@@ -22,32 +24,115 @@ mdaa <action> [options]
 
 ### Common Options
 
-| Option | Alias | Description |
-|--------|-------|-------------|
-| `--config <path>` | `-c` | Path to MDAA config file (default: `./mdaa.yaml`) |
-| `--domain <name>` | `-d` | Filter by domain name (comma-separated for multiple) |
-| `--env <name>` | `-e` | Filter by environment name (comma-separated for multiple) |
-| `--module <name>` | `-m` | Filter by module name (comma-separated for multiple) |
-| `--working-dir <path>` | `-w` | Override working directory (default: `./.mdaa_working`) |
-| `--role-arn <arn>` | `-r` | IAM role ARN to assume for CDK operations |
-| `--tag <tag>` | `-t` | NPM dist-tag for package installation |
-| `--mdaa-version <version>` | `-u` | Override MDAA module version |
-| `--cdk-verbose` | `-b` | Increase CDK CLI verbosity |
-| `--nofail` | `-f` | Continue execution after failures |
-| `--clear` | `-x` | Clear working directory of installed packages |
-| `--devops` | `-p` | Deploy MDAA DevOps resources and pipelines |
-| `--help` | `-h` | Show help |
-| `--version` | `-v` | Show MDAA version |
+| Option                     | Alias | Description                                               |
+| -------------------------- | ----- | --------------------------------------------------------- |
+| `--config <path>`          | `-c`  | Path to MDAA config file (default: `./mdaa.yaml`)         |
+| `--domain <name>`          | `-d`  | Filter by domain name (comma-separated for multiple)      |
+| `--env <name>`             | `-e`  | Filter by environment name (comma-separated for multiple) |
+| `--module <name>`          | `-m`  | Filter by module name (comma-separated for multiple)      |
+| `--working-dir <path>`     | `-w`  | Override working directory (default: `./.mdaa_working`)   |
+| `--role-arn <arn>`         | `-r`  | IAM role ARN to assume for CDK operations                 |
+| `--tag <tag>`              | `-t`  | NPM dist-tag for package installation                     |
+| `--mdaa-version <version>` | `-u`  | Override MDAA module version                              |
+| `--cdk-verbose`            | `-b`  | Increase CDK CLI verbosity                                |
+| `--nofail`                 | `-f`  | Continue execution after failures                         |
+| `--clear`                  | `-x`  | Clear working directory of installed packages             |
+| `--devops`                 | `-p`  | Deploy MDAA DevOps resources and pipelines                |
+| `--help`                   | `-h`  | Show help                                                 |
+| `--version`                | `-v`  | Show MDAA version                                         |
+
+### Init Options
+
+These options apply to the `init` action, which takes a target directory as its positional argument:
+
+| Option                 | Description                                                                                                                                           |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--starter-kit <name>` | Starter kit to scaffold into a new (empty) directory. Omit to choose interactively.                                                                   |
+| `--enhance`            | Add schemas, docs, and AI steering to an existing config directory, skipping the "add to this directory?" confirmation. Does not suppress the per-file overwrite prompt — use `--force` or `--no-prompt` for that. |
+| `--no-prompt`          | Never block on input: skips the confirmation and leaves any user-owned file that was modified since generation untouched. For scaffolding, requires `--starter-kit`. |
+| `--force` / `-F`       | Overwrite user-owned files (e.g. `CLAUDE.md`, `.github/copilot-instructions.md`) even when they've been modified since generation, without prompting. |
+
+Behavior:
+
+- Target directory is empty or new -> scaffolds the selected starter kit, prompts for `<YOUR_...>` placeholder values (unless `--no-prompt`), then adds versioned schemas/docs under `.mdaa/<version>/` and AI steering files.
+- Target directory already exists and is non-empty -> enhances it in place (prompts for confirmation unless `--enhance` or `--no-prompt`). It must be an MDAA config project: without an `mdaa.yaml` the command refuses rather than writing into an unrelated directory. `--starter-kit` cannot scaffold into a non-empty directory, but combined with `--enhance` it labels a project that has no `.mdaa/metadata.json` yet.
+- A bare `.git`, `.gitignore`, or `.DS_Store` does not count as occupied, so `git init proj && mdaa init proj --starter-kit minimal` works.
+
+What `init` writes:
+
+- `mdaa_version` pinned in `mdaa.yaml` — ensures deploy uses the same version used to generate schemas
+- `.mdaa/<version>/schemas/` and `.mdaa/<version>/docs/` - versioned JSON schemas and module documentation
+- `agent_rules/` - canonical config-authoring rule bodies (references rewritten to the versioned asset paths)
+- `.kiro/steering/`, `CLAUDE.md` + `.claude/rules/`, `.github/` - tool-specific AI steering wrappers that reference `agent_rules/`
+- `yaml-language-server` schema directives injected into config files for editor validation
+
+Committing the generated files (including `.mdaa/`) gives every clone schema validation and
+AI context immediately, with no `--enhance` step. Size is the trade-off: `.mdaa/` is roughly
+13 MB across ~290 files, and because `upgrade` prunes the old version directory while writing
+the new one, each upgrade lands as an ~13 MB delete plus an ~13 MB add in git history.
+
+If that history cost matters more than out-of-the-box validation, gitignore the versioned
+assets and have each clone regenerate them:
+
+```gitignore
+# Regenerate with: npx @aws-mdaa/cli@<version> init --enhance .
+.mdaa/*/
+```
+
+Keep `.mdaa/metadata.json` tracked either way — it records the kit name and the generated-file
+hashes that let `--enhance`/`upgrade` tell your edits from MDAA's output.
+
+### Upgrade Options
+
+The `upgrade` action bumps the MDAA version and refreshes all project assets. Run it from the project root (where `mdaa.yaml` lives):
+
+```bash
+mdaa upgrade [--force] [version]
+```
+
+If no version is specified, upgrades to the currently installed CLI version. Schemas and
+docs are generated from the installed CLI, so an explicit `[version]` must match it — to
+move a project to a different version, install that version and let it upgrade the project:
+`npx @aws-mdaa/cli@<version> upgrade`.
+
+| Option           | Description                                                                                                                                           |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--force` / `-F` | Overwrite user-owned files (e.g. `CLAUDE.md`, `.github/copilot-instructions.md`) even when they've been modified since generation, without prompting. |
+
+Like `init`, `upgrade` regenerates MDAA-owned files unconditionally but prompts before
+overwriting a user-owned file that has been modified since MDAA generated it. In a
+non-interactive shell those files are left untouched.
+
+What `upgrade` does:
+
+1. Updates `mdaa_version` in `mdaa.yaml`
+2. Regenerates `.mdaa/<new-version>/` with fresh schemas and docs
+3. Rewrites `$schema` directives in config files to reference the new version
+4. Prunes old `.mdaa/<old-version>/` directories
+5. Refreshes AI steering files
+
+Upgrade workflow:
+
+```bash
+# Install the new CLI version and upgrade the project
+npx @aws-mdaa/cli@1.8.0 upgrade
+
+# Review schema validation warnings in your editor
+# Check CHANGELOG for breaking changes
+
+# Deploy with the new version
+npx @aws-mdaa/cli@1.8.0 deploy
+```
 
 ### Baseline Diff Options
 
 These options enable comparing synthesized templates against stored baseline templates without requiring a deployed AWS environment:
 
-| Option | Alias | Description |
-|--------|-------|-------------|
-| `--cdk-out <path>` | `-k` | Override CDK output directory (default: `<working-dir>/cdk.out`) |
-| `--baseline <path>` | `-B` | Compare against baseline templates in this directory instead of deployed stacks |
-| `--diff-out <path>` | `-D` | Write diff output for each module to files in this directory instead of console |
+| Option              | Alias | Description                                                                     |
+| ------------------- | ----- | ------------------------------------------------------------------------------- |
+| `--cdk-out <path>`  | `-k`  | Override CDK output directory (default: `<working-dir>/cdk.out`)                |
+| `--baseline <path>` | `-B`  | Compare against baseline templates in this directory instead of deployed stacks |
+| `--diff-out <path>` | `-D`  | Write diff output for each module to files in this directory instead of console |
 
 ## Baseline Diff Workflow
 
@@ -76,6 +161,7 @@ mdaa diff -B ./baselines -D ./diff-output
 ```
 
 This will:
+
 1. Synthesize current templates to the default working directory
 2. Compare each module's template against the baseline
 3. Write diff results to `./diff-output/{org}/{domain}/{env}/{module}/diff.txt`
@@ -94,6 +180,21 @@ This synthesizes to `./new-baselines`, compares against `./current-baselines`, a
 ## Examples
 
 ```bash
+# Scaffold a new project interactively (choose a starter kit, fill placeholders)
+mdaa init ./my-data-platform
+
+# Scaffold a specific starter kit without prompts
+mdaa init ./my-data-platform --starter-kit basic_datalake --no-prompt
+
+# Enhance an existing config directory with schemas, docs, and AI steering
+mdaa init ./existing-config --enhance
+
+# Upgrade a project to a specific MDAA version (refreshes schemas, docs, steering)
+npx @aws-mdaa/cli@1.8.0 upgrade
+
+# Upgrade to the currently installed CLI version
+mdaa upgrade
+
 # Deploy all modules
 mdaa deploy
 

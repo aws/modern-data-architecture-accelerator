@@ -5,7 +5,7 @@
 
 import { EffectiveConfig, ModuleDeploymentConfig } from '../lib/config-types';
 import { generateContextCdkParams } from '../lib/utils';
-import { MdaaDeploy } from '../lib/mdaa-cli';
+import { MdaaDeploy } from '../lib/mdaa-deploy';
 import { HookConfig } from '../lib/mdaa-cli-config-parser';
 import { shellQuote } from '../lib/platform-utils';
 import * as childProcess from 'child_process';
@@ -1345,6 +1345,7 @@ describe('createTerraformOverride', () => {
   let mockExistsSync: jest.SpyInstance;
   let mockUnlinkSync: jest.SpyInstance;
   let mockWriteFileSync: jest.SpyInstance;
+  let mockMkdirSync: jest.SpyInstance;
 
   beforeEach(() => {
     jest.spyOn(packageHelper, 'loadLocalPackages').mockReturnValue({});
@@ -1353,6 +1354,9 @@ describe('createTerraformOverride', () => {
     mockWriteFileSync = jest
       .spyOn(fs, 'writeFileSync')
       .mockImplementation(jest.fn() as unknown as typeof fs.writeFileSync);
+    // The override's parent directory is ensured before the write, and these module
+    // paths are fictional, so the real mkdir must not run.
+    mockMkdirSync = jest.spyOn(fs, 'mkdirSync').mockImplementation(jest.fn() as unknown as typeof fs.mkdirSync);
   });
 
   afterEach(() => {
@@ -1424,7 +1428,9 @@ describe('createTerraformOverride', () => {
     // Should have unlinked the existing override
     expect(mockUnlinkSync).toHaveBeenCalledWith(expect.stringContaining('mdaa_override.tf.json'));
 
-    // Should have written the enriched override with encrypt and key
+    // Should have written the enriched override with encrypt and key, into a directory
+    // it ensured first
+    expect(mockMkdirSync).toHaveBeenCalledWith('/fake/tf-module', { recursive: true });
     expect(mockWriteFileSync).toHaveBeenCalledWith(
       expect.stringContaining('mdaa_override.tf.json'),
       expect.any(String),
