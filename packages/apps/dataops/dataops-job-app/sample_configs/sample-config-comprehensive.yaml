@@ -7,6 +7,10 @@
 # (databases, roles, security).
 projectName: dataops-project-test
 
+# (Optional) Set true only when projectName targets a SMUS/DataZone-integrated
+# dataops-project, to make the jobs appear in SageMaker Unified Studio. See SCHEMA.md.
+applySagemakerProjectTag: true
+
 # (Optional) SNS topic ARN for job notifications and workflow alerts.
 # Auto-resolved from project when projectName is set.
 notificationTopicArn: arn:{{partition}}:sns:{{region}}:{{account}}:test-topic

@@ -10,14 +10,14 @@ import { MdaaManagedPolicy, MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { CfnJob } from 'aws-cdk-lib/aws-glue';
+import { Fn, Token, Tags } from 'aws-cdk-lib';
+import { MdaaNagSuppressions, MdaaStringParameter } from '@aws-mdaa/construct'; //NOSONAR
 import { BucketDeployment, ISource, Source } from 'aws-cdk-lib/aws-s3-deployment';
-import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 import * as path from 'path';
 import { SnsTopic } from 'aws-cdk-lib/aws-events-targets';
 import { MdaaSnsTopic } from '@aws-mdaa/sns-constructs';
 import { Rule } from 'aws-cdk-lib/aws-events';
-import { Fn, Token } from 'aws-cdk-lib';
 import { ConfigurationElement } from '@aws-mdaa/config';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { MdaaLogGroup } from '@aws-mdaa/cloudwatch-constructs';
@@ -204,6 +204,18 @@ export interface GlueJobL3ConstructProps extends MdaaL3ConstructProps {
    * relative to this directory.
    */
   readonly assetBasePath?: string;
+
+  /**
+   * When true, tags each Glue job with `AmazonDataZoneProject` (resolved from the
+   * project's `<projectName>/sagemaker/project/id/default` SSM parameter) so the jobs
+   * appear in the SageMaker Unified Studio (SMUS) project UI.
+   *
+   * Requires `projectName` to be set (synth fails otherwise), and that project must be a
+   * SMUS/DataZone-integrated dataops-project that publishes that SSM parameter; otherwise
+   * deployment fails resolving a non-existent parameter. Left off, the module carries no
+   * cross-module SSM dependency and deploys independently. Defaults to false.
+   */
+  readonly applySagemakerProjectTag?: boolean;
 }
 
 /** Minimum Glue version required to emit Amazon DataZone Spark lineage events. */
@@ -229,6 +241,14 @@ export class GlueJobL3Construct extends MdaaL3Construct {
       throw new Error('Project KMS Key is required for job configuration');
     }
     this.kmsKey = Key.fromKeyArn(this, this.props.projectName ?? 'kms-key', this.props.kmsArn);
+
+    // applySagemakerProjectTag only takes effect inside the `job.name && projectName` guard
+    if (this.props.applySagemakerProjectTag && !this.props.projectName) {
+      throw new Error(
+        'applySagemakerProjectTag requires projectName, which identifies the SMUS/DataZone-integrated ' +
+          'dataops-project publishing the DataZone project ID SSM parameter.',
+      );
+    }
 
     // Build our jobs!
     const allJobs = this.props.jobConfigs;
@@ -652,6 +672,26 @@ export class GlueJobL3Construct extends MdaaL3Construct {
         `job/name/${jobName}`,
         job.name,
       );
+
+      // Optionally tag the job with AmazonDataZoneProject so it appears in the SMUS
+      // project UI. Gated behind applySagemakerProjectTag because it introduces a hard
+      // dependency on the DataZone project ID SSM parameter published by the
+      // dataops-project module — which only exists for SMUS/DataZone-integrated
+      // projects. Enabling it for a plain (non-SMUS) project would fail deployment
+      // resolving a non-existent parameter, so the module stays independently
+      // deployable by default.
+      if (this.props.applySagemakerProjectTag) {
+        // Resolve the project's DataZone project ID SSM path via the shared helper so
+        // the parameter layout lives in one place (DataOpsProjectUtils), rather than
+        // hand-constructing another module's SSM path here.
+        const projectIdSsmPath = DataOpsProjectUtils.projectSSMParamPath(
+          this.props.naming,
+          this.props.projectName,
+          DataOpsProjectUtils.SAGEMAKER_PROJECT_ID_KEY,
+        );
+        const datazoneProjectId = MdaaStringParameter.valueForStringParameter(this.scope, projectIdSsmPath);
+        Tags.of(job).add('AmazonDataZoneProject', datazoneProjectId);
+      }
 
       const eventRule = this.createJobMonitoringEventRule(`${jobName}-monitor`, [job.name]);
       if (!this.props.notificationTopicArn) {

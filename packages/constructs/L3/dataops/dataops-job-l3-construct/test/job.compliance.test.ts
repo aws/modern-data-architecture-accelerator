@@ -258,6 +258,57 @@ describe('MDAA Compliance Stack Tests', () => {
         RetentionInDays: Match.absent(),
       });
     });
+    test('Job is NOT tagged with AmazonDataZoneProject by default (no cross-module SSM dependency)', () => {
+      // Without applySagemakerProjectTag, the construct adds no AmazonDataZoneProject
+      // tag (and hence no SMUS project-id SSM dependency), so it stays independently
+      // deployable in a plain (non-SMUS) dataops project. The L3 construct applies no
+      // other tags of its own, so the Glue job has no Tags property at all here.
+      template.hasResourceProperties('AWS::Glue::Job', {
+        Tags: Match.absent(),
+      });
+    });
+    test('No SMUS project-id SSM parameter is synthesized by default (plain-project deployability)', () => {
+      // The tag read emits an AWS::SSM::Parameter::Value<String> template parameter, which
+      // CloudFormation resolves at changeset creation — before any resource is created — so a
+      // missing producer aborts the entire stack, not just the tagging. projectName is set here
+      // (via createConstructorProps) but the flag is off, which is the exact plain-project
+      // composition that reached a failed deploy. Assert the sagemaker project-id parameter is
+      // absent so a plain dataops-project (publishing neither datazone nor sagemaker) deploys.
+      const smusParams = Object.values(
+        template.findParameters('*', { Type: 'AWS::SSM::Parameter::Value<String>' }),
+      ).filter(param => /sagemaker\/project\/id/.test(param.Default ?? ''));
+      expect(smusParams).toHaveLength(0);
+    });
+  });
+
+  describe('MDAA with SMUS project tagging (applySagemakerProjectTag)', () => {
+    const testApp = new MdaaTestApp();
+    const stack = testApp.testStack;
+
+    new GlueJobL3Construct(stack, 'teststack', {
+      ...createConstructorProps(stack, testApp),
+      applySagemakerProjectTag: true,
+    });
+    testApp.checkCdkNagCompliance(testApp.testStack);
+    const template = Template.fromStack(testApp.testStack);
+
+    test('Job AmazonDataZoneProject tag resolves to the project DataZone-project-id SSM parameter', () => {
+      // With applySagemakerProjectTag enabled, the tag value must reference the SSM
+      // parameter holding THIS project's DataZone project ID (path:
+      // <projectName>/sagemaker/project/id/default), not just any value — assert both
+      // the Ref and the referenced SSM path so the path construction is verified.
+      template.hasResourceProperties('AWS::Glue::Job', {
+        Tags: Match.objectLike({
+          AmazonDataZoneProject: {
+            Ref: Match.stringLikeRegexp('SsmParameterValue.*testproject.*sagemakerprojectiddefault.*Parameter'),
+          },
+        }),
+      });
+      template.hasParameter('*', {
+        Type: 'AWS::SSM::Parameter::Value<String>',
+        Default: Match.stringLikeRegexp('test-project/sagemaker/project/id/default'),
+      });
+    });
   });
 
   describe('MDAA with worker type', () => {

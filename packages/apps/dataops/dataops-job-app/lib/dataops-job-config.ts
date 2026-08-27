@@ -51,6 +51,21 @@ export interface GlueJobConfigContents extends MdaaDataOpsConfigContents {
    */
   readonly projectName?: string;
   /**
+   * When true, tags every Glue job with `AmazonDataZoneProject` (resolved from the
+   * project's `sagemaker/project/id/default` SSM parameter) so the jobs appear in the
+   * SageMaker Unified Studio (SMUS) project UI.
+   *
+   * Requires `projectName` to be set (deployment fails at synth otherwise), and that
+   * project must be a SMUS/DataZone-integrated dataops-project that publishes that
+   * parameter; otherwise deployment fails resolving a non-existent SSM parameter.
+   * Defaults to false, keeping the module independently deployable.
+   *
+   * Use cases: SageMaker Unified Studio job visibility; DataZone project association
+   *
+   * Validation: Optional; boolean; requires `projectName` when true
+   */
+  readonly applySagemakerProjectTag?: boolean;
+  /**
    * Map of job names to Glue job definitions for ETL processing and data transformation.
    *
    * Use cases: Multi-job ETL workflows; Data transformation pipelines
@@ -75,6 +90,7 @@ export interface GlueJobConfigContents extends MdaaDataOpsConfigContents {
 
 export class GlueJobConfigParser extends MdaaDataOpsConfigParser<GlueJobConfigContents> {
   public readonly jobConfigs: { [key: string]: JobConfig };
+  public readonly applySagemakerProjectTag?: boolean;
 
   private static mergeJobConfigs(configContents: GlueJobConfigContents): GlueJobConfigContents {
     //Resolve jobs and their templates
@@ -115,5 +131,6 @@ export class GlueJobConfigParser extends MdaaDataOpsConfigParser<GlueJobConfigCo
   constructor(stack: Stack, props: MdaaAppConfigParserProps) {
     super(stack, GlueJobConfigParser.modifyProps(props), configSchema as Schema);
     this.jobConfigs = this.configContents.jobs;
+    this.applySagemakerProjectTag = this.configContents.applySagemakerProjectTag;
   }
 }

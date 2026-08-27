@@ -130,6 +130,23 @@ describe('GlueJobL3Construct Constructor Exception Tests', () => {
       new GlueJobL3Construct(stack, 'test-construct-no-project', props);
     }).not.toThrow();
   });
+
+  test('should throw when applySagemakerProjectTag is enabled without projectName', () => {
+    const props: GlueJobL3ConstructProps = {
+      ...createBaseProps(),
+      projectName: undefined,
+      applySagemakerProjectTag: true,
+      deploymentRoleArn: 'arn:test-partition:iam:test-region:test-account:role/deployment-role',
+      bucketName: 'test-bucket',
+      kmsArn: 'arn:test-partition:kms:test-region:test-account:key/test-key',
+      securityConfigurationName: 'test-security-config',
+      notificationTopicArn: 'arn:test-partition:sns:test-region:test-account:test-topic',
+    };
+
+    expect(() => {
+      new GlueJobL3Construct(stack, 'test-construct-tag-no-project', props);
+    }).toThrow('applySagemakerProjectTag requires projectName');
+  });
 });
 
 describe('Asset script resolution', () => {

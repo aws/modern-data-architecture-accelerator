@@ -64,6 +64,7 @@ import { CfnPrincipalPermissions, CfnResource } from 'aws-cdk-lib/aws-lakeformat
 import { IBucket } from 'aws-cdk-lib/aws-s3';
 import { EmailSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
 import { Construct } from 'constructs';
+import { DataOpsProjectUtils } from './dataops-project-utils';
 import { LakeFormationConfig, NamedTagBasedGrants } from './lake-formation-props';
 import { createLakeFormationTags, processLakeFormationTagsPermissions } from './lake-formation-tags-manager';
 
@@ -709,12 +710,23 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     if (this.props.datazone && this.props.sagemaker) {
       throw new Error('Only one of datazone or sagemaker properties should be defined');
     }
+    let resources: DatazoneResources | undefined;
     if (this.props.datazone) {
-      return this.createDatazoneResources(this.props.datazone, projectBucket, datazoneUserRole);
+      resources = this.createDatazoneResources(this.props.datazone, projectBucket, datazoneUserRole);
     } else if (this.props.sagemaker) {
-      return this.createSageMakerResources(this.props.sagemaker);
+      resources = this.createSageMakerResources(this.props.sagemaker);
     }
-    return undefined;
+    if (resources?.datazoneProject) {
+      // Publish the DataZone project ID to SSM so sibling modules (dataops-job, dataops-crawler,
+      // dataops-workflow) can apply the AmazonDataZoneProject tag, making their resources visible
+      // in the SageMaker Unified Studio project UI.
+      this.createProjectSSMParam(
+        'ssm-sagemaker-project-id',
+        DataOpsProjectUtils.SAGEMAKER_PROJECT_ID_KEY,
+        resources.datazoneProject.project.attrId,
+      );
+    }
+    return resources;
   }
 
   private createLakeFormationRole() {

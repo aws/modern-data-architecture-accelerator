@@ -3167,6 +3167,10 @@
         }
     },
     "properties": {
+        "applySagemakerProjectTag": {
+            "description": "When true, tags every Glue job with `AmazonDataZoneProject` (resolved from the\nproject's `sagemaker/project/id/default` SSM parameter) so the jobs appear in the\nSageMaker Unified Studio (SMUS) project UI.\n\nRequires `projectName` to be set (deployment fails at synth otherwise), and that\nproject must be a SMUS/DataZone-integrated dataops-project that publishes that\nparameter; otherwise deployment fails resolving a non-existent SSM parameter.\nDefaults to false, keeping the module independently deployable.\n\nUse cases: SageMaker Unified Studio job visibility; DataZone project association\n\nValidation: Optional; boolean; requires `projectName` when true",
+            "type": "boolean"
+        },
         "bucketName": {
             "description": "S3 bucket name for project storage (scripts, artifacts, temp files).\nAuto-resolved from project when projectName is set.\n\nUse cases: Script storage; Processing artifacts; Centralized project storage\n\nAWS: S3 bucket\n\nValidation: Optional; auto-wired from project if projectName provided",
             "type": "string"

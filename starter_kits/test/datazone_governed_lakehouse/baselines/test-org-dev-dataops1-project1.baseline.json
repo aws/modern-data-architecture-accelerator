@@ -3965,6 +3965,31 @@
         "aws:cdk:path": "test-org-dev-dataops1-project1/Role-Res-DataAdmin-0/Default"
       }
     },
+    "ssmsagemakerprojectidFE5981B8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/dataops1/project1/sagemaker/project/id/default",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "dataops1",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "project1",
+          "mdaa_org": "test-org",
+          "project": "lakehouse-ecosystem"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructdatazoneproject5CD687B2",
+            "Id"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-dataops1-project1/ssm-sagemaker-project-id/Resource"
+      }
+    },
     "RoleResDataEngineer0": {
       "Type": "AWS::CloudFormation::CustomResource",
       "Properties": {

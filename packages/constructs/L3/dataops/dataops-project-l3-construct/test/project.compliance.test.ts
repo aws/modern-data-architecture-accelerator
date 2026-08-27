@@ -772,6 +772,20 @@ describe('MDAA Compliance Stack Tests', () => {
     });
   });
 
+  test('DataZone project ID SSM parameter published for cross-module use', () => {
+    template.hasResourceProperties('AWS::SSM::Parameter', {
+      Name: Match.stringLikeRegexp('sagemaker/project/id/default'),
+      Type: 'String',
+      // Value must resolve to the DataZone project's ID (project.attrId -> an
+      // Fn::GetAtt on the CfnProject's Id), which is the cross-module contract this
+      // parameter exists to satisfy. Asserting the Value catches a regression that
+      // publishes an empty or incorrect project ID.
+      Value: Match.objectLike({
+        'Fn::GetAtt': Match.arrayWith([Match.stringLikeRegexp('[Dd]atazone.*[Pp]roject'), 'Id']),
+      }),
+    });
+  });
+
   test('LakeFormationTagAssociation', () => {
     template.hasResourceProperties('AWS::LakeFormation::TagAssociation', {
       LFTags: [
