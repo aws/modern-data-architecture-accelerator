@@ -41,6 +41,22 @@ mdaa <action> [options]
 | `--help`                   | `-h`  | Show help                                                 |
 | `--version`                | `-v`  | Show MDAA version                                         |
 
+For `synth`, `diff`, `deploy`, `destroy`, and `list`/`ls`, any option MDAA does not define is passed
+through verbatim to the `cdk` command it runs, so cdk's own flags work directly — for example
+`mdaa destroy --force` suppresses cdk's per-stack confirmation prompt. Write a pushed-down option
+**after** the action, or as `--flag=value`. MDAA takes the action from the first bare argument, so in
+`mdaa --profile myprofile destroy` the value `myprofile` is read as the action and the run fails with
+`Unknown action 'myprofile'`.
+
+Short aliases belong to MDAA wherever MDAA defines one, even where cdk uses the same letter. The table
+above covers the common options only; `mdaa --help` lists every alias. So `-f` is `--nofail` and not
+cdk's `--force`, `-c` is `--config` and not `--context`, `-e` is `--env` and not `--exclusively`, and
+`-t` is `--tag`, an npm dist-tag, rather than cdk's stack `--tags`. Most consequentially, `mdaa deploy -v`
+prints the MDAA version and exits without deploying — use `--cdk-verbose` for cdk's `-v`. Pass cdk flags
+by their long names. Two exceptions MDAA supplies itself, per module: cdk's `--app`, and cdk's `--output`
+— passing your own `--output` sends cdk both, and it refuses with `--output takes a string, got [...]`.
+Use `--cdk-out` to relocate that output instead.
+
 ### Init Options
 
 These options apply to the `init` action, which takes a target directory as its positional argument:
@@ -48,9 +64,9 @@ These options apply to the `init` action, which takes a target directory as its 
 | Option                 | Description                                                                                                                                           |
 | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `--starter-kit <name>` | Starter kit to scaffold into a new (empty) directory. Omit to choose interactively.                                                                   |
-| `--enhance`            | Add schemas, docs, and AI steering to an existing config directory, skipping the "add to this directory?" confirmation. Does not suppress the per-file overwrite prompt — use `--force` or `--no-prompt` for that. |
+| `--enhance`            | Add schemas, docs, and AI steering to an existing config directory, skipping the "add to this directory?" confirmation. Does not suppress the per-file overwrite prompt — use `--overwrite` or `--no-prompt` for that. |
 | `--no-prompt`          | Never block on input: skips the confirmation and leaves any user-owned file that was modified since generation untouched. For scaffolding, requires `--starter-kit`. |
-| `--force` / `-F`       | Overwrite user-owned files (e.g. `CLAUDE.md`, `.github/copilot-instructions.md`) even when they've been modified since generation, without prompting. |
+| `--overwrite`          | Overwrite user-owned files (e.g. `CLAUDE.md`, `.github/copilot-instructions.md`) even when they've been modified since generation, without prompting. |
 
 Behavior:
 
@@ -87,7 +103,7 @@ hashes that let `--enhance`/`upgrade` tell your edits from MDAA's output.
 The `upgrade` action bumps the MDAA version and refreshes all project assets. Run it from the project root (where `mdaa.yaml` lives):
 
 ```bash
-mdaa upgrade [--force] [version]
+mdaa upgrade [--overwrite] [--no-prompt] [version]
 ```
 
 If no version is specified, upgrades to the currently installed CLI version. Schemas and
@@ -95,9 +111,10 @@ docs are generated from the installed CLI, so an explicit `[version]` must match
 move a project to a different version, install that version and let it upgrade the project:
 `npx @aws-mdaa/cli@<version> upgrade`.
 
-| Option           | Description                                                                                                                                           |
-| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--force` / `-F` | Overwrite user-owned files (e.g. `CLAUDE.md`, `.github/copilot-instructions.md`) even when they've been modified since generation, without prompting. |
+| Option               | Description                                                                                                                                           |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--overwrite`        | Overwrite user-owned files (e.g. `CLAUDE.md`, `.github/copilot-instructions.md`) even when they've been modified since generation, without prompting. |
+| `--no-prompt`        | Never block on input: leaves any user-owned file that was modified since generation untouched.                                                        |
 
 Like `init`, `upgrade` regenerates MDAA-owned files unconditionally but prompts before
 overwriting a user-owned file that has been modified since MDAA generated it. In a

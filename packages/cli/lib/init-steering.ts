@@ -24,7 +24,7 @@ export interface GeneratedFile {
 export interface WriteOptions {
   readonly manifest: GeneratedFileManifest;
   /** Overwrite a modified file without asking */
-  readonly force: boolean;
+  readonly overwrite: boolean;
   /** Never block on input: a modified file is left alone rather than prompted for */
   readonly noPrompt: boolean;
 }
@@ -47,11 +47,11 @@ function sha256(content: string): string {
  *   wrote it -> safe to overwrite silently, refresh the hash.
  * - Exists and the hash differs (or was never recorded) -> either the user
  *   edited it, or it pre-dates MDAA entirely -> prompt for confirmation unless
- *   `force` is set.
+ *   `overwrite` is set.
  */
 export function writeGeneratedFile(outputDir: string, file: GeneratedFile, options: WriteOptions): void {
   const { relativePath, content } = file;
-  const { manifest, force, noPrompt } = options;
+  const { manifest, overwrite, noPrompt } = options;
   const filePath = path.join(outputDir, relativePath);
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   const newHash = sha256(content);
@@ -69,7 +69,7 @@ export function writeGeneratedFile(outputDir: string, file: GeneratedFile, optio
   const currentHash = sha256(fs.readFileSync(filePath, 'utf-8'));
   const recordedHash = manifest[manifestKey];
 
-  if (force || currentHash === recordedHash) {
+  if (overwrite || currentHash === recordedHash) {
     fs.writeFileSync(filePath, content);
     manifest[manifestKey] = newHash;
     return;
@@ -106,7 +106,7 @@ function promptOverwrite(relativePath: string, wasModifiedSinceGenerated: boolea
     // EAGAIN here. Treating that as "non-interactive" silently skipped a file the user
     // was never actually asked about, so it is reported distinctly.
     if ((err as { code?: string }).code === 'EAGAIN') {
-      console.log('  (could not read a response — skipping, re-run with --force to overwrite)');
+      console.log('  (could not read a response — skipping, re-run with --overwrite to overwrite)');
     } else {
       console.log('  (non-interactive — skipping)');
     }
@@ -316,7 +316,7 @@ export function generateGettingStartedContent(outputDir: string, kitName?: strin
  * Generate AI steering/instruction files for Kiro, Claude Code, and GitHub
  * Copilot. Every write goes through {@link writeGeneratedFile}, which tracks
  * a content hash in `manifest` so a later run can tell whether the user
- * edited a file since MDAA last wrote it — and prompts (unless `force`)
+ * edited a file since MDAA last wrote it — and prompts (unless `overwrite`)
  * rather than silently clobbering it.
  */
 export function generateSteeringFiles(outputDir: string, options: SteeringOptions): void {

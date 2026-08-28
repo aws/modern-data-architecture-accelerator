@@ -67,7 +67,7 @@ describe('mdaa init', () => {
 
   test('exits with error when no directory argument provided', async () => {
     await expect(
-      runInit({ targetDir: undefined, starterKit: undefined, enhance: false, noPrompt: false, force: true }),
+      runInit({ targetDir: undefined, starterKit: undefined, enhance: false, noPrompt: false, overwrite: true }),
     ).rejects.toThrow('process.exit called');
     expect(process.exit).toHaveBeenCalledWith(1);
   });
@@ -79,7 +79,13 @@ describe('mdaa init', () => {
     fs.writeFileSync(path.join(existingDir, 'file.txt'), 'content');
 
     await expect(
-      runInit({ targetDir: existingDir, starterKit: 'basic_datalake', enhance: false, noPrompt: true, force: true }),
+      runInit({
+        targetDir: existingDir,
+        starterKit: 'basic_datalake',
+        enhance: false,
+        noPrompt: true,
+        overwrite: true,
+      }),
     ).rejects.toThrow('process.exit called');
     expect(process.exit).toHaveBeenCalledWith(1);
   });
@@ -88,7 +94,7 @@ describe('mdaa init', () => {
     const nonExistentDir = path.join(tempDir, 'does-not-exist');
 
     await expect(
-      runInit({ targetDir: nonExistentDir, starterKit: undefined, enhance: true, noPrompt: false, force: true }),
+      runInit({ targetDir: nonExistentDir, starterKit: undefined, enhance: true, noPrompt: false, overwrite: true }),
     ).rejects.toThrow('process.exit called');
     expect(process.exit).toHaveBeenCalledWith(1);
   });
@@ -99,7 +105,7 @@ describe('mdaa init', () => {
     fs.writeFileSync(path.join(notAProject, 'somefile.txt'), 'content');
 
     await expect(
-      runInit({ targetDir: notAProject, starterKit: undefined, enhance: true, noPrompt: true, force: true }),
+      runInit({ targetDir: notAProject, starterKit: undefined, enhance: true, noPrompt: true, overwrite: true }),
     ).rejects.toThrow('process.exit called');
     expect(process.exit).toHaveBeenCalledWith(1);
     // Nothing may be written into a directory that isn't an MDAA project
@@ -114,7 +120,7 @@ describe('mdaa init', () => {
     fs.writeFileSync(path.join(decoy, 'CLAUDE.md'), 'MY OWN AGENT CONFIG\n');
 
     await expect(
-      runInit({ targetDir: decoy, starterKit: undefined, enhance: true, noPrompt: true, force: true }),
+      runInit({ targetDir: decoy, starterKit: undefined, enhance: true, noPrompt: true, overwrite: true }),
     ).rejects.toThrow('process.exit called');
     expect(fs.readFileSync(path.join(decoy, 'CLAUDE.md'), 'utf-8')).toEqual('MY OWN AGENT CONFIG\n');
     expect(fs.existsSync(path.join(decoy, '.mdaa', 'my-personal-notes', 'notes.md'))).toBe(true);
@@ -123,7 +129,7 @@ describe('mdaa init', () => {
   test('no generated steering or rule file tells the user to run an unresolvable command', async () => {
     const outputDir = path.join(tempDir, 'output');
 
-    await runInit({ targetDir: outputDir, starterKit: 'minimal', enhance: false, noPrompt: true, force: true });
+    await runInit({ targetDir: outputDir, starterKit: 'minimal', enhance: false, noPrompt: true, overwrite: true });
 
     // Only what init generates — `.mdaa/<version>/docs` is a copy of the repo's own
     // docs, which are written for contributors working inside a checkout.
@@ -151,7 +157,13 @@ describe('mdaa init', () => {
   test('creates output directory with kit files when --starter-kit and --no-prompt', async () => {
     const outputDir = path.join(tempDir, 'output');
 
-    await runInit({ targetDir: outputDir, starterKit: 'basic_datalake', enhance: false, noPrompt: true, force: true });
+    await runInit({
+      targetDir: outputDir,
+      starterKit: 'basic_datalake',
+      enhance: false,
+      noPrompt: true,
+      overwrite: true,
+    });
 
     expect(fs.existsSync(outputDir)).toBe(true);
     expect(fs.existsSync(path.join(outputDir, 'mdaa.yaml'))).toBe(true);
@@ -160,7 +172,13 @@ describe('mdaa init', () => {
   test('creates schemas directory in output', async () => {
     const outputDir = path.join(tempDir, 'output');
 
-    await runInit({ targetDir: outputDir, starterKit: 'basic_datalake', enhance: false, noPrompt: true, force: true });
+    await runInit({
+      targetDir: outputDir,
+      starterKit: 'basic_datalake',
+      enhance: false,
+      noPrompt: true,
+      overwrite: true,
+    });
 
     // Named explicitly: `.mdaa/` also holds metadata.json and readdirSync order is
     // filesystem-dependent, so indexing into it can pick the file instead of the dir.
@@ -170,7 +188,13 @@ describe('mdaa init', () => {
   test('creates docs directory in output', async () => {
     const outputDir = path.join(tempDir, 'output');
 
-    await runInit({ targetDir: outputDir, starterKit: 'basic_datalake', enhance: false, noPrompt: true, force: true });
+    await runInit({
+      targetDir: outputDir,
+      starterKit: 'basic_datalake',
+      enhance: false,
+      noPrompt: true,
+      overwrite: true,
+    });
 
     // Docs are under .mdaa/<version>/docs/
     expect(fs.existsSync(path.join(outputDir, '.mdaa', getCliVersion(), 'docs'))).toBe(true);
@@ -179,7 +203,13 @@ describe('mdaa init', () => {
   test('writes Kiro wrappers with the frontmatter and include paths they exist for', async () => {
     const outputDir = path.join(tempDir, 'output');
 
-    await runInit({ targetDir: outputDir, starterKit: 'basic_datalake', enhance: false, noPrompt: true, force: true });
+    await runInit({
+      targetDir: outputDir,
+      starterKit: 'basic_datalake',
+      enhance: false,
+      noPrompt: true,
+      overwrite: true,
+    });
 
     const always = fs.readFileSync(path.join(outputDir, '.kiro', 'steering', 'getting-started.md'), 'utf-8');
     expect(always).toContain('inclusion: always');
@@ -194,7 +224,13 @@ describe('mdaa init', () => {
   test('writes Claude and Copilot wrappers with depth-correct relative includes', async () => {
     const outputDir = path.join(tempDir, 'output');
 
-    await runInit({ targetDir: outputDir, starterKit: 'basic_datalake', enhance: false, noPrompt: true, force: true });
+    await runInit({
+      targetDir: outputDir,
+      starterKit: 'basic_datalake',
+      enhance: false,
+      noPrompt: true,
+      overwrite: true,
+    });
 
     // .claude/rules/ is two levels deep, .github/copilot-instructions.md one
     expect(fs.readFileSync(path.join(outputDir, '.claude', 'rules', 'user-config-authoring.md'), 'utf-8')).toContain(
@@ -214,7 +250,13 @@ describe('mdaa init', () => {
   test('creates root CLAUDE.md (always-loaded) referencing getting-started', async () => {
     const outputDir = path.join(tempDir, 'output');
 
-    await runInit({ targetDir: outputDir, starterKit: 'basic_datalake', enhance: false, noPrompt: true, force: true });
+    await runInit({
+      targetDir: outputDir,
+      starterKit: 'basic_datalake',
+      enhance: false,
+      noPrompt: true,
+      overwrite: true,
+    });
 
     const claudeMd = path.join(outputDir, 'CLAUDE.md');
     expect(fs.existsSync(claudeMd)).toBe(true);
@@ -224,7 +266,13 @@ describe('mdaa init', () => {
   test('creates .github directory in output', async () => {
     const outputDir = path.join(tempDir, 'output');
 
-    await runInit({ targetDir: outputDir, starterKit: 'basic_datalake', enhance: false, noPrompt: true, force: true });
+    await runInit({
+      targetDir: outputDir,
+      starterKit: 'basic_datalake',
+      enhance: false,
+      noPrompt: true,
+      overwrite: true,
+    });
 
     expect(fs.existsSync(path.join(outputDir, '.github'))).toBe(true);
   });
@@ -235,7 +283,7 @@ describe('mdaa init', () => {
     fs.mkdirSync(existingDir);
     fs.writeFileSync(path.join(existingDir, 'mdaa.yaml'), 'organization: test\n');
 
-    await runInit({ targetDir: existingDir, starterKit: undefined, enhance: true, noPrompt: true, force: true });
+    await runInit({ targetDir: existingDir, starterKit: undefined, enhance: true, noPrompt: true, overwrite: true });
 
     // Should have added steering files and .mdaa/ directory
     expect(fs.existsSync(path.join(existingDir, '.kiro', 'steering'))).toBe(true);
@@ -264,7 +312,7 @@ describe('mdaa init - schema injection', () => {
   test('injects schema directives into config files', async () => {
     const outputDir = path.join(tempDir, 'output');
 
-    await runInit({ targetDir: outputDir, starterKit: 'minimal', enhance: false, noPrompt: true, force: true });
+    await runInit({ targetDir: outputDir, starterKit: 'minimal', enhance: false, noPrompt: true, overwrite: true });
 
     const mdaaYaml = fs.readFileSync(path.join(outputDir, 'mdaa.yaml'), 'utf-8');
     expect(mdaaYaml).toContain('yaml-language-server');
@@ -274,7 +322,7 @@ describe('mdaa init - schema injection', () => {
   test('injects schema directives into nested config files', async () => {
     const outputDir = path.join(tempDir, 'output');
 
-    await runInit({ targetDir: outputDir, starterKit: 'minimal', enhance: false, noPrompt: true, force: true });
+    await runInit({ targetDir: outputDir, starterKit: 'minimal', enhance: false, noPrompt: true, overwrite: true });
 
     const rolesYaml = fs.readFileSync(path.join(outputDir, 'govern', 'roles.yaml'), 'utf-8');
     expect(rolesYaml).toContain('yaml-language-server');
@@ -290,7 +338,7 @@ describe('mdaa init - schema injection', () => {
     );
     fs.writeFileSync(path.join(existingDir, 'roles.yaml'), 'generateRoles: []\n');
 
-    await runInit({ targetDir: existingDir, starterKit: undefined, enhance: true, noPrompt: true, force: true });
+    await runInit({ targetDir: existingDir, starterKit: undefined, enhance: true, noPrompt: true, overwrite: true });
 
     const mdaaYaml = fs.readFileSync(path.join(existingDir, 'mdaa.yaml'), 'utf-8');
     expect(mdaaYaml).toContain('yaml-language-server');
@@ -319,7 +367,7 @@ describe('mdaa init - getting-started content', () => {
   test('getting-started includes kit name and docs URL', async () => {
     const outputDir = path.join(tempDir, 'output');
 
-    await runInit({ targetDir: outputDir, starterKit: 'minimal', enhance: false, noPrompt: true, force: true });
+    await runInit({ targetDir: outputDir, starterKit: 'minimal', enhance: false, noPrompt: true, overwrite: true });
 
     const gettingStarted = fs.readFileSync(path.join(outputDir, 'agent_rules', 'getting-started.md'), 'utf-8');
     expect(gettingStarted).toContain('minimal');
@@ -331,7 +379,7 @@ describe('mdaa init - getting-started content', () => {
   test('getting-started includes outstanding placeholders', async () => {
     const outputDir = path.join(tempDir, 'output');
 
-    await runInit({ targetDir: outputDir, starterKit: 'minimal', enhance: false, noPrompt: true, force: true });
+    await runInit({ targetDir: outputDir, starterKit: 'minimal', enhance: false, noPrompt: true, overwrite: true });
 
     const gettingStarted = fs.readFileSync(path.join(outputDir, 'agent_rules', 'getting-started.md'), 'utf-8');
     expect(gettingStarted).toContain('<YOUR_ORG_NAME>');
@@ -342,7 +390,7 @@ describe('mdaa init - getting-started content', () => {
     fs.mkdirSync(existingDir);
     fs.writeFileSync(path.join(existingDir, 'mdaa.yaml'), 'organization: test\n');
 
-    await runInit({ targetDir: existingDir, starterKit: undefined, enhance: true, noPrompt: true, force: true });
+    await runInit({ targetDir: existingDir, starterKit: undefined, enhance: true, noPrompt: true, overwrite: true });
 
     const gettingStarted = fs.readFileSync(path.join(existingDir, 'agent_rules', 'getting-started.md'), 'utf-8');
     expect(gettingStarted).toContain('MDAA');
@@ -369,7 +417,7 @@ describe('mdaa init - unknown starter kit', () => {
     const outputDir = path.join(tempDir, 'output');
 
     await expect(
-      runInit({ targetDir: outputDir, starterKit: 'nonexistent_kit', enhance: false, noPrompt: true, force: true }),
+      runInit({ targetDir: outputDir, starterKit: 'nonexistent_kit', enhance: false, noPrompt: true, overwrite: true }),
     ).rejects.toThrow('process.exit called');
     expect(process.exit).toHaveBeenCalledWith(1);
   });
@@ -1007,7 +1055,7 @@ describe('mdaa init - canonical rule copy', () => {
   test('copies canonical rule into agent_rules/ so projections resolve', async () => {
     const outputDir = path.join(tempDir, 'output');
 
-    await runInit({ targetDir: outputDir, starterKit: 'minimal', enhance: false, noPrompt: true, force: true });
+    await runInit({ targetDir: outputDir, starterKit: 'minimal', enhance: false, noPrompt: true, overwrite: true });
 
     const canonical = path.join(outputDir, 'agent_rules', 'user-config-authoring.md');
     expect(fs.existsSync(canonical)).toBe(true);
@@ -1041,7 +1089,7 @@ describe('mdaa init - interactive prompts', () => {
     // (kit selection reads .kit, placeholder prompts read .value).
     promptsMock.mockResolvedValue({ kit: 'minimal', value: 'interactive-value' });
 
-    await runInit({ targetDir: outputDir, starterKit: undefined, enhance: false, noPrompt: false, force: true });
+    await runInit({ targetDir: outputDir, starterKit: undefined, enhance: false, noPrompt: false, overwrite: true });
 
     // Which prompt was opened, not merely that something prompted
     expect(promptsMock).toHaveBeenCalledWith(expect.objectContaining({ type: 'select', name: 'kit' }));
@@ -1057,7 +1105,7 @@ describe('mdaa init - interactive prompts', () => {
     promptsMock.mockResolvedValue({}); // no .kit -> cancel
 
     await expect(
-      runInit({ targetDir: outputDir, starterKit: undefined, enhance: false, noPrompt: false, force: true }),
+      runInit({ targetDir: outputDir, starterKit: undefined, enhance: false, noPrompt: false, overwrite: true }),
     ).rejects.toThrow(CancelledError);
     // A cancellation is reported as such rather than exiting 0, which a wrapper script
     // could not tell apart from a successful scaffold.
@@ -1071,7 +1119,7 @@ describe('mdaa init - interactive prompts', () => {
     promptsMock.mockResolvedValue({ value: undefined });
 
     await expect(
-      runInit({ targetDir: outputDir, starterKit: 'minimal', enhance: false, noPrompt: false, force: true }),
+      runInit({ targetDir: outputDir, starterKit: 'minimal', enhance: false, noPrompt: false, overwrite: true }),
     ).rejects.toThrow(CancelledError);
     expect(process.exit).not.toHaveBeenCalled();
     // Output dir is not created when scaffolding is aborted during prompting
@@ -1083,7 +1131,7 @@ describe('mdaa init - interactive prompts', () => {
     // Empty string (not undefined) -> skipped, placeholder remains
     promptsMock.mockResolvedValue({ value: '' });
 
-    await runInit({ targetDir: outputDir, starterKit: 'minimal', enhance: false, noPrompt: false, force: true });
+    await runInit({ targetDir: outputDir, starterKit: 'minimal', enhance: false, noPrompt: false, overwrite: true });
 
     const mdaaYaml = fs.readFileSync(path.join(outputDir, 'mdaa.yaml'), 'utf-8');
     expect(mdaaYaml).toContain('<YOUR_ORG_NAME>');
@@ -1112,7 +1160,7 @@ describe('mdaa init - enhance confirmation prompt', () => {
     fs.writeFileSync(path.join(existingDir, 'mdaa.yaml'), 'organization: test\n');
     promptsMock.mockResolvedValue({ confirm: true });
 
-    await runInit({ targetDir: existingDir, starterKit: undefined, enhance: false, noPrompt: false, force: true });
+    await runInit({ targetDir: existingDir, starterKit: undefined, enhance: false, noPrompt: false, overwrite: true });
 
     expect(promptsMock).toHaveBeenCalledWith(expect.objectContaining({ type: 'confirm', name: 'confirm' }));
     expect(fs.existsSync(path.join(existingDir, '.kiro', 'steering'))).toBe(true);
@@ -1126,7 +1174,7 @@ describe('mdaa init - enhance confirmation prompt', () => {
     promptsMock.mockResolvedValue({ confirm: false });
 
     await expect(
-      runInit({ targetDir: existingDir, starterKit: undefined, enhance: false, noPrompt: false, force: true }),
+      runInit({ targetDir: existingDir, starterKit: undefined, enhance: false, noPrompt: false, overwrite: true }),
     ).rejects.toThrow(CancelledError);
     expect(process.exit).not.toHaveBeenCalled();
     // Nothing added on cancel
@@ -1176,7 +1224,7 @@ describe('mdaa init - version override reporting', () => {
 
     const logSpy = jest.spyOn(console, 'log').mockImplementation(() => undefined);
     try {
-      await runInit({ targetDir: existingDir, starterKit: undefined, enhance: true, noPrompt: true, force: true });
+      await runInit({ targetDir: existingDir, starterKit: undefined, enhance: true, noPrompt: true, overwrite: true });
     } finally {
       const logged = logSpy.mock.calls.map(c => c.join(' ')).join('\n');
       logSpy.mockRestore();

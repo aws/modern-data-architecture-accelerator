@@ -42,16 +42,16 @@ export interface InitOptions {
   starterKit?: string;
   enhance: boolean;
   noPrompt: boolean;
-  force: boolean;
+  overwrite: boolean;
 }
 
 /**
- * How writes treat a user-owned file that has been modified since MDAA generated it:
- * overwrite it (`force`), leave it (`noPrompt`), or ask. Carried as one value so it can be
- * threaded to the write path without growing every signature along the way.
+ * How writes treat a user-owned file that has been modified since MDAA generated it: overwrite
+ * it, leave it, or ask - selected by `overwrite` and `noPrompt` respectively. Carried as one
+ * value so it can be threaded to the write path without growing every signature along the way.
  */
 export interface WriteBehaviour {
-  readonly force: boolean;
+  readonly overwrite: boolean;
   readonly noPrompt: boolean;
 }
 
@@ -295,7 +295,7 @@ async function enhanceExistingProject(userPath: string, resolvedDir: string, opt
 
   console.log(`\nEnhancing ${userPath} with AI steering, schemas, and documentation...`);
   const version = enhanceDirectory(resolvedDir, options.starterKit, {
-    force: options.force,
+    overwrite: options.overwrite,
     noPrompt: options.noPrompt,
   });
   console.log('\n✅ Done!\n');
@@ -342,7 +342,7 @@ export async function runInit(options: InitOptions): Promise<void> {
 
   if (!targetDir) {
     console.error('Error: Directory argument is required.\n');
-    console.log('Usage: mdaa init [--starter-kit <name>] [--enhance] [--no-prompt] <directory>');
+    console.log('Usage: mdaa init [--starter-kit <name>] [--enhance] [--no-prompt] [--overwrite] <directory>');
     process.exit(1);
   }
 
@@ -420,8 +420,8 @@ async function scaffoldNewConfig(userPath: string, resolvedOutputDir: string, op
     pinMdaaVersion(resolvedOutputDir);
 
     // Enhance the output directory (schemas, docs, steering)
-    // Nothing in a directory this run just created can be user-modified, so force is safe
-    enhanceDirectory(resolvedOutputDir, selectedKit, { force: true, noPrompt });
+    // Nothing in a directory this run just created can be user-modified, so overwriting is safe
+    enhanceDirectory(resolvedOutputDir, selectedKit, { overwrite: true, noPrompt });
 
     // Clean up repo-relative links in the kit README
     cleanRepoLinks(resolvedOutputDir);
@@ -477,14 +477,14 @@ function validatedUpgradeTarget(targetVersion?: string): string {
  * Upgrade the project's mdaa_version and refresh all .mdaa/ assets.
  * If no version is specified, uses the currently installed CLI version.
  *
- * `force` carries the same meaning as on init: MDAA-owned files are always
+ * `overwrite` carries the same meaning as on init: MDAA-owned files are always
  * regenerated, while user-owned files (CLAUDE.md, copilot-instructions.md) that
  * have been modified since generation prompt before being overwritten. Upgrade is
  * the routine version-maintenance command, so it must not be the one path that
  * bypasses that protection.
  */
-export async function runUpgrade(targetVersion?: string, force = false, noPrompt = false): Promise<void> {
-  const behaviour: WriteBehaviour = { force, noPrompt };
+export async function runUpgrade(targetVersion?: string, overwrite = false, noPrompt = false): Promise<void> {
+  const behaviour: WriteBehaviour = { overwrite, noPrompt };
   const cwd = process.cwd();
   const mdaaYamlPath = path.join(cwd, 'mdaa.yaml');
 

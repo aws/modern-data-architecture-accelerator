@@ -177,7 +177,7 @@ describe('init-version', () => {
       fs.mkdirSync(path.join(projectDir, '.mdaa', 'notes'), { recursive: true });
       fs.writeFileSync(path.join(projectDir, '.mdaa', 'notes', 'todo.md'), 'my notes\n');
 
-      await runInit({ targetDir: projectDir, starterKit: undefined, enhance: true, noPrompt: true, force: true });
+      await runInit({ targetDir: projectDir, starterKit: undefined, enhance: true, noPrompt: true, overwrite: true });
 
       expect(fs.readFileSync(path.join(projectDir, '.mdaa', 'notes', 'todo.md'), 'utf-8')).toEqual('my notes\n');
       expect(fs.existsSync(path.join(projectDir, '.mdaa', getCliVersion(), 'schemas'))).toBe(true);
@@ -187,7 +187,7 @@ describe('init-version', () => {
       const projectDir = projectWith('mdaa_version: "../../sentinel/pwned"\norg: test\n');
 
       await expect(
-        runInit({ targetDir: projectDir, starterKit: undefined, enhance: true, noPrompt: true, force: true }),
+        runInit({ targetDir: projectDir, starterKit: undefined, enhance: true, noPrompt: true, overwrite: true }),
       ).rejects.toThrow(/Invalid mdaa_version/);
 
       // `.mdaa/../../sentinel/pwned` resolves to <tempDir>/sentinel/pwned

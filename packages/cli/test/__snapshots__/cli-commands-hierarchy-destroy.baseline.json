@@ -1,0 +1,66 @@
+[
+  {
+    "index": 0,
+    "command": "mkdir -p '/TEMP_DIR/mdaa_working/nodejs/71f98093' && npm install --no-fund --save-exact --tag '' --prefix '/TEMP_DIR/mdaa_working/nodejs/71f98093' '@aws-mdaa/roles@1.0.0-global' > '/dev/null'"
+  },
+  {
+    "index": 1,
+    "command": "mkdir -p '/TEMP_DIR/mdaa_working/nodejs/71f98093' && npm install --no-fund --save-exact --tag '' --prefix '/TEMP_DIR/mdaa_working/nodejs/71f98093' '@aws-mdaa/roles@1.0.0-global' > '/dev/null'"
+  },
+  {
+    "index": 2,
+    "command": "cd '/TEMP_DIR/mdaa_working/nodejs/71f98093/node_modules/@aws-mdaa/roles' && export CDK_DEPLOY_REGION='us-east-1' && export AWS_DEFAULT_REGION='us-east-1' && npx cdk 'destroy' --all --require-approval never -a 'npx  /TEMP_DIR/mdaa_working/nodejs/71f98093/node_modules/@aws-mdaa/roles/' -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/domain-b/env-2/mod-b' -c 'org=test-org' -c 'env=env-2' -c 'module_name=mod-b' -c 'domain=domain-b' -c 'permissions_boundary_arn=\"arn:aws:iam::123456789012:policy/boundary-global\"' -c 'naming_module=/TEMP_DIR/naming/global-naming.js' -c 'naming_class=GlobalNaming' -c 'use_bootstrap=\"false\"' -c 'module_configs=\"/TEMP_DIR/roles.yaml\"' -c 'tag_configs=\"/TEMP_DIR/tags-global.yaml\"' -c 'custom_aspects=[{\"aspect_module\":\"/TEMP_DIR/aspects/global-aspect.js\",\"aspect_class\":\"GlobalAspect\"}]' -c 'tag_config_data={\"tag_set_at_global_only\":\"global-value\",\"tag_overridden_everywhere\":\"from-global\"}' -c 'set_at_global_only=global-value' -c 'overridden_everywhere=from-global' --force"
+  },
+  {
+    "index": 3,
+    "command": "cd '/TEMP_DIR/mdaa_working/nodejs/71f98093/node_modules/@aws-mdaa/roles' && export CDK_DEPLOY_REGION='us-east-1' && export AWS_DEFAULT_REGION='us-east-1' && npx cdk 'destroy' --all --require-approval never -a 'npx  /TEMP_DIR/mdaa_working/nodejs/71f98093/node_modules/@aws-mdaa/roles/' -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/domain-b/env-2/mod-a' -c 'org=test-org' -c 'env=env-2' -c 'module_name=mod-a' -c 'domain=domain-b' -c 'permissions_boundary_arn=\"arn:aws:iam::123456789012:policy/boundary-global\"' -c 'naming_module=/TEMP_DIR/naming/global-naming.js' -c 'naming_class=GlobalNaming' -c 'use_bootstrap=\"false\"' -c 'module_configs=\"/TEMP_DIR/roles.yaml\"' -c 'tag_configs=\"/TEMP_DIR/tags-global.yaml\"' -c 'custom_aspects=[{\"aspect_module\":\"/TEMP_DIR/aspects/global-aspect.js\",\"aspect_class\":\"GlobalAspect\"}]' -c 'tag_config_data={\"tag_set_at_global_only\":\"global-value\",\"tag_overridden_everywhere\":\"from-global\"}' -c 'set_at_global_only=global-value' -c 'overridden_everywhere=from-global' --force"
+  },
+  {
+    "index": 4,
+    "command": "mkdir -p '/TEMP_DIR/mdaa_working/nodejs/71f98093' && npm install --no-fund --save-exact --tag '' --prefix '/TEMP_DIR/mdaa_working/nodejs/71f98093' '@aws-mdaa/roles@1.0.0-global' > '/dev/null'"
+  },
+  {
+    "index": 5,
+    "command": "mkdir -p '/TEMP_DIR/mdaa_working/nodejs/71f98093' && npm install --no-fund --save-exact --tag '' --prefix '/TEMP_DIR/mdaa_working/nodejs/71f98093' '@aws-mdaa/roles@1.0.0-global' > '/dev/null'"
+  },
+  {
+    "index": 6,
+    "command": "cd '/TEMP_DIR/mdaa_working/nodejs/71f98093/node_modules/@aws-mdaa/roles' && export CDK_DEPLOY_REGION='us-east-1' && export AWS_DEFAULT_REGION='us-east-1' && npx cdk 'destroy' --all --require-approval never -a 'npx  /TEMP_DIR/mdaa_working/nodejs/71f98093/node_modules/@aws-mdaa/roles/' -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/domain-b/env-1/mod-b' -c 'org=test-org' -c 'env=env-1' -c 'module_name=mod-b' -c 'domain=domain-b' -c 'permissions_boundary_arn=\"arn:aws:iam::123456789012:policy/boundary-global\"' -c 'naming_module=/TEMP_DIR/naming/global-naming.js' -c 'naming_class=GlobalNaming' -c 'use_bootstrap=\"false\"' -c 'module_configs=\"/TEMP_DIR/roles.yaml\"' -c 'tag_configs=\"/TEMP_DIR/tags-global.yaml\"' -c 'custom_aspects=[{\"aspect_module\":\"/TEMP_DIR/aspects/global-aspect.js\",\"aspect_class\":\"GlobalAspect\"}]' -c 'tag_config_data={\"tag_set_at_global_only\":\"global-value\",\"tag_overridden_everywhere\":\"from-global\"}' -c 'set_at_global_only=global-value' -c 'overridden_everywhere=from-global' --force"
+  },
+  {
+    "index": 7,
+    "command": "cd '/TEMP_DIR/mdaa_working/nodejs/71f98093/node_modules/@aws-mdaa/roles' && export CDK_DEPLOY_REGION='us-east-1' && export AWS_DEFAULT_REGION='us-east-1' && npx cdk 'destroy' --all --require-approval never -a 'npx  /TEMP_DIR/mdaa_working/nodejs/71f98093/node_modules/@aws-mdaa/roles/' -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/domain-b/env-1/mod-a' -c 'org=test-org' -c 'env=env-1' -c 'module_name=mod-a' -c 'domain=domain-b' -c 'permissions_boundary_arn=\"arn:aws:iam::123456789012:policy/boundary-global\"' -c 'naming_module=/TEMP_DIR/naming/global-naming.js' -c 'naming_class=GlobalNaming' -c 'use_bootstrap=\"false\"' -c 'module_configs=\"/TEMP_DIR/roles.yaml\"' -c 'tag_configs=\"/TEMP_DIR/tags-global.yaml\"' -c 'custom_aspects=[{\"aspect_module\":\"/TEMP_DIR/aspects/global-aspect.js\",\"aspect_class\":\"GlobalAspect\"}]' -c 'tag_config_data={\"tag_set_at_global_only\":\"global-value\",\"tag_overridden_everywhere\":\"from-global\"}' -c 'set_at_global_only=global-value' -c 'overridden_everywhere=from-global' --force"
+  },
+  {
+    "index": 8,
+    "command": "mkdir -p '/TEMP_DIR/mdaa_working/nodejs/263015ed' && npm install --no-fund --save-exact --tag '' --prefix '/TEMP_DIR/mdaa_working/nodejs/263015ed' '@aws-mdaa/roles@2.0.0-domain' > '/dev/null'"
+  },
+  {
+    "index": 9,
+    "command": "mkdir -p '/TEMP_DIR/mdaa_working/nodejs/263015ed' && npm install --no-fund --save-exact --tag '' --prefix '/TEMP_DIR/mdaa_working/nodejs/263015ed' '@aws-mdaa/roles@2.0.0-domain' > '/dev/null'"
+  },
+  {
+    "index": 10,
+    "command": "cd '/TEMP_DIR/mdaa_working/nodejs/263015ed/node_modules/@aws-mdaa/roles' && export CDK_DEPLOY_REGION='us-east-1' && export AWS_DEFAULT_REGION='us-east-1' && npx cdk 'destroy' --all --require-approval never -a 'npx  /TEMP_DIR/mdaa_working/nodejs/263015ed/node_modules/@aws-mdaa/roles/' -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/domain-a/env-2/mod-b' -c 'org=test-org' -c 'env=env-2' -c 'module_name=mod-b' -c 'domain=domain-a' -c 'permissions_boundary_arn=\"arn:aws:iam::123456789012:policy/boundary-domain-a\"' -c 'naming_module=/TEMP_DIR/naming/domain-naming.js' -c 'naming_class=DomainNaming' -c 'use_bootstrap=\"false\"' -c 'module_configs=\"/TEMP_DIR/roles.yaml\"' -c 'tag_configs=\"/TEMP_DIR/tags-domain-a.yaml\"' -c 'custom_aspects=[{\"aspect_module\":\"/TEMP_DIR/aspects/global-aspect.js\",\"aspect_class\":\"GlobalAspect\"},{\"aspect_module\":\"/TEMP_DIR/aspects/domain-aspect.js\",\"aspect_class\":\"DomainAspect\"}]' -c 'tag_config_data={\"tag_set_at_global_only\":\"global-value\",\"tag_overridden_everywhere\":\"from-domain\",\"tag_set_at_domain_only\":\"domain-value\"}' -c 'set_at_global_only=global-value' -c 'overridden_everywhere=from-domain' -c 'set_at_domain_only=domain-value' --force"
+  },
+  {
+    "index": 11,
+    "command": "cd '/TEMP_DIR/mdaa_working/nodejs/263015ed/node_modules/@aws-mdaa/roles' && export CDK_DEPLOY_REGION='us-east-1' && export AWS_DEFAULT_REGION='us-east-1' && npx cdk 'destroy' --all --require-approval never -a 'npx  /TEMP_DIR/mdaa_working/nodejs/263015ed/node_modules/@aws-mdaa/roles/' -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/domain-a/env-2/mod-a' -c 'org=test-org' -c 'env=env-2' -c 'module_name=mod-a' -c 'domain=domain-a' -c 'permissions_boundary_arn=\"arn:aws:iam::123456789012:policy/boundary-domain-a\"' -c 'naming_module=/TEMP_DIR/naming/domain-naming.js' -c 'naming_class=DomainNaming' -c 'use_bootstrap=\"false\"' -c 'module_configs=\"/TEMP_DIR/roles.yaml\"' -c 'tag_configs=\"/TEMP_DIR/tags-domain-a.yaml\"' -c 'custom_aspects=[{\"aspect_module\":\"/TEMP_DIR/aspects/global-aspect.js\",\"aspect_class\":\"GlobalAspect\"},{\"aspect_module\":\"/TEMP_DIR/aspects/domain-aspect.js\",\"aspect_class\":\"DomainAspect\"}]' -c 'tag_config_data={\"tag_set_at_global_only\":\"global-value\",\"tag_overridden_everywhere\":\"from-domain\",\"tag_set_at_domain_only\":\"domain-value\"}' -c 'set_at_global_only=global-value' -c 'overridden_everywhere=from-domain' -c 'set_at_domain_only=domain-value' --force"
+  },
+  {
+    "index": 12,
+    "command": "mkdir -p '/TEMP_DIR/mdaa_working/nodejs/4ee1cdd3' && npm install --no-fund --save-exact --tag '' --prefix '/TEMP_DIR/mdaa_working/nodejs/4ee1cdd3' '@aws-mdaa/roles@4.0.0-module' > '/dev/null'"
+  },
+  {
+    "index": 13,
+    "command": "mkdir -p '/TEMP_DIR/mdaa_working/nodejs/5b4e1b93' && npm install --no-fund --save-exact --tag '' --prefix '/TEMP_DIR/mdaa_working/nodejs/5b4e1b93' '@aws-mdaa/roles@3.0.0-env' > '/dev/null'"
+  },
+  {
+    "index": 14,
+    "command": "cd '/TEMP_DIR/mdaa_working/nodejs/5b4e1b93/node_modules/@aws-mdaa/roles' && export CDK_DEPLOY_REGION='us-west-2' && export AWS_DEFAULT_REGION='us-west-2' && export CDK_DEPLOY_ACCOUNT='123456789012' && npx cdk 'destroy' --all --require-approval never -a 'npx  /TEMP_DIR/mdaa_working/nodejs/5b4e1b93/node_modules/@aws-mdaa/roles/' -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/domain-a/env-1/mod-inherits' -c 'org=test-org' -c 'env=env-1' -c 'module_name=mod-inherits' -c 'domain=domain-a' -c 'permissions_boundary_arn=\"arn:aws:iam::123456789012:policy/boundary-env-1\"' -c 'naming_module=/TEMP_DIR/naming/env-naming.js' -c 'naming_class=EnvNaming' -c 'use_bootstrap=\"false\"' -c 'module_configs=\"/TEMP_DIR/roles.yaml\"' -c 'tag_configs=\"/TEMP_DIR/tags-env-1.yaml\"' -c 'custom_aspects=[{\"aspect_module\":\"/TEMP_DIR/aspects/global-aspect.js\",\"aspect_class\":\"GlobalAspect\"},{\"aspect_module\":\"/TEMP_DIR/aspects/domain-aspect.js\",\"aspect_class\":\"DomainAspect\"},{\"aspect_module\":\"/TEMP_DIR/aspects/env-aspect.js\",\"aspect_class\":\"EnvAspect\"}]' -c 'tag_config_data={\"tag_set_at_global_only\":\"global-value\",\"tag_overridden_everywhere\":\"from-env\",\"tag_set_at_domain_only\":\"domain-value\",\"tag_set_at_env_only\":\"env-value\"}' -c 'set_at_global_only=global-value' -c 'overridden_everywhere=from-env' -c 'set_at_domain_only=domain-value' -c 'set_at_env_only=env-value' --force"
+  },
+  {
+    "index": 15,
+    "command": "cd '/TEMP_DIR/mdaa_working/nodejs/4ee1cdd3/node_modules/@aws-mdaa/roles' && export CDK_DEPLOY_REGION='us-west-2' && export AWS_DEFAULT_REGION='us-west-2' && export CDK_DEPLOY_ACCOUNT='123456789012' && npx cdk 'destroy' --all --require-approval never -a 'npx  /TEMP_DIR/mdaa_working/nodejs/4ee1cdd3/node_modules/@aws-mdaa/roles/' -o '/TEMP_DIR/mdaa_working/cdk.out/test-org/domain-a/env-1/mod-overrides' -c 'org=test-org' -c 'env=env-1' -c 'module_name=mod-overrides' -c 'domain=domain-a' -c 'permissions_boundary_arn=\"arn:aws:iam::123456789012:policy/boundary-env-1\"' -c 'naming_module=/TEMP_DIR/naming/module-naming.js' -c 'naming_class=ModuleNaming' -c 'use_bootstrap=\"false\"' -c 'module_configs=\"/TEMP_DIR/roles.yaml\"' -c 'tag_configs=\"/TEMP_DIR/tags-module.yaml\"' -c 'allow_cross_reference_stack=\"true\"' -c 'additional_stacks=[{\"region\":\"us-east-2\"},{\"account\":\"210987654321\"}]' -c 'custom_aspects=[{\"aspect_module\":\"/TEMP_DIR/aspects/global-aspect.js\",\"aspect_class\":\"GlobalAspect\"},{\"aspect_module\":\"/TEMP_DIR/aspects/domain-aspect.js\",\"aspect_class\":\"DomainAspect\"},{\"aspect_module\":\"/TEMP_DIR/aspects/env-aspect.js\",\"aspect_class\":\"EnvAspect\"},{\"aspect_module\":\"/TEMP_DIR/aspects/module-aspect.js\",\"aspect_class\":\"ModuleAspect\"}]' -c 'tag_config_data={\"tag_set_at_global_only\":\"global-value\",\"tag_overridden_everywhere\":\"from-module\",\"tag_set_at_domain_only\":\"domain-value\",\"tag_set_at_env_only\":\"env-value\",\"tag_set_at_module_only\":\"module-value\"}' -c 'set_at_global_only=global-value' -c 'overridden_everywhere=from-module' -c 'set_at_domain_only=domain-value' -c 'set_at_env_only=env-value' -c 'set_at_module_only=module-value' --force"
+  }
+]

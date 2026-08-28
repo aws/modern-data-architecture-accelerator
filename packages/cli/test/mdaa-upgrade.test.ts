@@ -136,7 +136,7 @@ describe('mdaa upgrade', () => {
     });
   });
 
-  test('preserves a user-modified CLAUDE.md when --force is not passed', async () => {
+  test('preserves a user-modified CLAUDE.md when --overwrite is not passed', async () => {
     seedProjectWithModifiedClaudeMd();
     // Non-interactive shell: promptOverwrite's read fails, which must fail closed.
     jest.spyOn(fs, 'readSync').mockImplementation(() => {
@@ -165,7 +165,7 @@ describe('mdaa upgrade', () => {
     expect(fs.readFileSync(path.join(projectDir, 'CLAUDE.md'), 'utf-8')).not.toEqual(HAND_WRITTEN);
   });
 
-  test('overwrites a user-modified CLAUDE.md when --force is passed, without prompting', async () => {
+  test('overwrites a user-modified CLAUDE.md when --overwrite is passed, without prompting', async () => {
     seedProjectWithModifiedClaudeMd();
     const readSyncSpy = jest.spyOn(fs, 'readSync');
 

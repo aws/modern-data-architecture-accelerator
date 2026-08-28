@@ -70,6 +70,11 @@ const SAMPLE_CASES: readonly SampleCase[] = [
   // Under synth (-> validate) the baseline would contain the terraform/checkov
   // scaffolding but none of the config-derived -var values, which are the point.
   { name: 'terraform', action: 'diff' },
+  // The cdk pushdown: `--force` is not an MDAA option, so it must survive to the end of every
+  // emitted `cdk destroy`. Reuses the hierarchy config rather than adding one, since the
+  // concern is how an unclaimed token renders among the other cdk args across several modules.
+  // Nothing executes under --testing, so a destroy case is inert.
+  { name: 'hierarchy', action: 'destroy', extraArgs: ['--force'] },
 ];
 
 const SAMPLE_CONFIGS_DIR = path.join(__dirname, '..', 'sample_configs');
@@ -129,13 +134,26 @@ function stageSampleConfig(name: string): { workDir: string; configPath: string 
   return { workDir, configPath };
 }
 
-describe.each(SAMPLE_CASES)('CLI command baseline: $name', ({ name, action, extraArgs, env }) => {
-  test('emitted commands match baseline', () => {
-    const { workDir, configPath } = stageSampleConfig(name);
+/**
+ * Baseline file stem. Keyed on the action as well as the config, so one config can be exercised
+ * under more than one action without the two cases overwriting each other's baseline.
+ */
+function baselineStem({ name, action }: SampleCase): string {
+  return `cli-commands-${name}${action ? `-${action}` : ''}`;
+}
 
-    try {
-      // prettier-ignore
-      const proc = spawnSync( // NOSONAR
+// Titled by baseline stem rather than `$name`, so the two cases sharing a config are
+// distinguishable in the output and each title names the file it compares against.
+describe.each(SAMPLE_CASES.map(sampleCase => [baselineStem(sampleCase), sampleCase] as const))(
+  'CLI command baseline: %s',
+  (_stem, sampleCase) => {
+    const { name, action, extraArgs, env } = sampleCase;
+    test('emitted commands match baseline', () => {
+      const { workDir, configPath } = stageSampleConfig(name);
+
+      try {
+        // prettier-ignore
+        const proc = spawnSync( // NOSONAR
         process.execPath,
         [
           getCliEntryPoint(),
@@ -156,30 +174,31 @@ describe.each(SAMPLE_CASES)('CLI command baseline: $name', ({ name, action, extr
         },
       );
 
-      const diagnostics = `--- stdout ---\n${proc.stdout ?? ''}\n--- stderr ---\n${proc.stderr ?? ''}`;
+        const diagnostics = `--- stdout ---\n${proc.stdout ?? ''}\n--- stderr ---\n${proc.stderr ?? ''}`;
 
-      // Exit status, not just command count: a config that throws partway through emission
-      // still prints the earlier commands, so `length > 0` alone would pass and freeze a
-      // truncated set into the baseline — ratifying a regression that drops modules.
-      expect(proc.status === 0 ? '' : `CLI exited ${proc.status} for sample '${name}'.\n${diagnostics}`).toBe('');
+        // Exit status, not just command count: a config that throws partway through emission
+        // still prints the earlier commands, so `length > 0` alone would pass and freeze a
+        // truncated set into the baseline — ratifying a regression that drops modules.
+        expect(proc.status === 0 ? '' : `CLI exited ${proc.status} for sample '${name}'.\n${diagnostics}`).toBe('');
 
-      const commands = parseCliCommands(proc.stdout ?? '');
-      // A config that fails to parse prints nothing parseable, which would otherwise
-      // silently "pass" by writing an empty baseline. Assert with the CLI's own output
-      // as the message so a broken sample config is diagnosable from the failure alone.
-      expect(commands.length > 0 ? '' : `No commands parsed for sample '${name}'.\n${diagnostics}`).toBe('');
+        const commands = parseCliCommands(proc.stdout ?? '');
+        // A config that fails to parse prints nothing parseable, which would otherwise
+        // silently "pass" by writing an empty baseline. Assert with the CLI's own output
+        // as the message so a broken sample config is diagnosable from the failure alone.
+        expect(commands.length > 0 ? '' : `No commands parsed for sample '${name}'.\n${diagnostics}`).toBe('');
 
-      // Returns null on match (or after writing a new baseline in UPDATE_BASELINES
-      // mode) and a human-readable drift report otherwise, so asserting null surfaces
-      // that report as the failure message.
-      const drift = compareCliBaseline(
-        commands,
-        BASELINES_DIR,
-        path.join(BASELINES_DIR, `cli-commands-${name}.baseline.json`),
-      );
-      expect(drift).toBeNull();
-    } finally {
-      fs.rmSync(workDir, { recursive: true, force: true });
-    }
-  }, 120_000);
-});
+        // Returns null on match (or after writing a new baseline in UPDATE_BASELINES
+        // mode) and a human-readable drift report otherwise, so asserting null surfaces
+        // that report as the failure message.
+        const drift = compareCliBaseline(
+          commands,
+          BASELINES_DIR,
+          path.join(BASELINES_DIR, `${baselineStem(sampleCase)}.baseline.json`),
+        );
+        expect(drift).toBeNull();
+      } finally {
+        fs.rmSync(workDir, { recursive: true, force: true });
+      }
+    }, 120_000);
+  },
+);
