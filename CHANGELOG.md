@@ -1,6 +1,6 @@
 # Change Log
 
-## [NEXT_RELEASE_VERSION] - NEXT_RELEASE_DATE
+## [1.8.0] - 2026-08-28
 
 ### Changed
 

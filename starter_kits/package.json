@@ -1,6 +1,6 @@
 {
   "name": "@aws-mdaa/starter-kits",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "description": "MDAA starter kit configuration templates",
   "license": "Apache-2.0",
   "author": {
@@ -17,7 +17,7 @@
     "test:update-baselines": "UPDATE_BASELINES=true python3 ../scripts/test/test_starter_kit.py"
   },
   "devDependencies": {
-    "@aws-mdaa/testing": "1.7.0",
+    "@aws-mdaa/testing": "1.8.0",
     "@types/jest": "29.5.14",
     "@types/node": "22.9.0",
     "jest": "29.7.0",
