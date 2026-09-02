@@ -6,6 +6,7 @@
 import { MdaaTestApp } from '@aws-mdaa/testing';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import * as kms from 'aws-cdk-lib/aws-kms';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { createAgentCoreLogProtection } from '../lib';
 
 const TEST_RUNTIME_ID = 'my_org_dev__749d67db-QQHgbo7Noj';
@@ -70,6 +71,22 @@ describe('createAgentCoreLogProtection', () => {
     template.hasResourceProperties('Custom::AgentCoreLogProtection', {
       runtimeId: TEST_RUNTIME_ID,
       retentionDays: '90',
+    });
+  });
+
+  test('omits retentionDays for the INFINITE sentinel (9999 = never-expire)', () => {
+    // 9999 (RetentionDays.INFINITE) means never-expire: no retention policy is applied, so the
+    // sentinel is not forwarded to the handler's raw PutRetentionPolicy call (which rejects 9999).
+    createAgentCoreLogProtection(testApp.testStack, 'TestLogProtection', {
+      runtimeId: TEST_RUNTIME_ID,
+      retentionDays: RetentionDays.INFINITE,
+      naming: testApp.naming,
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    template.hasResourceProperties('Custom::AgentCoreLogProtection', {
+      runtimeId: TEST_RUNTIME_ID,
+      retentionDays: Match.absent(),
     });
   });
 

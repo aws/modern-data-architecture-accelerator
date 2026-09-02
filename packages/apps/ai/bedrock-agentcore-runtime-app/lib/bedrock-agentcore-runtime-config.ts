@@ -21,9 +21,10 @@ import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
 
 /**
- * Valid CloudWatch Logs retention periods in days, as accepted by the
- * RetentionDays enum. Constraining the config type to these literals makes
- * invalid values fail at schema validation rather than at deploy time.
+ * Valid CloudWatch Logs retention periods in days, as accepted by the RetentionDays enum, plus
+ * `9999` (RetentionDays.INFINITE / never-expire) as an explicit, lockable never-expire choice.
+ * Constraining the config type to these literals makes invalid values fail at schema validation
+ * rather than at deploy time.
  */
 export type LogRetentionDays =
   | 1
@@ -47,7 +48,8 @@ export type LogRetentionDays =
   | 2557
   | 2922
   | 3288
-  | 3653;
+  | 3653
+  | 9999;
 
 export interface BedrockAgentcoreRuntimeConfigContents extends MdaaBaseConfigContents {
   /**
@@ -227,14 +229,18 @@ export interface BedrockAgentcoreRuntimeConfigContents extends MdaaBaseConfigCon
    **/
   readonly enableTransactionSearch?: boolean;
   /**
-   * CloudWatch Logs retention period for the runtime log group in days.
+   * CloudWatch Logs retention period for the runtime log group, in days. Accepts any CloudWatch Logs
+   * `RetentionDays` value; `9999` (`RetentionDays.INFINITE`) means never-expire and can be set
+   * explicitly to lock indefinite retention into config. Omitting the field is equivalent to `9999` —
+   * no retention policy is applied, leaving the service-created log groups at CloudWatch's
+   * never-expire default (logs are kept, and billed, forever) unless a finite value is set.
    *
    * Use cases: Log retention policy, cost management, compliance retention requirements
    *
    * AWS: CloudWatch Logs log group retention
    *
-   * Validation: Optional; Number; must be a valid RetentionDays value (1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1096, 1827, 2192, 2557, 2922, 3288, 3653)
-   * @default 30
+   * Validation: Optional; Number; must be a valid RetentionDays value (1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1096, 1827, 2192, 2557, 2922, 3288, 3653, 9999)
+   * @default 9999
    **/
   readonly logRetentionDays?: LogRetentionDays;
   /**

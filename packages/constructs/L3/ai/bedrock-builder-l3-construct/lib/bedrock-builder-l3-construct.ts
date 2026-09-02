@@ -40,6 +40,13 @@ import {
   GatewayTargetProps,
   GatewayTargetsMap,
 } from '@aws-mdaa/bedrock-agentcore-gateway-l3-construct';
+import {
+  BedrockAgentcoreHarnessL3Construct,
+  HarnessConfigProps,
+  ResolvedGatewayArnMap,
+  ResolvedGuardrailRefMap,
+  validateHarnessVpcEndpointCollisions,
+} from '@aws-mdaa/bedrock-agentcore-harness-l3-construct';
 import { NamedOpensearchServerlessProps, validateAndGroupVpcEndpoints } from './vpc-endpoint-validator';
 
 /**
@@ -127,6 +134,19 @@ export interface NamedGatewayProps {
 export interface NamedGatewayTargetProps {
   /** @jsii ignore */
   [targetName: string]: GatewayTargetProps;
+}
+
+// Re-export the Harness config surface so the app config can import it from the builder package
+// rather than reaching into the harness L3 directly.
+export { HarnessConfigProps };
+
+/**
+ * Map of harness name to {@link HarnessConfigProps}. The key becomes the child construct id suffix
+ * (`bedrock-harness-<name>`) and the derived, MDAA-named harness name.
+ */
+export interface NamedHarnessProps {
+  /** @jsii ignore */
+  [harnessName: string]: HarnessConfigProps;
 }
 
 export interface BedrockBuilderL3ConstructProps extends MdaaL3ConstructProps {
@@ -243,6 +263,19 @@ export interface BedrockBuilderL3ConstructProps extends MdaaL3ConstructProps {
    * Validation: Optional; NamedGatewayTargetProps (map of target name to config)
    **/
   readonly gatewayTargets?: NamedGatewayTargetProps;
+  /**
+   * Bedrock AgentCore Harness configurations — a declarative agent loop (model + system prompt +
+   * tools) — keyed by harness name. A harness's `guardrail.id` and
+   * `tools[].agentCoreGateway.gatewayArn` may use a `config:<name>` reference into the sibling
+   * `guardrails` / `gateways` maps, resolved to the live resource.
+   *
+   * Use cases: declarative tool-using/RAG agents
+   *
+   * AWS: AWS::BedrockAgentCore::Harness
+   *
+   * Validation: Optional; NamedHarnessProps (map of harness name to config)
+   **/
+  readonly harnesses?: NamedHarnessProps;
 }
 
 /**
@@ -371,10 +404,95 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
     // Create AgentCore gateways (+ their referenced targets). Runs after createLambdaFunctions so
     // gateway target/interceptor `generated-function:<name>` references resolve against the shared
     // pool. Gateways reuse the same module CMK as agents/KBs/guardrails.
-    this.createGateways(props, kmsKey);
+    const gatewayArns = this.createGateways(props, kmsKey);
+
+    // Create AgentCore Harnesses. Runs after gateways/guardrails so `config:<name>` references in a
+    // harness's `tools[].agentCoreGateway.gatewayArn` / `guardrail.id` resolve against their live
+    // in-stack ARNs/ids.
+    this.createHarnesses(props, kmsKey, gatewayArns, guardrails);
 
     // Add suppressions for internal CDK constructs
     this.addInternalConstructSuppressions();
+  }
+
+  // ---------------------------------------------
+  // AgentCore Harness Methods
+  // ---------------------------------------------
+
+  /**
+   * Instantiates one {@link BedrockAgentcoreHarnessL3Construct} per entry in `props.harnesses`,
+   * injecting the shared module CMK (the harness is a pure key consumer for its log-group
+   * encryption) and passing through the resolved gateway ARN map (for
+   * `tools[].agentCoreGateway.gatewayArn: config:<name>` references) and the module's guardrails
+   * (for `guardrail.id: config:<name>` references). No-op when no harnesses are configured.
+   *
+   * The shared CMK already grants CloudWatch Logs service use on its key policy (see
+   * {@link getOrCreateKmsKey}), which is all the harness's log-protection custom resource needs.
+   */
+  private createHarnesses(
+    props: BedrockBuilderL3ConstructProps,
+    kmsKey: IKey,
+    gatewayArns: ResolvedGatewayArnMap,
+    guardrails: { [name: string]: bedrock.CfnGuardrail },
+  ): void {
+    const harnessEntries = Object.entries(props.harnesses || {});
+    if (harnessEntries.length === 0) {
+      return;
+    }
+
+    // Fail fast on cross-harness VPC-endpoint collisions before instantiating: two harnesses that
+    // configure endpoints in the same VPC either duplicate an endpoint (deploy fails) or diverge on
+    // security groups (first-invoke hang). The per-harness construct cannot see its siblings, so this
+    // module-level check is the only place the conflict is visible. Harnesses without a resolvable
+    // vpcId+vpcEndpoints create no endpoints (or fail their own vpcId check at instantiation), so they
+    // are not part of the collision set.
+    validateHarnessVpcEndpointCollisions(
+      // flatMap (not filter().map()): destructuring narrows vpcId/vpcEndpoints to non-optional inside
+      // the guarded branch, so the collision entry needs no non-null assertions. A plain boolean
+      // .filter() would not carry that narrowing into a subsequent .map().
+      harnessEntries.flatMap(([harnessName, config]) => {
+        const { vpcId, vpcEndpoints, securityGroups } = config.networkConfiguration;
+        if (!vpcEndpoints || !vpcId) {
+          return [];
+        }
+        return [
+          {
+            harnessName,
+            vpcId,
+            securityGroups,
+            config: vpcEndpoints,
+            hasGatewayTool: Object.values(config.tools ?? {}).some(tool => tool.agentCoreGateway != null),
+          },
+        ];
+      }),
+    );
+
+    const resolvedGuardrails = this.resolveHarnessGuardrailRefs(guardrails);
+
+    harnessEntries.forEach(([harnessName, harnessConfig]) => {
+      new BedrockAgentcoreHarnessL3Construct(this, `bedrock-harness-${harnessName}`, {
+        ...props,
+        ...harnessConfig,
+        harnessName,
+        kmsKey,
+        guardrails: resolvedGuardrails,
+        gateways: gatewayArns,
+      });
+    });
+  }
+
+  /**
+   * Builds the harness-facing {@link ResolvedGuardrailRefMap} from the module's guardrail
+   * constructs, so a harness's `guardrail.id: config:<name>` reference resolves to the live
+   * `attrGuardrailId`/`attrVersion`.
+   */
+  private resolveHarnessGuardrailRefs(guardrails: { [name: string]: bedrock.CfnGuardrail }): ResolvedGuardrailRefMap {
+    return Object.fromEntries(
+      Object.entries(guardrails).map(([name, guardrail]) => [
+        name,
+        { guardrailId: guardrail.attrGuardrailId, guardrailVersion: guardrail.attrVersion },
+      ]),
+    );
   }
 
   // ---------------------------------------------
@@ -392,11 +510,15 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
    * {@link grantGatewayRoleKeyUsage}) and the vended-log-delivery service grant is added once by
    * {@link grantGatewaysKeyUsage}. No-op when no gateways are configured; target references are
    * validated up front.
+   *
+   * @returns a map of gateway name to live gateway ARN, for a Harness's
+   *   `tools[].agentCoreGateway.gatewayArn: config:<name>` references.
    */
-  private createGateways(props: BedrockBuilderL3ConstructProps, kmsKey: IKey): void {
+  private createGateways(props: BedrockBuilderL3ConstructProps, kmsKey: IKey): ResolvedGatewayArnMap {
+    const gatewayArns: ResolvedGatewayArnMap = {};
     const gatewayEntries = Object.entries(props.gateways || {});
     if (gatewayEntries.length === 0) {
-      return;
+      return gatewayArns;
     }
 
     this.validateGatewayTargetReferences(props.gateways || {}, props.gatewayTargets || {});
@@ -425,10 +547,14 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
       // Depend on the gateway resource (not the construct — that cycles via the role). Keeps the CMK
       // grant present through both CreateGateway and DeleteGateway, which each call kms:GenerateDataKey.
       gatewayConstruct.gateway.node.addDependency(cmkUsagePolicy);
+
+      gatewayArns[gatewayName] = gatewayConstruct.gateway.attrGatewayArn;
     });
 
     // Add the vended-log-delivery service grant once to the shared key (needs no gateway role).
     this.grantGatewaysKeyUsage(kmsKey);
+
+    return gatewayArns;
   }
 
   /**

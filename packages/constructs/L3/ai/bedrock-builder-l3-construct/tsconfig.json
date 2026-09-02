@@ -38,6 +38,9 @@
       "path": "../bedrock-agentcore-gateway-l3-construct"
     },
     {
+      "path": "../bedrock-agentcore-harness-l3-construct"
+    },
+    {
       "path": "../../../L2/construct"
     },
     {

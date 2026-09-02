@@ -16,19 +16,22 @@ import {
   AGENTCORE_RUNTIME_ERROR_METRICS,
   AGENTCORE_RUNTIME_ID_REQUEST_PARAMETER,
   AgentcoreCognitoAuth,
+  buildDataProtectionPolicy,
   CognitoAuthProperty,
   createAgentCoreAlarms,
   createAgentCoreEventBridgeRules,
   createAgentCoreLogProtection,
   createAgentCoreResourcePolicy,
-  createAgentCoreVpcEndpoint,
   createAgentcoreCognitoAuth,
-  VpcEndpointProperty,
+  DataProtectionProperty,
+  parseEcrRepositoryArn,
+  validateLogRetentionDays,
 } from '@aws-mdaa/agentcore-shared';
 import { DockerImageAsset, Platform } from 'aws-cdk-lib/aws-ecr-assets';
 import { Effect, ManagedPolicy, PolicyDocument, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
-import { DataIdentifier, ResourcePolicy } from 'aws-cdk-lib/aws-logs';
+import { ResourcePolicy } from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
+import { createAgentCoreVpcEndpoint, VpcEndpointProperty } from './vpc-endpoint';
 import {
   buildAuthorizerConfiguration,
   buildLifecycleConfiguration,
@@ -510,54 +513,16 @@ export interface RuntimeEndpointProperty {
  */
 const UNIFIED_TRACES_DESTINATION_ENV_VAR = 'UNIFIED_TRACES_DESTINATION_ENABLED';
 
-/**
- * Built-in set of AWS-managed data identifiers that are always masked on the runtime
- * log groups. This is the mandatory compliance floor - it is applied to every deployment
- * and cannot be reduced. Configuration may only add identifiers on top of this set.
- */
-const BUILTIN_DATA_IDENTIFIERS: DataIdentifier[] = [
-  DataIdentifier.EMAILADDRESS,
-  DataIdentifier.CREDITCARDNUMBER,
-  DataIdentifier.SSN_US,
-  DataIdentifier.NAME,
-  DataIdentifier.ADDRESS,
-  DataIdentifier.PHONENUMBER_US,
-  DataIdentifier.IPADDRESS,
-];
+// AgentRuntimeName and RuntimeEndpoint EndpointName CFN pattern is `^[a-zA-Z][a-zA-Z0-9_]{0,47}$`
+// (max 48 chars). Passed to sanitizeBedrockAgentcoreName so the limit is enforced after any
+// leading-letter prefix is prepended.
+const MAX_RUNTIME_NAME_LENGTH = 48;
+const MAX_RUNTIME_ENDPOINT_NAME_LENGTH = 48;
 
-/**
- * CloudWatch Data Protection configuration for the runtime log groups.
- *
- * Data Protection (PII masking) and customer-managed KMS encryption are always-on,
- * built-in behavior for this module and cannot be disabled - sensitive data (emails,
- * SSNs, credit card numbers, etc.) is automatically masked in log events on ingestion.
- * This optional configuration only allows tightening the posture (adding identifiers);
- * it can never reduce the built-in compliance baseline.
- *
- * Use cases: extending PII masking with additional identifiers, future protection options
- *
- * AWS: CloudWatch Logs Data Protection Policy
- *
- * Validation: Optional; additionalIdentifiers only adds to the built-in identifier set
- */
-export interface DataProtectionProperty {
-  /**
-   * Additional AWS-managed data identifiers to mask, on top of the built-in
-   * comprehensive set (EmailAddress, CreditCardNumber, Ssn-US, Name, Address,
-   * PhoneNumber-US, IpAddress). Each entry is a name matching an AWS-managed data
-   * identifier (e.g., "DriversLicense-US", "PassportNumber-US").
-   *
-   * This field is additive only - it cannot remove or override the built-in
-   * identifiers, so it can never reduce the masking baseline.
-   *
-   * Use cases: stricter PII masking, organization-specific identifier requirements
-   *
-   * AWS: CloudWatch Logs managed data identifiers
-   *
-   * Validation: Optional; String[]; must be valid AWS data identifier names
-   **/
-  readonly additionalIdentifiers?: string[];
-}
+// The always-on PII data-protection floor and its policy builder are shared with the Harness L3
+// construct via @aws-mdaa/agentcore-shared. Re-exported here so this package's public API
+// (DataProtectionProperty) is unchanged.
+export { DataProtectionProperty } from '@aws-mdaa/agentcore-shared';
 
 /**
  * Optional CloudWatch Alarms configuration for the runtime.
@@ -1034,14 +999,19 @@ export interface BedrockAgentcoreRuntimeProps {
    **/
   readonly enforceVpcOnly?: boolean;
   /**
-   * CloudWatch Logs retention period for the runtime log group in days.
+   * CloudWatch Logs retention period for the runtime log group, in days. Accepts any CloudWatch Logs
+   * `RetentionDays` value; `9999` (`RetentionDays.INFINITE`) means never-expire and can be set
+   * explicitly to lock indefinite retention into config. Omitting the field is equivalent to `9999`
+   * — the log-protection Custom Resource applies no retention policy, leaving the service-created log
+   * groups at CloudWatch's never-expire default (logs are kept, and billed, forever) unless a finite
+   * value is set.
    *
    * Use cases: Log retention policy, cost management, compliance retention requirements
    *
    * AWS: CloudWatch Logs log group retention
    *
-   * Validation: Optional; Number; must be a valid RetentionDays value
-   * @default RetentionDays.ONE_MONTH (30 days)
+   * Validation: Optional; Number; must be a valid RetentionDays value (9999 for never-expire) — validated at synth
+   * @default 9999
    **/
   readonly logRetentionDays?: number;
   /**
@@ -1121,10 +1091,16 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
    * and every later caller gets the identical string.
    */
   private get sanitizedRuntimeName(): string {
+    // The cap is passed to sanitizeBedrockAgentcoreName as well as resourceName so it is enforced
+    // AFTER any `r_` prefix is prepended (a naming prefix beginning with a non-letter would otherwise
+    // push the name past the 48-char AgentRuntimeName limit). The AgentCore Harness construct's
+    // harnessResourceName applies the same guard.
     this._sanitizedRuntimeName ??= sanitizeBedrockAgentcoreName(
       this.props.naming
         .withResourceType(MdaaResourceType.BEDROCK_AGENTCORE_RUNTIME)
-        .resourceName(this.props.agentRuntimeName, 48),
+        .resourceName(this.props.agentRuntimeName, MAX_RUNTIME_NAME_LENGTH),
+      'r_',
+      MAX_RUNTIME_NAME_LENGTH,
     );
     return this._sanitizedRuntimeName;
   }
@@ -1150,6 +1126,12 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
         'networkConfiguration is required. MDAA enforces VPC deployment for Bedrock AgentCore Runtime to maintain the highest security standards.',
       );
     }
+
+    // Fail fast at synth on an invalid log-retention value. `9999` (RetentionDays.INFINITE) is
+    // accepted as an explicit never-expire choice; the log-protection Custom Resource applies no
+    // retention policy for it (never sending the sentinel to its raw PutRetentionPolicy call, which
+    // rejects 9999), yielding the same never-expire result as omitting the field.
+    validateLogRetentionDays(props.logRetentionDays, 'logRetentionDays');
 
     // Create the MDAA-managed Cognito IdP when opted in. Created before the runtime so the
     // authorizer can consume the pool's CDK token directly: the pool feeds the runtime and
@@ -1509,7 +1491,7 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
     if (containerConfig.containerUri) {
       return {
         containerUri: containerConfig.containerUri,
-        repositoryArn: this.parseEcrRepositoryArn(containerConfig.containerUri),
+        repositoryArn: parseEcrRepositoryArn(containerConfig.containerUri, Stack.of(this).partition),
       };
     }
     // If CodePath is provided, build Docker image and push to ECR
@@ -1794,39 +1776,22 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
     return (role as MdaaRole).roleArn;
   }
 
-  private parseEcrRepositoryArn(containerUri: string): string {
-    // Parse ECR container URI format: {account}.dkr.ecr.{region}.amazonaws.com/{repository}[:{tag}|@{digest}]
-    // Examples:
-    //   123456789012.dkr.ecr.us-east-1.amazonaws.com/my-repo:latest
-    //   123456789012.dkr.ecr.us-east-1.amazonaws.com/my-org/my-team/my-repo:v1.0.0
-    //   123456789012.dkr.ecr.us-east-1.amazonaws.com/my-repo@sha256:abc123...
-    //   123456789012.dkr.ecr.us-east-1.amazonaws.com/my-repo
-    const uriPattern = /^([a-zA-Z\d-]+)\.dkr\.ecr\.([a-zA-Z\d-]+)\.amazonaws\.com\/([^:@]+)/;
-    const match = uriPattern.exec(containerUri);
-
-    if (!match) {
-      throw new Error(
-        `Invalid ECR container URI format: ${containerUri}. Expected format: {account}.dkr.ecr.{region}.amazonaws.com/{repository}[:{tag}|@{digest}]`,
-      );
-    }
-
-    const [, account, region, repository] = match;
-    const stack = Stack.of(this);
-
-    return `arn:${stack.partition}:ecr:${region}:${account}:repository/${repository}`;
-  }
-
   private createRuntimeEndpoint(
     endpointConfig: RuntimeEndpointProperty,
     runtimeName: string,
   ): bedrockagentcore.CfnRuntimeEndpoint {
     // The sanitized endpoint name is the qualifier in the `Name` metric dimension
     // (`<runtimeName>::<qualifier>`), so it is retained for the alarms.
+    // The cap is passed to sanitizeBedrockAgentcoreName as well as resourceName so it is enforced
+    // AFTER the `endpoint_` prefix is prepended (a naming prefix beginning with a non-letter would
+    // otherwise push the name past the 48-char EndpointName limit). The AgentCore Harness construct's
+    // createHarnessEndpoint applies the same guard.
     const sanitizedEndpointName = sanitizeBedrockAgentcoreName(
       this.props.naming
         .withResourceType(MdaaResourceType.BEDROCK_AGENTCORE_ENDPOINT)
-        .resourceName(endpointConfig.name || `${runtimeName}_endpoint`, 48),
+        .resourceName(endpointConfig.name || `${runtimeName}_endpoint`, MAX_RUNTIME_ENDPOINT_NAME_LENGTH),
       'endpoint_',
+      MAX_RUNTIME_ENDPOINT_NAME_LENGTH,
     );
     this.sanitizedEndpointName = sanitizedEndpointName;
 
@@ -1939,7 +1904,7 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
     );
 
     // Build the always-on data protection policy (built-in identifier floor plus any additions)
-    const dataProtectionPolicy = this.buildDataProtectionPolicy(props.dataProtection);
+    const dataProtectionPolicy = buildDataProtectionPolicy('agentcore-runtime-data-protection', props.dataProtection);
 
     // Create Custom Resource that discovers the service-created log groups
     // and applies CMK encryption, retention, and data protection after the runtime exists
@@ -1961,48 +1926,6 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
     if (this.runtimeEndpoint) {
       logProtection.node.addDependency(this.runtimeEndpoint);
     }
-  }
-
-  /**
-   * Builds the always-on data protection policy. The built-in identifier floor
-   * ({@link BUILTIN_DATA_IDENTIFIERS}) is always masked; any additionalIdentifiers
-   * supplied via config are added on top (deduplicated). This is additive only -
-   * the floor can never be reduced.
-   */
-  private buildDataProtectionPolicy(dataProtection?: DataProtectionProperty): Record<string, unknown> {
-    const identifierNames = new Set<string>(BUILTIN_DATA_IDENTIFIERS.map(id => id.name));
-    for (const name of dataProtection?.additionalIdentifiers ?? []) {
-      identifierNames.add(new DataIdentifier(name).name);
-    }
-
-    const dataIdentifierArns = Array.from(identifierNames).map(
-      name => `arn:aws:dataprotection::aws:data-identifier/${name}`,
-    );
-
-    return {
-      Name: 'agentcore-runtime-data-protection',
-      Version: '2021-06-01',
-      Statement: [
-        {
-          Sid: 'audit-policy',
-          DataIdentifier: dataIdentifierArns,
-          Operation: {
-            Audit: {
-              FindingsDestination: {},
-            },
-          },
-        },
-        {
-          Sid: 'redact-policy',
-          DataIdentifier: dataIdentifierArns,
-          Operation: {
-            Deidentify: {
-              MaskConfig: {},
-            },
-          },
-        },
-      ],
-    };
   }
 
   private storeSSMParameters(runtimeName: string): void {

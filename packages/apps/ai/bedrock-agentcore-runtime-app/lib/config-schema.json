@@ -762,7 +762,7 @@
         },
         "DataProtectionProperty": {
             "additionalProperties": false,
-            "description": "CloudWatch Data Protection configuration for the runtime log groups.\n\nData Protection (PII masking) and customer-managed KMS encryption are always-on,\nbuilt-in behavior for this module and cannot be disabled - sensitive data (emails,\nSSNs, credit card numbers, etc.) is automatically masked in log events on ingestion.\nThis optional configuration only allows tightening the posture (adding identifiers);\nit can never reduce the built-in compliance baseline.\n\nUse cases: extending PII masking with additional identifiers, future protection options\n\nAWS: CloudWatch Logs Data Protection Policy\n\nValidation: Optional; additionalIdentifiers only adds to the built-in identifier set",
+            "description": "CloudWatch Data Protection configuration for the AgentCore service-created log groups.\n\nData Protection (PII masking) and customer-managed KMS encryption are always-on, built-in\nbehavior for the AgentCore modules and cannot be disabled — sensitive data (emails, SSNs, credit\ncard numbers, etc.) is automatically masked in log events on ingestion. This optional\nconfiguration only allows tightening the posture (adding identifiers); it can never reduce the\nbuilt-in compliance baseline.\n\nUse cases: extending PII masking with additional identifiers, future protection options\n\nAWS: CloudWatch Logs Data Protection Policy\n\nValidation: Optional; additionalIdentifiers only adds to the built-in identifier set",
             "properties": {
                 "additionalIdentifiers": {
                     "description": "Additional AWS-managed data identifiers to mask, on top of the built-in\ncomprehensive set (EmailAddress, CreditCardNumber, Ssn-US, Name, Address,\nPhoneNumber-US, IpAddress). Each entry is a name matching an AWS-managed data\nidentifier (e.g., \"DriversLicense-US\", \"PassportNumber-US\").\n\nThis field is additive only - it cannot remove or override the built-in\nidentifiers, so it can never reduce the masking baseline.\n\nUse cases: stricter PII masking, organization-specific identifier requirements\n\nAWS: CloudWatch Logs managed data identifiers\n\nValidation: Optional; String[]; must be valid AWS data identifier names",
@@ -3479,7 +3479,7 @@
             "description": "Configuration for MDAA-managed creation of the AgentCore interface VPC endpoint.\nPresence of this configuration opts in to endpoint creation (opt-in because\ninterface endpoints carry hourly and per-GB costs); an empty object accepts\nall defaults.\n\nThe endpoint provides VPC-resident callers a private network path to invoke\nAgentCore (no internet/NAT), and is the path that produces the aws:SourceVpc\nrequest context required by VPC-only resource policies (enforceVpcOnly).\n\nIf the VPC already has a bedrock-agentcore endpoint (e.g., created by LZA or\na central networking team), omit this configuration entirely — only one\nendpoint with Private DNS is allowed per service per VPC, and a second one\nwill fail to deploy.\n\nUse cases: Private invocation path, enforceVpcOnly support, no-NAT environments\n\nAWS: Interface VPC endpoint for com.amazonaws.{region}.bedrock-agentcore\n\nValidation: presence of this configuration opts in to endpoint creation",
             "properties": {
                 "createSupportingEndpoints": {
-                    "description": "Also create supporting interface endpoints commonly required in VPC mode\nwithout internet access: ECR API, ECR Docker, STS, and CloudWatch Logs.\n\nUse cases: Fully private subnets without NAT gateway, firewalled environments\n\nAWS: AWS::EC2::VPCEndpoint (Interface) for ecr.api, ecr.dkr, sts, logs\n\nValidation: Optional; Boolean",
+                    "description": "Also create supporting interface endpoints commonly required in VPC mode\nwithout internet access: ECR API, ECR Docker, STS, and CloudWatch Logs.\n\nThis creates those four interface endpoints and nothing else — it is not by itself a complete\nno-NAT configuration. Validate egress for your own runtime image and workload before removing a\nNAT gateway, and provision any further endpoints out of band.\n\nUse cases: Reaching ECR, STS, and CloudWatch Logs over PrivateLink from private subnets;\nfirewalled environments\n\nAWS: AWS::EC2::VPCEndpoint (Interface) for ecr.api, ecr.dkr, sts, logs\n\nValidation: Optional; Boolean",
                     "type": "boolean"
                 },
                 "endpointPolicy": {
@@ -3548,8 +3548,8 @@
             "description": "Session timeout and maximum lifetime settings for runtime instances.\n\nUse cases: Session management, resource control, timeout configuration\n\nAWS: Bedrock AgentCore Runtime lifecycle configuration\n\nValidation: Optional; LifecycleConfigurationProperty; values 60-28800 seconds"
         },
         "logRetentionDays": {
-            "default": 30,
-            "description": "CloudWatch Logs retention period for the runtime log group in days.\n\nUse cases: Log retention policy, cost management, compliance retention requirements\n\nAWS: CloudWatch Logs log group retention\n\nValidation: Optional; Number; must be a valid RetentionDays value (1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1096, 1827, 2192, 2557, 2922, 3288, 3653)",
+            "default": 9999,
+            "description": "CloudWatch Logs retention period for the runtime log group, in days. Accepts any CloudWatch Logs\n`RetentionDays` value; `9999` (`RetentionDays.INFINITE`) means never-expire and can be set\nexplicitly to lock indefinite retention into config. Omitting the field is equivalent to `9999` —\nno retention policy is applied, leaving the service-created log groups at CloudWatch's\nnever-expire default (logs are kept, and billed, forever) unless a finite value is set.\n\nUse cases: Log retention policy, cost management, compliance retention requirements\n\nAWS: CloudWatch Logs log group retention\n\nValidation: Optional; Number; must be a valid RetentionDays value (1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1096, 1827, 2192, 2557, 2922, 3288, 3653, 9999)",
             "enum": [
                 1,
                 1096,
@@ -3572,7 +3572,8 @@
                 60,
                 7,
                 731,
-                90
+                90,
+                9999
             ],
             "type": "number"
         },

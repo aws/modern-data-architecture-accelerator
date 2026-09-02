@@ -4,7 +4,7 @@
  */
 
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { createAgentCoreVpcEndpoint } from '../lib';
+import { createAgentCoreVpcEndpoint } from '../lib/vpc-endpoint';
 
 describe('createAgentCoreVpcEndpoint Compliance', () => {
   const testApp = new MdaaTestApp();

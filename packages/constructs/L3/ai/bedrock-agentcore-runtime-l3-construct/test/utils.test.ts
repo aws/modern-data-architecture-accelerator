@@ -102,7 +102,7 @@ describe('bedrock-agentcore-runtime-utils', () => {
         buildNetworkConfiguration({
           subnets: ['subnet-123'],
         } as unknown as NetworkConfigurationProperty),
-      ).toThrow('securityGroups is required in networkConfiguration');
+      ).toThrow('Agentcore "networkConfiguration.securityGroups" must contain 1-16 security group IDs.');
     });
 
     it('should throw error for missing subnets', () => {
@@ -110,7 +110,25 @@ describe('bedrock-agentcore-runtime-utils', () => {
         buildNetworkConfiguration({
           securityGroups: ['sg-123'],
         } as unknown as NetworkConfigurationProperty),
-      ).toThrow('subnets is required in networkConfiguration');
+      ).toThrow('Agentcore "networkConfiguration.subnets" must contain 1-16 subnet IDs.');
+    });
+
+    it('should throw error for empty security groups array', () => {
+      expect(() =>
+        buildNetworkConfiguration({
+          securityGroups: [],
+          subnets: ['subnet-123'],
+        }),
+      ).toThrow('Agentcore "networkConfiguration.securityGroups" must contain 1-16 security group IDs.');
+    });
+
+    it('should throw error for empty subnets array', () => {
+      expect(() =>
+        buildNetworkConfiguration({
+          securityGroups: ['sg-123'],
+          subnets: [],
+        }),
+      ).toThrow('Agentcore "networkConfiguration.subnets" must contain 1-16 subnet IDs.');
     });
 
     it('should throw error for too many security groups', () => {
@@ -119,7 +137,7 @@ describe('bedrock-agentcore-runtime-utils', () => {
           securityGroups: Array(17).fill('sg-123'),
           subnets: ['subnet-123'],
         }),
-      ).toThrow('securityGroups must be an array with 1-16 items');
+      ).toThrow('Agentcore "networkConfiguration.securityGroups" must contain 1-16 security group IDs.');
     });
 
     it('should throw error for too many subnets', () => {
@@ -128,7 +146,7 @@ describe('bedrock-agentcore-runtime-utils', () => {
           securityGroups: ['sg-123'],
           subnets: Array(17).fill('subnet-123'),
         }),
-      ).toThrow('subnets must be an array with 1-16 items');
+      ).toThrow('Agentcore "networkConfiguration.subnets" must contain 1-16 subnet IDs.');
     });
   });
 

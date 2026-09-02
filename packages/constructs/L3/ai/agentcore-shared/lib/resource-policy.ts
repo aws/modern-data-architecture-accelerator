@@ -24,6 +24,19 @@ export interface CreateAgentCoreResourcePolicyProps {
 export const DEFAULT_ACTIONS = ['bedrock-agentcore:InvokeAgentRuntime*'];
 
 /**
+ * Default AgentCore Gateway invoke action, used to scope the Gateway interface VPC endpoint policy.
+ *
+ * The Gateway endpoint (`bedrock-agentcore.gateway`) carries only gateway data-plane traffic — a
+ * session invoking its MCP tools. Management calls go to the separate `bedrock-agentcore-control`
+ * service, so a single `InvokeGateway` action fully scopes the endpoint without denying any legitimate
+ * traffic. Unlike {@link DEFAULT_ACTIONS} this needs no wildcard: `InvokeGateway` is the sole data-plane
+ * action and was e2e-confirmed as the precise governing action (allow → gateway tools load, explicit
+ * deny → the harness's MCP client fails to start). Kept alongside {@link DEFAULT_ACTIONS} so both
+ * AgentCore endpoint policies (Runtime data plane, Gateway data plane) live in one place and stay in sync.
+ */
+export const DEFAULT_GATEWAY_ACTIONS = ['bedrock-agentcore:InvokeGateway'];
+
+/**
  * Creates a resource-based policy on an AgentCore resource restricting
  * invocations to VPC-only traffic. Uses the native
  * `AWS::BedrockAgentCore::ResourcePolicy` CloudFormation resource so the

@@ -62,6 +62,32 @@ export function resolveModelArn(modelIdentifier: string, partition: string, regi
   return validateModelArn(`arn:${partition}:bedrock:${region}::foundation-model/${modelIdentifier}`);
 }
 
+/**
+ * Given a resolved system inference-profile ARN, returns the foundation-model ARN(s) that must ALSO be
+ * granted `bedrock:InvokeModel*` for the profile to work. Per the Bedrock inference-profile IAM docs,
+ * granting invoke on the profile ARN alone yields AccessDeniedException — the caller must also hold
+ * invoke on the underlying foundation model in each destination region.
+ *
+ * The destination regions are not knowable from the id, so the region segment is wildcarded (a single
+ * `*` also matches the empty-region form used by `global.*` profiles). The model name is the profile id
+ * with its leading region prefix (`us.` / `eu.` / `apac.` / `global.` / `us-gov.`) stripped.
+ *
+ * Returns [] for anything that is not a system `inference-profile/` ARN. On-demand foundation-model and
+ * custom-model ARNs genuinely need no paired grant. An `application-inference-profile/` ARN DOES need
+ * one, but its id is opaque so the underlying foundation model cannot be derived here — callers must
+ * handle that case explicitly rather than reading [] as "no paired grant required".
+ */
+export function inferenceProfileFoundationModelArns(modelArn: string): string[] {
+  const match = /^arn:([a-zA-Z\d-]+):bedrock:[^:]*:[^:]*:inference-profile\/(.+)$/.exec(modelArn);
+  if (!match) {
+    return [];
+  }
+  const [, partition, profileId] = match;
+  const firstDot = profileId.indexOf('.');
+  const foundationModelName = firstDot >= 0 ? profileId.slice(firstDot + 1) : profileId;
+  return [`arn:${partition}:bedrock:*::foundation-model/${foundationModelName}`];
+}
+
 function isException(name: string): boolean {
   return name.indexOf('Token[AWS') > -1;
 }

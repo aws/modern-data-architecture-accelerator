@@ -18,8 +18,10 @@ import {
 } from '@aws-mdaa/bedrock-knowledge-base-l3-construct';
 import { BedrockGuardrailProps, NamedGuardrailProps } from '@aws-mdaa/bedrock-guardrail-l3-construct';
 
-// Mock the resolveModelArn function
+// Mock the resolveModelArn function, keeping the module's other exports real — a bare factory would
+// leave them undefined for any construct under test that imports one.
 jest.mock('@aws-mdaa/ai-helper', () => ({
+  ...jest.requireActual('@aws-mdaa/ai-helper'),
   resolveModelArn: jest.fn((modelIdentifier: string, partition: string, region: string, account: string) =>
     modelIdentifier.startsWith('arn:')
       ? modelIdentifier
@@ -3260,6 +3262,63 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
 
     // checkCdkNagCompliance registers its own nested describe/tests, so it must run at the describe
     // body level (not inside a test()) — matching the other compliance blocks in this file.
+    testApp.checkCdkNagCompliance(testApp.testStack);
+  });
+
+  describe('AgentCore Harness Compliance', () => {
+    // Runs the AwsSolutions / NIST / HIPAA / PCI rulesets over the resources the builder synthesizes for
+    // its `harnesses` map, and asserts both harnesses are present. Exercises a standalone harness plus
+    // one wired to a config:<name> gateway and guardrail defined in the same module, so the compliance
+    // pass covers the auto-created execution role and managed policy in both shapes.
+    //
+    // Scope note: the harness owns no KMS key of its own — `kmsKey` is a required input and the builder
+    // injects the module CMK — so there is no per-harness key to validate here. The grant-level
+    // assertions (InvokeModel, ApplyGuardrail, InvokeGateway) live in bedrock-builder-harness.test.ts;
+    // this block is nag coverage plus a presence check, not a policy-content check.
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+
+    const constructProps: BedrockBuilderL3ConstructProps = {
+      dataAdminRoles: [dataAdminRoleRef],
+      roleHelper,
+      naming: testApp.naming,
+      guardrails: {
+        'enterprise-guardrail': {
+          contentFilters: {},
+          blockedInputMessaging: 'blocked',
+          blockedOutputsMessaging: 'blocked',
+        },
+      },
+      gateways: {
+        'weather-gateway': {
+          authorizerConfiguration: {
+            customJwt: { discoveryUrl: 'https://example.com/.well-known/openid-configuration', allowedAudience: ['a'] },
+          },
+        },
+      },
+      harnesses: {
+        'base-harness': {
+          modelId: 'anthropic.claude-sonnet-4-6-20250514-v1:0',
+          systemPrompt: 'You are a helpful assistant.',
+          networkConfiguration: { securityGroups: ['sg-test'], subnets: ['subnet-test'] },
+        },
+        'full-harness': {
+          modelId: 'anthropic.claude-sonnet-4-6-20250514-v1:0',
+          systemPrompt: 'You are a helpful assistant.',
+          networkConfiguration: { securityGroups: ['sg-test'], subnets: ['subnet-test'] },
+          guardrail: { id: 'config:enterprise-guardrail' },
+          tools: { gateway_tools: { agentCoreGateway: { gatewayArn: 'config:weather-gateway' } } },
+        },
+      },
+    };
+
+    new BedrockBuilderL3Construct(testApp.testStack, 'test-construct', constructProps);
+
+    const template = Template.fromStack(testApp.testStack);
+    test('Harness resources are present', () => {
+      template.resourceCountIs('AWS::BedrockAgentCore::Harness', 2);
+    });
+
     testApp.checkCdkNagCompliance(testApp.testStack);
   });
 });

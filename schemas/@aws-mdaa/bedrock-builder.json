@@ -1446,6 +1446,20 @@
             ],
             "type": "object"
         },
+        "DataProtectionProperty": {
+            "additionalProperties": false,
+            "description": "CloudWatch Data Protection configuration for the AgentCore service-created log groups.\n\nData Protection (PII masking) and customer-managed KMS encryption are always-on, built-in\nbehavior for the AgentCore modules and cannot be disabled — sensitive data (emails, SSNs, credit\ncard numbers, etc.) is automatically masked in log events on ingestion. This optional\nconfiguration only allows tightening the posture (adding identifiers); it can never reduce the\nbuilt-in compliance baseline.\n\nUse cases: extending PII masking with additional identifiers, future protection options\n\nAWS: CloudWatch Logs Data Protection Policy\n\nValidation: Optional; additionalIdentifiers only adds to the built-in identifier set",
+            "properties": {
+                "additionalIdentifiers": {
+                    "description": "Additional AWS-managed data identifiers to mask, on top of the built-in\ncomprehensive set (EmailAddress, CreditCardNumber, Ssn-US, Name, Address,\nPhoneNumber-US, IpAddress). Each entry is a name matching an AWS-managed data\nidentifier (e.g., \"DriversLicense-US\", \"PassportNumber-US\").\n\nThis field is additive only - it cannot remove or override the built-in\nidentifiers, so it can never reduce the masking baseline.\n\nUse cases: stricter PII masking, organization-specific identifier requirements\n\nAWS: CloudWatch Logs managed data identifiers\n\nValidation: Optional; String[]; must be valid AWS data identifier names",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
         "DockerImage": {
             "additionalProperties": false,
             "description": "A Docker image",
@@ -2022,8 +2036,8 @@
                     "type": "boolean"
                 },
                 "logRetentionDays": {
-                    "default": "RetentionDays.INFINITE (indefinite)",
-                    "description": "Retention (in days) for the destination log group. Must be a valid CloudWatch Logs\n`RetentionDays` value (e.g. 7, 30, 90, 365). Defaults to indefinite (the MDAA audit-log default)\nso logs are never silently dropped; set a finite value for cost or a compliance window.\n\nUse cases: cost control, compliance retention windows\n\nAWS: AWS::Logs::LogGroup RetentionInDays\n\nValidation: Optional; must be a valid CloudWatch Logs RetentionDays value — validated at synth\n(an unsupported value throws from the constructor rather than failing at deploy)",
+                    "default": 9999,
+                    "description": "Retention (in days) for the destination log group. Accepts any CloudWatch Logs `RetentionDays`\nvalue (e.g. 7, 30, 90, 365); `9999` (`RetentionDays.INFINITE`) means never-expire and can be set\nexplicitly to lock indefinite retention into config. Omitting the field is equivalent to `9999`\n(the MDAA audit-log default) so logs are never silently dropped; set a finite value for cost or a\ncompliance window.\n\nUse cases: cost control, compliance retention windows\n\nAWS: AWS::Logs::LogGroup RetentionInDays\n\nValidation: Optional; must be a valid CloudWatch Logs RetentionDays value (9999 for never-expire)\n— validated at synth (an unsupported value throws from the constructor rather than failing at deploy)",
                     "type": "number"
                 }
             },
@@ -2292,6 +2306,404 @@
                 "relevance": {
                     "description": "Relevance threshold (0.0-1.0) for query relevance",
                     "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "HarnessAgentCoreGatewayToolProperty": {
+            "additionalProperties": false,
+            "description": "AgentCore Gateway tool: wires the Harness to an existing Bedrock AgentCore Gateway's tool\nsurface. MDAA supports only `AWS_IAM` outbound auth (the gateway invoked with the Harness's own\nexecution role) — `oauth`/`none` are not yet exposed.\n\nUse cases: exposing gateway-fronted Lambda/OpenAPI/Smithy tools to the agent loop\n\nAWS: `HarnessTool` with `type: agentcore_gateway`, `config.agentCoreGateway`\n\nValidation: gatewayArn required",
+            "properties": {
+                "gatewayArn": {
+                    "description": "The gateway to attach, either a literal Gateway ARN or a `config:<name>` reference into the\norchestrating module's own gateway map (e.g. `bedrock-builder`'s `gateways:`), resolved to the\nlive gateway's ARN at synth time.\n\nUse cases: attaching a gateway created in the same module (no SSM round-trip), attaching an\nexternally created gateway by ARN\n\nAWS: `HarnessAgentCoreGatewayConfig.GatewayArn`\n\nValidation: Required; String; literal ARN or `config:<name>`",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "gatewayArn"
+            ],
+            "type": "object"
+        },
+        "HarnessConfigProps": {
+            "additionalProperties": false,
+            "description": "Complete configuration for a Bedrock AgentCore Harness — a declarative agent loop (model +\nsystem prompt + tools).\n\nUse cases: conversational AI agents, tool-using agents, RAG agents (via gateway tools)\n\nAWS: `AWS::BedrockAgentCore::Harness`\n\nValidation: modelId, systemPrompt and networkConfiguration are required",
+            "properties": {
+                "allowedTools": {
+                    "description": "Tool allowlist controlling which tools (including the built-in `shell` / `file_operations`) the\nagent may select during invocation. Supports the AgentCore `allowedTools` patterns (`*`, plain\nnames, `@builtin`, `@server/tool`, globs). Omit to allow all tools.\n\nNote: `allowedTools` scopes LLM tool selection during `InvokeHarness` only — it does not gate\nthe separate `InvokeAgentRuntimeCommand` API (which executes commands directly, without the\nLLM). To prevent direct command execution, do not grant `bedrock-agentcore:InvokeAgentRuntimeCommand`.\n\nUse cases: restricting the default `shell`/`file_operations` tools, reducing tool-definition\ntoken overhead\n\nAWS: `AllowedTools`\n\nValidation: Optional; String[]; 1-64 entries",
+                    "items": {
+                        "type": "string"
+                    },
+                    "maxItems": 64,
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "authorizerConfiguration": {
+                    "$ref": "#/definitions/AgentcoreAuthorizerConfigProperty",
+                    "description": "Inbound authorization configuration. Provide `customJwt` for JWT/OIDC inbound auth, or omit it\nto use AWS IAM (SigV4) — the Harness's no-configuration fallback.\n\nUse cases: inbound access control\n\nAWS: `AuthorizerConfiguration`\n\nValidation: Optional; valid customJwt when present"
+                },
+                "container": {
+                    "$ref": "#/definitions/HarnessContainerProperty",
+                    "description": "Bring-your-own container image for the harness's underlying runtime environment (pre-built ECR\nimage URI). Omit to use the AWS-managed harness container.\n\nUse cases: custom runtime image\n\nAWS: `EnvironmentArtifact.ContainerConfiguration`\n\nValidation: Optional; HarnessContainerProperty"
+                },
+                "dataProtection": {
+                    "$ref": "#/definitions/DataProtectionProperty",
+                    "description": "CloudWatch Data Protection configuration for the Harness's service-created log groups. PII\nmasking and CMK encryption are always-on and cannot be disabled; this only tightens the posture\nby adding identifiers on top of the built-in floor.\n\nUse cases: extending PII masking with additional identifiers\n\nAWS: CloudWatch Logs Data Protection Policy\n\nValidation: Optional; DataProtectionProperty; additive only"
+                },
+                "endpoint": {
+                    "$ref": "#/definitions/HarnessEndpointProperty",
+                    "description": "Named, versioned invocation endpoint for the harness. Omit to invoke the harness's default\n(latest) version directly.\n\nUse cases: pinning callers to a specific harness version, blue/green endpoint management\n\nAWS: `AWS::BedrockAgentCore::HarnessEndpoint`\n\nValidation: Optional; HarnessEndpointProperty"
+                },
+                "environmentVariables": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Key-value environment variables passed to the harness runtime environment.\n\nUse cases: runtime configuration, environment customization\n\nAWS: `EnvironmentVariables`\n\nValidation: Optional; Record<string, string>",
+                    "type": "object"
+                },
+                "guardrail": {
+                    "$ref": "#/definitions/HarnessGuardrailAssociation",
+                    "description": "Guardrail association for content filtering on the Harness's model calls. Rendered via a CDK\nproperty-override escape hatch (the pinned CDK L1 lags the CloudFormation spec for this field);\nsee the class-level documentation.\n\nUse cases: responsible-AI content filtering, safety controls\n\nAWS: `Model.BedrockModelConfig.AdditionalParams.guardrailConfig` (escape hatch)\n\nValidation: Optional; HarnessGuardrailAssociation"
+                },
+                "lifecycleConfiguration": {
+                    "$ref": "#/definitions/HarnessLifecycleProperty",
+                    "description": "Idle-session and runtime lifecycle settings for the underlying AgentCore Runtime environment.\n\nUse cases: cost control, session cleanup\n\nAWS: `Environment.AgentCoreRuntimeEnvironment.LifecycleConfiguration`\n\nValidation: Optional; HarnessLifecycleProperty"
+                },
+                "logRetentionDays": {
+                    "default": 9999,
+                    "description": "CloudWatch Logs retention period for the Harness's service-created log groups, in days. Accepts\nany CloudWatch Logs `RetentionDays` value; `9999` (`RetentionDays.INFINITE`) means never-expire\nand can be set explicitly to lock indefinite retention into config. Omitting the field is\nequivalent to `9999` — no retention policy is applied, leaving the log groups at CloudWatch's\nnever-expire default (logs are kept, and billed, forever) unless a finite value is set.\n\nUse cases: log retention policy, cost management\n\nAWS: CloudWatch Logs log group retention\n\nValidation: Optional; Number; must be a valid RetentionDays value (9999 for never-expire) — validated at synth",
+                    "type": "number"
+                },
+                "maxIterations": {
+                    "description": "Maximum number of iterations the agent loop can execute per invocation.\n\nUse cases: bounding tool-call loops, cost control\n\nAWS: `MaxIterations`\n\nValidation: Optional; Integer >= 1",
+                    "minimum": 1,
+                    "type": "number"
+                },
+                "maxTokens": {
+                    "description": "Global maximum tokens the harness may generate across the whole agent-loop invocation (distinct\nfrom `modelConfig.maxTokens`, which bounds a single model call). A hard cost cap on total\ngeneration per invocation.\n\nUse cases: cost control, bounding total generation per invocation\n\nAWS: `MaxTokens`\n\nValidation: Optional; Number; >= 1",
+                    "minimum": 1,
+                    "type": "number"
+                },
+                "modelConfig": {
+                    "$ref": "#/definitions/HarnessModelConfigProperty",
+                    "description": "Model sampling configuration (temperature, top-p, max tokens). Mirrors the CFN\n`HarnessBedrockModelConfig` sampling fields.\n\nUse cases: tuning response determinism, diversity, and length limits\n\nAWS: `Model.BedrockModelConfig`\n\nValidation: Optional; HarnessModelConfigProperty"
+                },
+                "modelId": {
+                    "description": "Foundation model identifier for the agent loop. Accepts an on-demand model id, a cross-region\n(system) inference profile id, or a full foundation-model / system inference-profile ARN\n(resolved via `resolveModelArn`). **Application** inference profile ARNs\n(`application-inference-profile/...`) are rejected at synth: their underlying foundation model is\nnot derivable, so the paired invoke grant an inference profile requires cannot be scoped.\n\nUse cases: selecting the reasoning model for the agent loop\n\nAWS: `Model.BedrockModelConfig.ModelId`\n\nValidation: Required; String; not an application-inference-profile ARN",
+                    "type": "string"
+                },
+                "networkConfiguration": {
+                    "$ref": "#/definitions/HarnessNetworkProperty",
+                    "description": "VPC network configuration for the harness's runtime sessions, placing them behind your own\nsecurity groups and subnets for private access to internal resources. Required: MDAA enforces\nVPC network isolation for the harness (`NetworkMode: VPC`), mirroring the AgentCore Runtime\nconstruct — there is no public-network option.\n\nUse cases: private access to internal resources, network isolation\n\nAWS: `Environment.AgentCoreRuntimeEnvironment.NetworkConfiguration` (`NetworkMode: VPC`)\n\nValidation: Required; HarnessNetworkProperty; 1-16 security groups and subnets"
+                },
+                "role": {
+                    "$ref": "#/definitions/MdaaRoleRef",
+                    "description": "Existing IAM role reference for the Harness execution role. If omitted, MDAA creates a role\ntrusting `bedrock-agentcore.amazonaws.com`, scoped to this account/harness.\n\nUse cases: role reuse, centralized permission management\n\nAWS: `ExecutionRoleArn`\n\nValidation: Optional; MdaaRoleRef"
+                },
+                "skills": {
+                    "description": "Skills injected into the agent's context: filesystem paths to skill definitions baked into the\nruntime image. Only the `path` skill source is exposed (the CDK L1 types only `path`); git / S3 /\nawsSkills sources documented in the CloudFormation `HarnessSkill` schema are not yet supported.\n\nUse cases: injecting curated instruction/script bundles into the agent\n\nAWS: `Skills`\n\nValidation: Optional; HarnessSkillProperty[]; each path non-empty",
+                    "items": {
+                        "$ref": "#/definitions/HarnessSkillProperty"
+                    },
+                    "type": "array"
+                },
+                "systemPrompt": {
+                    "description": "System prompt defining the agent's behavior and instructions.\n\nUse cases: agent persona, task instructions, behavioral constraints\n\nAWS: `SystemPrompt` (one text block)\n\nValidation: Required; String",
+                    "type": "string"
+                },
+                "timeoutSeconds": {
+                    "description": "Maximum duration in seconds for the agent loop execution per invocation.\n\nUse cases: bounding total invocation latency\n\nAWS: `TimeoutSeconds`\n\nValidation: Optional; Integer >= 1",
+                    "minimum": 1,
+                    "type": "number"
+                },
+                "tools": {
+                    "$ref": "#/definitions/NamedHarnessToolProps",
+                    "description": "Tools available to the agent loop, keyed by tool name. The key becomes `HarnessTool.Name` and is\nwhat `allowedTools` entries refer to.\n\nUse cases: giving the agent callable tools (client-executed or gateway-fronted)\n\nAWS: `Tools`\n\nValidation: Optional; NamedHarnessToolProps (map of tool name to config)"
+                },
+                "truncation": {
+                    "$ref": "#/definitions/HarnessTruncationProperty",
+                    "description": "Context-truncation configuration controlling how the agent loop trims conversation context when\nit exceeds the model's context window. Omit to accept the service default.\n\nUse cases: bounding long agent loops within the model context window\n\nAWS: `Truncation`\n\nValidation: Optional; HarnessTruncationProperty; tuning fields must match the selected strategy"
+                }
+            },
+            "required": [
+                "modelId",
+                "networkConfiguration",
+                "systemPrompt"
+            ],
+            "type": "object"
+        },
+        "HarnessContainerProperty": {
+            "additionalProperties": false,
+            "description": "Container configuration for the Harness's underlying AgentCore Runtime environment. Only a\npre-built ECR image URI is supported — the typed L1 `ContainerConfigurationProperty` exposes\n`containerUri` alone (no build-from-source), matching the harness's managed-runtime model.\n\nUse cases: bring-your-own container image for the harness runtime environment\n\nAWS: `EnvironmentArtifact.ContainerConfiguration`\n\nValidation: containerUri required; must be a valid ECR image URI",
+            "properties": {
+                "containerUri": {
+                    "description": "Pre-built container image URI from ECR\n(`{account}.dkr.ecr.{region}.amazonaws.com/{repository}[:{tag}|@{digest}]`). The execution role\nis granted scoped `ecr:GetDownloadUrlForLayer` / `ecr:BatchGetImage` pull permissions on the\nparsed repository.\n\nUse cases: custom runtime image, image reuse across harnesses\n\nAWS: `ContainerConfiguration.ContainerUri`\n\nValidation: Required; String; valid ECR image URI",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "containerUri"
+            ],
+            "type": "object"
+        },
+        "HarnessEndpointProperty": {
+            "additionalProperties": false,
+            "description": "Harness endpoint configuration: a named, versioned invocation target for the harness (mirrors the\nAgentCore Runtime construct's `runtimeEndpoint`). The pinned CDK has no typed\n`CfnHarnessEndpoint` L1 class, so this is rendered via a raw `CfnResource`\n(`AWS::BedrockAgentCore::HarnessEndpoint`); see the class-level documentation.\n\nUse cases: pinning callers to a specific harness version, blue/green endpoint management\n\nAWS: `AWS::BedrockAgentCore::HarnessEndpoint`\n\nValidation: name (when provided) is sanitized to `^[a-zA-Z][a-zA-Z0-9_]{0,47}$`",
+            "properties": {
+                "description": {
+                    "description": "Description of the endpoint.\n\nUse cases: endpoint documentation, operational clarity\n\nAWS: `HarnessEndpoint.Description`\n\nValidation: Optional; String; 1-256 chars",
+                    "maxLength": 256,
+                    "minLength": 1,
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Endpoint name for API-access identification. Defaults to a name derived from the harness name.\n\nUse cases: endpoint naming, API identification\n\nAWS: `HarnessEndpoint.EndpointName`\n\nValidation: Optional; String; alphanumeric and underscores; max 48 chars",
+                    "type": "string"
+                },
+                "targetVersion": {
+                    "description": "Specific harness version the endpoint points to.\n\nUse cases: version pinning, deployment control\n\nAWS: `HarnessEndpoint.TargetVersion`\n\nValidation: Optional; String; matches `^([1-9][0-9]{0,4})$`",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "HarnessGuardrailAssociation": {
+            "additionalProperties": false,
+            "description": "Guardrail association for a Harness: a `config:<name>` reference into a sibling `guardrails` map,\nor a literal guardrail id.\n\nUse cases: content filtering, responsible-AI controls on the Harness's model calls\n\nAWS: `Model.BedrockModelConfig.AdditionalParams.guardrailConfig` (escape hatch — see class doc)\n\nValidation: `id` required; `version` required unless `id` is a `config:<name>` reference (the\nreferenced guardrail's live version is used)",
+            "properties": {
+                "id": {
+                    "description": "Guardrail identifier: a `config:<name>` reference into a sibling `guardrails` map, or a literal\nguardrail id.\n\nUse cases: referencing a module-managed guardrail, referencing an externally created guardrail\n\nAWS: `GuardrailConfig.GuardrailIdentifier`\n\nValidation: Required; String",
+                    "type": "string"
+                },
+                "trace": {
+                    "default": "enabled",
+                    "description": "Guardrail trace behavior returned on the model request.\n\nUse cases: troubleshooting guardrail interventions\n\nAWS: `guardrailConfig.trace`\n\nValidation: Optional; must be a {@link HarnessGuardrailTrace} value",
+                    "enum": [
+                        "disabled",
+                        "enabled",
+                        "enabled_full"
+                    ],
+                    "type": "string"
+                },
+                "version": {
+                    "description": "Guardrail version. Required unless `id` is a `config:<name>` reference (the referenced\nguardrail's live version is used automatically).\n\nUse cases: pinning a specific guardrail version\n\nAWS: `GuardrailConfig.GuardrailVersion`\n\nValidation: Optional when `id` is a `config:` reference; otherwise Required; String",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "type": "object"
+        },
+        "HarnessInlineFunctionToolProperty": {
+            "additionalProperties": false,
+            "description": "Inline function tool: a tool definition the model can call, with no execution binding. The\ncaller (harness invoker) is responsible for executing the function and returning the result —\nthe Harness itself does not invoke anything for this tool type.\n\nUse cases: client-side tool execution, tools implemented outside AWS, RETURN_CONTROL-style tools\n\nAWS: `HarnessTool` with `type: inline_function`, `config.inlineFunction`\n\nValidation: description and inputSchema both required",
+            "properties": {
+                "description": {
+                    "description": "Description of what the tool does, shown to the model for tool selection.\n\nUse cases: tool selection guidance for the model\n\nAWS: `HarnessInlineFunctionConfig.Description`\n\nValidation: Required; String",
+                    "type": "string"
+                },
+                "inputSchema": {
+                    "additionalProperties": {},
+                    "description": "JSON Schema describing the tool's input parameters.\n\nUse cases: structured tool-call argument validation\n\nAWS: `HarnessInlineFunctionConfig.InputSchema`\n\nValidation: Required; JSON Schema object",
+                    "type": "object"
+                }
+            },
+            "required": [
+                "description",
+                "inputSchema"
+            ],
+            "type": "object"
+        },
+        "HarnessLifecycleProperty": {
+            "additionalProperties": false,
+            "description": "Lifecycle configuration mapped onto the Harness's underlying AgentCore Runtime environment.\n\nUse cases: idle-session and maximum-lifetime cost control\n\nAWS: `Environment.AgentCoreRuntimeEnvironment.LifecycleConfiguration`\n\nValidation: Optional; each value 60-28800 seconds",
+            "properties": {
+                "idleRuntimeSessionTimeout": {
+                    "description": "Idle session timeout in seconds before the underlying runtime session is terminated.\n\nUse cases: cost control, session cleanup\n\nAWS: `LifecycleConfiguration.IdleRuntimeSessionTimeout`\n\nValidation: Optional; Number; 60-28800 seconds",
+                    "maximum": 28800,
+                    "minimum": 60,
+                    "type": "number"
+                },
+                "maxLifetime": {
+                    "description": "Maximum session lifetime in seconds before forced termination regardless of activity.\n\nUse cases: cost control, hard session boundaries, bounding long-lived sessions\n\nAWS: `LifecycleConfiguration.MaxLifetime`\n\nValidation: Optional; Number; 60-28800 seconds",
+                    "maximum": 28800,
+                    "minimum": 60,
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "HarnessModelConfigProperty": {
+            "additionalProperties": false,
+            "description": "Model sampling configuration for the Harness's Bedrock model, mirroring the CFN\n`HarnessBedrockModelConfig` sampling fields. All fields are optional; omit the whole `modelConfig`\nblock to use the model's own defaults.\n\nUse cases: tuning response determinism, diversity, and length limits\n\nAWS: `Model.BedrockModelConfig` (sampling fields)\n\nValidation: Optional; see individual fields",
+            "properties": {
+                "maxTokens": {
+                    "description": "Maximum tokens the model may generate per iteration.\n\nUse cases: cost control, response length limits\n\nAWS: `Model.BedrockModelConfig.MaxTokens`\n\nValidation: Optional; Number; >= 1",
+                    "minimum": 1,
+                    "type": "number"
+                },
+                "temperature": {
+                    "description": "Sampling temperature for the model.\n\nUse cases: tuning response determinism vs. creativity\n\nAWS: `Model.BedrockModelConfig.Temperature`\n\nValidation: Optional; Number; 0-2",
+                    "maximum": 2,
+                    "minimum": 0,
+                    "type": "number"
+                },
+                "topP": {
+                    "description": "Nucleus sampling (top-p) for the model.\n\nUse cases: tuning response diversity\n\nAWS: `Model.BedrockModelConfig.TopP`\n\nValidation: Optional; Number; 0-1",
+                    "maximum": 1,
+                    "minimum": 0,
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "HarnessNetworkProperty": {
+            "additionalProperties": false,
+            "description": "VPC network configuration for the Harness's underlying AgentCore Runtime environment. Mirrors the\nAgentCore Runtime construct's VPC surface (MDAA enforces VPC mode); the harness maps it onto\n`Environment.AgentCoreRuntimeEnvironment.NetworkConfiguration` with `NetworkMode: VPC`.\n\nUse cases: private access to internal resources, network isolation, security boundaries\n\nAWS: `Environment.AgentCoreRuntimeEnvironment.NetworkConfiguration` (`NetworkMode: VPC`)\n\nValidation: securityGroups and subnets each required with 1-16 items",
+            "properties": {
+                "securityGroups": {
+                    "description": "Security group IDs controlling inbound/outbound traffic for the harness's runtime sessions.\n\nUse cases: network access control, traffic filtering, security boundaries\n\nAWS: `VpcConfig.SecurityGroups`\n\nValidation: Required; String[]; 1-16 security group IDs",
+                    "items": {
+                        "type": "string"
+                    },
+                    "maxItems": 16,
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "subnets": {
+                    "description": "Subnet IDs for the harness's runtime session placement, enabling multi-AZ deployment.\n\nUse cases: multi-AZ deployment, network isolation, high availability\n\nAWS: `VpcConfig.Subnets`\n\nValidation: Required; String[]; 1-16 subnet IDs",
+                    "items": {
+                        "type": "string"
+                    },
+                    "maxItems": 16,
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "vpcEndpoints": {
+                    "$ref": "#/definitions/HarnessVpcEndpointsProperty",
+                    "description": "Optional MDAA-managed creation of the VPC endpoints the harness's runtime sessions need for\noutbound access (no NAT/internet). Presence of this block opts in; which endpoints are created is\nderived from this harness's own configuration rather than listed, so a needed endpoint cannot be\nomitted by accident. Use its `exclude` list for endpoints the VPC already has.\n\nUse cases: no-NAT (fully private) harness sessions, VPC-mode gateway tools\n\nAWS: AWS::EC2::VPCEndpoint (Interface and Gateway)\n\nValidation: Optional; HarnessVpcEndpointsProperty; requires `vpcId` when present"
+                },
+                "vpcId": {
+                    "description": "VPC ID hosting the harness's runtime sessions. Required only when `vpcEndpoints` is configured\n(the VPC in which the endpoints are created); omit it when relying on VPC endpoints provisioned\nout of band (e.g. by LZA or a central networking team).\n\nUse cases: MDAA-managed VPC endpoint creation\n\nAWS: VPC ID for the harness's VPC endpoints\n\nValidation: Optional; String; required when `vpcEndpoints` is set",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "securityGroups",
+                "subnets"
+            ],
+            "type": "object"
+        },
+        "HarnessSkillProperty": {
+            "additionalProperties": false,
+            "description": "A skill available to the Harness's agent loop: a filesystem path to a skill definition baked into\nthe runtime image. Only the `path` source is exposed — the CloudFormation `HarnessSkill` schema\nalso defines `Git`, `S3`, and `AwsSkills` sources, but the pinned CDK L1's `HarnessSkillProperty`\ntypes only `path`.\n\nUse cases: injecting curated markdown/script skill bundles into the agent's context\n\nAWS: `Skills[]` (`HarnessSkill.Path`)\n\nValidation: path required, non-empty",
+            "properties": {
+                "path": {
+                    "description": "Filesystem path to the skill definition inside the runtime image.\n\nUse cases: referencing a skill bundled into a bring-your-own container\n\nAWS: `HarnessSkill.Path`\n\nValidation: Required; String; non-empty",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "path"
+            ],
+            "type": "object"
+        },
+        "HarnessToolProperty": {
+            "additionalProperties": false,
+            "description": "A single tool available to the Harness's agent loop, keyed by tool name in\n{@link NamedHarnessToolProps}. Exactly one of `inlineFunction` / `agentCoreGateway` must be set.\n\nUse cases: giving the agent loop callable tools\n\nAWS: `HarnessTool`\n\nValidation: exactly one of inlineFunction / agentCoreGateway",
+            "properties": {
+                "agentCoreGateway": {
+                    "$ref": "#/definitions/HarnessAgentCoreGatewayToolProperty",
+                    "description": "AgentCore Gateway tool configuration. Mutually exclusive with `inlineFunction`.\n\nUse cases: gateway-fronted tools (Lambda, OpenAPI, Smithy, KB RAG)\n\nAWS: `HarnessTool.Config.AgentCoreGateway`\n\nValidation: exactly one of inlineFunction / agentCoreGateway"
+                },
+                "inlineFunction": {
+                    "$ref": "#/definitions/HarnessInlineFunctionToolProperty",
+                    "description": "Inline function tool configuration. Mutually exclusive with `agentCoreGateway`.\n\nUse cases: client-executed tools\n\nAWS: `HarnessTool.Config.InlineFunction`\n\nValidation: exactly one of inlineFunction / agentCoreGateway"
+                }
+            },
+            "type": "object"
+        },
+        "HarnessTruncationProperty": {
+            "additionalProperties": false,
+            "description": "Context-truncation configuration for the Harness's agent loop, controlling how conversation\ncontext is trimmed when it exceeds the model's context window. The `strategy` selects the\napproach; the strategy-specific tuning fields apply only to their matching strategy (validated at\nsynth), so `none` takes no tuning.\n\nUse cases: bounding long agent loops within the model context window, cost control on context size\n\nAWS: `Truncation` (`HarnessTruncationConfiguration`)\n\nValidation: `strategy` required and a {@link HarnessTruncationStrategy} value; tuning fields must\nmatch the selected strategy",
+            "properties": {
+                "messagesCount": {
+                    "description": "Number of recent messages to retain in the context window. Applies to the `sliding_window`\nstrategy only.\n\nUse cases: fixed-size recent-message window\n\nAWS: `HarnessTruncationStrategyConfiguration.SlidingWindow.MessagesCount`\n\nValidation: Optional; Integer >= 1; only valid with `strategy: sliding_window`",
+                    "minimum": 1,
+                    "type": "number"
+                },
+                "preserveRecentMessages": {
+                    "description": "Number of recent messages to preserve without summarization. Applies to the `summarization`\nstrategy only.\n\nUse cases: keeping the newest turns verbatim while summarizing older context\n\nAWS: `HarnessTruncationStrategyConfiguration.Summarization.PreserveRecentMessages`\n\nValidation: Optional; Integer >= 0; only valid with `strategy: summarization`",
+                    "minimum": 0,
+                    "type": "number"
+                },
+                "strategy": {
+                    "$ref": "#/definitions/HarnessTruncationStrategy",
+                    "description": "The truncation strategy to apply.\n\nUse cases: choosing sliding-window vs. summarization vs. no truncation\n\nAWS: `HarnessTruncationConfiguration.Strategy`\n\nValidation: Required; must be a {@link HarnessTruncationStrategy} value"
+                },
+                "summarizationSystemPrompt": {
+                    "description": "System prompt used to generate the summary. Applies to the `summarization` strategy only.\n\nUse cases: steering how older context is summarized\n\nAWS: `HarnessTruncationStrategyConfiguration.Summarization.SummarizationSystemPrompt`\n\nValidation: Optional; non-empty String; only valid with `strategy: summarization`",
+                    "type": "string"
+                },
+                "summaryRatio": {
+                    "description": "Ratio of content to summarize (0-1 exclusive of 0). Applies to the `summarization` strategy only.\n\nUse cases: tuning how aggressively older context is compressed\n\nAWS: `HarnessTruncationStrategyConfiguration.Summarization.SummaryRatio`\n\nValidation: Optional; Number in (0, 1]; only valid with `strategy: summarization`",
+                    "exclusiveMinimum": 0,
+                    "maximum": 1,
+                    "type": "number"
+                }
+            },
+            "required": [
+                "strategy"
+            ],
+            "type": "object"
+        },
+        "HarnessTruncationStrategy": {
+            "description": "Context-truncation strategy the harness applies when the conversation exceeds the model's context\nwindow. A named enum (rather than a bare `string`) gives config authors schema-level validation and\na synth-time backstop for untyped/YAML callers.\n\nAWS: `Truncation.Strategy` (allowed values `sliding_window` / `summarization` / `none`)",
+            "enum": [
+                "sliding_window",
+                "summarization",
+                "none"
+            ],
+            "type": "string"
+        },
+        "HarnessVpcEndpointName": {
+            "description": "A VPC endpoint the Harness's runtime sessions use for outbound access. Every value here is an\nendpoint the harness itself calls — there is deliberately no AgentCore data-plane\n(`com.amazonaws.{region}.bedrock-agentcore`) entry: per the AgentCore PrivateLink documentation\nthat endpoint serves *inbound* API connectivity for callers reaching `InvokeHarness` privately,\nwhich is a property of the caller's VPC rather than of the harness's session subnets. It is also a\nper-VPC singleton, so N harnesses in one module could not each create one. Provision it alongside\nwhatever invokes the harness.\n\nUsed with {@link HarnessVpcEndpointsProperty.exclude} to skip endpoints the VPC already has.",
+            "enum": [
+                "bedrockRuntime",
+                "agentCoreGateway",
+                "ecrApi",
+                "ecrDocker",
+                "sts",
+                "logs",
+                "s3"
+            ],
+            "type": "string"
+        },
+        "HarnessVpcEndpointsProperty": {
+            "additionalProperties": false,
+            "description": "MDAA-managed VPC endpoints giving a VPC-mode Harness's runtime sessions a private outbound path\n(no NAT/internet). Presence of this configuration opts in to endpoint creation.\n\nWhich endpoints are created is **derived** from the harness's own configuration rather than listed\nhere: the managed agent loop always calls Bedrock for inference and always pulls a container image,\nand the AgentCore Gateway endpoint is added exactly when the harness declares an\n`agentcore_gateway` tool. That removes the failure mode where a hand-listed selection omits an\nendpoint the harness needs — such a harness deploys cleanly and fails only at first invoke, with\nerrors (a DNS failure, a hang, an image-pull timeout) that do not obviously point at a missing\nendpoint.\n\nUse {@link exclude} for endpoints the VPC already has: only one endpoint with Private DNS is\nallowed per service per VPC, so a duplicate fails to deploy.\n\nNo endpoint policy is exposed as a config knob. The supporting interface endpoints (Bedrock runtime,\nECR API/Docker, STS, Logs) carry no policy: each is traversed *outbound* by the AgentCore service and\nthis harness's execution role across a range of actions, and Private DNS makes an interface endpoint\nVPC-wide, so restricting their actions would deny the harness's own image pulls and break unrelated\nworkloads in the same VPC — access to those is governed by the execution role's identity policy\n(scoped to the resolved model, gateway, and repository ARNs) instead. Two endpoints are scoped rather\nthan left to the default, because each carries only one kind of legitimate traffic: the AgentCore\nGateway interface endpoint carries an action-scoped (`bedrock-agentcore:InvokeGateway`) StarPrincipal\npolicy — its sole traffic is gateway data-plane invokes, management going to the separate\nbedrock-agentcore-control service — and the S3 gateway endpoint carries a resource-scoped policy (see\n{@link s3RouteTableIds}).\n\nUse cases: fully private (no-NAT) harness sessions, VPC-mode gateway tools\n\nAWS: AWS::EC2::VPCEndpoint (Interface and Gateway)\n\nValidation: Optional; requires `networkConfiguration.vpcId` when present",
+            "properties": {
+                "additionalS3BucketArns": {
+                    "description": "Additional S3 resource ARNs to allow read access to through the S3 gateway endpoint, on top of the\nECR image-layer bucket. Supply these when other workloads share the named route tables and would\notherwise lose S3 access through the endpoint. Grants `s3:GetObject` / `s3:ListBucket`; pass bucket\nand/or object ARNs as needed.\n\nUse cases: readmitting co-located workloads' buckets on shared route tables\n\nAWS: Resource element of the S3 gateway endpoint policy\n\nValidation: Optional; String[]; valid S3 ARNs",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "exclude": {
+                    "description": "Endpoints to skip because the VPC already has them (created by LZA or a central networking team,\nfor example). Only one endpoint with Private DNS is allowed per service per VPC, so an\nunexcluded duplicate fails to deploy.\n\nUse cases: coexisting with centrally provisioned VPC endpoints\n\nAWS: AWS::EC2::VPCEndpoint\n\nValidation: Optional; each entry a {@link HarnessVpcEndpointName} value",
+                    "items": {
+                        "$ref": "#/definitions/HarnessVpcEndpointName"
+                    },
+                    "type": "array"
+                },
+                "s3RouteTableIds": {
+                    "description": "Route table IDs to associate the S3 **gateway** endpoint with, enabling container image-layer\ndownloads. Supply these for a no-NAT VPC; omit them to skip the S3 endpoint (image layers then\nneed NAT or an out-of-band S3 path).\n\nA gateway endpoint installs prefix-list routes into route tables rather than placing ENIs in\nsubnets, and imported subnets expose no discoverable route table, so the tables must be named\nexplicitly.\n\nIMPORTANT — blast radius: the endpoint therefore intercepts **all** S3 traffic from every subnet\nassociated with these route tables, not just the harness's. MDAA scopes its endpoint policy to the\nECR image-layer bucket, so other workloads sharing these route tables lose S3 access through this\nendpoint unless their buckets are named in {@link additionalS3BucketArns}. If those workloads need\nbroad S3 access, provision the S3 gateway endpoint out of band instead of enabling it here.\n\nUse cases: no-NAT container image-layer pulls from the ECR layer bucket\n\nAWS: RouteTableIds of the S3 gateway VPC endpoint\n\nValidation: Optional; String[]; non-empty when provided",
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
                 }
             },
             "type": "object"
@@ -4207,6 +4619,20 @@
             },
             "type": "object"
         },
+        "NamedHarnessProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/HarnessConfigProps"
+            },
+            "description": "Map of harness name to {@link HarnessConfigProps}. The key becomes the child construct id suffix\n(`bedrock-harness-<name>`) and the derived, MDAA-named harness name.",
+            "type": "object"
+        },
+        "NamedHarnessToolProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/HarnessToolProperty"
+            },
+            "description": "Map of tool name to {@link HarnessToolProperty}. The key becomes `HarnessTool.Name`, the callable\ntool identifier surfaced to the model and the value `allowedTools` entries refer to. Keying by name\nrather than using a list makes duplicate tool names unrepresentable — the service documents\n`HarnessTool.Name` as unique, and a duplicate would otherwise silently collapse two tools onto one\ngateway and drop the other's IAM grant.",
+            "type": "object"
+        },
         "NamedKnowledgeBaseProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/BedrockKnowledgeBaseProps"
@@ -5405,6 +5831,10 @@
         "guardrails": {
             "$ref": "#/definitions/NamedGuardrailProps",
             "description": "Guardrail configurations for AI safety, content filtering, and responsible AI deployment.\n\nUse cases: AI safety controls, content filtering, responsible AI, content moderation\n\nAWS: Bedrock Guardrails\n\nValidation: Optional; NamedGuardrailProps (map of guardrail name to config)"
+        },
+        "harnesses": {
+            "$ref": "#/definitions/NamedHarnessProps",
+            "description": "Bedrock AgentCore Harness configurations — a declarative agent loop (model + system prompt +\ntools) — keyed by harness name. A harness's `guardrail.id` and\n`tools[].agentCoreGateway.gatewayArn` may use a `config:<name>` reference into the sibling\n`guardrails` / `gateways` maps, resolved to the live resource.\n\nUse cases: declarative tool-using/RAG agents\n\nAWS: AWS::BedrockAgentCore::Harness\n\nValidation: Optional; NamedHarnessProps (map of harness name to config)"
         },
         "kmsKeyArn": {
             "description": "Existing KMS key ARN for encrypting all Bedrock resources in this module — agents, knowledge\nbases, guardrails, the shared Lambda pool, and AgentCore gateways all use this single key.\nIf omitted, one customer-managed key is created automatically and shared across them.\n\nWhen an existing key is provided, its key policy must already grant the required service and\nexecution-role use (the module cannot mutate an imported key's policy) — including the AgentCore\ngateway grants when gateways are configured.\n\nUse cases: Customer-controlled encryption, security compliance, key reuse\n\nAWS: KMS key for Bedrock resource encryption\n\nValidation: Optional; String; must be valid KMS key ARN",

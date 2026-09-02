@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { resolveModelArn } from '../lib';
+import { resolveModelArn, inferenceProfileFoundationModelArns } from '../lib';
 
 describe('Utils - resolveModelArn', () => {
   const mockPartition = 'aws';
@@ -337,6 +337,68 @@ describe('Utils - resolveModelArn', () => {
       const result = resolveModelArn(inferenceProfileId, mockPartition, mockRegion, account);
 
       expect(result).toBe(expectedArn);
+    });
+  });
+
+  describe('inferenceProfileFoundationModelArns', () => {
+    test('derives the region-wildcarded foundation-model ARN from a system inference-profile ARN', () => {
+      const profileArn =
+        'arn:aws:bedrock:us-east-1:123456789012:inference-profile/us.anthropic.claude-3-sonnet-20240229-v1:0';
+
+      expect(inferenceProfileFoundationModelArns(profileArn)).toEqual([
+        'arn:aws:bedrock:*::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0',
+      ]);
+    });
+
+    test('strips the global. prefix and preserves the partition', () => {
+      const profileArn =
+        'arn:aws-us-gov:bedrock:us-gov-east-1:123456789012:inference-profile/global.anthropic.claude-sonnet-4-20250514-v1:0';
+
+      expect(inferenceProfileFoundationModelArns(profileArn)).toEqual([
+        'arn:aws-us-gov:bedrock:*::foundation-model/anthropic.claude-sonnet-4-20250514-v1:0',
+      ]);
+    });
+
+    test('uses the whole profile id as the model name when it has no region prefix (no dot)', () => {
+      // A profile id with no dot never reaches the prefix-strip path, so the id is used verbatim —
+      // this exercises the firstDot < 0 branch of the model-name derivation.
+      const profileArn = 'arn:aws:bedrock:us-east-1:123456789012:inference-profile/some-model-v1';
+
+      expect(inferenceProfileFoundationModelArns(profileArn)).toEqual([
+        'arn:aws:bedrock:*::foundation-model/some-model-v1',
+      ]);
+    });
+
+    test('returns [] for a plain foundation-model ARN', () => {
+      expect(
+        inferenceProfileFoundationModelArns(
+          'arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0',
+        ),
+      ).toEqual([]);
+    });
+
+    // [] here means "not derivable", NOT "no paired grant needed" — an application inference profile does
+    // require one, but its id is opaque. Callers must reject or otherwise handle these; the harness L3
+    // rejects them at synth rather than auto-generating an under-scoped role.
+    test('returns [] for an application-inference-profile ARN (pairing not derivable from an opaque id)', () => {
+      expect(
+        inferenceProfileFoundationModelArns(
+          'arn:aws:bedrock:us-east-1:123456789012:application-inference-profile/my-profile',
+        ),
+      ).toEqual([]);
+    });
+
+    // Custom-model ARNs are invoked directly, so the doc states they "genuinely need no paired grant".
+    test('returns [] for a custom-model ARN', () => {
+      expect(
+        inferenceProfileFoundationModelArns(
+          'arn:aws:bedrock:us-east-1:123456789012:custom-model/anthropic.claude-3-sonnet-20240229-v1:0/abcdef123456',
+        ),
+      ).toEqual([]);
+    });
+
+    test('returns [] for a non-ARN string', () => {
+      expect(inferenceProfileFoundationModelArns('us.anthropic.claude-3-sonnet-20240229-v1:0')).toEqual([]);
     });
   });
 });

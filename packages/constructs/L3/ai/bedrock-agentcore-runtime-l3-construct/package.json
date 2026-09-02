@@ -22,6 +22,9 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "devDependencies": {
+    "@aws-mdaa/agentcore-shared": "1.8.1",
+    "@aws-mdaa/construct": "1.8.1",
+    "@aws-mdaa/ec2-constructs": "1.8.1",
     "@aws-mdaa/iam-constructs": "1.8.1",
     "@aws-mdaa/iam-role-helper": "1.8.1",
     "@aws-mdaa/kms-constructs": "1.8.1",
@@ -41,6 +44,9 @@
     "typescript-json-schema": "0.68.0"
   },
   "peerDependencies": {
+    "@aws-mdaa/agentcore-shared": "1.8.1",
+    "@aws-mdaa/construct": "1.8.1",
+    "@aws-mdaa/ec2-constructs": "1.8.1",
     "@aws-mdaa/iam-constructs": "1.8.1",
     "@aws-mdaa/iam-role-helper": "1.8.1",
     "@aws-mdaa/kms-constructs": "1.8.1",
@@ -55,6 +61,8 @@
   },
   "dependencies": {
     "@aws-mdaa/agentcore-shared": "1.8.1",
+    "@aws-mdaa/construct": "1.8.1",
+    "@aws-mdaa/ec2-constructs": "1.8.1",
     "@aws-mdaa/iam-constructs": "1.8.1",
     "@aws-mdaa/iam-role-helper": "1.8.1",
     "@aws-mdaa/kms-constructs": "1.8.1",

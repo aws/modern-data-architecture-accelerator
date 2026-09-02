@@ -1,0 +1,3248 @@
+{
+  "Description": "(SO0320-bedrock-builder) Modern Data Architecture Accelerator. Version VERSION",
+  "Parameters": {
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-bedrock-builder) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrail3B268BFF": {
+      "Type": "AWS::Bedrock::Guardrail",
+      "Properties": {
+        "BlockedInputMessaging": "This request violates our content policy.",
+        "BlockedOutputsMessaging": "This response violates our content policy.",
+        "ContentPolicyConfig": {
+          "FiltersConfig": [
+            {
+              "InputStrength": "MEDIUM",
+              "OutputStrength": "MEDIUM",
+              "Type": "HATE"
+            }
+          ]
+        },
+        "Description": "Enterprise content safety guardrail",
+        "KmsKeyArn": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-bedro--4eb4a970",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "bedrockbuilderbedrockguardrailenterpriseguardrailguardrailenterpriseguardrailarnssm57319B6E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/guardrail/enterprise-guardrail/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrail3B268BFF",
+            "GuardrailArn"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockguardrailenterpriseguardrailguardrailenterpriseguardrailidssm3DE34B00": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/guardrail/enterprise-guardrail/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrail3B268BFF",
+            "GuardrailId"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account"
+                },
+                "ArnLike": {
+                  "aws:SourceArn": "arn:test-partition:bedrock-agentcore:test-region:test-account:gateway/test-org-test-env-test-domain-test-bedr-5f22e006-*"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "bedrock-agentcore.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "IAM role for Bedrock AgentCore Gateway: weather-gateway",
+        "RoleName": "test-org-test-env-test-domain-test-bedrock-builder-harn-193a8f6d",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewayRolerolebedrockagentcoregatewayweathergatewayarnssmDF6CD4C1": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/role/bedrock-agentcore-gateway-weather-gateway/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewayRolerolebedrockagentcoregatewayweathergatewayidssm619960AE": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/role/bedrock-agentcore-gateway-weather-gateway/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE",
+            "RoleId"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewayRolerolebedrockagentcoregatewayweathergatewaynamessm9FEE5A56": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/role/bedrock-agentcore-gateway-weather-gateway/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE"
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035": {
+      "Type": "AWS::BedrockAgentCore::Gateway",
+      "Properties": {
+        "AuthorizerConfiguration": {
+          "CustomJWTAuthorizer": {
+            "AllowedAudience": [
+              "weather-clients"
+            ],
+            "DiscoveryUrl": "https://example.com/.well-known/openid-configuration"
+          }
+        },
+        "AuthorizerType": "CUSTOM_JWT",
+        "Description": "Weather tools MCP gateway",
+        "KmsKeyArn": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-bedr-5f22e006",
+        "ProtocolType": "MCP",
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE",
+            "Arn"
+          ]
+        },
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaycmkusageweathergatewaymanagedpolicybedrockagentcoregatewaycmkweathergatewayarnssmBD3729B7",
+        "bedrockbuilderbedrockgatewaycmkusageweathergatewaymanagedpolicybedrockagentcoregatewaycmkweathergatewaynamessm6D1258E9",
+        "bedrockbuilderbedrockgatewaycmkusageweathergateway1B57560A"
+      ]
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewaygatewayweathergatewayarnssmED6FA960": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/gateway/weather-gateway/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
+            "GatewayArn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaycmkusageweathergatewaymanagedpolicybedrockagentcoregatewaycmkweathergatewayarnssmBD3729B7",
+        "bedrockbuilderbedrockgatewaycmkusageweathergatewaymanagedpolicybedrockagentcoregatewaycmkweathergatewaynamessm6D1258E9",
+        "bedrockbuilderbedrockgatewaycmkusageweathergateway1B57560A"
+      ]
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewaygatewayweathergatewayidssmCE56CF89": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/gateway/weather-gateway/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
+            "GatewayIdentifier"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaycmkusageweathergatewaymanagedpolicybedrockagentcoregatewaycmkweathergatewayarnssmBD3729B7",
+        "bedrockbuilderbedrockgatewaycmkusageweathergatewaymanagedpolicybedrockagentcoregatewaycmkweathergatewaynamessm6D1258E9",
+        "bedrockbuilderbedrockgatewaycmkusageweathergateway1B57560A"
+      ]
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewaygatewayweathergatewayurlssmF2D32817": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/gateway/weather-gateway/url",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
+            "GatewayUrl"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaycmkusageweathergatewaymanagedpolicybedrockagentcoregatewaycmkweathergatewayarnssmBD3729B7",
+        "bedrockbuilderbedrockgatewaycmkusageweathergatewaymanagedpolicybedrockagentcoregatewaycmkweathergatewaynamessm6D1258E9",
+        "bedrockbuilderbedrockgatewaycmkusageweathergateway1B57560A"
+      ]
+    },
+    "bedrockbuilderbedrockgatewayweathergatewaygatewayloggroupDAE7C19B": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "KmsKeyId": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        },
+        "LogGroupName": "/aws/vendedlogs/bedrock-agentcore/gateway/APPLICATION_LOGS/test-org-test-env-test-domain-test-bedrock-builder-harness-comprehensive-weather-gateway",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "HIPAA.Security-CloudWatchLogGroupRetentionPeriod"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "PCI.DSS.321-CloudWatchLogGroupRetentionPeriod"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewaygatewayloggrouploggroupweathergatewaynamessm0AB07D11": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/loggroup/weather-gateway/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "/aws/vendedlogs/bedrock-agentcore/gateway/APPLICATION_LOGS/test-org-test-env-test-domain-test-bedrock-builder-harness-comprehensive-weather-gateway"
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewaygatewaylogsourceF6DB3158": {
+      "Type": "AWS::Logs::DeliverySource",
+      "Properties": {
+        "LogType": "APPLICATION_LOGS",
+        "Name": "test-org-test-env-test-domain-test-bedrock-builder--5f22e006",
+        "ResourceArn": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
+            "GatewayArn"
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewaygatewaylogdestinationE9842699": {
+      "Type": "AWS::Logs::DeliveryDestination",
+      "Properties": {
+        "DestinationResourceArn": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayweathergatewaygatewayloggroupDAE7C19B",
+            "Arn"
+          ]
+        },
+        "Name": "test-org-test-env-test-domain-test-bedrock-builder--5f22e006",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewaygatewaylogdeliveryEE07ADB2": {
+      "Type": "AWS::Logs::Delivery",
+      "Properties": {
+        "DeliveryDestinationArn": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayweathergatewaygatewaylogdestinationE9842699",
+            "Arn"
+          ]
+        },
+        "DeliverySourceName": "test-org-test-env-test-domain-test-bedrock-builder--5f22e006",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewayweathergatewaygatewaylogsourceF6DB3158"
+      ]
+    },
+    "bedrockbuilderbedrockgatewayweathergatewaygatewayweathergatewayrolearnssm0F069E2B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/gateway/weather-gateway/role-arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewaygatewayweathergatewaykmskeyarnssm24527117": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/gateway/weather-gateway/kms-key-arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewaycmkusageweathergateway1B57560A": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-builder-harn-40fa9de1",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "kms:DescribeKey",
+                "kms:Decrypt",
+                "kms:GenerateDataKey"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockcmk710EFABC",
+                  "Arn"
+                ]
+              },
+              "Sid": "GatewayCmkEncryptDecrypt"
+            },
+            {
+              "Action": "kms:CreateGrant",
+              "Condition": {
+                "StringEquals": {
+                  "kms:GrantConstraintType": "EncryptionContextSubset"
+                },
+                "ForAllValues:StringEquals": {
+                  "kms:GrantOperations": [
+                    "Decrypt",
+                    "GenerateDataKey"
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockcmk710EFABC",
+                  "Arn"
+                ]
+              },
+              "Sid": "GatewayCmkCreateGrant"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Ref": "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE"
+          }
+        ]
+      }
+    },
+    "bedrockbuilderbedrockgatewaycmkusageweathergatewaymanagedpolicybedrockagentcoregatewaycmkweathergatewayarnssmBD3729B7": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/managed-policy/bedrock-agentcore-gateway-cmk-weather-gateway/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockgatewaycmkusageweathergateway1B57560A"
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewaycmkusageweathergatewaymanagedpolicybedrockagentcoregatewaycmkweathergatewaynamessm6D1258E9": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/managed-policy/bedrock-agentcore-gateway-cmk-weather-gateway/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "bedrockbuilderbedrockgatewaycmkusageweathergateway1B57560A"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRoleF8BB3373": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account"
+                },
+                "ArnLike": {
+                  "aws:SourceArn": "arn:test-partition:bedrock-agentcore:test-region:test-account:*"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "bedrock-agentcore.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "IAM role for Bedrock AgentCore Harness: comprehensive-harness",
+        "RoleName": "test-org-test-env-test-domain-test-bedrock-builder-har--6e55005b",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-harness-l3-construct/lib/bedrock-agentcore-harness-l3-construct.ts] No AWS-managed policy is attached to this role: every permission is delivered via the scoped customer-managed policy (MdaaManagedPolicy) built above, whose statements mirror the AgentCore Harness sample execution-role policy and are scoped to this harness's resources. The customer-managed policy is the intended delivery mechanism per MDAA convention, so the AWS-managed-policy finding is suppressed.",
+              "id": "AwsSolutions-IAM4"
+            },
+            {
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRolerolebedrockagentcoreharnesscomprehensiveharnessarnssm9FC52F54": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/role/bedrock-agentcore-harness-comprehensive-harness/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRoleF8BB3373",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-harness-l3-construct/lib/bedrock-agentcore-harness-l3-construct.ts] No AWS-managed policy is attached to this role: every permission is delivered via the scoped customer-managed policy (MdaaManagedPolicy) built above, whose statements mirror the AgentCore Harness sample execution-role policy and are scoped to this harness's resources. The customer-managed policy is the intended delivery mechanism per MDAA convention, so the AWS-managed-policy finding is suppressed.",
+              "id": "AwsSolutions-IAM4"
+            },
+            {
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRolerolebedrockagentcoreharnesscomprehensiveharnessidssm11369591": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/role/bedrock-agentcore-harness-comprehensive-harness/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRoleF8BB3373",
+            "RoleId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-harness-l3-construct/lib/bedrock-agentcore-harness-l3-construct.ts] No AWS-managed policy is attached to this role: every permission is delivered via the scoped customer-managed policy (MdaaManagedPolicy) built above, whose statements mirror the AgentCore Harness sample execution-role policy and are scoped to this harness's resources. The customer-managed policy is the intended delivery mechanism per MDAA convention, so the AWS-managed-policy finding is suppressed.",
+              "id": "AwsSolutions-IAM4"
+            },
+            {
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRolerolebedrockagentcoreharnesscomprehensiveharnessnamessmFED043CC": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/role/bedrock-agentcore-harness-comprehensive-harness/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRoleF8BB3373"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-harness-l3-construct/lib/bedrock-agentcore-harness-l3-construct.ts] No AWS-managed policy is attached to this role: every permission is delivered via the scoped customer-managed policy (MdaaManagedPolicy) built above, whose statements mirror the AgentCore Harness sample execution-role policy and are scoped to this harness's resources. The customer-managed policy is the intended delivery mechanism per MDAA convention, so the AWS-managed-policy finding is suppressed.",
+              "id": "AwsSolutions-IAM4"
+            },
+            {
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessManagedPolicy77369283": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "Managed policy for Bedrock AgentCore Harness: comprehensive-harness",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-builder-harn-5e647e0c",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "bedrock:InvokeModel",
+                "bedrock:InvokeModelWithResponseStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:bedrock:test-region::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0",
+              "Sid": "BedrockModelInvocation"
+            },
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+                "xray:GetSamplingRules",
+                "xray:GetSamplingTargets"
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "XRayTracingAccess"
+            },
+            {
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:DescribeLogStreams"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:/aws/bedrock-agentcore/runtimes/*",
+              "Sid": "CloudWatchLogsGroup"
+            },
+            {
+              "Action": "logs:DescribeLogGroups",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:*",
+              "Sid": "CloudWatchLogsDescribeGroups"
+            },
+            {
+              "Action": [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:/aws/bedrock-agentcore/runtimes/*:log-stream:*",
+              "Sid": "CloudWatchLogsStream"
+            },
+            {
+              "Action": "logs:PutResourcePolicy",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:/aws/bedrock-agentcore/runtimes/*",
+              "Sid": "CloudWatchLogsPutResourcePolicy"
+            },
+            {
+              "Action": "cloudwatch:PutMetricData",
+              "Condition": {
+                "StringEquals": {
+                  "cloudwatch:namespace": "bedrock-agentcore"
+                }
+              },
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "CloudWatchMetricsPublish"
+            },
+            {
+              "Action": [
+                "bedrock-agentcore:GetWorkloadAccessToken",
+                "bedrock-agentcore:GetWorkloadAccessTokenForJWT"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                "arn:test-partition:bedrock-agentcore:test-region:test-account:workload-identity-directory/default",
+                "arn:test-partition:bedrock-agentcore:test-region:test-account:workload-identity-directory/default/workload-identity/harness_test_org_test_env_test_domain___1d2dffae*"
+              ],
+              "Sid": "AgentCoreWorkloadIdentity"
+            },
+            {
+              "Action": [
+                "bedrock-agentcore:StartBrowserSession",
+                "bedrock-agentcore:GetBrowserSession",
+                "bedrock-agentcore:ListBrowserSessions",
+                "bedrock-agentcore:StopBrowserSession",
+                "bedrock-agentcore:ConnectBrowserAutomationStream",
+                "bedrock-agentcore:ConnectBrowserLiveViewStream",
+                "bedrock-agentcore:UpdateBrowserStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:bedrock-agentcore:test-region:aws:browser/*",
+              "Sid": "AgentCoreBrowserDefault"
+            },
+            {
+              "Action": [
+                "bedrock-agentcore:StartCodeInterpreterSession",
+                "bedrock-agentcore:GetCodeInterpreterSession",
+                "bedrock-agentcore:ListCodeInterpreterSessions",
+                "bedrock-agentcore:StopCodeInterpreterSession",
+                "bedrock-agentcore:InvokeCodeInterpreter"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:bedrock-agentcore:test-region:aws:code-interpreter/*",
+              "Sid": "AgentCoreCodeInterpreterDefault"
+            },
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Deny",
+              "Resource": "*",
+              "Sid": "DenyRoleAssumption"
+            },
+            {
+              "Action": [
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage",
+                "ecr:BatchCheckLayerAvailability"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                "arn:test-partition:ecr:test-region:*:repository/harness-test-region",
+                "arn:test-partition:ecr:test-region:test-account:repository/my-harness-image"
+              ],
+              "Sid": "HarnessImageEcrPull"
+            },
+            {
+              "Action": "ecr:GetAuthorizationToken",
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "HarnessImageEcrToken"
+            },
+            {
+              "Action": "bedrock:ApplyGuardrail",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:test-partition:bedrock:test-region:test-account:guardrail/",
+                    {
+                      "Fn::GetAtt": [
+                        "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrail3B268BFF",
+                        "GuardrailId"
+                      ]
+                    }
+                  ]
+                ]
+              },
+              "Sid": "AllowApplyBedrockGuardrail"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey"
+              ],
+              "Condition": {
+                "StringLike": {
+                  "kms:ViaService": "bedrock.test-region.amazonaws.com"
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockcmk710EFABC",
+                  "Arn"
+                ]
+              },
+              "Sid": "GuardrailKmsDecrypt"
+            },
+            {
+              "Action": "bedrock-agentcore:InvokeGateway",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
+                  "GatewayArn"
+                ]
+              },
+              "Sid": "AllowInvokeGateway"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRoleF8BB3373"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessManagedPolicymanagedpolicyagentcoreharnesscomprehensiveharnessarnssm7AFA2A87": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/managed-policy/agentcore-harness-comprehensive-harness/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessManagedPolicy77369283"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessManagedPolicymanagedpolicyagentcoreharnesscomprehensiveharnessnamessmC91D5255": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/managed-policy/agentcore-harness-comprehensive-harness/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessManagedPolicy77369283"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessHarness2ED69A7F": {
+      "Type": "AWS::BedrockAgentCore::Harness",
+      "Properties": {
+        "AllowedTools": [
+          "get_order_status",
+          "@gateway_tools",
+          "@builtin"
+        ],
+        "AuthorizerConfiguration": {
+          "CustomJWTAuthorizer": {
+            "AllowedAudience": [
+              "support-clients"
+            ],
+            "AllowedClients": [
+              "support-app"
+            ],
+            "DiscoveryUrl": "https://example.com/.well-known/openid-configuration"
+          }
+        },
+        "Environment": {
+          "AgentCoreRuntimeEnvironment": {
+            "LifecycleConfiguration": {
+              "IdleRuntimeSessionTimeout": 900,
+              "MaxLifetime": 3600
+            },
+            "NetworkConfiguration": {
+              "NetworkMode": "VPC",
+              "NetworkModeConfig": {
+                "SecurityGroups": [
+                  "sg-0123456789abcdef0"
+                ],
+                "Subnets": [
+                  "subnet-0123456789abcdef0"
+                ]
+              }
+            }
+          }
+        },
+        "EnvironmentArtifact": {
+          "ContainerConfiguration": {
+            "ContainerUri": "test-account.dkr.ecr.test-region.amazonaws.com/my-harness-image:latest"
+          }
+        },
+        "EnvironmentVariables": {
+          "LOG_LEVEL": "INFO",
+          "SUPPORT_QUEUE": "tier-1"
+        },
+        "ExecutionRoleArn": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRoleF8BB3373",
+            "Arn"
+          ]
+        },
+        "HarnessName": "test_org_test_env_test_domain___1d2dffae",
+        "MaxIterations": 10,
+        "MaxTokens": 16384,
+        "Memory": {
+          "Disabled": {}
+        },
+        "Model": {
+          "BedrockModelConfig": {
+            "ApiFormat": "converse_stream",
+            "MaxTokens": 2048,
+            "ModelId": "arn:test-partition:bedrock:test-region::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0",
+            "Temperature": 0.7,
+            "TopP": 0.9,
+            "AdditionalParams": {
+              "guardrailConfig": {
+                "guardrailIdentifier": {
+                  "Fn::GetAtt": [
+                    "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrail3B268BFF",
+                    "GuardrailId"
+                  ]
+                },
+                "guardrailVersion": {
+                  "Fn::GetAtt": [
+                    "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrail3B268BFF",
+                    "Version"
+                  ]
+                },
+                "trace": "enabled"
+              }
+            }
+          }
+        },
+        "Skills": [
+          {
+            "Path": "/opt/skills/support-playbook"
+          }
+        ],
+        "SystemPrompt": [
+          {
+            "Text": "You are a customer support assistant. Use the available tools to help customers."
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "TimeoutSeconds": 300,
+        "Tools": [
+          {
+            "Config": {
+              "InlineFunction": {
+                "Description": "Returns the current status of a customer order",
+                "InputSchema": {
+                  "type": "object",
+                  "properties": {
+                    "orderId": {
+                      "type": "string",
+                      "description": "The order identifier"
+                    }
+                  },
+                  "required": [
+                    "orderId"
+                  ]
+                }
+              }
+            },
+            "Name": "get_order_status",
+            "Type": "inline_function"
+          },
+          {
+            "Config": {
+              "AgentCoreGateway": {
+                "GatewayArn": {
+                  "Fn::GetAtt": [
+                    "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
+                    "GatewayArn"
+                  ]
+                },
+                "OutboundAuth": {
+                  "AwsIam": {}
+                }
+              }
+            },
+            "Name": "gateway_tools",
+            "Type": "agentcore_gateway"
+          }
+        ],
+        "Truncation": {
+          "Config": {
+            "Summarization": {
+              "PreserveRecentMessages": 5,
+              "SummarizationSystemPrompt": "Summarize the earlier conversation, preserving order identifiers, customer decisions, and any unresolved issues.",
+              "SummaryRatio": 0.5
+            }
+          },
+          "Strategy": "summarization"
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessManagedPolicymanagedpolicyagentcoreharnesscomprehensiveharnessarnssm7AFA2A87",
+        "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessManagedPolicymanagedpolicyagentcoreharnesscomprehensiveharnessnamessmC91D5255",
+        "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessManagedPolicy77369283"
+      ]
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessEndpoint9ED76C29": {
+      "Type": "AWS::BedrockAgentCore::HarnessEndpoint",
+      "Properties": {
+        "HarnessId": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockharnesscomprehensiveharnessHarness2ED69A7F",
+            "HarnessId"
+          ]
+        },
+        "EndpointName": "test_org_test_env_test_domain_test_bed__1a0a7c64",
+        "Description": "Production endpoint pinned to a released harness version",
+        "TargetVersion": "1",
+        "Tags": [
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          }
+        ]
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockharnesscomprehensiveharnessHarness2ED69A7F"
+      ]
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessLogProtectionB3D075A6": {
+      "Type": "Custom::AgentCoreLogProtection",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customAgentCoreLogProtectionproviderframeworkonEvent185E2063",
+            "Arn"
+          ]
+        },
+        "runtimeId": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockharnesscomprehensiveharnessHarness2ED69A7F",
+            "Environment.AgentCoreRuntimeEnvironment.AgentRuntimeId"
+          ]
+        },
+        "kmsKeyArn": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        },
+        "retentionDays": "90",
+        "dataProtectionPolicy": "{\"Name\":\"agentcore-harness-data-protection\",\"Version\":\"2021-06-01\",\"Statement\":[{\"Sid\":\"audit-policy\",\"DataIdentifier\":[\"arn:aws:dataprotection::aws:data-identifier/EmailAddress\",\"arn:aws:dataprotection::aws:data-identifier/CreditCardNumber\",\"arn:aws:dataprotection::aws:data-identifier/Ssn-US\",\"arn:aws:dataprotection::aws:data-identifier/Name\",\"arn:aws:dataprotection::aws:data-identifier/Address\",\"arn:aws:dataprotection::aws:data-identifier/PhoneNumber-US\",\"arn:aws:dataprotection::aws:data-identifier/IpAddress\",\"arn:aws:dataprotection::aws:data-identifier/DriversLicense-US\",\"arn:aws:dataprotection::aws:data-identifier/PassportNumber-US\"],\"Operation\":{\"Audit\":{\"FindingsDestination\":{}}}},{\"Sid\":\"redact-policy\",\"DataIdentifier\":[\"arn:aws:dataprotection::aws:data-identifier/EmailAddress\",\"arn:aws:dataprotection::aws:data-identifier/CreditCardNumber\",\"arn:aws:dataprotection::aws:data-identifier/Ssn-US\",\"arn:aws:dataprotection::aws:data-identifier/Name\",\"arn:aws:dataprotection::aws:data-identifier/Address\",\"arn:aws:dataprotection::aws:data-identifier/PhoneNumber-US\",\"arn:aws:dataprotection::aws:data-identifier/IpAddress\",\"arn:aws:dataprotection::aws:data-identifier/DriversLicense-US\",\"arn:aws:dataprotection::aws:data-identifier/PassportNumber-US\"],\"Operation\":{\"Deidentify\":{\"MaskConfig\":{}}}}]}"
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockharnesscomprehensiveharnessHarness2ED69A7F",
+        "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessEndpoint9ED76C29"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsSecurityGroup6430C772": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "test-org-test-env-test-domain-test-bedrock-builder-harness-comprehensive/bedrock-builder/bedrock-harness-comprehensive-harness/VpcEndpoints/SecurityGroup",
+        "GroupName": "test-org-test-env-test-domain-test-bedrock-builder-harness-comprehensive-agentcore-harness-vpce-comprehensive-harness",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "255.255.255.255/32",
+            "Description": "Disallow all traffic",
+            "FromPort": 252,
+            "IpProtocol": "icmp",
+            "ToPort": 86
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcId": "vpc-0123456789abcdef0"
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsSecurityGroupfromsg0123456789abcdef0tcpPORT44391AEEF4E": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "Description": "HTTPS from harness security group to AgentCore VPC endpoint",
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsSecurityGroup6430C772",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": "sg-0123456789abcdef0",
+        "ToPort": 443
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsSecurityGroupsecuritygroupagentcoreharnessvpcecomprehensiveharnessidssm5B3D183C": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/security-group/agentcore-harness-vpce-comprehensive-harness/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsSecurityGroup6430C772",
+            "GroupId"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsBedrockRuntimeEndpoint77E969FD": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsSecurityGroup6430C772",
+              "GroupId"
+            ]
+          }
+        ],
+        "ServiceName": "com.amazonaws.test-region.bedrock-runtime",
+        "SubnetIds": [
+          "subnet-0123456789abcdef0"
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": "vpc-0123456789abcdef0"
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsAgentCoreGatewayEndpoint5C77B5C7": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "bedrock-agentcore:InvokeGateway",
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": "*",
+              "Sid": "AgentCoreGatewayInvokeThroughEndpoint"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsSecurityGroup6430C772",
+              "GroupId"
+            ]
+          }
+        ],
+        "ServiceName": "com.amazonaws.test-region.bedrock-agentcore.gateway",
+        "SubnetIds": [
+          "subnet-0123456789abcdef0"
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": "vpc-0123456789abcdef0"
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsEcrApiEndpoint99234CA5": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsSecurityGroup6430C772",
+              "GroupId"
+            ]
+          }
+        ],
+        "ServiceName": "com.amazonaws.test-region.ecr.api",
+        "SubnetIds": [
+          "subnet-0123456789abcdef0"
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": "vpc-0123456789abcdef0"
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsEcrDockerEndpointDD83ADE7": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsSecurityGroup6430C772",
+              "GroupId"
+            ]
+          }
+        ],
+        "ServiceName": "com.amazonaws.test-region.ecr.dkr",
+        "SubnetIds": [
+          "subnet-0123456789abcdef0"
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": "vpc-0123456789abcdef0"
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsStsEndpointEA898B65": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsSecurityGroup6430C772",
+              "GroupId"
+            ]
+          }
+        ],
+        "ServiceName": "com.amazonaws.test-region.sts",
+        "SubnetIds": [
+          "subnet-0123456789abcdef0"
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": "vpc-0123456789abcdef0"
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsS3GatewayEndpoint0A2ACF1D": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Sid": "AllowEcrImageLayerPull",
+              "Effect": "Allow",
+              "Principal": "*",
+              "Action": [
+                "s3:GetObject"
+              ],
+              "Resource": [
+                "arn:test-partition:s3:::prod-test-region-starport-layer-bucket/*"
+              ]
+            },
+            {
+              "Sid": "AllowAdditionalBucketRead",
+              "Effect": "Allow",
+              "Principal": "*",
+              "Action": [
+                "s3:GetObject",
+                "s3:ListBucket"
+              ],
+              "Resource": [
+                "arn:test-partition:s3:::my-shared-bucket",
+                "arn:test-partition:s3:::my-shared-bucket/*"
+              ]
+            }
+          ]
+        },
+        "RouteTableIds": [
+          "rtb-0123456789abcdef0"
+        ],
+        "ServiceName": {
+          "Fn::Join": [
+            "",
+            [
+              "com.amazonaws.",
+              {
+                "Ref": "AWS::Region"
+              },
+              ".s3"
+            ]
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcEndpointType": "Gateway",
+        "VpcId": "vpc-0123456789abcdef0"
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessvpcendpointharnesscomprehensiveharnessbedrockRuntimeidssmE383CB52": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/vpc-endpoint/harness-comprehensive-harness-bedrockruntime/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsBedrockRuntimeEndpoint77E969FD"
+        }
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessvpcendpointharnesscomprehensiveharnessagentCoreGatewayidssm4BC9ACF2": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/vpc-endpoint/harness-comprehensive-harness-agentcoregateway/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsAgentCoreGatewayEndpoint5C77B5C7"
+        }
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessvpcendpointharnesscomprehensiveharnessecrApiidssmF328C993": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/vpc-endpoint/harness-comprehensive-harness-ecrapi/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsEcrApiEndpoint99234CA5"
+        }
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessvpcendpointharnesscomprehensiveharnessecrDockeridssm5C3BD7AF": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/vpc-endpoint/harness-comprehensive-harness-ecrdocker/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsEcrDockerEndpointDD83ADE7"
+        }
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessvpcendpointharnesscomprehensiveharnessstsidssmC41A1C2C": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/vpc-endpoint/harness-comprehensive-harness-sts/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsStsEndpointEA898B65"
+        }
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessharnesscomprehensiveharnessarnssm0B5DA933": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/harness/comprehensive-harness/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockharnesscomprehensiveharnessHarness2ED69A7F",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessharnesscomprehensiveharnessidssmDCB1C7F7": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/harness/comprehensive-harness/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockharnesscomprehensiveharnessHarness2ED69A7F",
+            "HarnessId"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessharnesscomprehensiveharnessrolearnssmB81FFCA1": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/harness/comprehensive-harness/role-arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRoleF8BB3373",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessharnessEndpointcomprehensiveharnessidssm36673FC4": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/harnessendpoint/comprehensive-harness/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessEndpoint9ED76C29"
+        }
+      }
+    },
+    "RoleResDataAdmin0": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "DataAdmin-0",
+          "name": "Admin"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "bedrockcmk710EFABC": {
+      "Type": "AWS::KMS::Key",
+      "Properties": {
+        "EnableKeyRotation": true,
+        "Enabled": true,
+        "KeyPolicy": {
+          "Statement": [
+            {
+              "Action": "kms:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account:root"
+              },
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "kms:Create*",
+                "kms:Describe*",
+                "kms:Enable*",
+                "kms:List*",
+                "kms:Put*",
+                "kms:Update*",
+                "kms:Revoke*",
+                "kms:Disable*",
+                "kms:Get*",
+                "kms:Delete*",
+                "kms:TagResource",
+                "kms:UntagResource",
+                "kms:ScheduleKeyDeletion",
+                "kms:CancelKeyDeletion"
+              ],
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResDataAdmin0",
+                              "id"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "test-org-test-env-test-domain-test-bedrock-builder-harness-comprehensive-usage-stmt"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext"
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "kms:EncryptionContext:aws:logs:arn": "arn:test-partition:logs:test-region:test-account:log-group:*"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "logs.test-region.amazonaws.com"
+              },
+              "Resource": "*",
+              "Sid": "CloudWatchLogsEncryption"
+            },
+            {
+              "Action": [
+                "kms:GenerateDataKey*",
+                "kms:Decrypt",
+                "kms:DescribeKey"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "bedrock.amazonaws.com"
+              },
+              "Resource": "*",
+              "Sid": "AllowBedrockServiceForAgents"
+            },
+            {
+              "Action": [
+                "kms:CreateGrant",
+                "kms:ListGrants",
+                "kms:RevokeGrant"
+              ],
+              "Condition": {
+                "Bool": {
+                  "kms:GrantIsForAWSResource": "true"
+                },
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account",
+                  "kms:ViaService": "bedrock.test-region.amazonaws.com"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "bedrock.amazonaws.com"
+              },
+              "Resource": "*",
+              "Sid": "AllowBedrockServiceToManageGrants"
+            },
+            {
+              "Action": [
+                "kms:GenerateDataKey",
+                "kms:Decrypt"
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "kms:EncryptionContext:SourceArn": "arn:test-partition:logs:test-region:test-account:*",
+                  "aws:SourceAccount": "test-account"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "delivery.logs.amazonaws.com"
+              },
+              "Resource": "*",
+              "Sid": "AllowGatewayVendedLogDeliveryEncryption"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "bedrockcmkAlias64D9B0C4": {
+      "Type": "AWS::KMS::Alias",
+      "Properties": {
+        "AliasName": "alias/test-org-test-env-test-domain-test-bedrock-builder-harness-comprehensive",
+        "TargetKeyId": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockcmkkmsarnssm9ABBCC7F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/kms/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockcmkkmsidssm418027C6": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/kms/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockcmk710EFABC"
+        }
+      }
+    },
+    "customAgentCoreLogProtectionhandlerrole772ADF8C": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "RoleName": "test-org-test-env-test-domain-test-bedrock-builder-harn-56cb00fb",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionhandlerroleDefaultPolicy74388693": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-bedrock-builder-harn-56cb00fb*"
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-bedrock-builder-harn-56cb00fb*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "customAgentCoreLogProtectionhandlerroleDefaultPolicy74388693",
+        "Roles": [
+          {
+            "Ref": "customAgentCoreLogProtectionhandlerrole772ADF8C"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionhandlerpolicy6DC99A72": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "logs:DescribeLogGroups",
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "logs:AssociateKmsKey",
+                "logs:DisassociateKmsKey",
+                "logs:PutRetentionPolicy",
+                "logs:PutDataProtectionPolicy"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:test-partition:logs:test-region:test-account:log-group:/aws/bedrock-agentcore/runtimes/",
+                    {
+                      "Fn::GetAtt": [
+                        "bedrockbuilderbedrockharnesscomprehensiveharnessHarness2ED69A7F",
+                        "Environment.AgentCoreRuntimeEnvironment.AgentRuntimeId"
+                      ]
+                    },
+                    "-*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": "kms:DescribeKey",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockcmk710EFABC",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "AgentCoreLogProtection-handler",
+        "Roles": [
+          {
+            "Ref": "customAgentCoreLogProtectionhandlerrole772ADF8C"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] logs:DescribeLogGroups does not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html). Log group mutation actions are scoped to the deployment account/region and runtime-specific prefix pattern (/aws/bedrock-agentcore/runtimes/{runtimeId}-*).",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionhandlerfunction04508FB7": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Environment": {
+          "Variables": {
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-harn-56cb00fb",
+        "Handler": "log_protection.lambda_handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "customAgentCoreLogProtectionhandlerrole772ADF8C",
+            "Arn"
+          ]
+        },
+        "Runtime": "python3.14",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 300
+      },
+      "DependsOn": [
+        "customAgentCoreLogProtectionhandlerpolicy6DC99A72",
+        "customAgentCoreLogProtectionhandlerroleDefaultPolicy74388693",
+        "customAgentCoreLogProtectionhandlerrole772ADF8C"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionhandlerfunctionlambdaAgentCoreLogProtectionhandlernamessmF07E99E2": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/lambda/agentcorelogprotection-handler/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "customAgentCoreLogProtectionhandlerfunction04508FB7"
+        }
+      },
+      "DependsOn": [
+        "customAgentCoreLogProtectionhandlerpolicy6DC99A72"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionhandlerfunctionlambdaAgentCoreLogProtectionhandlerarnssmEC90D0CB": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/lambda/agentcorelogprotection-handler/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "customAgentCoreLogProtectionhandlerfunction04508FB7",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "customAgentCoreLogProtectionhandlerpolicy6DC99A72"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionhandlerfunctionlambdaAgentCoreLogProtectionhandlerloggroupssm640D0F72": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/lambda/agentcorelogprotection-handler/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "customAgentCoreLogProtectionhandlerfunction04508FB7"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": [
+        "customAgentCoreLogProtectionhandlerpolicy6DC99A72"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionproviderrole75408012": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "CR Role",
+        "RoleName": "test-org-test-env-test-domain-test-bedrock-builder-harn-47999260",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionproviderroleDefaultPolicyC06F89FF": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-bedrock-builder-harn-47999260*"
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-bedrock-builder-harn-47999260*"
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "customAgentCoreLogProtectionhandlerfunction04508FB7",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "customAgentCoreLogProtectionhandlerfunction04508FB7",
+                          "Arn"
+                        ]
+                      },
+                      ":*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "lambda:GetFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "customAgentCoreLogProtectionhandlerfunction04508FB7",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "customAgentCoreLogProtectionproviderroleDefaultPolicyC06F89FF",
+        "Roles": [
+          {
+            "Ref": "customAgentCoreLogProtectionproviderrole75408012"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionproviderframeworkonEvent185E2063": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Description": "AWS CDK resource provider framework - onEvent (test-org-test-env-test-domain-test-bedrock-builder-harness-comprehensive/custom-AgentCoreLogProtection-provider)",
+        "Environment": {
+          "Variables": {
+            "USER_ON_EVENT_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "customAgentCoreLogProtectionhandlerfunction04508FB7",
+                "Arn"
+              ]
+            }
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-harn-47999260",
+        "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON"
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "customAgentCoreLogProtectionproviderrole75408012",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs24.x",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 900
+      },
+      "DependsOn": [
+        "customAgentCoreLogProtectionproviderroleDefaultPolicyC06F89FF",
+        "customAgentCoreLogProtectionproviderrole75408012"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Lambda function Runtime set by CDK Provider Framework",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "bedrockbuilderbedrockguardrailenterpriseguardrailguardrailenterpriseguardrailarnout2598FC36": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrail3B268BFF",
+          "GuardrailArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:guardrail:enterpriseguardrail:arn"
+      }
+    },
+    "bedrockbuilderbedrockguardrailenterpriseguardrailguardrailenterpriseguardrailidout5535E0B8": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrail3B268BFF",
+          "GuardrailId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:guardrail:enterpriseguardrail:id"
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewayRolerolebedrockagentcoregatewayweathergatewayarnout3E55BAD1": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:role:bedrockagentcoregatewayweathergateway:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewayRolerolebedrockagentcoregatewayweathergatewayidout476AA435": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:role:bedrockagentcoregatewayweathergateway:id"
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewayRolerolebedrockagentcoregatewayweathergatewaynameoutDC52B31F": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:role:bedrockagentcoregatewayweathergateway:name"
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewaygatewayweathergatewayarnout1F926E20": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
+          "GatewayArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:gateway:weathergateway:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewaygatewayweathergatewayidout3DEE1B02": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
+          "GatewayIdentifier"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:gateway:weathergateway:id"
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewayGatewaygatewayweathergatewayurloutC65C0B6D": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
+          "GatewayUrl"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:gateway:weathergateway:url"
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewaygatewayloggrouploggroupweathergatewaynameoutD4B39D99": {
+      "Value": "/aws/vendedlogs/bedrock-agentcore/gateway/APPLICATION_LOGS/test-org-test-env-test-domain-test-bedrock-builder-harness-comprehensive-weather-gateway",
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:loggroup:weathergateway:name"
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewaygatewayweathergatewayrolearnoutD2A470A1": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:gateway:weathergateway:role-arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewayweathergatewaygatewayweathergatewaykmskeyarnoutFEC39C32": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockcmk710EFABC",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:gateway:weathergateway:kms-key-arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewaycmkusageweathergatewaymanagedpolicybedrockagentcoregatewaycmkweathergatewayarnout3537FC08": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockgatewaycmkusageweathergateway1B57560A"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:managed-policy:bedrockagentcoregatewaycmkweathergateway:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewaycmkusageweathergatewaymanagedpolicybedrockagentcoregatewaycmkweathergatewaynameout73314075": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "bedrockbuilderbedrockgatewaycmkusageweathergateway1B57560A"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:managed-policy:bedrockagentcoregatewaycmkweathergateway:name"
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRolerolebedrockagentcoreharnesscomprehensiveharnessarnout6460F1BE": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRoleF8BB3373",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:role:bedrockagentcoreharnesscomprehensiveharness:arn"
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRolerolebedrockagentcoreharnesscomprehensiveharnessidout986E6C4C": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRoleF8BB3373",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:role:bedrockagentcoreharnesscomprehensiveharness:id"
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRolerolebedrockagentcoreharnesscomprehensiveharnessnameoutF8E86E5D": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRoleF8BB3373"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:role:bedrockagentcoreharnesscomprehensiveharness:name"
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessManagedPolicymanagedpolicyagentcoreharnesscomprehensiveharnessarnout6EECF0E4": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessManagedPolicy77369283"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:managed-policy:agentcoreharnesscomprehensiveharness:arn"
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessManagedPolicymanagedpolicyagentcoreharnesscomprehensiveharnessnameoutB74200D4": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessManagedPolicy77369283"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:managed-policy:agentcoreharnesscomprehensiveharness:name"
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsSecurityGroupsecuritygroupagentcoreharnessvpcecomprehensiveharnessidoutD10AD6D6": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsSecurityGroup6430C772",
+          "GroupId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:security-group:agentcoreharnessvpcecomprehensiveharness:id"
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessvpcendpointharnesscomprehensiveharnessbedrockRuntimeidout7EFC0783": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsBedrockRuntimeEndpoint77E969FD"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:vpc-endpoint:harnesscomprehensiveharnessbedrockruntime:id"
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessvpcendpointharnesscomprehensiveharnessagentCoreGatewayidout96D536BA": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsAgentCoreGatewayEndpoint5C77B5C7"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:vpc-endpoint:harnesscomprehensiveharnessagentcoregateway:id"
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessvpcendpointharnesscomprehensiveharnessecrApiidout7B87443C": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsEcrApiEndpoint99234CA5"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:vpc-endpoint:harnesscomprehensiveharnessecrapi:id"
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessvpcendpointharnesscomprehensiveharnessecrDockeridout607C4B65": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsEcrDockerEndpointDD83ADE7"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:vpc-endpoint:harnesscomprehensiveharnessecrdocker:id"
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessvpcendpointharnesscomprehensiveharnessstsidout2E39EF63": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsStsEndpointEA898B65"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:vpc-endpoint:harnesscomprehensiveharnesssts:id"
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessharnesscomprehensiveharnessarnout5E382F94": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockharnesscomprehensiveharnessHarness2ED69A7F",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:harness:comprehensiveharness:arn"
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessharnesscomprehensiveharnessidout3CFBECF1": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockharnesscomprehensiveharnessHarness2ED69A7F",
+          "HarnessId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:harness:comprehensiveharness:id"
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessharnesscomprehensiveharnessrolearnout76C5BBA7": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRoleF8BB3373",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:harness:comprehensiveharness:role-arn"
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessharnessEndpointcomprehensiveharnessidout394A557D": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessEndpoint9ED76C29"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:harnessendpoint:comprehensiveharness:id"
+      }
+    },
+    "bedrockcmkkmsarnout0D3BC511": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockcmk710EFABC",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:kms:arn"
+      }
+    },
+    "bedrockcmkkmsidout38E894CA": {
+      "Value": {
+        "Ref": "bedrockcmk710EFABC"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:kms:id"
+      }
+    },
+    "customAgentCoreLogProtectionhandlerfunctionlambdaAgentCoreLogProtectionhandlernameoutC1A1A368": {
+      "Value": {
+        "Ref": "customAgentCoreLogProtectionhandlerfunction04508FB7"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:lambda:agentcorelogprotectionhandler:name"
+      }
+    },
+    "customAgentCoreLogProtectionhandlerfunctionlambdaAgentCoreLogProtectionhandlerarnout04AFBBA1": {
+      "Value": {
+        "Fn::GetAtt": [
+          "customAgentCoreLogProtectionhandlerfunction04508FB7",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:lambda:agentcorelogprotectionhandler:arn"
+      }
+    },
+    "customAgentCoreLogProtectionhandlerfunctionlambdaAgentCoreLogProtectionhandlerloggroupoutAFB34640": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "customAgentCoreLogProtectionhandlerfunction04508FB7"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:lambda:agentcorelogprotectionhandler:log-group"
+      }
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

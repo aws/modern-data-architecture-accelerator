@@ -5,7 +5,7 @@
 
 import { MdaaTestApp } from '@aws-mdaa/testing';
 import { Match, Template } from 'aws-cdk-lib/assertions';
-import { createAgentCoreVpcEndpoint } from '../lib';
+import { createAgentCoreVpcEndpoint } from '../lib/vpc-endpoint';
 
 const TEST_VPC_ID = 'vpc-0123456789abcdef0';
 const TEST_SUBNET_IDS = ['subnet-12345678', 'subnet-87654321'];

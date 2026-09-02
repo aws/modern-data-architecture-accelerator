@@ -3,7 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { AgentcoreCognitoAuth, buildCustomJwtAuthorizer } from '@aws-mdaa/agentcore-shared';
+import {
+  AgentcoreCognitoAuth,
+  buildAgentcoreLifecycleConfiguration,
+  buildAgentcoreVpcNetworkConfiguration,
+  buildCustomJwtAuthorizer,
+  validateAgentcoreVpcNetworkMembers,
+} from '@aws-mdaa/agentcore-shared';
 import { aws_bedrockagentcore as bedrockagentcore } from 'aws-cdk-lib';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import {
@@ -26,22 +32,12 @@ import {
 export function buildLifecycleConfiguration(
   lifecycleConfig: LifecycleConfigurationProperty,
 ): bedrockagentcore.CfnRuntime.LifecycleConfigurationProperty {
-  const config: { idleRuntimeSessionTimeout?: number; maxLifetime?: number } = {};
-  if (lifecycleConfig.idleRuntimeSessionTimeout !== undefined) {
-    const timeout = lifecycleConfig.idleRuntimeSessionTimeout;
-    if (timeout < 60 || timeout > 28800) {
-      throw new Error('IdleRuntimeSessionTimeout must be between 60 and 28800 seconds');
-    }
-    config.idleRuntimeSessionTimeout = timeout;
-  }
-  if (lifecycleConfig.maxLifetime !== undefined) {
-    const lifetime = lifecycleConfig.maxLifetime;
-    if (lifetime < 60 || lifetime > 28800) {
-      throw new Error('MaxLifetime must be between 60 and 28800 seconds');
-    }
-    config.maxLifetime = lifetime;
-  }
-  return config;
+  // Validation/build logic is shared with the Harness module via @aws-mdaa/agentcore-shared. The
+  // Runtime keeps its own PascalCase error labels (asserted by its tests) via the labels argument.
+  return buildAgentcoreLifecycleConfiguration(lifecycleConfig, {
+    idleTimeoutLabel: 'IdleRuntimeSessionTimeout',
+    maxLifetimeLabel: 'MaxLifetime',
+  });
 }
 
 /**
@@ -55,30 +51,12 @@ export function buildLifecycleConfiguration(
 export function buildNetworkConfiguration(
   networkConfig: NetworkConfigurationProperty,
 ): bedrockagentcore.CfnRuntime.NetworkConfigurationProperty {
-  // Validate required fields
-  if (!networkConfig.securityGroups || networkConfig.securityGroups.length === 0) {
-    throw new Error('securityGroups is required in networkConfiguration');
-  }
-  if (!networkConfig.subnets || networkConfig.subnets.length === 0) {
-    throw new Error('subnets is required in networkConfiguration');
-  }
+  // Bounds-check both member arrays via the shared validator (single source of truth, shared with
+  // the Harness module). Only the message prefix differs between the two modules.
+  validateAgentcoreVpcNetworkMembers(networkConfig.securityGroups, networkConfig.subnets, 'Agentcore');
 
-  // Validate array lengths
-  if (networkConfig.securityGroups.length < 1 || networkConfig.securityGroups.length > 16) {
-    throw new Error('securityGroups must be an array with 1-16 items');
-  }
-  if (networkConfig.subnets.length < 1 || networkConfig.subnets.length > 16) {
-    throw new Error('subnets must be an array with 1-16 items');
-  }
-
-  // MDAA security requirement: Always use VPC mode
-  return {
-    networkMode: 'VPC',
-    networkModeConfig: {
-      securityGroups: networkConfig.securityGroups,
-      subnets: networkConfig.subnets,
-    },
-  };
+  // MDAA security requirement: Always use VPC mode (shared builder is the single source of truth).
+  return buildAgentcoreVpcNetworkConfiguration(networkConfig.securityGroups, networkConfig.subnets);
 }
 
 /**
@@ -209,36 +187,9 @@ export function buildRequestHeaderConfiguration(
   return { requestHeaderAllowlist: allowlist };
 }
 
-/**
- * Sanitizes Bedrock AgentCore names to match CloudFormation pattern requirements.
- * Pattern: ^[a-zA-Z][a-zA-Z0-9_]{0,47}$ (no hyphens allowed)
- *
- * This function only handles character sanitization. Length enforcement should be
- * handled by the naming service (props.naming.resourceName) before calling this function.
- *
- * Transformations applied:
- * - Replaces hyphens with underscores
- * - Removes invalid characters (keeps only alphanumeric and underscores)
- * - Ensures name starts with a letter (adds prefix if needed)
- *
- * @param name - The name to sanitize
- * @param prefix - Optional prefix to add if name doesn't start with a letter (default: 'r_')
- * @returns Sanitized name matching CloudFormation pattern
- */
-export function sanitizeBedrockAgentcoreName(name: string, prefix: string = 'r_'): string {
-  // Replace hyphens with underscores (Bedrock AgentCore doesn't allow hyphens)
-  let sanitized = name.replace(/-/g, '_');
-
-  // Remove any invalid characters (keep only alphanumeric and underscores)
-  sanitized = sanitized.replace(/\W/g, '_');
-
-  // Ensure it starts with a letter
-  if (!/^[a-zA-Z]/.test(sanitized)) {
-    sanitized = `${prefix}${sanitized}`;
-  }
-
-  return sanitized;
-}
+// Re-exported for backward compatibility — the canonical implementation now lives in
+// @aws-mdaa/agentcore-shared (shared with the Harness L3 construct).
+export { sanitizeBedrockAgentcoreName } from '@aws-mdaa/agentcore-shared';
 
 /**
  * Extracts and converts custom policy statements from configuration to CDK PolicyStatement objects.

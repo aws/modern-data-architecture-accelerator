@@ -38,6 +38,12 @@
       "path": "../agentcore-shared"
     },
     {
+      "path": "../../../L2/construct"
+    },
+    {
+      "path": "../../../L2/ec2-constructs"
+    },
+    {
       "path": "../../../L2/iam-constructs"
     },
     {

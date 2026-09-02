@@ -244,7 +244,7 @@ By default the construct creates:
 
 Configure it via the optional `logDelivery` property:
 
-- `logDelivery.logRetentionDays`: retention (in days) for the destination log group. Must be a valid CloudWatch Logs `RetentionDays` value (e.g. `7`, `30`, `90`, `365`). Defaults to indefinite retention. Set a finite value for cost control or a bounded compliance window.
+- `logDelivery.logRetentionDays`: retention (in days) for the destination log group. Must be a valid CloudWatch Logs `RetentionDays` value (e.g. `7`, `30`, `90`, `365`), or `9999` (`RetentionDays.INFINITE`) to lock never-expire into config explicitly rather than relying on omission. Omit it for indefinite retention (the default). Set a finite value for cost control or a bounded compliance window.
 - `logDelivery.enabled`: set to `false` to opt out of the pipeline entirely (not recommended — gateway audit logs are then not captured). Defaults to `true`.
 
 ```yaml

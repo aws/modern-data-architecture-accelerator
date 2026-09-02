@@ -34,6 +34,11 @@ The Bedrock Builder CDK L3 construct is used to configure and deploy a secure Be
 
 * **OpenSearch Serverless VPC Endpoints**: For OpenSearch Serverless vector stores, the construct automatically creates VPC endpoints for secure connectivity. If you already have an existing VPC endpoint for OpenSearch Serverless in your VPC, you can provide the endpoint ID and security group ID in the vector store configuration to reuse it instead of creating a new one. This prevents deployment failures when a VPC endpoint already exists.
 
+* **AgentCore Harness(es)**: (Optional) Deploys one or more [`AWS::BedrockAgentCore::Harness`](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/harness.html) resources — a declarative agent loop (model + system prompt + tools). Configured via the top-level `harnesses` map, independently of `agents`.
+
+  * A harness's `guardrail.id` and `tools[].agentCoreGateway.gatewayArn` may reference a guardrail or gateway defined elsewhere in the same module via a `config:<name>` reference (resolved to the live guardrail id/version or gateway ARN), or a literal id/ARN.
+  * Covers model and sampling config, execution role, guardrails, session lifecycle and cost caps, `inline_function` and `agentcore_gateway` tools, VPC networking, and context truncation — see [`@aws-mdaa/bedrock-agentcore-harness-l3-construct`](../bedrock-agentcore-harness-l3-construct/README.md) for the full configuration surface.
+
 ## Configuration
 
 ### Using Existing OpenSearch Serverless VPC Endpoints

@@ -24,6 +24,7 @@
   "devDependencies": {
     "@aws-mdaa/bedrock-agent-l3-construct": "1.8.1",
     "@aws-mdaa/bedrock-agentcore-gateway-l3-construct": "1.8.1",
+    "@aws-mdaa/bedrock-agentcore-harness-l3-construct": "1.8.1",
     "@aws-mdaa/bedrock-guardrail-l3-construct": "1.8.1",
     "@aws-mdaa/bedrock-knowledge-base-l3-construct": "1.8.1",
     "@aws-mdaa/construct": "1.8.1",
@@ -47,6 +48,7 @@
   "peerDependencies": {
     "@aws-mdaa/bedrock-agent-l3-construct": "1.8.1",
     "@aws-mdaa/bedrock-agentcore-gateway-l3-construct": "1.8.1",
+    "@aws-mdaa/bedrock-agentcore-harness-l3-construct": "1.8.1",
     "@aws-mdaa/bedrock-guardrail-l3-construct": "1.8.1",
     "@aws-mdaa/bedrock-knowledge-base-l3-construct": "1.8.1",
     "@aws-mdaa/construct": "1.8.1",
@@ -59,6 +61,7 @@
   },
   "dependencies": {
     "@aws-mdaa/bedrock-agentcore-gateway-l3-construct": "1.8.1",
+    "@aws-mdaa/bedrock-agentcore-harness-l3-construct": "1.8.1",
     "@aws-mdaa/construct": "1.8.1",
     "@aws-mdaa/iam-constructs": "1.8.1",
     "@aws-mdaa/iam-role-helper": "1.8.1",

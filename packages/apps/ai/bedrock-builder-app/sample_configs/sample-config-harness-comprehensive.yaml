@@ -1,0 +1,211 @@
+# Comprehensive Bedrock Builder configuration for an AgentCore Harness — a declarative agent loop
+# (foundation model + system prompt + tools) configured via the top-level `harnesses` map,
+# independently of `agents`.
+#
+# This config exercises the optional harness features on a single harness: model sampling and
+# iteration limits, idle/max-lifetime lifecycle, inbound JWT auth, a guardrail and an AgentCore
+# Gateway tool resolved via `config:<name>` references into the sibling maps below, an inline-function
+# tool, a tool allowlist, skills, a bring-your-own ECR container image, VPC network placement with
+# MDAA-managed endpoints, additive PII masking, an explicit log retention, a summarization truncation
+# strategy, and a named versioned endpoint pinned with `targetVersion`.
+#
+# A few options are mutually exclusive with the choices above and so are demonstrated by their sibling
+# forms rather than shown here:
+#   - `role` (bring-your-own execution role) — this harness lets MDAA auto-create the scoped execution
+#     role; see the roles-app README for the reference forms (name / arn / id).
+#   - literal `guardrail.id` + `guardrail.version` — this harness resolves its guardrail via a
+#     `config:<name>` reference (which supplies the version automatically); a literal id would instead
+#     require an explicit `version`.
+#   - `truncation.messagesCount` — a `sliding_window`-only field, incompatible with the `summarization`
+#     strategy set below.
+#
+# See sample-config-harness-minimal.yaml for the mandatory-only, default-path harness.
+
+# See CONFIGURATION.md for role reference options (name, arn, id). Admin roles are granted key-admin
+# rights on the module's KMS key (used here for the harness's log-group encryption).
+dataAdminRoles:
+  - name: 'Admin'
+
+# Guardrail referenced by the harness below via a `config:<name>` reference. The harness reads the
+# guardrail's live id and version from this map — no explicit `version` needed on the reference.
+guardrails:
+  enterprise-guardrail:
+    description: 'Enterprise content safety guardrail'
+    contentFilters:
+      hate:
+        inputStrength: 'MEDIUM'
+        outputStrength: 'MEDIUM'
+    blockedInputMessaging: 'This request violates our content policy.'
+    blockedOutputsMessaging: 'This response violates our content policy.'
+
+# AgentCore Gateway referenced by the harness below via a `config:<name>` reference. Created in-stack,
+# so the harness resolves it to the live gateway ARN with no SSM round-trip. No targets are configured
+# here — this exercises the harness's gateway-tool wiring, not the gateway's own tool surface (see
+# sample-config-gateway.yaml for a fully wired gateway).
+gateways:
+  weather-gateway:
+    description: 'Weather tools MCP gateway'
+    authorizerConfiguration:
+      customJwt:
+        discoveryUrl: 'https://example.com/.well-known/openid-configuration'
+        allowedAudience:
+          - 'weather-clients'
+
+# AgentCore Harness configurations, keyed by harness name.
+harnesses:
+  comprehensive-harness:
+    # Required: foundation model identifier for the agent loop.
+    modelId: 'anthropic.claude-3-sonnet-20240229-v1:0'
+    # Required: system prompt defining the agent's behavior.
+    systemPrompt: 'You are a customer support assistant. Use the available tools to help customers.'
+    # (Optional) Model sampling tuning; every field is independently optional.
+    modelConfig:
+      # Sampling temperature, 0-2.
+      temperature: 0.7
+      # Nucleus sampling (top-p), 0-1.
+      topP: 0.9
+      # Max tokens the model may generate per iteration.
+      maxTokens: 2048
+    # (Optional) Max agent-loop iterations per invocation (>= 1).
+    maxIterations: 10
+    # (Optional) Max agent-loop duration per invocation, in seconds (>= 1).
+    timeoutSeconds: 300
+    # (Optional) Runtime session lifecycle on the underlying AgentCore Runtime environment; each value
+    # is 60-28800 seconds.
+    lifecycleConfiguration:
+      # Idle timeout before a runtime session is terminated.
+      idleRuntimeSessionTimeout: 900
+      # Hard maximum session lifetime regardless of activity.
+      maxLifetime: 3600
+    # (Optional) Inbound JWT (OIDC) authorization; omit the whole block for AWS IAM (SigV4).
+    authorizerConfiguration:
+      customJwt:
+        # Required: OIDC discovery URL; must end with /.well-known/openid-configuration.
+        discoveryUrl: 'https://example.com/.well-known/openid-configuration'
+        # (Optional) Accepted `aud` claim values.
+        allowedAudience:
+          - 'support-clients'
+        # (Optional) Accepted `client_id` claim values.
+        allowedClients:
+          - 'support-app'
+    # (Optional) Guardrail via a `config:<name>` reference — resolved to the live guardrail id and
+    # version from the `guardrails` map above. Guardrails are enforced over the Converse API, so a
+    # guarded harness always renders ApiFormat: converse_stream.
+    guardrail:
+      # `config:<name>` reference (or a literal guardrail id).
+      id: 'config:enterprise-guardrail'
+      # (Optional) Assessment trace: enabled (default) | disabled | enabled_full.
+      trace: 'enabled'
+    # (Optional) Tools available to the agent loop, keyed by tool name — the key is the callable tool
+    # identifier the model sees and what allowedTools entries below refer to. Each tool sets exactly
+    # one of inlineFunction / agentCoreGateway.
+    tools:
+      # An inline_function tool: the harness invoker (not AWS) executes this tool and returns the
+      # result — no execution binding is created.
+      get_order_status:
+        inlineFunction:
+          description: 'Returns the current status of a customer order'
+          inputSchema:
+            type: object
+            properties:
+              orderId:
+                type: string
+                description: 'The order identifier'
+            required:
+              - orderId
+      # An agentcore_gateway tool via a `config:<name>` reference — resolved to the live gateway ARN
+      # from the `gateways` map above (AWS_IAM / SigV4 outbound auth).
+      gateway_tools:
+        agentCoreGateway:
+          gatewayArn: 'config:weather-gateway'
+    # (Optional) Tool allowlist — restricts which tools (including the built-in shell / file_operations)
+    # the agent may select during invocation. Supports the AgentCore allowedTools patterns (`*`, plain
+    # names, `@builtin`, `@server/tool`, globs); 1-64 entries. Omit the property entirely to allow all
+    # tools — an empty list is rejected (minItems: 1).
+    # Every tool declared above must appear here, or the model can never select it: `get_order_status`
+    # by name, and the gateway tool via `@gateway_tools` — the `@server` form, which allows every tool
+    # the gateway attached under the tool name `gateway_tools` exposes. Naming it without the `@` would
+    # not reach the gateway's tools, and omitting it entirely leaves the gateway endpoint and its
+    # InvokeGateway grant billed but unreachable.
+    allowedTools:
+      - 'get_order_status'
+      - '@gateway_tools'
+      - '@builtin'
+    # (Optional) Skills baked into the runtime image, referenced by filesystem path. Only the `path`
+    # skill source is supported (git / S3 / awsSkills sources are not yet wired).
+    skills:
+      - path: '/opt/skills/support-playbook'
+    # (Optional) Bring-your-own pre-built container image from ECR; omit to use the AWS-managed harness
+    # container. The execution role is granted scoped ecr:GetDownloadUrlForLayer / ecr:BatchGetImage
+    # pull permissions on the parsed repository.
+    container:
+      containerUri: '{{account}}.dkr.ecr.{{region}}.amazonaws.com/my-harness-image:latest'
+    # Required: MDAA enforces VPC network isolation for the harness runtime (NetworkMode: VPC) — 1-16
+    # security groups and subnets.
+    networkConfiguration:
+      securityGroups:
+        - 'sg-0123456789abcdef0'
+      subnets:
+        - 'subnet-0123456789abcdef0'
+      # (Optional) MDAA-managed VPC endpoints giving this harness's sessions a private outbound path
+      # (no NAT/internet). `vpcId` is required whenever `vpcEndpoints` is set. Which endpoints are
+      # created is derived from this harness's own config — always bedrock-runtime (inference) plus ECR
+      # api/dkr, STS, and Logs, and the AgentCore Gateway endpoint because this harness declares an
+      # agentcore_gateway tool. The AgentCore data-plane endpoint is NOT created here: it serves
+      # inbound callers, so it belongs in the VPC of whatever invokes the harness.
+      vpcId: 'vpc-0123456789abcdef0'
+      vpcEndpoints:
+        # (Optional) Route tables for the S3 gateway endpoint. Container image layers are pulled from
+        # the ECR layer bucket over S3, so a no-NAT VPC needs it; a gateway endpoint attaches to route
+        # tables (not subnets), which must be named explicitly. NOTE: it intercepts ALL S3 traffic from
+        # every subnet on these route tables, and MDAA scopes its policy to the image-layer bucket — use
+        # additionalS3BucketArns to readmit other workloads' buckets if they share the tables.
+        s3RouteTableIds:
+          - 'rtb-0123456789abcdef0'
+        # (Optional) Extra S3 ARNs to readmit through the S3 gateway endpoint (co-located workloads on
+        # shared route tables). Grants s3:GetObject / s3:ListBucket.
+        additionalS3BucketArns:
+          - 'arn:{{partition}}:s3:::my-shared-bucket'
+          - 'arn:{{partition}}:s3:::my-shared-bucket/*'
+        # (Optional) Endpoints the VPC already has (e.g. from LZA). Only one endpoint with Private DNS
+        # is allowed per service per VPC, so an unexcluded duplicate fails to deploy.
+        exclude:
+          - 'logs'
+    # (Optional) Environment variables passed to the harness runtime environment.
+    environmentVariables:
+      LOG_LEVEL: 'INFO'
+      SUPPORT_QUEUE: 'tier-1'
+    # (Optional) Global generation cap across the whole agent-loop invocation (>= 1), distinct from
+    # modelConfig.maxTokens (which bounds a single model call).
+    maxTokens: 16384
+    # (Optional) Additive PII masking on the service-created log groups. The built-in identifier floor
+    # (email, credit card, SSN, name, address, phone, IP) is always masked; these only add to it.
+    dataProtection:
+      additionalIdentifiers:
+        - 'DriversLicense-US'
+        - 'PassportNumber-US'
+    # (Optional) CloudWatch Logs retention (days) for the harness's service-created log groups.
+    # Defaults to indefinite retention when omitted.
+    logRetentionDays: 90
+    # (Optional) Context truncation — how the agent loop trims context when it exceeds the model's
+    # window. strategy: sliding_window | summarization | none. Each strategy's tuning fields apply only
+    # to that strategy (validated at synth); none takes no tuning.
+    truncation:
+      strategy: 'summarization'
+      # Newest turns kept verbatim (summarization only), >= 0.
+      preserveRecentMessages: 5
+      # Ratio of older content to summarize, 0 < r <= 1 (summarization only).
+      summaryRatio: 0.5
+      # System prompt steering how older context is summarized (summarization only). The sibling
+      # `messagesCount` field is not set here: it applies to `strategy: sliding_window` only and would
+      # be rejected at synth alongside `summarization`.
+      summarizationSystemPrompt: 'Summarize the earlier conversation, preserving order identifiers, customer decisions, and any unresolved issues.'
+    # (Optional) Named, versioned invocation endpoint pinning callers to a specific harness version.
+    endpoint:
+      # (Optional) Endpoint name (alphanumeric + underscore, max 48 chars).
+      name: 'prod'
+      # (Optional) Description (1-256 chars).
+      description: 'Production endpoint pinned to a released harness version'
+      # (Optional) Specific harness version this endpoint points to (matches `^[1-9][0-9]{0,4}$`). Omit
+      # to let the endpoint float to the harness's current version on every redeploy.
+      targetVersion: '1'

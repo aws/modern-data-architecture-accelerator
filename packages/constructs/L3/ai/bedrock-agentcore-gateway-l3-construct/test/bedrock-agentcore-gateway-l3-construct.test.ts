@@ -8,6 +8,7 @@ import { MdaaTestApp } from '@aws-mdaa/testing';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import {
   BedrockAgentcoreGatewayL3Construct,
   BedrockAgentcoreGatewayL3ConstructProps,
@@ -649,9 +650,22 @@ describe('BedrockAgentcoreGatewayL3Construct', () => {
       expect(logGroup.Properties.LogGroupName as string).toMatch(
         /^\/aws\/vendedlogs\/bedrock-agentcore\/gateway\/APPLICATION_LOGS\/.+/,
       );
-      // CMK-encrypted (KmsKeyId present) with the default indefinite retention — CDK omits
-      // RetentionInDays entirely for RetentionDays.INFINITE (audit-by-default: never drop logs).
+      // CMK-encrypted (KmsKeyId present) with the default indefinite retention — omitting
+      // logRetentionDays sets no retention, so CDK emits no RetentionInDays (audit-by-default: never
+      // drop logs).
       expect(logGroup.Properties.KmsKeyId).toBeDefined();
+      expect(logGroup.Properties.RetentionInDays).toBeUndefined();
+    });
+
+    test('accepts the never-expire sentinel (9999), rendering no RetentionInDays', () => {
+      // 9999 (RetentionDays.INFINITE) is an accepted, explicit never-expire choice: the CDK log group
+      // renders it as no RetentionInDays — the same never-expire result as omitting logRetentionDays.
+      new BedrockAgentcoreGatewayL3Construct(testApp.testStack, 'gw', {
+        ...baseProps(testApp, roleHelper),
+        logDelivery: { logRetentionDays: RetentionDays.INFINITE },
+      });
+      const template = Template.fromStack(testApp.testStack);
+      const logGroup = Object.values(template.findResources('AWS::Logs::LogGroup'))[0];
       expect(logGroup.Properties.RetentionInDays).toBeUndefined();
     });
 

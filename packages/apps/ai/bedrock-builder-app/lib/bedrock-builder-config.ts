@@ -13,6 +13,7 @@ import {
   NamedAgentProps,
   NamedGatewayProps,
   NamedGatewayTargetProps,
+  NamedHarnessProps,
 } from '@aws-mdaa/bedrock-builder-l3-construct';
 import { Schema } from 'ajv';
 import { Stack } from 'aws-cdk-lib';
@@ -134,6 +135,19 @@ export interface BedrockBuilderConfigContents extends MdaaBaseConfigContents {
    * Validation: Optional; NamedGatewayTargetProps (map of target name to config)
    **/
   readonly gatewayTargets?: NamedGatewayTargetProps;
+  /**
+   * Bedrock AgentCore Harness configurations — a declarative agent loop (model + system prompt +
+   * tools) — keyed by harness name. A harness's `guardrail.id` and
+   * `tools[].agentCoreGateway.gatewayArn` may use a `config:<name>` reference into the sibling
+   * `guardrails` / `gateways` maps, resolved to the live resource.
+   *
+   * Use cases: declarative tool-using/RAG agents
+   *
+   * AWS: AWS::BedrockAgentCore::Harness
+   *
+   * Validation: Optional; NamedHarnessProps (map of harness name to config)
+   **/
+  readonly harnesses?: NamedHarnessProps;
 }
 
 export class BedrockBuilderConfigParser extends MdaaAppConfigParser<BedrockBuilderConfigContents> {
@@ -187,6 +201,11 @@ export class BedrockBuilderConfigParser extends MdaaAppConfigParser<BedrockBuild
    */
   public readonly gatewayTargets?: NamedGatewayTargetProps;
 
+  /**
+   * (Optional) AgentCore Harness configurations
+   */
+  public readonly harnesses?: NamedHarnessProps;
+
   constructor(stack: Stack, props: MdaaAppConfigParserProps) {
     super(stack, props, configSchema as Schema);
     this.dataAdminRoles = this.configContents.dataAdminRoles;
@@ -199,5 +218,6 @@ export class BedrockBuilderConfigParser extends MdaaAppConfigParser<BedrockBuild
     this.vectorStores = this.configContents.vectorStores;
     this.gateways = this.configContents.gateways;
     this.gatewayTargets = this.configContents.gatewayTargets;
+    this.harnesses = this.configContents.harnesses;
   }
 }

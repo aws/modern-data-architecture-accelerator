@@ -87,6 +87,9 @@ describe('MdaaDefaultResourceNaming', () => {
     expect(naming.withResourceType(MdaaResourceType.S3_TABLES).resourceName('analytics')).toBe(
       naming.resourceName('analytics'),
     );
+    expect(naming.withResourceType(MdaaResourceType.BEDROCK_AGENTCORE_HARNESS).resourceName('harness')).toBe(
+      naming.resourceName('harness'),
+    );
   });
 
   test('ssmOrgPath', () => {

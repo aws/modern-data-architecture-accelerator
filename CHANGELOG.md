@@ -1,4 +1,13 @@
+
 # Change Log
+
+## [NEXT_RELEASE_VERSION] - NEXT_RELEASE_DATE
+
+### New Features
+
+#### Bedrock Builder Module
+
+- Added **AgentCore Harnesses** via a new top-level `harnesses` property: declarative, tool-using agents (model + system prompt + tools) deployed on AgentCore, each with always-on customer-managed KMS log encryption and PII masking, CUSTOM_JWT/AWS_IAM inbound authorization, and a least-privilege scoped execution role. Additive only — harnesses are created only when the property is set. See the [module README](packages/apps/ai/bedrock-builder-app/README.md) for an overview, sample configs, and the full config surface.
 
 ## [1.8.1] - 2026-09-14
 

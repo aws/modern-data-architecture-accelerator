@@ -19,6 +19,7 @@ This module deploys and integrates the following resources:
 - **Knowledge Base(s)** (Optional) — Bedrock Knowledge Bases with S3 and SharePoint data sources, multiple parsing strategies (default, BDA, Foundation Model, custom), and chunking configurations.
 - **Vector Store(s)** (Optional) — OpenSearch Serverless collections or Aurora Serverless clusters for Knowledge Base vector storage.
 - **Bedrock Guardrail** (Optional) — Content filters, contextual grounding, PII entity detection, and regex-based sensitive information filtering.
+- **AgentCore Harness(es)** (Optional) — Declarative agent loops (model + system prompt + tools) on AgentCore Runtime, declared under `harnesses`. Deploys the harness, a scoped execution role, an optional versioned endpoint, and MDAA-managed VPC endpoints. See the [construct README](../../../constructs/L3/ai/bedrock-agentcore-harness-l3-construct/README.md).
 
 ![bedrock-builder](../../../constructs/L3/ai/bedrock-builder-l3-construct/docs/bedrock-builder.png)
 
@@ -41,6 +42,7 @@ This module is designed in alignment with MDAA security/compliance principles an
   - Agent resources encrypted with customer-managed KMS keys (auto-generated if not provided)
   - OpenSearch Serverless collections use encryption-at-rest security policies
   - Aurora Serverless clusters encrypted with KMS
+  - AgentCore Harness log groups encrypted with a customer-managed KMS key
 - **Encryption in Transit**:
   - All Bedrock API communications use TLS
   - OpenSearch and Aurora connections encrypted in transit
@@ -48,31 +50,37 @@ This module is designed in alignment with MDAA security/compliance principles an
   - Agent execution role scoped to specific Knowledge Bases, Foundation Models, and Guardrails
   - Lambda execution roles scoped to required services only
   - OpenSearch Serverless uses data access policies for fine-grained control
+  - AgentCore Harness execution role scoped to its resolved model, guardrail, gateway, and image grants, with an `sts:AssumeRole` deny and a configurable tool allowlist
 - **Network Isolation**:
   - Lambda functions and Aurora clusters can be VPC-bound with configurable security groups
   - OpenSearch Serverless collections support VPC endpoints
   - No public connectivity to VPC-bound resources
+  - AgentCore Harnesses run in mandatory VPC-only network mode behind an MDAA-managed endpoint security group
 - **Content Safety**:
   - Guardrails provide content filters and contextual grounding checks
   - PII entity detection and regex-based sensitive information filtering
+  - AgentCore Harness log groups apply an always-on PII masking floor, extensible via config
 
 ---
 
 ## AWS Service Endpoints
 
-The following VPC endpoints may be required for VPC-bound resources (Lambda functions, Aurora Serverless, OpenSearch Serverless) if public AWS service endpoint connectivity is unavailable (e.g., private subnets without NAT gateway, firewalled environments, or PrivateLink-only architectures):
+The following VPC endpoints may be required for VPC-bound resources (Lambda functions, Aurora Serverless, OpenSearch Serverless, AgentCore Harnesses) if public AWS service endpoint connectivity is unavailable (e.g., private subnets without NAT gateway, firewalled environments, or PrivateLink-only architectures). For a harness, MDAA can create the ones it needs itself — set `networkConfiguration.vpcEndpoints` and see the [construct README](../../../constructs/L3/ai/bedrock-agentcore-harness-l3-construct/README.md#container-and-vpc-networking) for the derived set:
 
-| AWS Service           | Endpoint Service Name                    | Type      |
-| --------------------- | ---------------------------------------- | --------- |
-| Bedrock Runtime       | `com.amazonaws.{region}.bedrock-runtime` | Interface |
-| Bedrock Agent         | `com.amazonaws.{region}.bedrock-agent`   | Interface |
-| Lambda                | `com.amazonaws.{region}.lambda`          | Interface |
-| KMS                   | `com.amazonaws.{region}.kms`             | Interface |
-| CloudWatch Logs       | `com.amazonaws.{region}.logs`            | Interface |
-| STS                   | `com.amazonaws.{region}.sts`             | Interface |
-| S3                    | `com.amazonaws.{region}.s3`              | Gateway   |
-| OpenSearch Serverless | `com.amazonaws.{region}.aoss`            | Interface |
-| RDS                   | `com.amazonaws.{region}.rds`             | Interface |
+| AWS Service           | Endpoint Service Name                              | Type      |
+| --------------------- | -------------------------------------------------- | --------- |
+| Bedrock Runtime       | `com.amazonaws.{region}.bedrock-runtime`           | Interface |
+| Bedrock Agent         | `com.amazonaws.{region}.bedrock-agent`             | Interface |
+| ECR API               | `com.amazonaws.{region}.ecr.api`                   | Interface |
+| ECR Docker Registry   | `com.amazonaws.{region}.ecr.dkr`                   | Interface |
+| AgentCore Gateway     | `com.amazonaws.{region}.bedrock-agentcore.gateway` | Interface |
+| Lambda                | `com.amazonaws.{region}.lambda`                    | Interface |
+| KMS                   | `com.amazonaws.{region}.kms`                       | Interface |
+| CloudWatch Logs       | `com.amazonaws.{region}.logs`                      | Interface |
+| STS                   | `com.amazonaws.{region}.sts`                       | Interface |
+| S3                    | `com.amazonaws.{region}.s3`                        | Gateway   |
+| OpenSearch Serverless | `com.amazonaws.{region}.aoss`                      | Interface |
+| RDS                   | `com.amazonaws.{region}.rds`                       | Interface |
 
 Additional VPC endpoints may be required depending on the AWS services accessed by your custom Lambda function code.
 
@@ -115,6 +123,28 @@ Deploys Bedrock agents with action groups, knowledge bases backed by Aurora and 
 ```yaml
 # Contents available via above link
 --8<-- "target/docs/packages/apps/ai/bedrock-builder-app/sample_configs/sample-config-comprehensive.yaml"
+```
+
+#### AgentCore Harness Configuration (Minimal)
+
+Deploys a single AgentCore Harness — a declarative agent loop (foundation model + system prompt) configured via the top-level `harnesses` map, independently of `agents`. Sets only the mandatory fields (model, system prompt, VPC network configuration) and takes the default path for everything else. Start here for a quick agent-loop proof-of-concept on AgentCore rather than classic Bedrock Agents.
+
+[sample-config-harness-minimal.yaml](sample_configs/sample-config-harness-minimal.yaml)
+
+```yaml
+# Contents available via above link
+--8<-- "target/docs/packages/apps/ai/bedrock-builder-app/sample_configs/sample-config-harness-minimal.yaml"
+```
+
+#### AgentCore Harness Configuration (Comprehensive)
+
+Deploys an AgentCore Harness exercising the optional features on a single harness: model sampling and iteration limits, idle/max-lifetime lifecycle, inbound JWT auth, a guardrail and an AgentCore Gateway tool resolved via `config:<name>` references into sibling maps, an inline-function tool, a tool allowlist, skills, a bring-your-own ECR container image, VPC network placement with MDAA-managed endpoints, additive PII masking, log retention, a summarization truncation strategy, and a named versioned endpoint. Use this as a reference for full control over an AgentCore agent loop.
+
+[sample-config-harness-comprehensive.yaml](sample_configs/sample-config-harness-comprehensive.yaml)
+
+```yaml
+# Contents available via above link
+--8<-- "target/docs/packages/apps/ai/bedrock-builder-app/sample_configs/sample-config-harness-comprehensive.yaml"
 ```
 
 ---

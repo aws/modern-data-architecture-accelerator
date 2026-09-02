@@ -5,3 +5,4 @@
 
 export * from './bedrock-agentcore-runtime-l3-construct';
 export * from './utils';
+export * from './vpc-endpoint';

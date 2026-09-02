@@ -8,7 +8,7 @@ import { MdaaSecurityGroup } from '@aws-mdaa/ec2-constructs';
 import { InterfaceVpcEndpoint, InterfaceVpcEndpointAwsService, ISecurityGroup, Subnet, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { ArnPrincipal, Effect, PolicyStatement, StarPrincipal } from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
-import { DEFAULT_ACTIONS } from './resource-policy';
+import { DEFAULT_ACTIONS } from '@aws-mdaa/agentcore-shared';
 
 /**
  * Endpoint policy configuration for the AgentCore interface VPC endpoint.
@@ -81,7 +81,12 @@ export interface VpcEndpointProperty {
    * Also create supporting interface endpoints commonly required in VPC mode
    * without internet access: ECR API, ECR Docker, STS, and CloudWatch Logs.
    *
-   * Use cases: Fully private subnets without NAT gateway, firewalled environments
+   * This creates those four interface endpoints and nothing else — it is not by itself a complete
+   * no-NAT configuration. Validate egress for your own runtime image and workload before removing a
+   * NAT gateway, and provision any further endpoints out of band.
+   *
+   * Use cases: Reaching ECR, STS, and CloudWatch Logs over PrivateLink from private subnets;
+   * firewalled environments
    *
    * AWS: AWS::EC2::VPCEndpoint (Interface) for ecr.api, ecr.dkr, sts, logs
    *
@@ -132,9 +137,14 @@ const SUPPORTING_ENDPOINT_SERVICES: { id: string; service: InterfaceVpcEndpointA
  * - Optional supporting endpoints (ECR API/Docker, STS, CloudWatch Logs) for
  *   fully private environments
  *
- * Works for any AgentCore resource type served by the shared service endpoint
- * (Runtime, Tools, Memory, Identity). The Gateway uses a distinct endpoint
- * (bedrock-agentcore.gateway), not created here.
+ * The shared AgentCore service endpoint this builds serves every non-Gateway
+ * resource type (Runtime, Tools, Memory, Identity); the Gateway uses a distinct
+ * endpoint (bedrock-agentcore.gateway), not created here.
+ *
+ * NOTE: this builder lives in the Runtime L3 package; the sibling Harness L3 keeps a
+ * parallel implementation (HarnessVpcEndpoints). They are intentionally not shared: the
+ * Runtime's two-list supporting-endpoint design and the Harness's derived-set /
+ * endpoint-exclude semantics differ, so a single shared copy would have to reconcile them.
  */
 export function createAgentCoreVpcEndpoint(
   scope: Construct,
@@ -192,6 +202,11 @@ export function createAgentCoreVpcEndpoint(
     }),
   );
 
+  // Note: unlike the main AgentCore endpoint above (which sets an explicit policy),
+  // these supporting endpoints (ECR/STS/Logs) carry AWS's default full-access endpoint policy. An
+  // account-scoped `aws:PrincipalAccount` condition would be cheap defence-in-depth (access is
+  // otherwise governed by the execution role's identity policy). The AgentCore Harness construct's
+  // interface endpoints share this default — apply the condition in both.
   const supportingEndpoints: InterfaceVpcEndpoint[] = props.vpcEndpointConfig.createSupportingEndpoints
     ? SUPPORTING_ENDPOINT_SERVICES.map(
         ({ id: endpointId, service }) =>

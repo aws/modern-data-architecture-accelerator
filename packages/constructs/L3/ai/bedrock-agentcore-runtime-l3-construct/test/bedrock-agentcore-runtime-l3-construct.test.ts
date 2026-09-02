@@ -140,7 +140,7 @@ describe('BedrockAgentcoreRuntimeL3Construct Unit Tests', () => {
 
       expect(() => {
         new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'invalid-runtime-construct', constructProps);
-      }).toThrow('securityGroups is required');
+      }).toThrow('Agentcore "networkConfiguration.securityGroups" must contain 1-16 security group IDs.');
     });
   });
 
@@ -192,7 +192,7 @@ describe('BedrockAgentcoreRuntimeL3Construct Unit Tests', () => {
 
       expect(() => {
         new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'invalid-vpc-runtime-construct', constructProps);
-      }).toThrow('subnets is required');
+      }).toThrow('Agentcore "networkConfiguration.subnets" must contain 1-16 subnet IDs.');
     });
   });
 
@@ -1602,6 +1602,11 @@ describe('BedrockAgentcoreRuntimeL3Construct Unit Tests', () => {
           '.*EmailAddress.*CreditCardNumber.*Ssn-US.*Name.*Address.*PhoneNumber-US.*IpAddress.*',
         ),
         runtimeId: Match.anyValue(),
+      });
+      // The policy Name is the module-specific literal passed to buildDataProtectionPolicy; guards
+      // against a regression if the shared builder's default diverges.
+      template.hasResourceProperties('Custom::AgentCoreLogProtection', {
+        dataProtectionPolicy: Match.stringLikeRegexp('.*"Name":"agentcore-runtime-data-protection".*'),
       });
     });
 

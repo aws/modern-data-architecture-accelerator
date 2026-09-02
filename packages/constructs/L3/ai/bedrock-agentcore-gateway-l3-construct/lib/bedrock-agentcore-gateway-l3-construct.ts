@@ -22,6 +22,7 @@ import {
   AgentcoreAuthorizerConfigProperty,
   buildCustomJwtAuthorizer,
   resolveAuthorizerType,
+  validateLogRetentionDays,
 } from '@aws-mdaa/agentcore-shared';
 import { FunctionProps, LambdaFunctionL3Construct } from '@aws-mdaa/dataops-lambda-l3-construct';
 import { MdaaManagedPolicy, MdaaRole } from '@aws-mdaa/iam-constructs';
@@ -31,7 +32,6 @@ import { MdaaResourceType } from '@aws-mdaa/naming';
 import { Stack } from 'aws-cdk-lib';
 import { Effect, IRole, PolicyDocument, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
-import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
 
 export { FunctionProps } from '@aws-mdaa/dataops-lambda-l3-construct';
@@ -161,17 +161,19 @@ export interface GatewayLogDeliveryProperty {
    **/
   readonly enabled?: boolean;
   /**
-   * Retention (in days) for the destination log group. Must be a valid CloudWatch Logs
-   * `RetentionDays` value (e.g. 7, 30, 90, 365). Defaults to indefinite (the MDAA audit-log default)
-   * so logs are never silently dropped; set a finite value for cost or a compliance window.
+   * Retention (in days) for the destination log group. Accepts any CloudWatch Logs `RetentionDays`
+   * value (e.g. 7, 30, 90, 365); `9999` (`RetentionDays.INFINITE`) means never-expire and can be set
+   * explicitly to lock indefinite retention into config. Omitting the field is equivalent to `9999`
+   * (the MDAA audit-log default) so logs are never silently dropped; set a finite value for cost or a
+   * compliance window.
    *
    * Use cases: cost control, compliance retention windows
    *
    * AWS: AWS::Logs::LogGroup RetentionInDays
    *
-   * Validation: Optional; must be a valid CloudWatch Logs RetentionDays value — validated at synth
-   * (an unsupported value throws from the constructor rather than failing at deploy)
-   * @default RetentionDays.INFINITE (indefinite)
+   * Validation: Optional; must be a valid CloudWatch Logs RetentionDays value (9999 for never-expire)
+   * — validated at synth (an unsupported value throws from the constructor rather than failing at deploy)
+   * @default 9999
    **/
   readonly logRetentionDays?: number;
 }
@@ -360,8 +362,10 @@ export class BedrockAgentcoreGatewayL3Construct extends MdaaL3Construct {
     validateInterceptorConfigurations(props.interceptors);
     this.validateInterceptorLambdaSources(props.interceptors);
     // Fail fast at synth on an invalid log-retention value; CloudWatch Logs RetentionDays accepts
-    // only a fixed set of values, and CloudFormation would otherwise reject it at deploy.
-    this.validateLogRetentionDays(props.logDelivery?.logRetentionDays);
+    // only a fixed set of values, and CloudFormation would otherwise reject it at deploy. `9999`
+    // (RetentionDays.INFINITE) is accepted as an explicit never-expire choice — the CDK log group
+    // renders it as no RetentionInDays, the same never-expire result as omitting the field.
+    validateLogRetentionDays(props.logDelivery?.logRetentionDays, 'logDelivery.logRetentionDays');
 
     // Resolve the MDAA-named, sanitized gateway name once, to scope the auto-created role's
     // trust-policy `aws:SourceArn` to this gateway's ARN prefix. MdaaAgentcoreGateway derives the
@@ -738,26 +742,6 @@ export class BedrockAgentcoreGatewayL3Construct extends MdaaL3Construct {
       assumedBy: trustPolicy,
       description: `IAM role for Bedrock AgentCore Gateway: ${props.gatewayName}`,
     });
-  }
-
-  /**
-   * Validates the optional `logDelivery.logRetentionDays` at synth against the CloudWatch Logs
-   * {@link RetentionDays} enum (a fixed set of values, 9999 being `INFINITE`), so misconfiguration
-   * fails fast rather than at deploy. `undefined` is valid (indefinite, audit-by-default).
-   */
-  private validateLogRetentionDays(logRetentionDays?: number): void {
-    if (logRetentionDays === undefined) {
-      return;
-    }
-    // RetentionDays is a numeric enum; Object.values yields both numbers and names, so keep only the
-    // numeric members.
-    const validValues = Object.values(RetentionDays).filter((v): v is number => typeof v === 'number');
-    if (!validValues.includes(logRetentionDays)) {
-      throw new Error(
-        `Invalid logDelivery.logRetentionDays '${logRetentionDays}'. Must be a valid CloudWatch Logs ` +
-          `retention value (one of: ${validValues.join(', ')}), or omit it for indefinite retention.`,
-      );
-    }
   }
 
   /**

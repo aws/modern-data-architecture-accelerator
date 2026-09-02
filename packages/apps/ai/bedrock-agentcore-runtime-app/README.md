@@ -352,7 +352,7 @@ Rather than creating the AgentCore VPC endpoint manually, this module can create
 - Correct service name (`com.amazonaws.{region}.bedrock-agentcore`) with **Private DNS enabled**, so the default regional endpoint resolves privately with no code changes
 - A dedicated endpoint security group allowing inbound HTTPS (443) **only from the runtime's application security groups** — not the entire VPC CIDR
 - An endpoint policy restricted to AgentCore invoke actions; principals default to `*` (required for OAuth/JWT callers, which have no IAM identity visible to endpoint policies) or can be restricted to specific IAM principal ARNs via `endpointPolicy.allowPrincipals`
-- Optionally, supporting interface endpoints for fully private environments (`createSupportingEndpoints: true` adds ECR API, ECR Docker, STS, and CloudWatch Logs)
+- Optionally, supporting interface endpoints for private subnets (`createSupportingEndpoints: true` adds ECR API, ECR Docker, STS, and CloudWatch Logs — those four only, so validate your runtime's own egress before removing a NAT gateway)
 
 The endpoint ID is published to SSM Parameter Store for cross-module reference.
 

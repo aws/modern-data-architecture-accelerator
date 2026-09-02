@@ -9,6 +9,7 @@ import { Duration, Stack } from 'aws-cdk-lib';
 import { PolicyStatement, Effect } from 'aws-cdk-lib/aws-iam';
 import { Runtime, Code } from 'aws-cdk-lib/aws-lambda';
 import { IKey } from 'aws-cdk-lib/aws-kms';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
 
 export interface LogProtectionProps {
@@ -75,7 +76,11 @@ export function createAgentCoreLogProtection(
     handlerProps.kmsKeyArn = props.kmsKey.keyArn;
   }
 
-  if (props.retentionDays) {
+  // RetentionDays.INFINITE (9999) and omission both mean never-expire: apply no retention policy
+  // rather than sending the sentinel to the handler's raw PutRetentionPolicy call, which rejects
+  // 9999. Only a finite retention value is forwarded; omitting it leaves the log groups at
+  // CloudWatch's never-expire default.
+  if (props.retentionDays && props.retentionDays !== RetentionDays.INFINITE) {
     handlerProps.retentionDays = String(props.retentionDays);
   }
 

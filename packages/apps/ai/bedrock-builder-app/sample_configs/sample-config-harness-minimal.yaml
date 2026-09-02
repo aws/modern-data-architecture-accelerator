@@ -1,0 +1,30 @@
+# Minimal Bedrock Builder configuration for an AgentCore Harness — a declarative agent loop
+# (foundation model + system prompt). Harnesses are configured via the top-level `harnesses` map,
+# independently of `agents`.
+#
+# This config sets only the mandatory fields and takes the default path for everything else: an
+# MDAA-created execution role, AWS IAM (SigV4) inbound auth, the AWS-managed harness container, no
+# tools, and the service-default model sampling, lifecycle, and truncation behavior. See
+# sample-config-harness-comprehensive.yaml for a harness exercising the optional features.
+
+# See CONFIGURATION.md for role reference options (name, arn, id). Admin roles are granted key-admin
+# rights on the module's KMS key (used here for the harness's log-group encryption).
+dataAdminRoles:
+  - name: 'Admin'
+
+# AgentCore Harness configurations, keyed by harness name.
+harnesses:
+  minimal-harness:
+    # Required: foundation model identifier for the agent loop (on-demand id, inference-profile id, or
+    # full ARN).
+    modelId: 'anthropic.claude-3-sonnet-20240229-v1:0'
+    # Required: system prompt defining the agent's behavior.
+    systemPrompt: 'You are a helpful assistant.'
+    # Required: MDAA enforces VPC network isolation for the harness runtime (NetworkMode: VPC) — there
+    # is no public-network option. Supply the security groups and subnets (1-16 each) that run the
+    # harness's runtime sessions in your VPC.
+    networkConfiguration:
+      securityGroups:
+        - 'sg-0123456789abcdef0'
+      subnets:
+        - 'subnet-0123456789abcdef0'
