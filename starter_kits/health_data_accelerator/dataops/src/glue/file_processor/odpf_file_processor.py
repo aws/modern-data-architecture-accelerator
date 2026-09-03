@@ -1,3 +1,4 @@
+import json
 import logging
 import sys
 import boto3
@@ -28,8 +29,7 @@ class FileTrackerStatus:
                : incremental_refresh_list: A list of incremental CDC files
                : all_files: A list of dictionaries with table refresh configuration data
         """
-        input_params = args['input_params']
-        ddb_file_tracker_table = eval(input_params)['ddb_file_tracker_table']
+        ddb_file_tracker_table = input_params['ddb_file_tracker_table']
         paginator = self.dynamodb.meta.client.get_paginator("query")
         pages = paginator.paginate(
             TableName=ddb_file_tracker_table,
@@ -80,9 +80,8 @@ class FileTrackerStatus:
             refresh_file_list(List): The list of DMS files that were processed
         """
         for file in refresh_file_list:
-            input_params = args['input_params']
-            ddb_file_tracker_history_table = eval(input_params)['ddb_file_tracker_history_table']
-            ddb_file_tracker_table = eval(input_params)['ddb_file_tracker_table']
+            ddb_file_tracker_history_table = input_params['ddb_file_tracker_history_table']
+            ddb_file_tracker_table = input_params['ddb_file_tracker_table']
             file["file_ingestion_status"] = 'raw_file_processed'
             file["glue_job_run_id"] = args['JOB_RUN_ID']
             self.dynamodb_client.transact_write_items(
@@ -128,8 +127,7 @@ class RawTableRefreshStatus:
         Returns:
             refresh_status(Dict): DynamoDB record of the table refresh status
         """
-        input_params = args['input_params']
-        ddb_file_processing_tracker_table = eval(input_params)['ddb_file_processing_tracker_table']
+        ddb_file_processing_tracker_table = input_params['ddb_file_processing_tracker_table']
         raw_table_refresh_status = None
         raw_pipeline_refresh_table = self.dynamodb.Table(ddb_file_processing_tracker_table)
         resp = raw_pipeline_refresh_table.get_item(
@@ -155,8 +153,7 @@ class RawTableRefreshStatus:
         Parameters:
             raw_table_refresh_status_rec(String): The table refresh record for the raw table
         """
-        input_params = args['input_params']
-        ddb_file_processing_tracker_table = eval(input_params)['ddb_file_processing_tracker_table']
+        ddb_file_processing_tracker_table = input_params['ddb_file_processing_tracker_table']
         item = {'raw_table_name': {'S': raw_table_refresh_status_rec['raw_table_name']},
                 'glue_job_run_id': {'S': raw_table_refresh_status_rec['glue_job_run_id']},
                 'refresh_status': {'S': raw_table_refresh_status_rec['refresh_status']},
@@ -180,8 +177,7 @@ class RawTableRefreshStatus:
             raw_table_ref_details_rec(String): The table refresh record for the raw table
                                          into the refresh history DynamoDB table
         """
-        input_params = args['input_params']
-        ddb_file_processing_tracker_history_table = eval(input_params)['ddb_file_processing_tracker_history_table']
+        ddb_file_processing_tracker_history_table = input_params['ddb_file_processing_tracker_history_table']
         raw_table_refresh_history_rec = {**raw_table_ref_status_rec, **raw_table_ref_details_rec}
         item = {'raw_table_name': {'S': raw_table_refresh_history_rec['raw_table_name']},
                 'glue_job_run_id': {'S': raw_table_refresh_history_rec['glue_job_run_id']},
@@ -327,8 +323,7 @@ def get_parameters():
     Returns:
         table_list(List): A list of tables to be refreshed
     """
-    input_params = args['input_params']
-    raw_table_list = eval(input_params)['batch_chunk']
+    raw_table_list = input_params['batch_chunk']
     return raw_table_list
 
 def process_files():
@@ -397,7 +392,8 @@ if __name__ == "__main__":
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     args = getResolvedOptions(sys.argv, ["JOB_NAME", "input_params"])
-    raw_bucket_name = eval(args["input_params"])["batch_chunk"][0]["raw_database_S3_bucket"]
+    input_params = json.loads(args["input_params"])
+    raw_bucket_name = input_params["batch_chunk"][0]["raw_database_S3_bucket"]
     config = SparkConf().setAll(
         [
             ("spark.sql.extensions", "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions"),

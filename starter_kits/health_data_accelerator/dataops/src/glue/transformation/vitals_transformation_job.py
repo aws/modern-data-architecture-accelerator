@@ -15,7 +15,7 @@ import pandas as pd
 import json
 
 args = getResolvedOptions(sys.argv, ["JOB_NAME", "input_params"])
-input_params = eval(args["input_params"])
+input_params = json.loads(args["input_params"])
 curated_s3_path = f"s3://{input_params['curated_bucket_name']}"
 
 config = SparkConf().setAll(
@@ -463,6 +463,5 @@ SELECT *,
     ) AS avg_risk_level
 FROM glue_catalog.{curated_catalog_db_name}.organization_vitals_info
 """)
-
 
 

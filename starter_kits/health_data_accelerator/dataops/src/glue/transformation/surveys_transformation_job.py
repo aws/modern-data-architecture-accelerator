@@ -13,7 +13,7 @@ import pandas as pd
 import json
 
 args = getResolvedOptions(sys.argv, ["JOB_NAME", "input_params"])
-input_params = eval(args["input_params"])
+input_params = json.loads(args["input_params"])
 curated_s3_path = f"s3://{input_params['curated_bucket_name']}"
 
 config = SparkConf().setAll(
@@ -262,6 +262,5 @@ else:
     OPTIONS ('write.object-storage.enabled'=true, 'write.data.path'='{curated_s3_path}/missing_subscribers')
     TBLPROPERTIES ("format-version"="2")
     """)
-
 
 

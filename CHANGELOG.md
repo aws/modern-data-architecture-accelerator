@@ -1,5 +1,11 @@
 # Change Log
 
+## [NEXT_RELEASE_VERSION] - NEXT_RELEASE_DATE
+
+### Bug Fixes
+
+- Fixed an eval injection vulnerability in the Health Data Accelerator (HDA) starter kit's AWS Glue jobs by safely parsing job parameters as JSON
+
 ## [1.8.0] - 2026-08-28
 
 ### Changed
