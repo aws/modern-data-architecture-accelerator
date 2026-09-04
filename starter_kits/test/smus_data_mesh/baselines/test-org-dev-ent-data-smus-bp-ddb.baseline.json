@@ -1423,6 +1423,9 @@
             ]
           ]
         },
+        "template_kms_key_arn": {
+          "Ref": "domainconfigparserdomainconfigparserssmdomainkmsarnParameter5C330018"
+        },
         "user_parameters": [
           {
             "fieldType": "string",

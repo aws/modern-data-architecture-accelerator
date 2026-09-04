@@ -6,6 +6,8 @@
 
 - Fixed an eval injection vulnerability in the Health Data Accelerator (HDA) starter kit's AWS Glue jobs by safely parsing job parameters as JSON
 
+- Fixed DataZone custom blueprint template staging being denied by the domain S3 bucket's SSE-KMS policy by encrypting the template copy with the domain KMS key
+
 ## [1.8.0] - 2026-08-28
 
 ### Changed

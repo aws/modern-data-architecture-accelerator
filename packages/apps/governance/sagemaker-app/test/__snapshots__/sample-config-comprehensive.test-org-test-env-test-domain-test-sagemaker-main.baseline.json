@@ -7520,6 +7520,12 @@
             "RegionalDomainName"
           ]
         },
+        "template_kms_key_arn": {
+          "Fn::GetAtt": [
+            "datazonetestdomaincmkE950F0CB",
+            "Arn"
+          ]
+        },
         "user_parameters": [
           {
             "fieldType": "String",
@@ -7664,6 +7670,12 @@
           "Fn::GetAtt": [
             "datazonetestdomaindomaindomainbucket63360CC6",
             "RegionalDomainName"
+          ]
+        },
+        "template_kms_key_arn": {
+          "Fn::GetAtt": [
+            "datazonetestdomaincmkE950F0CB",
+            "Arn"
           ]
         },
         "user_parameters": [

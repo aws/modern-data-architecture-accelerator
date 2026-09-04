@@ -103,17 +103,24 @@ def lambda_handler(event, context):
     elif event['RequestType'] == 'Delete':
         return handle_delete(event,domainId,resource_config, context)
     
-def copy_template(templateSourceUrl,templateBucket,templateBucketRegionDomainName,templateKey):
+def copy_template(templateSourceUrl,templateBucket,templateBucketRegionDomainName,templateKey,templateKmsKeyArn=None):
     # Copy template from CDK bucket to Domain bucket
     templateSourceBucket,templateSourceObj = get_s3_bucket_obj_from_url(templateSourceUrl)
-    s3_client.copy_object(
-        CopySource = {
+    copy_kwargs = {
+        'CopySource': {
             'Bucket': templateSourceBucket,
             'Key': templateSourceObj
         },
-        Bucket=templateBucket,
-        Key=templateKey
-    )
+        'Bucket': templateBucket,
+        'Key': templateKey
+    }
+    # The domain bucket enforces SSE-KMS with its own CMK (ForceKMS bucket policy),
+    # so the copy must specify the domain KMS key or the PutObject is denied.
+    if templateKmsKeyArn is not None:
+        copy_kwargs['ServerSideEncryption'] = 'aws:kms'
+        copy_kwargs['SSEKMSKeyId'] = templateKmsKeyArn
+        copy_kwargs['BucketKeyEnabled'] = True
+    s3_client.copy_object(**copy_kwargs)
     templateUrl = f'https://{templateBucketRegionDomainName}/{templateKey}'
     logger.info(f"Staged template from {templateSourceUrl} to {templateUrl}")
     return templateUrl
@@ -144,7 +151,7 @@ def handle_create(event,domainId,resource_config, context):
     if userParameters is not None:
         userParameters = [convert_dict_string_booleans(x) for x in userParameters]
 
-    templateUrl = copy_template(templateSourceUrl,templateBucket,templateBucketRegionDomainName,templateKey)
+    templateUrl = copy_template(templateSourceUrl,templateBucket,templateBucketRegionDomainName,templateKey,resource_config.get('template_kms_key_arn', None))
     logger.info(f"Creating Environment Blueprint {blueprintName} for domain {domainId}")
     
     create_kwargs = {
@@ -194,7 +201,7 @@ def handle_update(event,domainId,resource_config, context):
     if userParameters is not None:
         userParameters = [convert_dict_string_booleans(x) for x in userParameters]
 
-    templateUrl = copy_template(templateSourceUrl,templateBucket,templateBucketRegionDomainName,templateKey)
+    templateUrl = copy_template(templateSourceUrl,templateBucket,templateBucketRegionDomainName,templateKey,resource_config.get('template_kms_key_arn', None))
 
     logger.info(f"Update Environment Blueprint {identifier} for domain {domainId}")
 

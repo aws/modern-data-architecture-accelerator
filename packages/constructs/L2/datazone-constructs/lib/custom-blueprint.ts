@@ -116,6 +116,7 @@ export class MdaaSageMakerCustomBlueprintConstruct extends Construct {
         template_bucket: props.domainBucket.bucketName,
         template_key: templateKey,
         template_bucket_region_domain_name: props.domainBucket.bucketRegionalDomainName,
+        template_kms_key_arn: props.domainKmsKeyArn,
         user_parameters: userParameters,
       },
       naming: props.naming,
