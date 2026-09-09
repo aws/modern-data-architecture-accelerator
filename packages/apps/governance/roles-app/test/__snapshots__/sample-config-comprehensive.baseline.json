@@ -3715,6 +3715,148 @@
         }
       }
     },
+    "gitlabdeploymentE8B89538": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": {
+                "StringLike": {
+                  "gitlab.example.com:sub": "project_path:my-org/my-repo:ref_type:branch:ref:main"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": "arn:test-partition:iam::test-account:oidc-provider/gitlab.example.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "RoleName": "test-org-test-env-test-domain-test-roles-main-gitlab-deployment",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "roles"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-roles-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "gitlabdeploymentrolegitlabdeploymentarnssm2C940053": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-roles-main/role/gitlab-deployment/arn",
+        "Tags": {
+          "mdaa_cdk_app": "roles",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-roles-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "gitlabdeploymentE8B89538",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "gitlabdeploymentrolegitlabdeploymentidssm3DF52A54": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-roles-main/role/gitlab-deployment/id",
+        "Tags": {
+          "mdaa_cdk_app": "roles",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-roles-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "gitlabdeploymentE8B89538",
+            "RoleId"
+          ]
+        }
+      }
+    },
+    "gitlabdeploymentrolegitlabdeploymentnamessmBBA6DF4F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-roles-main/role/gitlab-deployment/name",
+        "Tags": {
+          "mdaa_cdk_app": "roles",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-roles-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "gitlabdeploymentE8B89538"
+        }
+      }
+    },
+    "gitlabdeploymentgitlabdeploymentssmgeneratedrolearnEC80E86E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/generated-role/gitlab-deployment/arn",
+        "Tags": {
+          "mdaa_cdk_app": "roles",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-roles-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "gitlabdeploymentE8B89538",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "gitlabdeploymentgitlabdeploymentssmgeneratedroleidBB67C009": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/generated-role/gitlab-deployment/id",
+        "Tags": {
+          "mdaa_cdk_app": "roles",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-roles-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "gitlabdeploymentE8B89538",
+            "RoleId"
+          ]
+        }
+      }
+    },
     "multipleservicerole656CDC5E": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -4599,6 +4741,36 @@
       },
       "Export": {
         "Name": "test-org:test-domain:test-roles-main:role:application-data-role2:name"
+      }
+    },
+    "gitlabdeploymentrolegitlabdeploymentarnoutE3E89196": {
+      "Value": {
+        "Fn::GetAtt": [
+          "gitlabdeploymentE8B89538",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-roles-main:role:gitlabdeployment:arn"
+      }
+    },
+    "gitlabdeploymentrolegitlabdeploymentidout24A9CE96": {
+      "Value": {
+        "Fn::GetAtt": [
+          "gitlabdeploymentE8B89538",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-roles-main:role:gitlabdeployment:id"
+      }
+    },
+    "gitlabdeploymentrolegitlabdeploymentnameout881D76DB": {
+      "Value": {
+        "Ref": "gitlabdeploymentE8B89538"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-roles-main:role:gitlabdeployment:name"
       }
     },
     "multipleservicerolerolemultipleservicerolearnout9392FD43": {

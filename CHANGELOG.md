@@ -2,6 +2,12 @@
 
 ## [NEXT_RELEASE_VERSION] - NEXT_RELEASE_DATE
 
+### New Features
+
+#### Roles Module
+
+- Added `webidentity:` trusted principal prefix enabling OIDC web identity federation for CI/CD providers (e.g. GitLab CI/CD, GitHub Actions). See the [roles-app README](packages/apps/governance/roles-app/README.md) for trust-policy details and required scoping conditions.
+
 ### Bug Fixes
 
 - Fixed an eval injection vulnerability in the Health Data Accelerator (HDA) starter kit's AWS Glue jobs by safely parsing job parameters as JSON

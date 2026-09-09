@@ -842,7 +842,7 @@
                     "type": "array"
                 },
                 "trustedPrincipal": {
-                    "description": "Primary trusted principal for the role's trust policy. Supports formats:\n\"this_account\", \"service:svc.amazonaws.com\", \"federation:name\", or ARN.\n\nUse cases: Service trust; Cross-account trust; Federation-based assume role\n\nAWS: IAM role trust policy primary principal\n\nValidation: Required; must be valid principal identifier",
+                    "description": "Primary trusted principal for the role's trust policy. Supports formats:\n\"this_account\", \"service:svc.amazonaws.com\", \"account:123456789012\",\n\"federation:name\", \"webidentity:oidc-provider-arn\", or ARN.\n\nUse cases: Service trust; Cross-account trust; Federation-based assume role;\nOIDC web identity federation (e.g. GitLab CI/CD, GitHub Actions)\n\nAWS: IAM role trust policy primary principal\n\nValidation: Required; must be valid principal identifier",
                     "type": "string"
                 },
                 "verbatimRoleName": {
@@ -2885,7 +2885,7 @@
                     "type": "array"
                 },
                 "trustedPrincipal": {
-                    "description": "AWS principal identifier for trust policy. Supports formats:\n\"this_account\", \"service:svc.amazonaws.com\", \"federation:name\", or ARN.\n\nUse cases: Service trust; Cross-account trust; Federation trust\n\nAWS: IAM trust policy principal specification\n\nValidation: Required; must be valid principal identifier",
+                    "description": "AWS principal identifier for trust policy. Supports formats:\n\"this_account\", \"service:svc.amazonaws.com\", \"account:123456789012\",\n\"federation:name\", \"webidentity:oidc-provider-arn\", or ARN.\n\nUse cases: Service trust; Cross-account trust; Federation trust;\nOIDC web identity federation (e.g. GitLab CI/CD, GitHub Actions)\n\nAWS: IAM trust policy principal specification\n\nValidation: Required; must be valid principal identifier",
                     "type": "string"
                 }
             },

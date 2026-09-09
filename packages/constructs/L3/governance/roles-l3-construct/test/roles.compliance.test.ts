@@ -117,6 +117,15 @@ describe('MDAA Compliance Stack Tests', () => {
       verbatimRoleName: true,
     },
     {
+      name: 'test-role-webidentity',
+      trustedPrincipal: 'webidentity:arn:test-partition:iam::test-account:oidc-provider/gitlab.example.com',
+      assumeRoleTrustConditions: {
+        StringLike: {
+          'gitlab.example.com:sub': 'project_path:my-org/my-repo:ref_type:branch:ref:main',
+        },
+      },
+    },
+    {
       name: 'test-role8',
       trustedPrincipal: 'this_account',
       additionalTrustedActions: ['sts:TagSession'],
@@ -501,6 +510,31 @@ describe('MDAA Compliance Stack Tests', () => {
       }),
     );
   });
+
+  test('Role Federated WebIdentity Trust', () => {
+    template.hasResourceProperties(
+      'AWS::IAM::Role',
+      Match.objectLike({
+        AssumeRolePolicyDocument: {
+          Statement: [
+            {
+              Action: 'sts:AssumeRoleWithWebIdentity',
+              Condition: {
+                StringLike: {
+                  'gitlab.example.com:sub': 'project_path:my-org/my-repo:ref_type:branch:ref:main',
+                },
+              },
+              Effect: 'Allow',
+              Principal: {
+                Federated: 'arn:test-partition:iam::test-account:oidc-provider/gitlab.example.com',
+              },
+            },
+          ],
+          Version: '2012-10-17',
+        },
+      }),
+    );
+  });
 });
 
 describe('additionalTrustedActions validation', () => {
@@ -557,6 +591,244 @@ describe('additionalTrustedActions validation', () => {
         roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
       });
     }).toThrow(/Invalid action 'iam:PassRole'/);
+  });
+
+  test('rejects unrecognized trusted principal prefix', () => {
+    expect(() => {
+      new RolesL3Construct(new MdaaTestApp().testStack, 'invalid-prefix', {
+        generateRoles: [
+          {
+            name: 'bad-role',
+            trustedPrincipal: 'bogus:foo',
+          },
+        ],
+        naming: testApp.naming,
+        roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+      });
+    }).toThrow(/must start with service:, account:, webidentity:, federation: or equal 'this_account'/);
+  });
+
+  test('rejects webidentity primary principal without trust conditions', () => {
+    expect(() => {
+      new RolesL3Construct(new MdaaTestApp().testStack, 'webidentity-unscoped', {
+        generateRoles: [
+          {
+            name: 'bad-role',
+            trustedPrincipal: 'webidentity:arn:test-partition:iam::test-account:oidc-provider/gitlab.example.com',
+          },
+        ],
+        naming: testApp.naming,
+        roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+      });
+    }).toThrow(/webidentity trusted principals require assumeRoleTrustConditions/);
+  });
+
+  test('rejects webidentity primary principal with empty trust conditions ({})', () => {
+    expect(() => {
+      new RolesL3Construct(new MdaaTestApp().testStack, 'webidentity-empty-conditions', {
+        generateRoles: [
+          {
+            name: 'bad-role',
+            trustedPrincipal: 'webidentity:arn:test-partition:iam::test-account:oidc-provider/gitlab.example.com',
+            // Empty conditions renders a statement with no effective scoping.
+            assumeRoleTrustConditions: {},
+          },
+        ],
+        naming: testApp.naming,
+        roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+      });
+    }).toThrow(/webidentity trusted principals require assumeRoleTrustConditions/);
+  });
+
+  test('rejects webidentity primary principal with an empty condition operator ({ StringLike: {} })', () => {
+    expect(() => {
+      new RolesL3Construct(new MdaaTestApp().testStack, 'webidentity-empty-operator', {
+        generateRoles: [
+          {
+            name: 'bad-role',
+            trustedPrincipal: 'webidentity:arn:test-partition:iam::test-account:oidc-provider/gitlab.example.com',
+            // Operator present but empty -> emits a Condition key that constrains nothing.
+            assumeRoleTrustConditions: { StringLike: {} },
+          },
+        ],
+        naming: testApp.naming,
+        roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+      });
+    }).toThrow(/webidentity trusted principals require assumeRoleTrustConditions/);
+  });
+
+  test('rejects webidentity trust conditions that only constrain an unrelated key', () => {
+    expect(() => {
+      new RolesL3Construct(new MdaaTestApp().testStack, 'webidentity-unrelated-key', {
+        generateRoles: [
+          {
+            name: 'bad-role',
+            trustedPrincipal: 'webidentity:arn:test-partition:iam::test-account:oidc-provider/gitlab.example.com',
+            // Non-empty condition, but on a key unrelated to the OIDC provider -> principal is unscoped.
+            assumeRoleTrustConditions: { StringEquals: { 'aws:RequestTag/team': 'data' } },
+          },
+        ],
+        naming: testApp.naming,
+        roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+      });
+    }).toThrow(/at least one condition key beginning with 'gitlab.example.com:'/);
+  });
+
+  test('rejects a webidentity provider claim matched against a bare * wildcard', () => {
+    expect(() => {
+      new RolesL3Construct(new MdaaTestApp().testStack, 'webidentity-wildcard-value', {
+        generateRoles: [
+          {
+            name: 'bad-role',
+            trustedPrincipal: 'webidentity:arn:test-partition:iam::test-account:oidc-provider/gitlab.example.com',
+            // Provider-prefixed key present, but '*' matches any subject -> unscoped.
+            assumeRoleTrustConditions: { StringLike: { 'gitlab.example.com:sub': '*' } },
+          },
+        ],
+        naming: testApp.naming,
+        roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+      });
+    }).toThrow(/at least one condition key beginning with 'gitlab.example.com:'/);
+  });
+
+  test('rejects a webidentity provider claim whose array value contains a bare * (IAM OR semantics)', () => {
+    expect(() => {
+      new RolesL3Construct(new MdaaTestApp().testStack, 'webidentity-array-wildcard', {
+        generateRoles: [
+          {
+            name: 'bad-role',
+            trustedPrincipal: 'webidentity:arn:test-partition:iam::test-account:oidc-provider/gitlab.example.com',
+            // Array values are OR'd by IAM, so the '*' entry matches any identity.
+            assumeRoleTrustConditions: {
+              StringLike: { 'gitlab.example.com:sub': ['project_path:my-org/my-repo:*', '*'] },
+            },
+          },
+        ],
+        naming: testApp.naming,
+        roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+      });
+    }).toThrow(/at least one condition key beginning with 'gitlab.example.com:'/);
+  });
+
+  test('rejects a webidentity provider claim behind a negation operator (StringNotLike)', () => {
+    expect(() => {
+      new RolesL3Construct(new MdaaTestApp().testStack, 'webidentity-negation', {
+        generateRoles: [
+          {
+            name: 'bad-role',
+            trustedPrincipal: 'webidentity:arn:test-partition:iam::test-account:oidc-provider/gitlab.example.com',
+            // "any subject except X" -> does not pin which identity may assume the role.
+            assumeRoleTrustConditions: { StringNotLike: { 'gitlab.example.com:sub': 'project_path:blocked/*' } },
+          },
+        ],
+        naming: testApp.naming,
+        roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+      });
+    }).toThrow(/at least one condition key beginning with 'gitlab.example.com:'/);
+  });
+
+  test('rejects a webidentity provider claim behind a ForAllValues set operator', () => {
+    expect(() => {
+      new RolesL3Construct(new MdaaTestApp().testStack, 'webidentity-forallvalues', {
+        generateRoles: [
+          {
+            name: 'bad-role',
+            trustedPrincipal: 'webidentity:arn:test-partition:iam::test-account:oidc-provider/gitlab.example.com',
+            // ForAllValues is vacuously true when the claim is absent from the request.
+            assumeRoleTrustConditions: {
+              'ForAllValues:StringLike': { 'gitlab.example.com:sub': 'project_path:my-org/my-repo:*' },
+            },
+          },
+        ],
+        naming: testApp.naming,
+        roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+      });
+    }).toThrow(/at least one condition key beginning with 'gitlab.example.com:'/);
+  });
+
+  test('accepts a webidentity trust scoped on the provider :aud claim (e.g. Cognito identity pool)', () => {
+    expect(() => {
+      new RolesL3Construct(new MdaaTestApp().testStack, 'webidentity-aud-scoped', {
+        generateRoles: [
+          {
+            name: 'cognito-role',
+            trustedPrincipal:
+              'webidentity:arn:test-partition:iam::test-account:oidc-provider/cognito-identity.amazonaws.com',
+            // Cognito uses :aud (the identity-pool id) as the tenant boundary, not :sub.
+            assumeRoleTrustConditions: {
+              StringEquals: { 'cognito-identity.amazonaws.com:aud': 'us-east-1:pool-id' },
+            },
+          },
+        ],
+        naming: testApp.naming,
+        roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+      });
+    }).not.toThrow();
+  });
+
+  test('rejects webidentity as an additional trusted principal', () => {
+    expect(() => {
+      new RolesL3Construct(new MdaaTestApp().testStack, 'webidentity-additional', {
+        generateRoles: [
+          {
+            name: 'bad-role',
+            trustedPrincipal: 'this_account',
+            additionalTrustedPrincipals: [
+              {
+                trustedPrincipal: 'webidentity:arn:test-partition:iam::test-account:oidc-provider/gitlab.example.com',
+              },
+            ],
+          },
+        ],
+        naming: testApp.naming,
+        roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+      });
+    }).toThrow(/webidentity trusted principals are not supported as additionalTrustedPrincipals/);
+  });
+});
+
+describe('WebIdentity additionalTrustedActions scoping', () => {
+  const testApp = new MdaaTestApp();
+  new RolesL3Construct(testApp.testStack, 'webidentity-addl-actions', {
+    generateRoles: [
+      {
+        name: 'gitlab-deploy',
+        trustedPrincipal: 'webidentity:arn:test-partition:iam::test-account:oidc-provider/gitlab.example.com',
+        assumeRoleTrustConditions: {
+          StringLike: {
+            'gitlab.example.com:sub': 'project_path:my-org/my-repo:ref_type:branch:ref:main',
+          },
+        },
+        additionalTrustedActions: ['sts:TagSession'],
+      },
+    ],
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+  });
+  const template = Template.fromStack(testApp.testStack);
+
+  test('additionalTrustedActions statement carries the same trust conditions', () => {
+    template.hasResourceProperties(
+      'AWS::IAM::Role',
+      Match.objectLike({
+        AssumeRolePolicyDocument: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Action: 'sts:TagSession',
+              Condition: {
+                StringLike: {
+                  'gitlab.example.com:sub': 'project_path:my-org/my-repo:ref_type:branch:ref:main',
+                },
+              },
+              Effect: 'Allow',
+              Principal: {
+                Federated: 'arn:test-partition:iam::test-account:oidc-provider/gitlab.example.com',
+              },
+            }),
+          ]),
+        },
+      }),
+    );
   });
 });
 

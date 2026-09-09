@@ -90,6 +90,8 @@ generateRoles:
     #   - "federation:<name>": Trust a SAML federation from config
     #   - "account:<account-id>": Trust another AWS account
     #   - "arn:...": Trust a specific IAM role/user ARN
+    #   - "webidentity:<oidc-provider-arn>": Trust an OIDC provider
+    #     (e.g. GitLab CI/CD, GitHub Actions)
     trustedPrincipal: this_account
     # (Optional) Base persona for automatic MDAA managed policy
     # attachment. Valid values: data-admin, data-engineer,
@@ -232,6 +234,19 @@ generateRoles:
         aws:PrincipalArn: arn:{{partition}}:iam::{{account}}:role/test-application-role
     generatedPolicies:
       - TestPolicy
+
+  # ----------------------------------------------------------------
+  # Web identity (OIDC) federation example (e.g. GitLab CI/CD)
+  # ----------------------------------------------------------------
+  # Role assumable via OIDC web identity federation. Uses
+  # sts:AssumeRoleWithWebIdentity with a Federated principal.
+  gitlab-deployment:
+    # Use the "webidentity:" prefix with the OIDC provider ARN
+    trustedPrincipal: webidentity:arn:{{partition}}:iam::{{account}}:oidc-provider/gitlab.example.com
+    # Conditions to restrict which OIDC tokens can assume the role
+    assumeRoleTrustConditions:
+      StringLike:
+        'gitlab.example.com:sub': 'project_path:my-org/my-repo:ref_type:branch:ref:main'
 
   # ----------------------------------------------------------------
   # Multi-service trust with additional STS actions

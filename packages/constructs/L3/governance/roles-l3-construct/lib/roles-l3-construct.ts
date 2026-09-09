@@ -23,6 +23,7 @@ import {
   SamlPrincipal,
   SamlProvider,
   ServicePrincipal,
+  WebIdentityPrincipal,
 } from 'aws-cdk-lib/aws-iam';
 import { CfnResourceShare } from 'aws-cdk-lib/aws-ram';
 import { ParameterTier } from 'aws-cdk-lib/aws-ssm';
@@ -150,9 +151,11 @@ export interface GenerateRoleWithNameProps extends GenerateRoleProps {
 export interface TrustedPrincipalProps {
   /**
    * AWS principal identifier for trust policy. Supports formats:
-   * "this_account", "service:svc.amazonaws.com", "federation:name", or ARN.
+   * "this_account", "service:svc.amazonaws.com", "account:123456789012",
+   * "federation:name", "webidentity:oidc-provider-arn", or ARN.
    *
-   * Use cases: Service trust; Cross-account trust; Federation trust
+   * Use cases: Service trust; Cross-account trust; Federation trust;
+   * OIDC web identity federation (e.g. GitLab CI/CD, GitHub Actions)
    *
    * AWS: IAM trust policy principal specification
    *
@@ -197,9 +200,11 @@ export interface GenerateRoleProps {
   readonly basePersona?: BasePersona;
   /**
    * Primary trusted principal for the role's trust policy. Supports formats:
-   * "this_account", "service:svc.amazonaws.com", "federation:name", or ARN.
+   * "this_account", "service:svc.amazonaws.com", "account:123456789012",
+   * "federation:name", "webidentity:oidc-provider-arn", or ARN.
    *
-   * Use cases: Service trust; Cross-account trust; Federation-based assume role
+   * Use cases: Service trust; Cross-account trust; Federation-based assume role;
+   * OIDC web identity federation (e.g. GitLab CI/CD, GitHub Actions)
    *
    * AWS: IAM role trust policy primary principal
    *
@@ -461,6 +466,26 @@ export class RolesL3Construct extends MdaaL3Construct {
       );
       const managedPolicies = [...(awsManagedPolicies || []), ...(customerManagedPolicies || [])];
 
+      // OIDC providers are not account-bound, so a webidentity trust with no conditions would permit
+      // sts:AssumeRoleWithWebIdentity from ANY identity issued by the provider. Require the operator to
+      // scope the trust on the provider's OWN identity claims (condition keys prefixed with the OIDC
+      // issuer host, e.g. "gitlab.com:sub"). Merely having a non-empty condition is not enough: an empty
+      // {} / { StringLike: {} } scopes nothing, and a condition on an unrelated key (e.g. aws:RequestTag)
+      // leaves the OIDC principal effectively unscoped. Keying on the issuer-host prefix rather than a
+      // fixed claim name lets operators use :sub (GitLab/GitHub) or :aud (Cognito identity pools) as
+      // appropriate to their provider.
+      if (generateRole.trustedPrincipal.startsWith('webidentity:')) {
+        const providerId = RolesL3Construct.webidentityProviderId(generateRole.trustedPrincipal);
+        if (!RolesL3Construct.conditionsScopeProvider(providerId, generateRole.assumeRoleTrustConditions)) {
+          throw new Error(
+            `Role '${generateRole.name}': webidentity trusted principals require assumeRoleTrustConditions ` +
+              `that constrain the OIDC trust on the provider's own claims (at least one condition key ` +
+              `beginning with '${providerId}:', e.g. '${providerId}:sub'); an unscoped condition, or one on ` +
+              `an unrelated key, would allow any identity from the OIDC provider to assume the role.`,
+          );
+        }
+      }
+
       const resolvedTrustPrincipal = this.resolveTrustedPrincipal(generateRole.trustedPrincipal, federationProviders);
       const trustPrincipal = generateRole.assumeRoleTrustConditions
         ? new PrincipalWithConditions(resolvedTrustPrincipal, generateRole.assumeRoleTrustConditions)
@@ -478,10 +503,14 @@ export class RolesL3Construct extends MdaaL3Construct {
           generateRole.additionalTrustedActions,
           `role '${generateRole.name}' additionalTrustedActions`,
         );
+        // Reuse the (optionally condition-scoped) trustPrincipal rather than the raw resolvedTrustPrincipal
+        // so the same assumeRoleTrustConditions apply here. Otherwise a webidentity primary with
+        // additionalTrustedActions would emit a second, unscoped statement granting those sts actions to
+        // the OIDC provider, re-introducing the unscoped OIDC trust the primary guard prevents.
         role.assumeRolePolicy.addStatements(
           new PolicyStatement({
             actions: generateRole.additionalTrustedActions,
-            principals: [resolvedTrustPrincipal],
+            principals: [trustPrincipal],
             effect: Effect.ALLOW,
           }),
         );
@@ -489,6 +518,16 @@ export class RolesL3Construct extends MdaaL3Construct {
 
       generateRole.additionalTrustedPrincipals?.forEach(trustPrincipalProps => {
         if (role.assumeRolePolicy) {
+          // additionalTrustedPrincipals cannot carry trust conditions, so a webidentity principal here
+          // could only ever produce an unscoped OIDC trust. Reject it and direct operators to the
+          // primary trustedPrincipal (with assumeRoleTrustConditions) instead.
+          if (trustPrincipalProps.trustedPrincipal.startsWith('webidentity:')) {
+            throw new Error(
+              `Role '${generateRole.name}': webidentity trusted principals are not supported as ` +
+                `additionalTrustedPrincipals because their OIDC trust cannot be scoped with conditions. ` +
+                `Configure the webidentity principal as the role's primary trustedPrincipal with assumeRoleTrustConditions.`,
+            );
+          }
           const trustPrincipal = this.resolveTrustedPrincipal(
             trustPrincipalProps.trustedPrincipal,
             federationProviders,
@@ -585,10 +624,14 @@ export class RolesL3Construct extends MdaaL3Construct {
         throw new Error(`Role references non-existent federation in config: ${ref}`);
       }
       return new SamlPrincipal(federation, {});
+    } else if (ref.startsWith('webidentity:')) {
+      return new WebIdentityPrincipal(ref.replace(/^webidentity:\s*/, ''));
     } else if (ref == 'this_account') {
       return new AccountPrincipal(this.account);
     } else {
-      throw new Error("Trusted principal must start with service:, account:, federation: or equal 'this_account'");
+      throw new Error(
+        "Trusted principal must start with service:, account:, webidentity:, federation: or equal 'this_account'",
+      );
     }
   }
 
@@ -602,6 +645,82 @@ export class RolesL3Construct extends MdaaL3Construct {
         );
       }
     });
+  }
+
+  /**
+   * Extracts the OIDC issuer identifier from a `webidentity:<oidc-provider-arn>` trusted principal.
+   * IAM OIDC condition keys are prefixed with this identifier (the issuer host/path), e.g. the ARN
+   * `arn:aws:iam::123456789012:oidc-provider/gitlab.com` yields `gitlab.com`, whose claims appear as
+   * `gitlab.com:sub`, `gitlab.com:aud`, etc. Returns '' if the ref is not a well-formed provider ARN.
+   */
+  private static webidentityProviderId(ref: string): string {
+    const arn = ref.replace(/^webidentity:\s*/, '');
+    return arn.split('oidc-provider/')[1] ?? '';
+  }
+
+  /**
+   * Returns true only if the supplied trust conditions actually scope the OIDC trust to the given
+   * provider — i.e. a positively-matching condition operator contains a key prefixed with
+   * `<providerId>:` (typically `:sub`, or `:aud` for Cognito identity pools) whose value is not a bare
+   * `*` wildcard. This deliberately rejects:
+   *  - empty conditions (`{}`, `{ StringLike: {} }`),
+   *  - conditions that only constrain unrelated keys (e.g. `aws:RequestTag/*`),
+   *  - a provider claim matched against `*` (e.g. `{ StringLike: { 'gitlab.com:sub': '*' } }`), and
+   *  - operators that do not positively pin the claim: negation (`StringNotEquals`/`StringNotLike`,
+   *    which mean "any identity except…"), set operators satisfied when the claim is absent
+   *    (`ForAllValues:*`), `*IfExists` variants (satisfied when the claim is absent), and `Null`.
+   * all of which leave the OIDC principal effectively unscoped. It does not attempt to judge how narrow
+   * a non-`*` value is: partial wildcards are legitimately used by operators and cannot be reliably
+   * classified here.
+   */
+  private static conditionsScopeProvider(providerId: string, conditions?: { [key: string]: Condition }): boolean {
+    if (!providerId) {
+      return false;
+    }
+    return Object.entries(conditions ?? {}).some(
+      ([operator, operatorValues]) =>
+        RolesL3Construct.isPositiveMatchOperator(operator) &&
+        typeof operatorValues === 'object' &&
+        operatorValues !== null &&
+        Object.entries(operatorValues).some(
+          ([conditionKey, conditionValue]) =>
+            conditionKey.startsWith(`${providerId}:`) && RolesL3Construct.isConstrainingValue(conditionValue),
+        ),
+    );
+  }
+
+  /**
+   * A condition operator positively pins the claim only if it asserts the claim equals/matches a value
+   * that is present in the request. Negation operators (`StringNotEquals`/`StringNotLike`) invert the
+   * meaning, `ForAllValues:*` is vacuously satisfied when the claim is absent, `*IfExists` is satisfied
+   * when the claim is absent, and `Null` tests presence rather than value — none of these constrain
+   * *which* identity may assume the role, so they do not count as scoping the OIDC trust.
+   */
+  private static isPositiveMatchOperator(operator: string): boolean {
+    return (
+      operator !== 'Null' &&
+      !operator.includes('Not') &&
+      !operator.startsWith('ForAllValues:') &&
+      !operator.endsWith('IfExists')
+    );
+  }
+
+  /**
+   * A condition value meaningfully constrains a claim unless it is a bare `*` wildcard (or an
+   * array whose every entry is `*`), which matches any value and scopes nothing.
+   */
+  private static isConstrainingValue(value: unknown): boolean {
+    if (typeof value === 'string') {
+      return value.trim() !== '*';
+    }
+    if (Array.isArray(value)) {
+      // IAM OR-evaluates the values under a single condition key, so a bare '*' anywhere in the array
+      // matches any identity. Require a non-empty array whose EVERY entry is constraining (fail closed):
+      // one '*' entry makes the whole condition non-scoping.
+      return value.length > 0 && value.every(entry => RolesL3Construct.isConstrainingValue(entry));
+    }
+    // Non-string/array values (e.g. numeric/boolean condition values) are inherently specific.
+    return value !== null && value !== undefined;
   }
 
   private loadPolicyConfig(fileName: string) {
