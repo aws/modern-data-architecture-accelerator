@@ -1,6 +1,6 @@
 # Change Log
 
-## [NEXT_RELEASE_VERSION] - NEXT_RELEASE_DATE
+## [1.8.1] - 2026-09-14
 
 ### New Features
 

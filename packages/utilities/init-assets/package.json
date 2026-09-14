@@ -1,6 +1,6 @@
 {
   "name": "@aws-mdaa/init-assets",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "MDAA documentation and AI steering content bundled for the `mdaa init` command",
   "license": "Apache-2.0",
   "author": {

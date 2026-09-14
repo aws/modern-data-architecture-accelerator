@@ -1,6 +1,6 @@
 {
   "name": "@aws-mdaa/mwaa-constructs",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "MDAA MWAA Constructs",
   "license": "Apache-2.0",
   "author": {
@@ -22,9 +22,9 @@
     "test:package-docs": "../../../../scripts/generate_docs/test_package_docs.sh"
   },
   "devDependencies": {
-    "@aws-mdaa/construct": "1.8.0",
-    "@aws-mdaa/naming": "1.8.0",
-    "@aws-mdaa/testing": "1.8.0",
+    "@aws-mdaa/construct": "1.8.1",
+    "@aws-mdaa/naming": "1.8.1",
+    "@aws-mdaa/testing": "1.8.1",
     "@types/jest": "29.5.14",
     "@types/node": "22.9.0",
     "@types/prettier": "2.6.0",
@@ -38,15 +38,15 @@
     "typescript-json-schema": "0.68.0"
   },
   "dependencies": {
-    "@aws-mdaa/construct": "1.8.0",
-    "@aws-mdaa/naming": "1.8.0",
+    "@aws-mdaa/construct": "1.8.1",
+    "@aws-mdaa/naming": "1.8.1",
     "aws-cdk-lib": "2.261.0",
     "cdk-nag": "2.37.55",
     "constructs": "10.6.0"
   },
   "peerDependencies": {
-    "@aws-mdaa/construct": "1.8.0",
-    "@aws-mdaa/naming": "1.8.0",
+    "@aws-mdaa/construct": "1.8.1",
+    "@aws-mdaa/naming": "1.8.1",
     "aws-cdk-lib": "2.261.0",
     "cdk-nag": "2.37.55",
     "constructs": "10.6.0"

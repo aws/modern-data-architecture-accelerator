@@ -1,6 +1,6 @@
 {
   "name": "@aws-mdaa/eventbridge-helper",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "MDAA EventBridge Helper",
   "license": "Apache-2.0",
   "author": {
@@ -22,8 +22,8 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "devDependencies": {
-    "@aws-mdaa/naming": "1.8.0",
-    "@aws-mdaa/testing": "1.8.0",
+    "@aws-mdaa/naming": "1.8.1",
+    "@aws-mdaa/testing": "1.8.1",
     "@types/jest": "29.5.14",
     "@types/node": "22.9.0",
     "@types/prettier": "2.6.0",
@@ -37,13 +37,13 @@
     "typescript-json-schema": "0.68.0"
   },
   "peerDependencies": {
-    "@aws-mdaa/naming": "1.8.0",
+    "@aws-mdaa/naming": "1.8.1",
     "aws-cdk-lib": "2.261.0",
     "constructs": "10.6.0"
   },
   "dependencies": {
-    "@aws-mdaa/naming": "1.8.0",
-    "@aws-mdaa/sqs-constructs": "1.8.0",
+    "@aws-mdaa/naming": "1.8.1",
+    "@aws-mdaa/sqs-constructs": "1.8.1",
     "aws-cdk-lib": "2.261.0",
     "cdk-nag": "2.37.55",
     "constructs": "10.6.0"
