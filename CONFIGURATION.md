@@ -190,12 +190,12 @@ context:
 
   # List values
   subnet_ids:
-    - subnet-0ec554f55bbcede67
-    - subnet-0009c5a40b836101f
+    - subnet-1234567890abcdef0
+    - subnet-0fedcba9876543210
 
   # Object values
   vpc_configuration:
-    vpcId: vpc-02376b8f79d1b4f1d
+    vpcId: vpc-1234567890abcdef0
     cidr: '10.0.0.0/16'
     enableDnsHostnames: true
 

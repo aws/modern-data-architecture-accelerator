@@ -30,27 +30,78 @@ phases:
       - echo "Post build completed on `date`"
 
 artifacts:
+  # Keep this in step with the ARTIFACT_PATHS list in .gitlab-ci.yml's
+  # cornerstone_package_artifact job: the two feed the same scanners by different
+  # routes, so a path present in only one is scanned in only one.
+  #
+  # package-lock.json must ship alongside package.json: SBOM generators resolve the
+  # npm dependency tree from the lockfile, and report nothing for npm without it.
+  # Every directory holding a package.json, requirements.txt or Dockerfile has to be
+  # here for the same reason.
   files:
     - package.json
+    - package-lock.json
     - packages/**/*
-    - target/**/*
+    - installer/**/*
+    - starter_kits/**/*
+    - sample_customizations/**/*
     - schemas/**/*
     - scripts/**/*
+    - bin/**/*
+    - target/**/*
+    - deployment/**/*
+    - buildspec.yml
+    - solution-manifest.yaml
+    # nx.json names requirements-dev.txt and scripts/build/build_package*.sh as build
+    # inputs, so it and the jest configs are what let anything reading the archive
+    # resolve the project graph. They do not affect the phases above, which run
+    # against the full source checkout.
+    - nx.json
+    - jest.config.js
+    - jest.config.snapshot.js
+    - jest.setup.js
+    - eslint.config.mjs
+    - typedoc.json
+    - requirements-dev.txt
+    - .prettierrc.json
     - .gitignore
+    # Scanner config travels with the code it exempts: .gitallowed carries the test
+    # account IDs that appear in starter_kits/ and schemas/, so shipping the ignore
+    # files without it sends those to the secrets scan unallowlisted.
+    - .viperlightignore
+    - .gitleaksignore
+    - .semgrepignore
+    - .bandit
+    - .checkov.yml
+    - .gitallowed
     - sonar-project.properties
     - README.md
     - LICENSE.txt
     - NOTICE.txt
+    - THIRD-PARTY-NOTICE.md
     - CODE_OF_CONDUCT.md
     - CONTRIBUTING.md
-    - buildspec.yml
     - CHANGELOG.md
     - SECURITY.md
-    - .viperlightignore
-    - .gitleaksignore
-    - .semgrepignore
-    - solution-manifest.yaml
-    - deployment/**/*
+    # README links to each of these; omitting them publishes broken links.
+    - ARCHITECTURES.md
+    - CONFIGURATION.md
+    - CUSTOMIZATION.md
+    - DEPLOYMENT.md
+    - DEVELOPMENT.md
+    - PREDEPLOYMENT.md
+    - TESTING.md
+  # pre_build runs npm install/build/test before artifacts are collected, and CI is
+  # unset here so test_repo.sh additionally runs the starter-kit synth harness and
+  # the Python suites — hence cdk.out, coverage and .venv need excluding too.
   exclude-paths:
     - '**/node_modules/**'
-    - "packages/**/node_modules/"
+    - '**/cdk.out/**'
+    - '**/.mdaa_working/**'
+    - '**/coverage/**'
+    - '**/.venv/**'
+    - '**/__pycache__/**'
+    - '**/.pytest_cache/**'
+    # A lockfile-stripped duplicate of packages/ that build-open-source-dist.sh
+    # leaves behind; scanning it double-counts every workspace package.
+    - 'deployment/open-source/**'

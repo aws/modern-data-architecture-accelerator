@@ -2241,35 +2241,68 @@ cornerstone_package_artifact:
     - "export PUBLISHED_VERSION=v$(cat package.json | jq -r '.version')"
     - 'echo "Packaging Cornerstone artifact for version: $PUBLISHED_VERSION"'
     - echo "Creating cornerstone artifact archive..."
-    # zip exits 0 when only some arguments are missing, so a stale entry in the list
-    # below would ship a silently incomplete artifact. Assert every input exists first.
     - |
-      for f in package.json packages target schemas scripts .gitignore \
-               sonar-project.properties README.md LICENSE.txt NOTICE.txt \
-               CODE_OF_CONDUCT.md CONTRIBUTING.md buildspec.yml CHANGELOG.md \
-               SECURITY.md .viperlightignore solution-manifest.yaml deployment; do
+      # One list drives both the existence check and the archive, so the two cannot
+      # drift apart. The check matters because zip exits 0 when only some of its
+      # arguments are missing, which would ship a silently incomplete artifact.
+      #
+      # Keep this in step with buildspec.yml's artifacts.files: that list is what
+      # reaches the same scanners on the git-source path.
+      ARTIFACT_PATHS="
+        package.json
+        package-lock.json
+        packages
+        installer
+        starter_kits
+        sample_customizations
+        schemas
+        scripts
+        bin
+        target
+        deployment
+        buildspec.yml
+        solution-manifest.yaml
+        nx.json
+        jest.config.js
+        jest.config.snapshot.js
+        jest.setup.js
+        eslint.config.mjs
+        typedoc.json
+        requirements-dev.txt
+        .prettierrc.json
+        .gitignore
+        .viperlightignore
+        .gitleaksignore
+        .semgrepignore
+        .bandit
+        .checkov.yml
+        .gitallowed
+        sonar-project.properties
+        README.md
+        LICENSE.txt
+        NOTICE.txt
+        THIRD-PARTY-NOTICE.md
+        CODE_OF_CONDUCT.md
+        CONTRIBUTING.md
+        CHANGELOG.md
+        SECURITY.md
+        ARCHITECTURES.md
+        CONFIGURATION.md
+        CUSTOMIZATION.md
+        DEPLOYMENT.md
+        DEVELOPMENT.md
+        PREDEPLOYMENT.md
+        TESTING.md
+      "
+      for f in $ARTIFACT_PATHS; do
         [ -e "$f" ] || { echo "ERROR: cornerstone artifact input missing: $f" >&2; exit 1; }
       done
-    - |
-      zip -q -r artifact.zip \
-        package.json \
-        packages/ \
-        target/ \
-        schemas/ \
-        scripts/ \
-        .gitignore \
-        sonar-project.properties \
-        README.md \
-        LICENSE.txt \
-        NOTICE.txt \
-        CODE_OF_CONDUCT.md \
-        CONTRIBUTING.md \
-        buildspec.yml \
-        CHANGELOG.md \
-        SECURITY.md \
-        .viperlightignore \
-        solution-manifest.yaml \
-        deployment/
+      # Unquoted on purpose: the list is newline-separated and no path contains a
+      # space, so word-splitting is what turns it into arguments. node_modules is
+      # excluded because cornerstone_build_distributions runs `npm install` in
+      # installer/ and ships the result through its untracked artifacts.
+      # shellcheck disable=SC2086
+      zip -q -r artifact.zip $ARTIFACT_PATHS -x '*/node_modules/*'
     - echo "Archive created successfully ($(du -h artifact.zip | cut -f1))"
   artifacts:
     name: cornerstone-packaged-artifact
