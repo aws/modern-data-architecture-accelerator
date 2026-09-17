@@ -1,8 +1,8 @@
 # Migrating from `@aws-mdaa/gaia` (v1) to `@aws-mdaa/gaia-v2`
 
-`@aws-mdaa/gaia` (v1) is deprecated in favor of `@aws-mdaa/gaia-v2`. This guide describes what changed, what does not have a drop-in equivalent, and how to migrate an existing deployment.
+`@aws-mdaa/gaia` (v1) has been removed in favor of `@aws-mdaa/gaia-v2`. This guide describes what changed, what does not have a drop-in equivalent, and how to migrate an existing deployment.
 
-> **Status:** v1 remains published and functional. New features land in v2 only. v1 will be removed in v1.9.0.
+> **Status:** v1 has been removed from the MDAA repository as of the v1.9.0 release. The previously published `@aws-mdaa/gaia@1.8.1` and `@aws-mdaa/gaia-l3-construct@1.8.1` packages remain available on the npm registry (marked deprecated) so existing deployments can continue to build while migrating. New features land in v2 only.
 
 ## Why v2 exists
 
@@ -30,7 +30,7 @@ Recommended approach:
 
 1. **Deploy v2 alongside v1** in a new domain or environment inside your existing `mdaa.yaml`. Let both run side by side during migration.
 2. **Re-create your knowledge content** in v2's Bedrock Knowledge Base. v1's RAG stores (Aurora PgVector indices, Kendra indices) do not port directly.
-3. **Update your frontend** to target v2's AppSync Events endpoint and REST endpoint. The API shapes differ. See [`packages/apps/ai/gaia-v2-app/SCHEMA.md`](../gaia-v2-app/SCHEMA.md) for the v2 surface.
+3. **Update your frontend** to target v2's AppSync Events endpoint and REST endpoint. The runtime request/response shapes differ from v1; inspect the deployed v2 API (API Gateway console / AppSync schema) for the current contract. [`SCHEMA.md`](./SCHEMA.md) documents the module's deployment configuration, not the runtime API payloads.
 4. **Cut over traffic** once you have validated v2. Leave v1 deployed until you are confident in v2, then destroy the v1 stack.
 
 ## Config migration
@@ -60,7 +60,7 @@ v1 and v2 configs are not interchangeable. Some key-by-key pointers:
 
 v1 exposed a REST API and a WebSocket API at API Gateway. v2 exposes a REST API at API Gateway and an AppSync Events endpoint for streaming. If you have an existing frontend built against v1:
 
-- **REST calls** will need endpoint URL updates and response schema changes. Check v2's `config-schema.json` for the new shapes.
+- **REST calls** will need endpoint URL updates and request/response schema changes. These runtime payloads are defined by the deployed v2 backend (inspect the API Gateway / AppSync definitions of your stack); v2's `config-schema.json` describes the module's deployment configuration, not the API payload shapes.
 - **WebSocket consumers** must migrate to an AppSync Events client. There is no adapter.
 - **Auth flow** is simpler in v2 because there are no custom authorizers. If you were using the v1 custom authorizer to inject per-user attributes, that logic moves into v2's Cognito user pool triggers (`PreTokenGeneration`) or into your client.
 

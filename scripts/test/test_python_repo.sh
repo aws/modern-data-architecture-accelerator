@@ -16,10 +16,10 @@ source "$SCRIPT_DIR/../nx/affected-base.sh"
 
 if [ "${NX_RUN_ALL:-false}" = "true" ]; then
   echo "Running Python tests (all packages)"
-  npx nx run-many -t test:python --all --parallel=5 --exclude=@aws-mdaa/gaia-l3-construct "$@"
+  npx nx run-many -t test:python --all --parallel=5 "$@"
 else
   echo "Running Python tests (affected packages)"
-  npx nx affected -t test:python --base="$NX_BASE" --head="$NX_HEAD" --parallel=5 --exclude=@aws-mdaa/gaia-l3-construct "$@"
+  npx nx affected -t test:python --base="$NX_BASE" --head="$NX_HEAD" --parallel=5 "$@"
 fi
 
 # Run baseline review script tests (not managed by nx)

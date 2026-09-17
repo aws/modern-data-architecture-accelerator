@@ -9,6 +9,10 @@
 
 - Added **AgentCore Harnesses** via a new top-level `harnesses` property: declarative, tool-using agents (model + system prompt + tools) deployed on AgentCore, each with always-on customer-managed KMS log encryption and PII masking, CUSTOM_JWT/AWS_IAM inbound authorization, and a least-privilege scoped execution role. Additive only — harnesses are created only when the property is set. See the [module README](packages/apps/ai/bedrock-builder-app/README.md) for an overview, sample configs, and the full config surface.
 
+### Removed
+
+- **GAIA v1 removed** (fulfilling the removal target announced in 1.7.0): the `@aws-mdaa/gaia` and `@aws-mdaa/gaia-l3-construct` packages have been deleted. Deployments must use `@aws-mdaa/gaia-v2` and `@aws-mdaa/gaia-v2-l3-construct`, a re-architected GenAI backend that is **not** a drop-in replacement — there is no in-place upgrade. See [MIGRATION_TO_V2.md](packages/apps/ai/gaia-v2-app/MIGRATION_TO_V2.md) for the migration path. **Breaking change.**
+
 ## [1.8.1] - 2026-09-14
 
 ### New Features
@@ -232,7 +236,7 @@
 
 ### Deprecations
 
-- **GAIA v1 removal target set to v1.9.0**: `@aws-mdaa/gaia` and `@aws-mdaa/gaia-l3-construct` (GAIA v1), deprecated in favor of `@aws-mdaa/gaia-v2` and `@aws-mdaa/gaia-v2-l3-construct`, now have a firm removal target of **v1.9.0**. Previously the removal was documented only as "a future release". v1 remains published and functional for existing deployments until then and will not receive new features. See [MIGRATION_TO_V2.md](packages/apps/ai/gaia-app/MIGRATION_TO_V2.md) for migration guidance.
+- **GAIA v1 removal target set to v1.9.0**: `@aws-mdaa/gaia` and `@aws-mdaa/gaia-l3-construct` (GAIA v1), deprecated in favor of `@aws-mdaa/gaia-v2` and `@aws-mdaa/gaia-v2-l3-construct`, now have a firm removal target of **v1.9.0**. Previously the removal was documented only as "a future release". v1 remains published and functional for existing deployments until then and will not receive new features. See [MIGRATION_TO_V2.md](packages/apps/ai/gaia-v2-app/MIGRATION_TO_V2.md) for migration guidance.
 - **Bedrock Agent module deprecation**: `@aws-mdaa/bedrock-agent-l3-construct` is deprecated, as the Amazon Bedrock Agents service will no longer be open to new customers starting on July 30, 2026. Existing customers can continue to use the service as normal. We will support similar capabilities in the next release.
 - **SageMaker Ground Truth and Model Monitoring modules deprecation**: `@aws-mdaa/sagemaker-ground-truth` and `@aws-mdaa/sagemaker-model-monitoring` (apps, their `-l3-construct` L3 constructs, and the `MdaaGroundTruth`/`MdaaModelMonitor` L2 constructs) are deprecated, as SageMaker Ground Truth, Model Monitor, and Clarify entered maintenance mode on July 30, 2026 and are no longer open to new customers. This is a **non-breaking** deprecation — existing deployments continue to work. For Model Monitor/Clarify a replacement solution is targeted for the next release; Ground Truth has no managed AWS replacement. See the [Ground Truth](packages/apps/ai/sagemaker-ground-truth-app/README.md) and [Model Monitoring](packages/apps/ai/sagemaker-model-monitoring-app/README.md) module READMEs for the deprecation mechanism, replacement direction, and migration guidance.
 
@@ -362,7 +366,7 @@
 - `@aws-mdaa/gaia` and `@aws-mdaa/gaia-l3-construct` (GAIA v1) are deprecated in favor of `@aws-mdaa/gaia-v2` and `@aws-mdaa/gaia-v2-l3-construct`
   - v1 packages remain published and functional for existing deployments but will not receive new features
   - v1 packages will be removed in a future major release
-  - v2 is a re-architected GAIA backend (Cognito, AppSync Events, CloudFront) and is not a drop-in replacement. See [MIGRATION_TO_V2.md](packages/apps/ai/gaia-app/MIGRATION_TO_V2.md) for guidance
+  - v2 is a re-architected GAIA backend (Cognito, AppSync Events, CloudFront) and is not a drop-in replacement. See [MIGRATION_TO_V2.md](packages/apps/ai/gaia-v2-app/MIGRATION_TO_V2.md) for guidance
 
 ### General Changes
 

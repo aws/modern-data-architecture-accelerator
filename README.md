@@ -167,8 +167,7 @@ MDAA includes 40+ modules for governance, data lakes, pipelines, analytics, AI, 
 - [**SageMaker Unified Studio**](packages/apps/ai/sm-studio-domain-app/README.md) - Secured SageMaker Unified Studio.
 - [**SageMaker Notebooks**](packages/apps/ai/sm-notebook-app/README.md) - Secured SageMaker notebooks.
 - [**Data Science Team/Project**](packages/apps/ai/data-science-team-app/README.md) - Resources for team data science activities.
-- [**Generative AI Accelerator**](packages/apps/ai/gaia-v2-app/README.md) - Authenticated GenAI chatbot with WebSocket streaming, Bedrock Knowledge Base RAG, and admin and client UIs.
-- [**Generative AI Accelerator v1 (deprecated)**](packages/apps/ai/gaia-app/README.md) - Previous generation of the GenAI chatbot. New deployments should use `@aws-mdaa/gaia-v2`; v1 remains published for existing deployments and will be removed in v1.9.0. See the [migration guide](packages/apps/ai/gaia-app/MIGRATION_TO_V2.md).
+- [**Generative AI Accelerator**](packages/apps/ai/gaia-v2-app/README.md) - Authenticated GenAI chatbot with WebSocket streaming, Bedrock Knowledge Base RAG, and admin and client UIs. Successor to the removed `@aws-mdaa/gaia` (v1); see the [migration guide](packages/apps/ai/gaia-v2-app/MIGRATION_TO_V2.md).
 - [**SageMaker Ground Truth**](packages/apps/ai/sagemaker-ground-truth-app/README.md) - Automated continuous data labeling pipeline with Ground Truth and Feature Store integration.
 - [**SageMaker MLOps**](packages/apps/ai/sagemaker-mlops-app/README.md) - Unified ML training and deployment pipeline with cross-account model promotion.
 - [**SageMaker Pipeline**](packages/apps/ai/sagemaker-pipeline-app/README.md) - Declarative SageMaker Pipeline defined in CDK/CloudFormation with no seed code required.

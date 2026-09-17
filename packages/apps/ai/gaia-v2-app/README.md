@@ -2,6 +2,8 @@
 
 The GenAI Accelerator is a comprehensive, enterprise-ready solution for rapidly deploying production-grade Generative AI applications on AWS. Built as part of the Modern Data Architecture Accelerator (MDAA) ecosystem, it provides organizations with a secure, scalable, and compliant foundation for implementing GenAI capabilities without the complexity of building from scratch.
 
+> **Migrating from GAIA v1?** `@aws-mdaa/gaia-v2` is the successor to the removed `@aws-mdaa/gaia` (v1) module. v2 is a re-architected backend and is not a drop-in replacement — see [MIGRATION_TO_V2.md](./MIGRATION_TO_V2.md) for the migration path.
+
 ## Architecture Overview
 
 The GenAI Accelerator follows a modern, event-driven serverless architecture designed for scalability, security, and cost optimization. The system is built around three core interaction patterns: real-time chat via WebSocket, RESTful API operations, and asynchronous document processing.
