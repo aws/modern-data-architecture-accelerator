@@ -115,6 +115,14 @@
                     },
                     "type": "array"
                 },
+                "additionalKmsKeyArns": {
+                    "default": "- only this bucket's own key may encrypt objects written to it",
+                    "description": "KMS keys, besides this bucket's own key, permitted to encrypt objects written to this bucket.\nApplies to this bucket only, on top of the module-level additionalBucketKmsKeyArns; the two\nare unioned. Use this when one zone needs a key the rest of the module does not. List only\nkeys the deployment controls - each one widens which keys may encrypt objects here.\n\nUse cases: One zone written by a Glue job with its own security configuration; A shared\nanalytics key used against a single zone\n\nAWS: S3 bucket policy ForceKMS condition on s3:x-amz-server-side-encryption-aws-kms-key-id\n\nValidation: Optional; array of full KMS key ARNs, since the condition key carries an ARN\nrather than a key id. Wildcards are rejected at synth: the bucket policy matches these values\nwith StringNotLikeIfExists, so a `*` or `?` would permit every key. An MDAA SSM reference may\nstand in for a literal - `ssm-domain:` and `ssm-org:` take a path relative to the domain or the\norg, and `ssm:` takes an absolute path.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "corsRules": {
                     "description": "Cross-origin resource sharing rules for this bucket.\nRequired when web browsers or AWS services need cross-origin access.\n\nUse cases: SageMaker Ground Truth labeling; Web-based data applications; AWS service integrations\n\nAWS: S3 CORS configuration\n\nValidation: Optional; array of CorsRuleConfig",
                     "items": {
@@ -3344,6 +3352,14 @@
             },
             "description": "Named access policies defining role-based permissions per S3 prefix.\nPolicies are referenced by name in bucket configurations.\n\nUse cases: Reusable permission sets; Prefix-level read/write/super access\n\nAWS: S3 bucket policy rule sets\n\nValidation: Required; map of policy name to AccessPolicyConfig; policies referenced in buckets must be defined here",
             "type": "object"
+        },
+        "additionalBucketKmsKeyArns": {
+            "default": "- only each bucket's own key may encrypt objects written to it",
+            "description": "KMS keys, besides each bucket's own key, permitted to encrypt objects written to any bucket in\nthis module. Set this when a Glue job writes here under a Glue Security Configuration keyed by\nanother module's key: a Security Configuration encrypts with one key, so every bucket the job\nwrites to has to trust that key. Applies to every bucket in the module - use a bucket's own\nadditionalKmsKeyArns for a key only one zone needs. List only keys the deployment controls,\nsince each one widens which keys may encrypt objects here. The module README covers the\nkms:Decrypt the read path also needs.\n\nUse cases: Splitting a data lake across several Data Lake modules, each with its own key;\nGlue jobs writing into a module that did not create the Security Configuration key; A shared\nanalytics key owned outside this module\n\nAWS: S3 bucket policy ForceKMS condition on s3:x-amz-server-side-encryption-aws-kms-key-id\n\nValidation: Optional; array of full KMS key ARNs, since the condition key carries an ARN\nrather than a key id. Wildcards are rejected at synth: the bucket policy matches these values\nwith StringNotLikeIfExists, so a `*` or `?` would permit every key. An MDAA SSM reference may\nstand in for a literal - `ssm-domain:` and `ssm-org:` take a path relative to the domain or the\norg, and `ssm:` takes an absolute path, which for a data lake key means spelling out the org\nand domain segments. An SSM reference also makes this module undeployable until the module\nowning the key has deployed; a literal ARN carries no such dependency.",
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
         },
         "buckets": {
             "additionalProperties": {

@@ -156,6 +156,12 @@ lifecycleConfigurations:
           StorageClass: STANDARD_IA
           NewerNoncurrentVersions: 1
 
+# (Optional) Keys, besides each bucket's own, allowed to encrypt objects written to any bucket
+# here. Usually the key a Glue Security Configuration uses, created by another data lake module.
+# Example SSM: ssm-domain:/datalake-raw/kms/arn
+additionalBucketKmsKeyArns:
+  - ssm-domain:/datalake-raw/kms/arn
+
 # Data lake bucket definitions keyed by zone name (e.g., 'raw',
 # 'transformed', 'curated'). Each bucket gets its own S3 bucket
 # with the specified access policies and features.
@@ -301,6 +307,10 @@ buckets:
     accessPolicies:
       - Root
       - Data
+    # (Optional) Keys allowed to encrypt objects written to this bucket only, on top of the
+    # module-level additionalBucketKmsKeyArns above.
+    additionalKmsKeyArns:
+      - arn:{{partition}}:kms:{{region}}:{{account}}:key/sample-shared-analytics-key
     replication:
       # Sending side, as on raw: MDAA creates the rules and the replication role here.
       outbound:

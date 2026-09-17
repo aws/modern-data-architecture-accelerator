@@ -23,6 +23,7 @@ export class DataLakeCDKApp extends MdaaCdkApp {
       buckets: appConfig.buckets,
       storageLensEnabled: appConfig.storageLensEnabled,
       shareParametersWithAccounts: appConfig.shareParametersWithAccounts,
+      additionalBucketKmsKeyArns: appConfig.additionalBucketKmsKeyArns,
       ...l3ConstructProps,
     };
 

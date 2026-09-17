@@ -191,6 +191,34 @@ Worth knowing before turning it on:
 - **Delete markers are not replicated unless you ask.** `outbound.deleteMarkerReplication` defaults to false, matching S3's own default: deleting an object here leaves the replica in place, so the destination stays usable as a recovery point after an accidental or malicious delete. Set it to true when the destination has to mirror this bucket rather than protect it, and the replication role is then granted `s3:ReplicateDelete` to match. Two limits apply either way, both S3's: the deletion of a *specific version* is never replicated, and neither are delete markers written by an S3 Lifecycle expiration rule - so a bucket whose `lifecycleConfiguration` expires objects cannot be mirrored exactly. A bucket receiving replicas is always granted `s3:ReplicateDelete`, since the sending rule belongs to the other account and may enable delete markers at any time.
 - **Prefix scoping.** Omitting `prefixFilters` on `outbound` replicates the whole bucket, which is usually what a DR copy wants. Omitting it on `inbound` is a wider decision: it grants the external role replicate-write across every key in the receiving bucket and leaves it able to list every key too, so set it whenever the sending side only writes under known prefixes - most of all when that side is not MDAA-managed. When both ends set it, the `inbound` prefixes must cover the `outbound` prefixes or the uncovered objects fail to replicate.
 
+## Trusting Additional KMS Keys
+
+Every bucket in this module is encrypted with the module's own KMS key, and its bucket policy denies `s3:PutObject` for any object encrypted with a different key. A Glue Security Configuration encrypts with exactly one key, so when a data lake is split across several Data Lake modules - each of which creates its own key - a Glue job running under one Security Configuration can only write to the module whose key that Security Configuration uses. Writes to the others fail with Access Denied.
+
+Name the Security Configuration's key on the modules that have to accept those writes. `additionalBucketKmsKeyArns` applies to every bucket in the module, and a bucket's own `additionalKmsKeyArns` adds a key for that zone alone; the two are unioned, and each bucket always trusts its own key:
+
+```yaml
+# in the module that does not own the Security Configuration key
+additionalBucketKmsKeyArns:
+  - ssm-domain:/datalake-raw/kms/arn
+
+buckets:
+  standardized:
+    accessPolicies: [Root]
+  exchange:
+    accessPolicies: [Root]
+    additionalKmsKeyArns:
+      - arn:aws:kms:us-east-1:111111111111:key/33333333-4444-5555-6666-777777777777
+```
+
+Both properties take full KMS key **ARNs** - the bucket policy condition carries an ARN, not a key id. List only keys the deployment controls: each one widens which keys may encrypt objects in these buckets.
+
+Three things to know before setting them:
+
+- **Reading the objects needs a KMS grant this does not give.** Objects a Glue job writes are encrypted with the Security Configuration's key, not with the bucket's own key, so anything that reads them also needs `kms:Decrypt` on that key. A Data Lake module makes key users of the roles in its own `accessPolicies` only, so a role that reaches these buckets through this module holds no rights on the other module's key. Granting it there means adding it to that module's `accessPolicies`, which also grants it prefix access to that module's buckets.
+- **An SSM reference couples this module's deployment to the module that owns the key.** `ssm-domain:`, `ssm-org:` and `ssm:` all resolve through CloudFormation at stack-operation time, and CloudFormation fails the operation when the parameter does not exist - so this module cannot deploy until the module publishing the key has. A literal ARN carries no such dependency; use one when the two are deployed independently.
+- **A wildcard is caught only in a literal ARN.** MDAA refuses a `*` or `?` in these values at synth, because the bucket policy matches them with `StringNotLikeIfExists` - an operator that honours wildcards - so one value containing a wildcard would match every key ARN and switch the guard off for the whole bucket. An SSM reference is still an unresolved token at synth and cannot be checked, so whatever the parameter holds at stack-operation time is what lands in the policy. Anyone who can write that parameter can therefore disable the bucket's encryption enforcement: restrict write access to it as tightly as to the bucket policy, or name the key with a literal ARN.
+
 ## Configuration
 
 ### MDAA Config

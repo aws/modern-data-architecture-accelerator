@@ -302,6 +302,11 @@ export interface BucketDefinition {
   readonly corsRules?: CorsRule[];
   /** Cross-account replication into and/or out of this bucket. Both sides default off. */
   readonly replication?: BucketReplicationDefinition;
+  /**
+   * KMS key ARNs, besides this bucket's own key, permitted to encrypt objects written here.
+   * Unioned with the module-level additionalBucketKmsKeyArns.
+   */
+  readonly additionalKmsKeyArns?: string[];
 }
 
 export interface AccessPolicyProps {
@@ -349,6 +354,11 @@ export interface DataLakeL3ConstructProps extends MdaaL3ConstructProps {
    * @default - no parameters are shared and all parameters stay in the Standard tier
    */
   readonly shareParametersWithAccounts?: string[];
+  /**
+   * KMS key ARNs, besides each bucket's own key, permitted to encrypt objects written to any
+   * bucket in this module. Unioned with each bucket's own additionalKmsKeyArns.
+   */
+  readonly additionalBucketKmsKeyArns?: string[];
 }
 
 /**
@@ -470,6 +480,32 @@ class DataLakeReplicationValidator {
    */
   private static literal(value: string): string | undefined {
     return Token.isUnresolved(value) ? undefined : value;
+  }
+}
+
+/**
+ * Synth-time guard on the keys a bucket is configured to trust for encryption, beyond its own.
+ */
+class DataLakeKmsKeyTrustValidator {
+  /**
+   * The ForceKMS statement denies s3:PutObject unless the encrypting key matches one of these
+   * values, under StringNotLikeIfExists - an operator that honours `*` and `?` wildcards. A value
+   * containing one therefore matches every key ARN and switches the guard off for the whole bucket,
+   * so it is rejected rather than deployed.
+   *
+   * Only a wrong value this permissive is rejected. A merely malformed ARN fails closed: it matches
+   * no key, so writes with the key it was meant to name stay denied.
+   *
+   * Skipped for unresolved tokens, which is what an SSM-sourced ARN still is at synth.
+   * https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition_operators.html
+   */
+  public static validateNoWildcards(bucketZone: string, keyArns: string[]) {
+    const wildcarded = keyArns.filter(arn => !Token.isUnresolved(arn) && /[*?]/.test(arn));
+    if (wildcarded.length > 0) {
+      throw new Error(
+        `Bucket '${bucketZone}': additional KMS key ARN '${wildcarded[0]}' contains a wildcard. The bucket policy matches these values with StringNotLikeIfExists, so a wildcard would permit every key and disable encryption enforcement on this bucket. List each trusted key ARN in full.`,
+      );
+    }
   }
 }
 
@@ -681,6 +717,7 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
       corsRules: bucketDefinition.corsRules,
       replicationRole: replicationRole?.role,
       replicationRules: outbound ? this.createReplicationRules(bucketDefinition.bucketZone, outbound) : undefined,
+      additionalKmsKeyArns: this.resolveAdditionalKmsKeyArns(bucketDefinition),
       tier: this.parameterTier,
     });
 
@@ -742,6 +779,24 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
     this.addBucketEventBridgeNotification(bucketDefinition, bucket);
 
     return bucket;
+  }
+
+  /**
+   * Keys, besides the bucket's own, that may encrypt objects written to it: the module-level list
+   * followed by this bucket's own, deduplicated on first occurrence. Order follows the config, so
+   * reordering two keys there reorders the rendered condition - a template diff only, since IAM
+   * treats the condition's values as a set and order never changes how it evaluates.
+   *
+   * Undefined for an empty union rather than an empty array: MdaaBucket takes its multi-key branch
+   * on any defined value, so an empty array would render ForAllValues:StringNotLikeIfExists on a
+   * bucket that trusts only its own key - a template diff for no gain.
+   */
+  private resolveAdditionalKmsKeyArns(bucketDefinition: BucketDefinition): string[] | undefined {
+    const keyArns = [
+      ...new Set([...(this.props.additionalBucketKmsKeyArns ?? []), ...(bucketDefinition.additionalKmsKeyArns ?? [])]),
+    ];
+    DataLakeKmsKeyTrustValidator.validateNoWildcards(bucketDefinition.bucketZone, keyArns);
+    return keyArns.length > 0 ? keyArns : undefined;
   }
 
   /**

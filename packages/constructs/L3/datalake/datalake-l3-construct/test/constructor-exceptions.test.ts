@@ -272,4 +272,60 @@ describe('S3DatalakeBucketL3Construct Exception Tests', () => {
         }),
     ).toThrow(/needs the 4 parameters it shares to exist, but 0 were created/);
   });
+
+  // A wildcard matches every key ARN under StringNotLikeIfExists, so it would deploy a bucket whose
+  // encryption enforcement is off while still looking configured.
+  test('a wildcard in a per-bucket additional KMS key ARN throws', () => {
+    expect(
+      build({
+        bucketZone: 'test-zone',
+        accessPolicies: [testAccessPolicy],
+        additionalKmsKeyArns: ['arn:aws:kms:us-west-2:222222222222:key/*'],
+      }),
+    ).toThrow(/contains a wildcard.*would permit every key and disable encryption enforcement/s);
+  });
+
+  test('a single-character wildcard in an additional KMS key ARN throws', () => {
+    expect(
+      build({
+        bucketZone: 'test-zone',
+        accessPolicies: [testAccessPolicy],
+        additionalKmsKeyArns: ['arn:aws:kms:us-west-2:222222222222:key/abcd-123?'],
+      }),
+    ).toThrow(/contains a wildcard/);
+  });
+
+  test('a wildcard in a module-level additional KMS key ARN throws', () => {
+    expect(
+      () =>
+        new S3DatalakeBucketL3Construct(testApp.testStack, 'module-wildcard-stack', {
+          buckets: [{ bucketZone: 'test-zone', accessPolicies: [testAccessPolicy] }],
+          naming: testApp.naming,
+          roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+          additionalBucketKmsKeyArns: ['arn:aws:kms:*:*:key/*'],
+        }),
+    ).toThrow(/contains a wildcard/);
+  });
+
+  test('a full additional KMS key ARN does not throw', () => {
+    expect(
+      build({
+        bucketZone: 'test-zone',
+        accessPolicies: [testAccessPolicy],
+        additionalKmsKeyArns: ['arn:aws:kms:us-west-2:222222222222:key/abcd-1234'],
+      }),
+    ).not.toThrow();
+  });
+
+  // An SSM-sourced ARN is still a token at synth, so it cannot be inspected and must be allowed
+  // through - the sample config uses exactly this form.
+  test('an additional KMS key ARN resolved at deploy time does not throw', () => {
+    expect(
+      build({
+        bucketZone: 'test-zone',
+        accessPolicies: [testAccessPolicy],
+        additionalKmsKeyArns: [Lazy.string({ produce: () => 'arn:aws:kms:us-west-2:222222222222:key/abcd-1234' })],
+      }),
+    ).not.toThrow();
+  });
 });

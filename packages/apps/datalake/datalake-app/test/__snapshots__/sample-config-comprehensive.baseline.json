@@ -21,6 +21,10 @@
       "Type": "AWS::SSM::Parameter::Value<String>",
       "Default": "/test-org/test-domain/generated-role/data-scientist/id"
     },
+    "SsmParameterValuetestorgtestdomaindatalakerawkmsarnC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/test-domain/datalake-raw/kms/arn"
+    },
     "BootstrapVersion": {
       "Type": "AWS::SSM::Parameter::Value<String>",
       "Default": "/cdk-bootstrap/hnb659fds/version",
@@ -1261,13 +1265,18 @@
             {
               "Action": "s3:PutObject",
               "Condition": {
-                "StringNotLikeIfExists": {
-                  "s3:x-amz-server-side-encryption-aws-kms-key-id": {
-                    "Fn::GetAtt": [
-                      "cmk01DE03DA",
-                      "Arn"
-                    ]
-                  }
+                "ForAllValues:StringNotLikeIfExists": {
+                  "s3:x-amz-server-side-encryption-aws-kms-key-id": [
+                    {
+                      "Fn::GetAtt": [
+                        "cmk01DE03DA",
+                        "Arn"
+                      ]
+                    },
+                    {
+                      "Ref": "SsmParameterValuetestorgtestdomaindatalakerawkmsarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+                    }
+                  ]
                 }
               },
               "Effect": "Deny",
@@ -2374,13 +2383,19 @@
             {
               "Action": "s3:PutObject",
               "Condition": {
-                "StringNotLikeIfExists": {
-                  "s3:x-amz-server-side-encryption-aws-kms-key-id": {
-                    "Fn::GetAtt": [
-                      "cmk01DE03DA",
-                      "Arn"
-                    ]
-                  }
+                "ForAllValues:StringNotLikeIfExists": {
+                  "s3:x-amz-server-side-encryption-aws-kms-key-id": [
+                    {
+                      "Fn::GetAtt": [
+                        "cmk01DE03DA",
+                        "Arn"
+                      ]
+                    },
+                    {
+                      "Ref": "SsmParameterValuetestorgtestdomaindatalakerawkmsarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+                    },
+                    "arn:test-partition:kms:test-region:test-account:key/sample-shared-analytics-key"
+                  ]
                 }
               },
               "Effect": "Deny",
@@ -3755,13 +3770,18 @@
             {
               "Action": "s3:PutObject",
               "Condition": {
-                "StringNotLikeIfExists": {
-                  "s3:x-amz-server-side-encryption-aws-kms-key-id": {
-                    "Fn::GetAtt": [
-                      "cmk01DE03DA",
-                      "Arn"
-                    ]
-                  }
+                "ForAllValues:StringNotLikeIfExists": {
+                  "s3:x-amz-server-side-encryption-aws-kms-key-id": [
+                    {
+                      "Fn::GetAtt": [
+                        "cmk01DE03DA",
+                        "Arn"
+                      ]
+                    },
+                    {
+                      "Ref": "SsmParameterValuetestorgtestdomaindatalakerawkmsarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+                    }
+                  ]
                 }
               },
               "Effect": "Deny",
@@ -4783,13 +4803,18 @@
             {
               "Action": "s3:PutObject",
               "Condition": {
-                "StringNotLikeIfExists": {
-                  "s3:x-amz-server-side-encryption-aws-kms-key-id": {
-                    "Fn::GetAtt": [
-                      "cmk01DE03DA",
-                      "Arn"
-                    ]
-                  }
+                "ForAllValues:StringNotLikeIfExists": {
+                  "s3:x-amz-server-side-encryption-aws-kms-key-id": [
+                    {
+                      "Fn::GetAtt": [
+                        "cmk01DE03DA",
+                        "Arn"
+                      ]
+                    },
+                    {
+                      "Ref": "SsmParameterValuetestorgtestdomaindatalakerawkmsarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+                    }
+                  ]
                 }
               },
               "Effect": "Deny",

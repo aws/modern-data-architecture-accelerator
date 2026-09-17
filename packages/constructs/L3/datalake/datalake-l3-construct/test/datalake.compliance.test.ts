@@ -1471,6 +1471,145 @@ describe('DataLake Inbound Replication list scoping', () => {
   });
 });
 
+/** The condition key the ForceKMS statement matches on, spelled out once. */
+const FORCE_KMS_CONDITION_KEY = 's3:x-amz-server-side-encryption-aws-kms-key-id';
+
+/**
+ * Each bucket policy's ForceKMS condition, keyed by the name of the bucket it applies to. Keyed by
+ * bucket name rather than by logical id so a per-bucket assertion does not depend on how CDK
+ * mangles a construct id.
+ */
+function forceKmsConditionsByBucketName(template: Template): { [bucketName: string]: unknown } {
+  const buckets = template.findResources('AWS::S3::Bucket');
+  return Object.fromEntries(
+    Object.values(template.findResources('AWS::S3::BucketPolicy')).map(policy => {
+      const bucketName = buckets[policy.Properties.Bucket.Ref].Properties.BucketName;
+      const statements: { Sid?: string; Condition?: unknown }[] = policy.Properties.PolicyDocument.Statement;
+      return [bucketName, statements.find(statement => statement.Sid == 'ForceKMS')?.Condition];
+    }),
+  );
+}
+
+const TEST_BUCKET_NAME_PREFIX = 'test-org-test-env-test-domain-test-module-';
+
+describe('DataLake Additional Bucket KMS Keys', () => {
+  const testApp = new MdaaTestApp();
+  const policy: AccessPolicyProps = {
+    name: 'test-policy',
+    s3Prefix: '/data',
+    readRoleRefs: [{ id: 'test-read-role-id' }],
+  };
+  const moduleKeyArn = 'arn:test-partition:kms:test-region:test-account:key/module-wide-key';
+  const zoneKeyArn = 'arn:test-partition:kms:test-region:test-account:key/zone-only-key';
+
+  new S3DatalakeBucketL3Construct(testApp.testStack, 'test-additional-keys-stack', {
+    buckets: [
+      { bucketZone: 'inherits', accessPolicies: [policy] },
+      { bucketZone: 'extends', accessPolicies: [policy], additionalKmsKeyArns: [zoneKeyArn] },
+      { bucketZone: 'repeats', accessPolicies: [policy], additionalKmsKeyArns: [moduleKeyArn] },
+    ],
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+    additionalBucketKmsKeyArns: [moduleKeyArn],
+  });
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  const conditions = forceKmsConditionsByBucketName(template);
+  const kmsKeyLogicalIds = Object.keys(template.findResources('AWS::KMS::Key'));
+  const ownKey = { 'Fn::GetAtt': [kmsKeyLogicalIds[0], 'Arn'] };
+
+  // The data lake mints exactly one key, so the expectations below can name it positionally.
+  test('The module creates a single KMS key', () => {
+    expect(kmsKeyLogicalIds).toHaveLength(1);
+  });
+
+  test('A module-level key is trusted by every bucket, alongside the bucket own key', () => {
+    Object.values(conditions).forEach(condition =>
+      expect(condition).toEqual({
+        'ForAllValues:StringNotLikeIfExists': {
+          [FORCE_KMS_CONDITION_KEY]: expect.arrayContaining([ownKey, moduleKeyArn]),
+        },
+      }),
+    );
+  });
+
+  test('A per-bucket key is trusted only by that bucket', () => {
+    expect(conditions[`${TEST_BUCKET_NAME_PREFIX}extends`]).toEqual({
+      'ForAllValues:StringNotLikeIfExists': {
+        [FORCE_KMS_CONDITION_KEY]: [ownKey, moduleKeyArn, zoneKeyArn],
+      },
+    });
+    expect(conditions[`${TEST_BUCKET_NAME_PREFIX}inherits`]).toEqual({
+      'ForAllValues:StringNotLikeIfExists': {
+        [FORCE_KMS_CONDITION_KEY]: [ownKey, moduleKeyArn],
+      },
+    });
+  });
+
+  test('A key named at both levels appears once', () => {
+    expect(conditions[`${TEST_BUCKET_NAME_PREFIX}repeats`]).toEqual({
+      'ForAllValues:StringNotLikeIfExists': {
+        [FORCE_KMS_CONDITION_KEY]: [ownKey, moduleKeyArn],
+      },
+    });
+  });
+});
+
+describe('DataLake Without Additional Bucket KMS Keys', () => {
+  const testApp = new MdaaTestApp();
+
+  new S3DatalakeBucketL3Construct(testApp.testStack, 'test-own-key-only-stack', {
+    buckets: [
+      {
+        bucketZone: 'own-key-only',
+        accessPolicies: [{ name: 'test-policy', s3Prefix: '/data', readRoleRefs: [{ id: 'test-read-role-id' }] }],
+      },
+    ],
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+  });
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  // The single-key form is a bare scalar under StringNotLikeIfExists. Setting neither property has
+  // to keep rendering it, or every existing config gets a bucket-policy diff.
+  test('A bucket trusting only its own key keeps the single-key condition', () => {
+    const ownKey = { 'Fn::GetAtt': [Object.keys(template.findResources('AWS::KMS::Key'))[0], 'Arn'] };
+    expect(Object.values(forceKmsConditionsByBucketName(template))).toEqual([
+      { StringNotLikeIfExists: { [FORCE_KMS_CONDITION_KEY]: ownKey } },
+    ]);
+  });
+});
+
+describe('DataLake With Empty Additional Bucket KMS Key Lists', () => {
+  const testApp = new MdaaTestApp();
+
+  new S3DatalakeBucketL3Construct(testApp.testStack, 'test-empty-keys-stack', {
+    buckets: [
+      {
+        bucketZone: 'empty-lists',
+        accessPolicies: [{ name: 'test-policy', s3Prefix: '/data', readRoleRefs: [{ id: 'test-read-role-id' }] }],
+        additionalKmsKeyArns: [],
+      },
+    ],
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+    additionalBucketKmsKeyArns: [],
+  });
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  // MdaaBucket branches on any defined value, so an empty union has to reach it as undefined -
+  // an empty array would render the multi-key operator around a single key.
+  test('An empty union renders the single-key condition, not the multi-key operator', () => {
+    const ownKey = { 'Fn::GetAtt': [Object.keys(template.findResources('AWS::KMS::Key'))[0], 'Arn'] };
+    expect(Object.values(forceKmsConditionsByBucketName(template))).toEqual([
+      { StringNotLikeIfExists: { [FORCE_KMS_CONDITION_KEY]: ownKey } },
+    ]);
+  });
+});
+
 describe('DataLake Outbound Replication role trust policy', () => {
   const testApp = new MdaaTestApp();
 

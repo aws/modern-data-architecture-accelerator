@@ -9,6 +9,10 @@
 
 - Added **AgentCore Harnesses** via a new top-level `harnesses` property: declarative, tool-using agents (model + system prompt + tools) deployed on AgentCore, each with always-on customer-managed KMS log encryption and PII masking, CUSTOM_JWT/AWS_IAM inbound authorization, and a least-privilege scoped execution role. Additive only — harnesses are created only when the property is set. See the [module README](packages/apps/ai/bedrock-builder-app/README.md) for an overview, sample configs, and the full config surface.
 
+#### Data Lake Module
+
+- Added `additionalBucketKmsKeyArns` and per-bucket `additionalKmsKeyArns` to let buckets accept objects encrypted with keys the module did not create, so Glue jobs can write into a data lake split across several Data Lake modules. Both are optional; existing configs are unchanged. See the [module README](packages/apps/datalake/datalake-app/README.md#trusting-additional-kms-keys).
+
 ### Removed
 
 - **GAIA v1 removed** (fulfilling the removal target announced in 1.7.0): the `@aws-mdaa/gaia` and `@aws-mdaa/gaia-l3-construct` packages have been deleted. Deployments must use `@aws-mdaa/gaia-v2` and `@aws-mdaa/gaia-v2-l3-construct`, a re-architected GenAI backend that is **not** a drop-in replacement — there is no in-place upgrade. See [MIGRATION_TO_V2.md](packages/apps/ai/gaia-v2-app/MIGRATION_TO_V2.md) for the migration path. **Breaking change.**

@@ -128,6 +128,25 @@ export interface BucketConfig {
    * Validation: Optional; both sub-blocks default off
    */
   readonly replication?: BucketReplicationDefinition;
+  /**
+   * KMS keys, besides this bucket's own key, permitted to encrypt objects written to this bucket.
+   * Applies to this bucket only, on top of the module-level additionalBucketKmsKeyArns; the two
+   * are unioned. Use this when one zone needs a key the rest of the module does not. List only
+   * keys the deployment controls - each one widens which keys may encrypt objects here.
+   *
+   * Use cases: One zone written by a Glue job with its own security configuration; A shared
+   * analytics key used against a single zone
+   *
+   * AWS: S3 bucket policy ForceKMS condition on s3:x-amz-server-side-encryption-aws-kms-key-id
+   *
+   * Validation: Optional; array of full KMS key ARNs, since the condition key carries an ARN
+   * rather than a key id. Wildcards are rejected at synth: the bucket policy matches these values
+   * with StringNotLikeIfExists, so a `*` or `?` would permit every key. An MDAA SSM reference may
+   * stand in for a literal - `ssm-domain:` and `ssm-org:` take a path relative to the domain or the
+   * org, and `ssm:` takes an absolute path.
+   * @default - only this bucket's own key may encrypt objects written to it
+   */
+  readonly additionalKmsKeyArns?: string[];
 }
 
 /**
@@ -544,6 +563,31 @@ export interface DataLakeConfigContents extends MdaaBaseConfigContents {
    * @default - no parameters are shared and all parameters stay in the Standard tier
    */
   readonly shareParametersWithAccounts?: string[];
+  /**
+   * KMS keys, besides each bucket's own key, permitted to encrypt objects written to any bucket in
+   * this module. Set this when a Glue job writes here under a Glue Security Configuration keyed by
+   * another module's key: a Security Configuration encrypts with one key, so every bucket the job
+   * writes to has to trust that key. Applies to every bucket in the module - use a bucket's own
+   * additionalKmsKeyArns for a key only one zone needs. List only keys the deployment controls,
+   * since each one widens which keys may encrypt objects here. The module README covers the
+   * kms:Decrypt the read path also needs.
+   *
+   * Use cases: Splitting a data lake across several Data Lake modules, each with its own key;
+   * Glue jobs writing into a module that did not create the Security Configuration key; A shared
+   * analytics key owned outside this module
+   *
+   * AWS: S3 bucket policy ForceKMS condition on s3:x-amz-server-side-encryption-aws-kms-key-id
+   *
+   * Validation: Optional; array of full KMS key ARNs, since the condition key carries an ARN
+   * rather than a key id. Wildcards are rejected at synth: the bucket policy matches these values
+   * with StringNotLikeIfExists, so a `*` or `?` would permit every key. An MDAA SSM reference may
+   * stand in for a literal - `ssm-domain:` and `ssm-org:` take a path relative to the domain or the
+   * org, and `ssm:` takes an absolute path, which for a data lake key means spelling out the org
+   * and domain segments. An SSM reference also makes this module undeployable until the module
+   * owning the key has deployed; a literal ARN carries no such dependency.
+   * @default - only each bucket's own key may encrypt objects written to it
+   */
+  readonly additionalBucketKmsKeyArns?: string[];
 }
 
 export class DataLakeConfigParser extends MdaaAppConfigParser<DataLakeConfigContents> {
@@ -554,6 +598,7 @@ export class DataLakeConfigParser extends MdaaAppConfigParser<DataLakeConfigCont
   public readonly inventories?: { [key: string]: string };
   public readonly storageLensEnabled: boolean;
   public readonly shareParametersWithAccounts?: string[];
+  public readonly additionalBucketKmsKeyArns?: string[];
 
   constructor(stack: Stack, props: MdaaAppConfigParserProps) {
     super(stack, props, configSchema as Schema);
@@ -567,6 +612,7 @@ export class DataLakeConfigParser extends MdaaAppConfigParser<DataLakeConfigCont
 
     this.storageLensEnabled = this.configContents.storageLensEnabled ?? false;
     this.shareParametersWithAccounts = this.configContents.shareParametersWithAccounts;
+    this.additionalBucketKmsKeyArns = this.configContents.additionalBucketKmsKeyArns;
 
     this.buckets = Object.entries(this.configContents.buckets).map(zoneAndBucketConfig => {
       const bucketZone: string = zoneAndBucketConfig[0];
