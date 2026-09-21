@@ -5,6 +5,7 @@
 
 import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
+import { Aws } from 'aws-cdk-lib';
 import { Annotations, Match, Template } from 'aws-cdk-lib/assertions';
 import {
   BedrockAgentcoreRuntimeL3Construct,
@@ -620,6 +621,45 @@ describe('BedrockAgentcoreRuntimeL3Construct Unit Tests', () => {
             Match.objectLike({
               Sid: 'ECRRepositoryAccess',
               Resource: 'arn:test-partition:ecr:us-east-1:123456789012:repository/my-repo',
+            }),
+          ]),
+        },
+      });
+    });
+
+    test('should scope ECR access when containerUri account is an unresolved token', () => {
+      // MDAA `{{account}}` resolves to the AWS::AccountId pseudo-parameter token on an env-agnostic
+      // synth, so the URI reaching the construct carries a token in place of the account id.
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        agentRuntimeName: 'token-account-runtime',
+        agentRuntimeArtifact: {
+          containerConfiguration: {
+            containerUri: `${Aws.ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/my-repo:latest`,
+          },
+        },
+        networkConfiguration: {
+          securityGroups: ['sg-12345678'],
+          subnets: ['subnet-12345678'],
+        },
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'token-account-runtime-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      // The token resolves to a Ref, keeping the grant scoped to the single repository
+      template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
+        PolicyDocument: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Sid: 'ECRRepositoryAccess',
+              Resource: {
+                'Fn::Join': [
+                  '',
+                  ['arn:test-partition:ecr:us-east-1:', { Ref: 'AWS::AccountId' }, ':repository/my-repo'],
+                ],
+              },
             }),
           ]),
         },

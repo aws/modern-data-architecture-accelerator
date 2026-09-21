@@ -4,7 +4,7 @@
  */
 
 import { MdaaDefaultResourceNaming, MdaaResourceNamingConfig, MdaaResourceType } from '../lib';
-import { App } from 'aws-cdk-lib';
+import { App, Aws } from 'aws-cdk-lib';
 
 describe('MdaaDefaultResourceNaming', () => {
   const namingProps: MdaaResourceNamingConfig = {
@@ -23,6 +23,45 @@ describe('MdaaDefaultResourceNaming', () => {
     const newName = naming.resourceName('x'.repeat(100), 20);
     expect(newName.length).toBe(20);
     expect(newName).toBe('test-org-te-5a4488cb');
+  });
+
+  test('resourceName lower-cases around an unresolved suffix, leaving the token intact', () => {
+    // An env-agnostic synth reaches naming with the AWS::AccountId pseudo-parameter in the suffix
+    // (e.g. a bucket name built as `<domain>-<region>-<account>-tooling`). The literal text still has
+    // to be lower-cased — a name that skipped it would break S3 outright and silently diverge from the
+    // naming convention elsewhere — while the marker must survive for CloudFormation to resolve it.
+    // Truncation is skipped either way, since the resolved length is unknown at synth.
+    const suffix = `my-Domain-${Aws.ACCOUNT_ID}-tooling`;
+    expect(naming.resourceName(suffix, 63)).toBe(
+      `test-org-test-env-test-domain-test-module-my-domain-${Aws.ACCOUNT_ID}-tooling`,
+    );
+  });
+
+  test('resourceName preserves a non-pseudo-parameter token id when lower-casing', () => {
+    // A token sourced from an SSM lookup renders as `${Token[TOKEN.<n>]}`. The previous implementation
+    // lower-cased the whole name and repaired only this shape afterwards; pseudo-parameter ids such as
+    // AWS.AccountId were left corrupted. Both shapes now come through untouched.
+    expect(naming.resourceName('My-Bucket-${Token[TOKEN.123]}', 63)).toBe(
+      'test-org-test-env-test-domain-test-module-my-bucket-${Token[TOKEN.123]}',
+    );
+  });
+
+  test('resourceName does not truncate an unresolved name past maxLength', () => {
+    const longSuffix = `${'x'.repeat(100)}-${Aws.REGION}`;
+    const name = naming.resourceName(longSuffix, 20);
+    expect(name).toContain(Aws.REGION);
+    expect(name.length).toBeGreaterThan(20);
+  });
+
+  test('resourceName leaves a name unresolved through a base component intact, with no suffix', () => {
+    // The base name can be unresolved on its own: a config that derives `org` from an SSM lookup
+    // leaves a token in the base while the suffix is resolved or absent. The early return has to key
+    // off the assembled name, not the suffix, or a name like this would be truncated mid-token.
+    const tokenizedBase = new MdaaDefaultResourceNaming({ ...namingProps, org: Aws.ACCOUNT_ID });
+    expect(tokenizedBase.resourceName(undefined, 20)).toBe(`${Aws.ACCOUNT_ID}-test-env-test-domain-test-module`);
+    expect(tokenizedBase.resourceName('test-resource', 20)).toBe(
+      `${Aws.ACCOUNT_ID}-test-env-test-domain-test-module-test-resource`,
+    );
   });
 
   test('ssmPath', () => {

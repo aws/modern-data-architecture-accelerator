@@ -37,4 +37,4 @@
 ## Examples
 <!-- Are there any examples of this which exist in other solutions? !-->
 
-/label ~"Feature Request" ~New 
+/label ~"Feature Request"

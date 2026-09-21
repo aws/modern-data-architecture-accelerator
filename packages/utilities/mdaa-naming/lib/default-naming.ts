@@ -3,9 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { Token } from 'aws-cdk-lib';
 import { IMdaaResourceNaming, MdaaResourceNamingConfig } from './resource-naming';
 import { MdaaResourceType } from './resource-type';
 import { validateResourceName } from './utils';
+
+/** How CDK renders an unresolved token embedded in a string, e.g. `${Token[AWS.AccountId.9]}`. */
+const TOKEN_MARKER_PATTERN = /^\$\{Token\[[^\]]*\]\}$/;
+
+/** The same marker as a capturing split pattern, so `split` yields the markers alongside the literals. */
+const TOKEN_MARKER_SPLIT_PATTERN = /(\$\{Token\[[^\]]*\]\})/;
 
 /**
  * A default MDAA Naming implementation
@@ -85,7 +92,18 @@ export class MdaaDefaultResourceNaming implements IMdaaResourceNaming {
   public resourceName(resourceNameSuffix?: string, maxLength?: number): string {
     let name = `${this.props.org}-${this.props.env}-${this.props.domain}-${this.props.moduleName}`;
     if (resourceNameSuffix) {
+      // Lower-cased even when it carries an unresolved token: `lowerCase` lower-cases only the
+      // literal text around the markers, so a suffix like `my-Domain-<account token>-tooling` still
+      // gets the casing the naming convention requires without breaking the token.
       name = `${name}-${this.lowerCase(resourceNameSuffix)}`;
+    }
+    // An unresolved name has no synth-time length or character set, so neither truncation nor
+    // validation can apply: truncating would cut through the token marker and corrupt it (leaving
+    // text like `${to` in the template), and the character check would reject the marker's own
+    // punctuation. Return it intact and let CloudFormation resolve it at deploy, where the service
+    // enforces its own naming rules.
+    if (Token.isUnresolved(name)) {
+      return name;
     }
     if (maxLength && name.length >= maxLength) {
       const hashCodeHex = MdaaDefaultResourceNaming.hashCodeHex(name);
@@ -209,7 +227,24 @@ export class MdaaDefaultResourceNaming implements IMdaaResourceNaming {
     return h.toString(16);
   }
 
+  /**
+   * Lower-cases a name, leaving any unresolved token it contains verbatim.
+   *
+   * Lower-casing a token's rendered marker breaks it — CDK stops recognizing the marker, so the value
+   * is never resolved and the literal text ships in the template. Only the literal text around the
+   * markers is lower-cased, which preserves every token id shape (`AWS.AccountId`, `TOKEN.<n>`, …).
+   * The previous implementation lower-cased the whole string and reconstructed the marker afterwards,
+   * which only worked for `TOKEN.<n>`: the original casing of any other id is unrecoverable once
+   * lower-cased.
+   *
+   * Split on the marker text rather than resolved via `Tokenization.reverseString`, because that
+   * throws on a marker whose key is not registered in the current token map — a name is data here and
+   * may legitimately contain marker-shaped text.
+   */
   protected lowerCase(input: string): string {
-    return input.toLowerCase().replace(/\{token\[token\.(\d+)]}/, '{Token[TOKEN.$1]}');
+    return input
+      .split(TOKEN_MARKER_SPLIT_PATTERN)
+      .map(part => (TOKEN_MARKER_PATTERN.test(part) ? part : part.toLowerCase()))
+      .join('');
   }
 }

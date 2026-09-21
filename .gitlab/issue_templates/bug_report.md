@@ -35,4 +35,4 @@
 - [ ] If the answer to the previous question was yes, are the changes available on GitHub?
 - [ ] Were there any errors in the CloudWatch Logs?
 
-/label ~Bug ~New
+/label ~Bug

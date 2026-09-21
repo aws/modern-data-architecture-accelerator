@@ -23,7 +23,7 @@ import { MdaaResolvableRole, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { MdaaKmsKey, USER_ACTIONS } from '@aws-mdaa/kms-constructs';
 import { LakeFormationSettingsL3Construct } from '@aws-mdaa/lakeformation-settings-l3-construct';
 import { MdaaL3Construct } from '@aws-mdaa/l3-construct';
-import { Annotations, Duration } from 'aws-cdk-lib';
+import { Annotations, Duration, Token } from 'aws-cdk-lib';
 
 import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper/lib/rolehelper';
 import { IMdaaResourceNaming } from '@aws-mdaa/naming/lib/resource-naming';
@@ -1385,7 +1385,23 @@ export class CommonDomainHelper {
     region: string,
     domainConfigSsmParamBase: string,
   ) {
+    // Reading the domain-owning account's parameters from an associated account's stack requires a
+    // literal ARN: the value becomes a CloudFormation dynamic reference (`{{resolve:ssm:<arn>}}`),
+    // which CloudFormation parses as text and cannot resolve an intrinsic inside — hence CDK's
+    // `fromStringParameterArn` rejecting an unresolved ARN.
+    //
+    // Nothing substitutes for the missing value. The deploying account is known only at deploy time,
+    // and reading the parameters by name instead would read them from the associated account rather
+    // than the domain-owning one — a domain wired to the wrong config source, reported as a warning.
+    // Fail here instead, naming the config change that makes the read possible.
     const domainConfigSsmParamArn = `arn:${this.props.partition}:ssm:${region}:${this.props.account}:parameter${domainConfigSsmParamBase}`;
+    if (Token.isUnresolved(domainConfigSsmParamArn)) {
+      throw new Error(
+        `Domain '${domainName}': a cross-account DataZone domain requires an explicit 'account' and 'region' in the ` +
+          `MDAA config. Its associated-account stacks read the domain config parameters from the domain-owning ` +
+          `account by ARN, which cannot be formed while the account, region or partition is unresolved.`,
+      );
+    }
     return new DomainConfig(crossAccountStack, `domain-config-parser-${domainName}`, {
       ssmParamBase: domainConfigSsmParamArn,
       naming: this.props.naming,

@@ -13,6 +13,10 @@
 
 - Added `additionalBucketKmsKeyArns` and per-bucket `additionalKmsKeyArns` to let buckets accept objects encrypted with keys the module did not create, so Glue jobs can write into a data lake split across several Data Lake modules. Both are optional; existing configs are unchanged. See the [module README](packages/apps/datalake/datalake-app/README.md#trusting-additional-kms-keys).
 
+### Bug Fixes
+
+- Fixed `mdaa synth` failing when `account` and/or `region` are left as `default` and no AWS credentials are resolvable, which leaves them as unresolved CloudFormation pseudo-parameters that several code paths treated as literal strings: ECR container URI parsing, cross-account SSM lookup, resource name generation, and cdk-nag suppression matching.
+
 ### Removed
 
 - **GAIA v1 removed** (fulfilling the removal target announced in 1.7.0): the `@aws-mdaa/gaia` and `@aws-mdaa/gaia-l3-construct` packages have been deleted. Deployments must use `@aws-mdaa/gaia-v2` and `@aws-mdaa/gaia-v2-l3-construct`, a re-architected GenAI backend that is **not** a drop-in replacement — there is no in-place upgrade. See [MIGRATION_TO_V2.md](packages/apps/ai/gaia-v2-app/MIGRATION_TO_V2.md) for the migration path. **Breaking change.**

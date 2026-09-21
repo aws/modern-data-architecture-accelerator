@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { App, Stack } from 'aws-cdk-lib';
+import { App, Fn, Stack } from 'aws-cdk-lib';
 import { CfnBucket } from 'aws-cdk-lib/aws-s3';
 import { MdaaNagSuppressions } from '../lib';
 
@@ -25,6 +25,91 @@ describe('MdaaNagSuppressions', () => {
       expect(suppressions).toBeDefined();
       expect(suppressions).toHaveLength(1);
       expect(suppressions[0].reason).toMatch(/^\[MDAA:.*\] Test reason$/);
+    });
+
+    test('renders an unresolved appliesTo the way cdk-nag renders its findings', () => {
+      // On an env-agnostic synth the account is the AWS::AccountId pseudo-parameter, and cdk-nag
+      // reports the finding's resource as `<AWS::AccountId>`. An appliesTo carrying CDK's token
+      // instead would never match, so the suppression would silently miss and the rule would fail.
+      const { stack, bucket } = createTestStack();
+      MdaaNagSuppressions.addCodeResourceSuppressions(bucket, [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason: 'Wildcard scoped to this account',
+          appliesTo: [`Resource::arn:${stack.partition}:logs:${stack.region}:${stack.account}:log-group:*sagemaker*`],
+        },
+      ]);
+      const suppressions = bucket.cfnOptions.metadata!['cdk_nag']?.rules_to_suppress;
+      expect(suppressions[0].applies_to).toEqual([
+        'Resource::arn:<AWS::Partition>:logs:<AWS::Region>:<AWS::AccountId>:log-group:*sagemaker*',
+      ]);
+    });
+
+    test('renders a resource attribute reference as its <LogicalId.Attr> placeholder', () => {
+      // A wildcard scoped to a resource attribute — a bucket ARN via attrArn — resolves to an
+      // Fn::GetAtt rather than a Ref, which cdk-nag reports as `<LogicalId.Attr>`.
+      const { stack, bucket } = createTestStack();
+      const target = new CfnBucket(stack, 'AttrBucket');
+      MdaaNagSuppressions.addCodeResourceSuppressions(bucket, [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason: 'Wildcard scoped to the bucket contents',
+          appliesTo: [`Resource::${target.attrArn}/*`],
+        },
+      ]);
+      const suppressions = bucket.cfnOptions.metadata!['cdk_nag']?.rules_to_suppress;
+      expect(suppressions[0].applies_to).toEqual([`Resource::<${stack.resolve(target.logicalId)}.Arn>/*`]);
+    });
+
+    test('renders an intrinsic cdk-nag does not special-case the way cdk-nag renders it', () => {
+      // Any intrinsic outside Ref/Fn::GetAtt/Fn::Join reaches the fallback. cdk-nag renders such a
+      // value as JSON, so the fallback has to as well — `[object Object]` would match nothing.
+      const { bucket } = createTestStack();
+      MdaaNagSuppressions.addCodeResourceSuppressions(bucket, [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason: 'Wildcard scoped via an unhandled intrinsic',
+          appliesTo: [`Resource::${Fn.select(0, Fn.getAzs())}/*`],
+        },
+      ]);
+      const suppressions = bucket.cfnOptions.metadata!['cdk_nag']?.rules_to_suppress;
+      expect(suppressions[0].applies_to).toEqual(['Resource::{"Fn::Select":[0,{"Fn::GetAZs":""}]}/*']);
+    });
+
+    test('flattens only the unresolved entries of a mixed appliesTo array', () => {
+      const { stack, bucket } = createTestStack();
+      MdaaNagSuppressions.addCodeResourceSuppressions(bucket, [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason: 'One unresolved and one literal entry',
+          appliesTo: [
+            `Resource::arn:${stack.partition}:s3:::bucket/*`,
+            'Resource::arn:aws:s3:::literal-bucket/*',
+            'Action::s3:*',
+          ],
+        },
+      ]);
+      const suppressions = bucket.cfnOptions.metadata!['cdk_nag']?.rules_to_suppress;
+      expect(suppressions[0].applies_to).toEqual([
+        'Resource::arn:<AWS::Partition>:s3:::bucket/*',
+        'Resource::arn:aws:s3:::literal-bucket/*',
+        'Action::s3:*',
+      ]);
+    });
+
+    test('leaves a resolved appliesTo untouched', () => {
+      const { bucket } = createTestStack();
+      MdaaNagSuppressions.addCodeResourceSuppressions(bucket, [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason: 'Wildcard scoped to a known account',
+          appliesTo: ['Resource::arn:aws:logs:us-east-1:123456789012:log-group:*sagemaker*'],
+        },
+      ]);
+      const suppressions = bucket.cfnOptions.metadata!['cdk_nag']?.rules_to_suppress;
+      expect(suppressions[0].applies_to).toEqual([
+        'Resource::arn:aws:logs:us-east-1:123456789012:log-group:*sagemaker*',
+      ]);
     });
 
     test('handles multiple suppressions', () => {
@@ -126,6 +211,23 @@ describe('MdaaNagSuppressions', () => {
       expect(suppressions).toBeDefined();
       expect(suppressions[0].reason).toContain('Children too');
     });
+
+    test('renders an unresolved appliesTo the way cdk-nag renders its findings', () => {
+      // Config-sourced suppressions carry appliesTo from the MDAA config, so they need the same
+      // alignment as code-sourced ones.
+      const { stack, bucket } = createTestStack({
+        module_configs: './sample_configs/sample-config.yaml',
+      });
+      MdaaNagSuppressions.addConfigResourceSuppressions(bucket, [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason: 'Wildcard scoped to this account',
+          appliesTo: [`Resource::arn:${stack.partition}:s3:::${stack.account}-bucket/*`],
+        },
+      ]);
+      const suppressions = bucket.cfnOptions.metadata!['cdk_nag']?.rules_to_suppress;
+      expect(suppressions[0].applies_to).toEqual(['Resource::arn:<AWS::Partition>:s3:::<AWS::AccountId>-bucket/*']);
+    });
   });
 
   describe('addConfigResourceSuppressionsByPath', () => {
@@ -183,6 +285,22 @@ describe('MdaaNagSuppressions', () => {
       const suppressions = bucket.cfnOptions.metadata!['cdk_nag']?.rules_to_suppress;
       expect(suppressions).toBeDefined();
       expect(suppressions[0].reason).toBe('[CONFIG] With children');
+    });
+
+    test('renders an unresolved appliesTo the way cdk-nag renders its findings', () => {
+      // This overload resolves against the stack rather than the target construct, so its
+      // alignment is wired separately from the two construct-scoped methods.
+      const { stack } = createTestStack();
+      const bucket = new CfnBucket(stack, 'ByPathTokenBucket');
+      MdaaNagSuppressions.addConfigResourceSuppressionsByPath(stack, '/' + bucket.node.path, [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason: 'Wildcard scoped to this region',
+          appliesTo: [`Resource::arn:${stack.partition}:logs:${stack.region}:*:log-group:*`],
+        },
+      ]);
+      const suppressions = bucket.cfnOptions.metadata!['cdk_nag']?.rules_to_suppress;
+      expect(suppressions[0].applies_to).toEqual(['Resource::arn:<AWS::Partition>:logs:<AWS::Region>:*:log-group:*']);
     });
   });
 });

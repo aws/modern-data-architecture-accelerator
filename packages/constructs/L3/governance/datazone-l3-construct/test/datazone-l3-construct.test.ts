@@ -3097,4 +3097,72 @@ describe('DataZone L3 Construct Tests', () => {
       expect(crossPolicyBodyStr).toContain('\\"KmsARN\\":');
     });
   });
+
+  describe('Cross-account domain config parameter reference', () => {
+    /** The associated-account config used by both branches; only the stack env differs. */
+    const domainsWithAssociatedAccount = {
+      'test-domain': {
+        description: 'Test',
+        dataAdminRole: { arn: 'arn:test-partition:iam::123456789012:role/admin' },
+        userAssignment: 'AUTOMATIC' as const,
+        associatedAccounts: {
+          acc1: {
+            account: '123456789012',
+            region: 'test-region',
+            glueCatalogKmsKeyArn: 'arn:test-partition:kms:test-region:123456789012:key/test',
+          },
+        },
+      },
+    };
+
+    /**
+     * The `Default` of every SSM-backed parameter the cross-account DomainConfig creates. Scoped by
+     * logical id so unrelated SSM parameters in the same stack are not asserted on.
+     */
+    function domainConfigParameterDefaults(template: Template): string[] {
+      const json = template.toJSON() as {
+        Parameters?: Record<string, { Type: string; Default: string }>;
+      };
+      return Object.entries(json.Parameters ?? {})
+        .filter(([id, p]) => id.includes('domainconfigparser') && p.Type.startsWith('AWS::SSM::Parameter::Value'))
+        .map(([, p]) => p.Default);
+    }
+
+    test('reads the domain-owning account by ARN when the deploying account resolves', () => {
+      const crossAccountStack = new Stack(testApp, 'cross-account-stack', { env: { account: '123456789012' } });
+      new DataZoneL3Construct(stack, 'test', {
+        naming: testApp.naming,
+        roleHelper,
+        crossAccountStacks: { '123456789012': { 'test-region': crossAccountStack } },
+        dataZoneDomains: domainsWithAssociatedAccount,
+      });
+
+      const defaults = domainConfigParameterDefaults(Template.fromStack(crossAccountStack));
+      expect(defaults.length).toBeGreaterThan(0);
+      // Every parameter is read from the domain-owning account by full ARN, which is what makes the
+      // read cross-account.
+      defaults.forEach(d =>
+        expect(d).toMatch(/^arn:test-partition:ssm:test-region:test-account:parameter\/test-org\/.*\/config\//),
+      );
+    });
+
+    test('fails at synth when the deploying account is unresolved', () => {
+      // An env-agnostic stack: account, region and partition are all CloudFormation pseudo-parameters,
+      // so no literal ARN can be formed. Reading the parameters by name instead would read them from
+      // the associated account rather than the domain-owning one, so the construct refuses to guess.
+      const agnosticStack = new Stack(testApp, 'env-agnostic-stack');
+      const agnosticRoleHelper = new MdaaRoleHelper(agnosticStack, testApp.naming);
+      const crossAccountStack = new Stack(testApp, 'cross-account-stack-agnostic');
+
+      expect(
+        () =>
+          new DataZoneL3Construct(agnosticStack, 'test', {
+            naming: testApp.naming,
+            roleHelper: agnosticRoleHelper,
+            crossAccountStacks: { '123456789012': { 'test-region': crossAccountStack } },
+            dataZoneDomains: domainsWithAssociatedAccount,
+          }),
+      ).toThrow(/Domain 'test-domain': a cross-account DataZone domain requires an explicit 'account' and 'region'/);
+    });
+  });
 });
