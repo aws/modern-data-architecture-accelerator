@@ -5,3 +5,4 @@
 
 export * from './construct';
 export * from './nag-suppressions';
+export * from './inline-policy-naming-aspect';

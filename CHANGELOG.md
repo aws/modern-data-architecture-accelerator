@@ -13,9 +13,15 @@
 
 - Added `additionalBucketKmsKeyArns` and per-bucket `additionalKmsKeyArns` to let buckets accept objects encrypted with keys the module did not create, so Glue jobs can write into a data lake split across several Data Lake modules. Both are optional; existing configs are unchanged. See the [module README](packages/apps/datalake/datalake-app/README.md#trusting-additional-kms-keys).
 
+#### Naming
+
+- Added the `@aws-mdaa/namingEnforceInlinePolicies` opt-in context flag, which applies the MDAA resource naming convention to inline IAM policy names that CDK creates internally (e.g. via `role.addToPolicy()`) and to policies embedded in a role's `Policies[]`. Defaults to `false`; existing deployments are unaffected unless the flag is set. When enabled, standalone `AWS::IAM::Policy` renames are replaced by CloudFormation on the next deploy, while embedded role-policy renames are applied in place.
+
 ### Bug Fixes
 
 - Fixed `mdaa synth` failing when `account` and/or `region` are left as `default` and no AWS credentials are resolvable, which leaves them as unresolved CloudFormation pseudo-parameters that several code paths treated as literal strings: ECR container URI parsing, cross-account SSM lookup, resource name generation, and cdk-nag suppression matching.
+
+- Fixed the role-resolution custom resource Lambda silently having no `logs:CreateLogStream` / `logs:PutLogEvents` permission. Its log-write grant was built from an uncapped name while `MdaaLambdaFunction` caps the function name at 64 characters, so once `org-env-domain-module` reached 52 characters the grant pointed at a log group that never existed. The grant now derives from the same capped function name. This is an in-place `AWS::IAM::Policy` update requiring no replacement, but affected deployments will see a policy diff even with `@aws-mdaa/namingEnforceInlinePolicies` unset.
 
 ### Removed
 

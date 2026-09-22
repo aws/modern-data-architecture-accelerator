@@ -6,7 +6,8 @@
 import { MdaaAppProps, MdaaCdkApp } from '../lib/app';
 import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaAppConfigParserProps, MdaaSageMakerCustomBluePrintConfig } from '../lib/app_config';
-import { Stack } from 'aws-cdk-lib';
+import { Aspects, Stack } from 'aws-cdk-lib';
+import { InlinePolicyNamingAspect } from '@aws-mdaa/construct'; //NOSONAR
 
 class TestApp extends MdaaCdkApp {
   constructor(props: MdaaAppProps = {}) {
@@ -142,6 +143,46 @@ describe('MdaaCdkApp', () => {
           },
         }),
     ).toThrow('One of account or region must be specified in additional_stacks');
+  });
+
+  describe('InlinePolicyNamingAspect application', () => {
+    const hasInlineAspect = (app: MdaaCdkApp): boolean =>
+      Aspects.of(app).all.some(a => a instanceof InlinePolicyNamingAspect);
+
+    test('is not applied when the context flag is absent', () => {
+      const app = new TestApp({ context: baseContext });
+      expect(hasInlineAspect(app)).toBe(false);
+    });
+
+    test('is not applied when the context flag is false', () => {
+      const app = new TestApp({
+        context: { ...baseContext, '@aws-mdaa/namingEnforceInlinePolicies': 'false' },
+      });
+      expect(hasInlineAspect(app)).toBe(false);
+    });
+
+    test('is applied when the context flag is true', () => {
+      const app = new TestApp({
+        context: { ...baseContext, '@aws-mdaa/namingEnforceInlinePolicies': 'true' },
+      });
+      expect(hasInlineAspect(app)).toBe(true);
+    });
+
+    test('flag parsing is case-insensitive', () => {
+      const app = new TestApp({
+        context: { ...baseContext, '@aws-mdaa/namingEnforceInlinePolicies': 'TRUE' },
+      });
+      expect(hasInlineAspect(app)).toBe(true);
+    });
+
+    test('is applied when the context flag is a quoted value from the CLI', () => {
+      // The CLI emits the flag value wrapped in double quotes; cleanContextStringValue
+      // strips them. Exercise that quote-stripping path for this flag.
+      const app = new TestApp({
+        context: { ...baseContext, '@aws-mdaa/namingEnforceInlinePolicies': '"true"' },
+      });
+      expect(hasInlineAspect(app)).toBe(true);
+    });
   });
 
   describe('SageMaker Blueprint', () => {

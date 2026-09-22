@@ -11,7 +11,7 @@ import {
   MdaaServiceCatalogProductConfig,
   TagElement,
 } from '@aws-mdaa/config';
-import { MdaaNagSuppressions, MdaaStringParameter } from '@aws-mdaa/construct'; //NOSONAR
+import { InlinePolicyNamingAspect, MdaaNagSuppressions, MdaaStringParameter } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { IMdaaResourceNaming, MdaaDefaultResourceNaming } from '@aws-mdaa/naming';
 import { App, AppProps, Aspects, Stack, Tags } from 'aws-cdk-lib';
@@ -177,6 +177,7 @@ export abstract class MdaaCdkApp extends App {
     Aspects.of(this).add(new PCIDSS321Checks({ verbose: true, logIgnores: logSuppressions }));
 
     this.applyCustomAspects();
+    this.applyInlinePolicyNamingAspect();
 
     this.appConfigRaw = {
       ...this.loadConfigFromFiles(this.node.tryGetContext('module_configs')?.split(',') || []),
@@ -324,6 +325,15 @@ export abstract class MdaaCdkApp extends App {
     const customAspects: MdaaCustomAspect[] = getNodeValue(this.node, 'custom_aspects', []);
     console.log(typeof customAspects);
     customAspects.forEach(customAspect => this.applyCustomAspect(customAspect));
+  }
+
+  private applyInlinePolicyNamingAspect() {
+    const rawFlag: string | undefined = this.node.tryGetContext('@aws-mdaa/namingEnforceInlinePolicies');
+    const enabled = rawFlag ? cleanContextStringValue(rawFlag).toLowerCase() === 'true' : false;
+    if (enabled) {
+      console.log('Applying InlinePolicyNamingAspect for inline policy naming enforcement.');
+      Aspects.of(this).add(new InlinePolicyNamingAspect({ naming: this.naming }));
+    }
   }
 
   private applyCustomAspect(customAspect: MdaaCustomAspect) {

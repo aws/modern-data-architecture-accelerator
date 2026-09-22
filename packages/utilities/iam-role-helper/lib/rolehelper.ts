@@ -4,7 +4,7 @@
  */
 
 import { MdaaLambdaFunction, MdaaLambdaRole } from '@aws-mdaa/lambda-constructs';
-import { IMdaaResourceNaming } from '@aws-mdaa/naming';
+import { IMdaaResourceNaming, MdaaResourceType } from '@aws-mdaa/naming';
 import { Duration } from 'aws-cdk-lib';
 import { ManagedPolicy, PolicyDocument, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
@@ -127,11 +127,22 @@ export class MdaaRoleHelper {
   }
 
   private createResolveRoleProvider(): Provider {
+    // This value is consumed as logGroupNames on the CR Lambda role, where
+    // MdaaLambdaRole.addLogGroups builds the log-write permission ARN as
+    // /aws/lambda/${logGroup}*. The ${logGroup} segment must therefore be the
+    // Lambda function name (created below via functionName: 'role-res-cr',
+    // which MdaaLambdaFunction names with LAMBDA_FUNCTION + a 64-char cap).
+    // Under a resource-type-aware naming module a CLOUDWATCH_LOG_GROUP-typed
+    // name would diverge from the function name, leaving the CR Lambda without
+    // logs:CreateLogStream / logs:PutLogEvents. Match the function naming here.
+    const crLogGroupName = this.naming
+      .withResourceType(MdaaResourceType.LAMBDA_FUNCTION)
+      .resourceName('role-res-cr', 64);
     const crLambdaRole = new MdaaLambdaRole(this.scope, 'role-res-cr', {
       description: 'CR Role',
       roleName: 'role-res-cr',
       naming: this.naming,
-      logGroupNames: [this.naming.resourceName('role-res-cr')],
+      logGroupNames: [crLogGroupName],
       createParams: false,
       createOutputs: false,
     });
