@@ -8,7 +8,7 @@
  * Pattern: ^[a-zA-Z][a-zA-Z0-9_]{0,47}$ (no hyphens allowed)
  *
  * The naming service (props.naming.resourceName) caps the name passed in, but the leading-letter
- * prefix below is prepended *after* that cap — so a name already sitting at the limit (e.g. a naming
+ * prefix below is prepended *after* that cap - so a name already sitting at the limit (e.g. a naming
  * prefix beginning with a digit) would overflow the CloudFormation limit. Pass `maxLength` (the
  * resource's CFN name limit) to enforce the final length here, after prefixing. When omitted this is a
  * pure character sanitizer, preserving the original contract for callers that cap elsewhere.

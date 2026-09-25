@@ -63,7 +63,7 @@ describe('createAgentCoreVpcEndpoint', () => {
   });
 
   test('should restrict endpoint policy to configured IAM principals', () => {
-    const callerRoleArn = 'arn:aws:iam::123456789012:role/my-caller-role';
+    const callerRoleArn = 'arn:aws:iam::test-account:role/my-caller-role';
     createAgentCoreVpcEndpoint(testApp.testStack, 'TestVpce', {
       vpcId: TEST_VPC_ID,
       subnetIds: TEST_SUBNET_IDS,
@@ -111,12 +111,12 @@ describe('createAgentCoreVpcEndpoint', () => {
       ToPort: 443,
       SourceSecurityGroupId: 'sg-12345678',
     });
-    // No CIDR-based ingress — access is via application SGs only
+    // No CIDR-based ingress - access is via application SGs only
     const ingressRules = template.findResources('AWS::EC2::SecurityGroupIngress');
     Object.values(ingressRules).forEach(rule => {
       expect(rule.Properties.CidrIp).toBeUndefined();
     });
-    // allowAllOutbound: false — CDK emits only its "Disallow all traffic"
+    // allowAllOutbound: false - CDK emits only its "Disallow all traffic"
     // 255.255.255.255/32 placeholder, never an allow-all (0.0.0.0/0) egress rule
     const securityGroups = template.findResources('AWS::EC2::SecurityGroup');
     Object.values(securityGroups).forEach(sg => {

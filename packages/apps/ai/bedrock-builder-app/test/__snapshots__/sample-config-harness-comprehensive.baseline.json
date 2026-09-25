@@ -44,10 +44,7 @@
         },
         "Description": "Enterprise content safety guardrail",
         "KmsKeyArn": {
-          "Fn::GetAtt": [
-            "bedrockcmk710EFABC",
-            "Arn"
-          ]
+          "Fn::GetAtt": ["bedrockcmk710EFABC", "Arn"]
         },
         "Name": "test-org-test-env-test-domain-test-bedro--4eb4a970",
         "Tags": [
@@ -176,10 +173,7 @@
         },
         "Type": "String",
         "Value": {
-          "Fn::GetAtt": [
-            "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE",
-            "Arn"
-          ]
+          "Fn::GetAtt": ["bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE", "Arn"]
         }
       }
     },
@@ -196,10 +190,7 @@
         },
         "Type": "String",
         "Value": {
-          "Fn::GetAtt": [
-            "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE",
-            "RoleId"
-          ]
+          "Fn::GetAtt": ["bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE", "RoleId"]
         }
       }
     },
@@ -225,27 +216,19 @@
       "Properties": {
         "AuthorizerConfiguration": {
           "CustomJWTAuthorizer": {
-            "AllowedAudience": [
-              "weather-clients"
-            ],
+            "AllowedAudience": ["weather-clients"],
             "DiscoveryUrl": "https://example.com/.well-known/openid-configuration"
           }
         },
         "AuthorizerType": "CUSTOM_JWT",
         "Description": "Weather tools MCP gateway",
         "KmsKeyArn": {
-          "Fn::GetAtt": [
-            "bedrockcmk710EFABC",
-            "Arn"
-          ]
+          "Fn::GetAtt": ["bedrockcmk710EFABC", "Arn"]
         },
         "Name": "test-org-test-env-test-domain-test-bedr-5f22e006",
         "ProtocolType": "MCP",
         "RoleArn": {
-          "Fn::GetAtt": [
-            "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE",
-            "Arn"
-          ]
+          "Fn::GetAtt": ["bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE", "Arn"]
         },
         "Tags": {
           "mdaa_cdk_app": "bedrock-builder",
@@ -274,10 +257,7 @@
         },
         "Type": "String",
         "Value": {
-          "Fn::GetAtt": [
-            "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
-            "GatewayArn"
-          ]
+          "Fn::GetAtt": ["bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035", "GatewayArn"]
         }
       },
       "DependsOn": [
@@ -299,10 +279,7 @@
         },
         "Type": "String",
         "Value": {
-          "Fn::GetAtt": [
-            "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
-            "GatewayIdentifier"
-          ]
+          "Fn::GetAtt": ["bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035", "GatewayIdentifier"]
         }
       },
       "DependsOn": [
@@ -324,10 +301,7 @@
         },
         "Type": "String",
         "Value": {
-          "Fn::GetAtt": [
-            "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
-            "GatewayUrl"
-          ]
+          "Fn::GetAtt": ["bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035", "GatewayUrl"]
         }
       },
       "DependsOn": [
@@ -340,10 +314,7 @@
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
         "KmsKeyId": {
-          "Fn::GetAtt": [
-            "bedrockcmk710EFABC",
-            "Arn"
-          ]
+          "Fn::GetAtt": ["bedrockcmk710EFABC", "Arn"]
         },
         "LogGroupName": "/aws/vendedlogs/bedrock-agentcore/gateway/APPLICATION_LOGS/test-org-test-env-test-domain-test-bedrock-builder-harness-comprehensive-weather-gateway",
         "Tags": [
@@ -411,10 +382,7 @@
         "LogType": "APPLICATION_LOGS",
         "Name": "test-org-test-env-test-domain-test-bedrock-builder--5f22e006",
         "ResourceArn": {
-          "Fn::GetAtt": [
-            "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
-            "GatewayArn"
-          ]
+          "Fn::GetAtt": ["bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035", "GatewayArn"]
         },
         "Tags": [
           {
@@ -444,10 +412,7 @@
       "Type": "AWS::Logs::DeliveryDestination",
       "Properties": {
         "DestinationResourceArn": {
-          "Fn::GetAtt": [
-            "bedrockbuilderbedrockgatewayweathergatewaygatewayloggroupDAE7C19B",
-            "Arn"
-          ]
+          "Fn::GetAtt": ["bedrockbuilderbedrockgatewayweathergatewaygatewayloggroupDAE7C19B", "Arn"]
         },
         "Name": "test-org-test-env-test-domain-test-bedrock-builder--5f22e006",
         "Tags": [
@@ -478,10 +443,7 @@
       "Type": "AWS::Logs::Delivery",
       "Properties": {
         "DeliveryDestinationArn": {
-          "Fn::GetAtt": [
-            "bedrockbuilderbedrockgatewayweathergatewaygatewaylogdestinationE9842699",
-            "Arn"
-          ]
+          "Fn::GetAtt": ["bedrockbuilderbedrockgatewayweathergatewaygatewaylogdestinationE9842699", "Arn"]
         },
         "DeliverySourceName": "test-org-test-env-test-domain-test-bedrock-builder--5f22e006",
         "Tags": [
@@ -507,9 +469,7 @@
           }
         ]
       },
-      "DependsOn": [
-        "bedrockbuilderbedrockgatewayweathergatewaygatewaylogsourceF6DB3158"
-      ]
+      "DependsOn": ["bedrockbuilderbedrockgatewayweathergatewaygatewaylogsourceF6DB3158"]
     },
     "bedrockbuilderbedrockgatewayweathergatewaygatewayweathergatewayrolearnssm0F069E2B": {
       "Type": "AWS::SSM::Parameter",
@@ -524,10 +484,7 @@
         },
         "Type": "String",
         "Value": {
-          "Fn::GetAtt": [
-            "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE",
-            "Arn"
-          ]
+          "Fn::GetAtt": ["bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE", "Arn"]
         }
       }
     },
@@ -544,10 +501,7 @@
         },
         "Type": "String",
         "Value": {
-          "Fn::GetAtt": [
-            "bedrockcmk710EFABC",
-            "Arn"
-          ]
+          "Fn::GetAtt": ["bedrockcmk710EFABC", "Arn"]
         }
       }
     },
@@ -560,17 +514,10 @@
         "PolicyDocument": {
           "Statement": [
             {
-              "Action": [
-                "kms:DescribeKey",
-                "kms:Decrypt",
-                "kms:GenerateDataKey"
-              ],
+              "Action": ["kms:DescribeKey", "kms:Decrypt", "kms:GenerateDataKey"],
               "Effect": "Allow",
               "Resource": {
-                "Fn::GetAtt": [
-                  "bedrockcmk710EFABC",
-                  "Arn"
-                ]
+                "Fn::GetAtt": ["bedrockcmk710EFABC", "Arn"]
               },
               "Sid": "GatewayCmkEncryptDecrypt"
             },
@@ -581,18 +528,12 @@
                   "kms:GrantConstraintType": "EncryptionContextSubset"
                 },
                 "ForAllValues:StringEquals": {
-                  "kms:GrantOperations": [
-                    "Decrypt",
-                    "GenerateDataKey"
-                  ]
+                  "kms:GrantOperations": ["Decrypt", "GenerateDataKey"]
                 }
               },
               "Effect": "Allow",
               "Resource": {
-                "Fn::GetAtt": [
-                  "bedrockcmk710EFABC",
-                  "Arn"
-                ]
+                "Fn::GetAtt": ["bedrockcmk710EFABC", "Arn"]
               },
               "Sid": "GatewayCmkCreateGrant"
             }
@@ -660,6 +601,691 @@
         }
       }
     },
+    "bedrockbuildervpcendpointsagentcoreprivatebedrockruntimesecuritygroup02459AB3": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Consumer access to the bedrock-runtime VPC endpoint",
+        "GroupName": "test-org-test-env-test-domain-test-bedrock-builder-harness-comprehensive-vpc-endpoint-agentcore-private-bedrock-runtime",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "255.255.255.255/32",
+            "Description": "Disallow all traffic",
+            "FromPort": 252,
+            "IpProtocol": "icmp",
+            "ToPort": 86
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcId": "vpc-0123456789abcdef0"
+      }
+    },
+    "bedrockbuildervpcendpointsagentcoreprivatebedrockruntimesecuritygroupsecuritygroupvpcendpointagentcoreprivatebedrockruntimeidssm1EDF90F9": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/security-group/vpc-endpoint-agentcore-private-bedrock-runtime/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": ["bedrockbuildervpcendpointsagentcoreprivatebedrockruntimesecuritygroup02459AB3", "GroupId"]
+        }
+      }
+    },
+    "bedrockbuildervpcendpointsagentcoreprivatebedrockruntimeendpointB5FCD0B8": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": ["bedrockbuildervpcendpointsagentcoreprivatebedrockruntimesecuritygroup02459AB3", "GroupId"]
+          }
+        ],
+        "ServiceName": "com.amazonaws.test-region.bedrock-runtime",
+        "SubnetIds": ["subnet-0123456789abcdef0", "subnet-0123456789abcdef1"],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": "vpc-0123456789abcdef0"
+      }
+    },
+    "bedrockbuildervpcendpointsagentcoreprivateecrapisecuritygroupF3150F7C": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Consumer access to the ecr.api VPC endpoint",
+        "GroupName": "test-org-test-env-test-domain-test-bedrock-builder-harness-comprehensive-vpc-endpoint-agentcore-private-ecr-api",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "255.255.255.255/32",
+            "Description": "Disallow all traffic",
+            "FromPort": 252,
+            "IpProtocol": "icmp",
+            "ToPort": 86
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcId": "vpc-0123456789abcdef0"
+      }
+    },
+    "bedrockbuildervpcendpointsagentcoreprivateecrapisecuritygroupsecuritygroupvpcendpointagentcoreprivateecrapiidssmF5F7499A": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/security-group/vpc-endpoint-agentcore-private-ecr-api/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": ["bedrockbuildervpcendpointsagentcoreprivateecrapisecuritygroupF3150F7C", "GroupId"]
+        }
+      }
+    },
+    "bedrockbuildervpcendpointsagentcoreprivateecrapiendpoint1AAF5002": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": ["bedrockbuildervpcendpointsagentcoreprivateecrapisecuritygroupF3150F7C", "GroupId"]
+          }
+        ],
+        "ServiceName": "com.amazonaws.test-region.ecr.api",
+        "SubnetIds": ["subnet-0123456789abcdef0"],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": "vpc-0123456789abcdef0"
+      }
+    },
+    "bedrockbuildervpcendpointsagentcoreprivateecrdkrsecuritygroup29F6983D": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Consumer access to the ecr.dkr VPC endpoint",
+        "GroupName": "test-org-test-env-test-domain-test-bedrock-builder-harness-comprehensive-vpc-endpoint-agentcore-private-ecr-dkr",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "255.255.255.255/32",
+            "Description": "Disallow all traffic",
+            "FromPort": 252,
+            "IpProtocol": "icmp",
+            "ToPort": 86
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcId": "vpc-0123456789abcdef0"
+      }
+    },
+    "bedrockbuildervpcendpointsagentcoreprivateecrdkrsecuritygroupsecuritygroupvpcendpointagentcoreprivateecrdkridssm509DBA03": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/security-group/vpc-endpoint-agentcore-private-ecr-dkr/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": ["bedrockbuildervpcendpointsagentcoreprivateecrdkrsecuritygroup29F6983D", "GroupId"]
+        }
+      }
+    },
+    "bedrockbuildervpcendpointsagentcoreprivateecrdkrendpoint4C7E19A0": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": ["bedrockbuildervpcendpointsagentcoreprivateecrdkrsecuritygroup29F6983D", "GroupId"]
+          }
+        ],
+        "ServiceName": "com.amazonaws.test-region.ecr.dkr",
+        "SubnetIds": ["subnet-0123456789abcdef0", "subnet-0123456789abcdef1"],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": "vpc-0123456789abcdef0"
+      }
+    },
+    "bedrockbuildervpcendpointsagentcoreprivatebedrockagentcoregatewaysecuritygroup670C9E61": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Consumer access to the bedrock-agentcore.gateway VPC endpoint",
+        "GroupName": "test-org-test-env-test-domain-test-bedrock-builder-harness-comprehensive-vpc-endpoint-agentcore-private-bedrock-agentcore-gateway",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "255.255.255.255/32",
+            "Description": "Disallow all traffic",
+            "FromPort": 252,
+            "IpProtocol": "icmp",
+            "ToPort": 86
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcId": "vpc-0123456789abcdef0"
+      }
+    },
+    "bedrockbuildervpcendpointsagentcoreprivatebedrockagentcoregatewaysecuritygroupsecuritygroupvpcendpointagentcoreprivatebedrockagentcoregatewayidssmF8CEC305": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/security-group/vpc-endpoint-agentcore-private-bedrock-agentcore-gateway/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuildervpcendpointsagentcoreprivatebedrockagentcoregatewaysecuritygroup670C9E61",
+            "GroupId"
+          ]
+        }
+      }
+    },
+    "bedrockbuildervpcendpointsagentcoreprivatebedrockagentcoregatewayendpoint72C7E8D6": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "bedrock-agentcore:InvokeGateway",
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": "*",
+              "Sid": "AllowScopedServiceAccess"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "bedrockbuildervpcendpointsagentcoreprivatebedrockagentcoregatewaysecuritygroup670C9E61",
+              "GroupId"
+            ]
+          }
+        ],
+        "ServiceName": "com.amazonaws.test-region.bedrock-agentcore.gateway",
+        "SubnetIds": ["subnet-0123456789abcdef0", "subnet-0123456789abcdef1"],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": "vpc-0123456789abcdef0"
+      }
+    },
+    "bedrockbuildervpcendpointsagentcoreprivates3imagelayersgatewayendpoint5FD0C85D": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:GetObject",
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": "arn:test-partition:s3:::prod-test-region-starport-layer-bucket/*",
+              "Sid": "AllowEcrImageLayerPull"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "RouteTableIds": ["rtb-0123456789abcdef0"],
+        "ServiceName": {
+          "Fn::Join": [
+            "",
+            [
+              "com.amazonaws.",
+              {
+                "Ref": "AWS::Region"
+              },
+              ".s3"
+            ]
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcEndpointType": "Gateway",
+        "VpcId": "vpc-0123456789abcdef0"
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointAccessClientSecurityGroup20BA78DB": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Private endpoint client access for Harness comprehensive-harness",
+        "GroupName": "test-org-test-env-test-domain-test-bedrock-builder-harness-comprehensive-agentcore-harness-vpce-client-comprehensive-harness",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "255.255.255.255/32",
+            "Description": "Disallow all traffic",
+            "FromPort": 252,
+            "IpProtocol": "icmp",
+            "ToPort": 86
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-harness-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VpcId": "vpc-0123456789abcdef0"
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointAccessClientSecurityGroupsecuritygroupagentcoreharnessvpceclientcomprehensiveharnessidssmE108B534": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/security-group/agentcore-harness-vpce-client-comprehensive-harness/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointAccessClientSecurityGroup20BA78DB",
+            "GroupId"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointAccessEndpointsbedrockruntimeegressD6D42094": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "Description": "HTTPS to the bedrock-runtime VPC endpoint",
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": ["bedrockbuildervpcendpointsagentcoreprivatebedrockruntimesecuritygroup02459AB3", "GroupId"]
+        },
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointAccessClientSecurityGroup20BA78DB",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 443
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointAccessEndpointsbedrockruntimeingress5E3DF3F5": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "Description": "HTTPS from Harness endpoint client to bedrock-runtime",
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": ["bedrockbuildervpcendpointsagentcoreprivatebedrockruntimesecuritygroup02459AB3", "GroupId"]
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointAccessClientSecurityGroup20BA78DB",
+            "GroupId"
+          ]
+        },
+        "ToPort": 443
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointAccessEndpointsecrapiegress9455D8BE": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "Description": "HTTPS to the ecr.api VPC endpoint",
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": ["bedrockbuildervpcendpointsagentcoreprivateecrapisecuritygroupF3150F7C", "GroupId"]
+        },
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointAccessClientSecurityGroup20BA78DB",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 443
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointAccessEndpointsecrapiingressF99E530D": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "Description": "HTTPS from Harness endpoint client to ecr.api",
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": ["bedrockbuildervpcendpointsagentcoreprivateecrapisecuritygroupF3150F7C", "GroupId"]
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointAccessClientSecurityGroup20BA78DB",
+            "GroupId"
+          ]
+        },
+        "ToPort": 443
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointAccessEndpointsecrdkregress17459492": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "Description": "HTTPS to the ecr.dkr VPC endpoint",
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": ["bedrockbuildervpcendpointsagentcoreprivateecrdkrsecuritygroup29F6983D", "GroupId"]
+        },
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointAccessClientSecurityGroup20BA78DB",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 443
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointAccessEndpointsecrdkringressA62E5D4F": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "Description": "HTTPS from Harness endpoint client to ecr.dkr",
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": ["bedrockbuildervpcendpointsagentcoreprivateecrdkrsecuritygroup29F6983D", "GroupId"]
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointAccessClientSecurityGroup20BA78DB",
+            "GroupId"
+          ]
+        },
+        "ToPort": 443
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointAccessEndpointsstsegressFF0F01F4": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "Description": "HTTPS to the sts VPC endpoint",
+        "DestinationSecurityGroupId": "sg-0fedcba9876543210",
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointAccessClientSecurityGroup20BA78DB",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 443
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointAccessEndpointsstsingressABEC9D31": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "Description": "HTTPS from Harness endpoint client to sts",
+        "FromPort": 443,
+        "GroupId": "sg-0fedcba9876543210",
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointAccessClientSecurityGroup20BA78DB",
+            "GroupId"
+          ]
+        },
+        "ToPort": 443
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointAccessEndpointsbedrockagentcoregatewayegressD9ACBB17": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "Description": "HTTPS to the bedrock-agentcore.gateway VPC endpoint",
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": [
+            "bedrockbuildervpcendpointsagentcoreprivatebedrockagentcoregatewaysecuritygroup670C9E61",
+            "GroupId"
+          ]
+        },
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointAccessClientSecurityGroup20BA78DB",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 443
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointAccessEndpointsbedrockagentcoregatewayingress35CB4B43": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "Description": "HTTPS from Harness endpoint client to bedrock-agentcore.gateway",
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "bedrockbuildervpcendpointsagentcoreprivatebedrockagentcoregatewaysecuritygroup670C9E61",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointAccessClientSecurityGroup20BA78DB",
+            "GroupId"
+          ]
+        },
+        "ToPort": 443
+      }
+    },
     "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRoleF8BB3373": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -716,6 +1342,7 @@
               "id": "AwsSolutions-IAM4"
             },
             {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-harness-l3-construct/lib/bedrock-agentcore-harness-l3-construct.ts] Wildcard resources are required for actions that do not support resource-level permissions, per the AWS service-authorization reference for each service: ECR GetAuthorizationToken (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonelasticcontainerregistry.html); X-Ray tracing PutTraceSegments/PutTelemetryRecords/GetSamplingRules/GetSamplingTargets (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsx-ray.html); and cloudwatch:PutMetricData (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatch.html), further scoped by a condition restricting it to the bedrock-agentcore metrics namespace. logs:DescribeLogGroups likewise does not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html), so it is scoped to the log-group resource type (log-group:*) - the tightest scope the action accepts - rather than a bare \"*\". The AWS-managed-image ECR pull (HarnessImageEcrPull, always granted; a bring-your-own container adds its own repository ARN alongside it) scopes the repository name to harness-<region> but wildcards the account segment because the managed image lives in an AWS-owned registry account that varies by region and is not knowable at synth; the repository name is pinned, so this is the tightest scope available. The cross-region inference-profile grant (BedrockInferenceProfileModelInvocation, emitted only for an inference-profile modelId) wildcards the REGION segment of the destination foundation-model ARN because a profile routes to destination regions that are not knowable at synth; the partition and model name are pinned, and the grant is bounded by a StringLike condition on bedrock:InferenceProfileArn so it is usable only through this profile (https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-prereq.html). The remaining wildcards are narrowed to the service-managed harness resource prefixes (CloudWatch Logs log-group, log-stream, and PutResourcePolicy ARN prefixes under /aws/bedrock-agentcore/runtimes/, AgentCore workload-identity, and the AWS-owned default browser & code-interpreter prefixes) rather than a bare \"*\". Residual breadth: the logs:PutResourcePolicy resource prefix (/aws/bedrock-agentcore/runtimes/*) spans every AgentCore runtime log group in the account, not just this harness's group, because the service generates the runtime id only after this role is built, so the exact log-group ARN is not knowable at synth. This is accepted: the action is scoped to the AgentCore runtimes log-group prefix (never a bare \"*\"), and tightening to the specific group would require a custom resource to resolve the service-generated id post-create.",
               "id": "AwsSolutions-IAM5"
             }
           ]
@@ -735,10 +1362,7 @@
         },
         "Type": "String",
         "Value": {
-          "Fn::GetAtt": [
-            "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRoleF8BB3373",
-            "Arn"
-          ]
+          "Fn::GetAtt": ["bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRoleF8BB3373", "Arn"]
         }
       },
       "Metadata": {
@@ -749,6 +1373,7 @@
               "id": "AwsSolutions-IAM4"
             },
             {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-harness-l3-construct/lib/bedrock-agentcore-harness-l3-construct.ts] Wildcard resources are required for actions that do not support resource-level permissions, per the AWS service-authorization reference for each service: ECR GetAuthorizationToken (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonelasticcontainerregistry.html); X-Ray tracing PutTraceSegments/PutTelemetryRecords/GetSamplingRules/GetSamplingTargets (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsx-ray.html); and cloudwatch:PutMetricData (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatch.html), further scoped by a condition restricting it to the bedrock-agentcore metrics namespace. logs:DescribeLogGroups likewise does not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html), so it is scoped to the log-group resource type (log-group:*) - the tightest scope the action accepts - rather than a bare \"*\". The AWS-managed-image ECR pull (HarnessImageEcrPull, always granted; a bring-your-own container adds its own repository ARN alongside it) scopes the repository name to harness-<region> but wildcards the account segment because the managed image lives in an AWS-owned registry account that varies by region and is not knowable at synth; the repository name is pinned, so this is the tightest scope available. The cross-region inference-profile grant (BedrockInferenceProfileModelInvocation, emitted only for an inference-profile modelId) wildcards the REGION segment of the destination foundation-model ARN because a profile routes to destination regions that are not knowable at synth; the partition and model name are pinned, and the grant is bounded by a StringLike condition on bedrock:InferenceProfileArn so it is usable only through this profile (https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-prereq.html). The remaining wildcards are narrowed to the service-managed harness resource prefixes (CloudWatch Logs log-group, log-stream, and PutResourcePolicy ARN prefixes under /aws/bedrock-agentcore/runtimes/, AgentCore workload-identity, and the AWS-owned default browser & code-interpreter prefixes) rather than a bare \"*\". Residual breadth: the logs:PutResourcePolicy resource prefix (/aws/bedrock-agentcore/runtimes/*) spans every AgentCore runtime log group in the account, not just this harness's group, because the service generates the runtime id only after this role is built, so the exact log-group ARN is not knowable at synth. This is accepted: the action is scoped to the AgentCore runtimes log-group prefix (never a bare \"*\"), and tightening to the specific group would require a custom resource to resolve the service-generated id post-create.",
               "id": "AwsSolutions-IAM5"
             }
           ]
@@ -768,10 +1393,7 @@
         },
         "Type": "String",
         "Value": {
-          "Fn::GetAtt": [
-            "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRoleF8BB3373",
-            "RoleId"
-          ]
+          "Fn::GetAtt": ["bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRoleF8BB3373", "RoleId"]
         }
       },
       "Metadata": {
@@ -782,6 +1404,7 @@
               "id": "AwsSolutions-IAM4"
             },
             {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-harness-l3-construct/lib/bedrock-agentcore-harness-l3-construct.ts] Wildcard resources are required for actions that do not support resource-level permissions, per the AWS service-authorization reference for each service: ECR GetAuthorizationToken (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonelasticcontainerregistry.html); X-Ray tracing PutTraceSegments/PutTelemetryRecords/GetSamplingRules/GetSamplingTargets (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsx-ray.html); and cloudwatch:PutMetricData (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatch.html), further scoped by a condition restricting it to the bedrock-agentcore metrics namespace. logs:DescribeLogGroups likewise does not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html), so it is scoped to the log-group resource type (log-group:*) - the tightest scope the action accepts - rather than a bare \"*\". The AWS-managed-image ECR pull (HarnessImageEcrPull, always granted; a bring-your-own container adds its own repository ARN alongside it) scopes the repository name to harness-<region> but wildcards the account segment because the managed image lives in an AWS-owned registry account that varies by region and is not knowable at synth; the repository name is pinned, so this is the tightest scope available. The cross-region inference-profile grant (BedrockInferenceProfileModelInvocation, emitted only for an inference-profile modelId) wildcards the REGION segment of the destination foundation-model ARN because a profile routes to destination regions that are not knowable at synth; the partition and model name are pinned, and the grant is bounded by a StringLike condition on bedrock:InferenceProfileArn so it is usable only through this profile (https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-prereq.html). The remaining wildcards are narrowed to the service-managed harness resource prefixes (CloudWatch Logs log-group, log-stream, and PutResourcePolicy ARN prefixes under /aws/bedrock-agentcore/runtimes/, AgentCore workload-identity, and the AWS-owned default browser & code-interpreter prefixes) rather than a bare \"*\". Residual breadth: the logs:PutResourcePolicy resource prefix (/aws/bedrock-agentcore/runtimes/*) spans every AgentCore runtime log group in the account, not just this harness's group, because the service generates the runtime id only after this role is built, so the exact log-group ARN is not knowable at synth. This is accepted: the action is scoped to the AgentCore runtimes log-group prefix (never a bare \"*\"), and tightening to the specific group would require a custom resource to resolve the service-generated id post-create.",
               "id": "AwsSolutions-IAM5"
             }
           ]
@@ -812,6 +1435,7 @@
               "id": "AwsSolutions-IAM4"
             },
             {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-harness-l3-construct/lib/bedrock-agentcore-harness-l3-construct.ts] Wildcard resources are required for actions that do not support resource-level permissions, per the AWS service-authorization reference for each service: ECR GetAuthorizationToken (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonelasticcontainerregistry.html); X-Ray tracing PutTraceSegments/PutTelemetryRecords/GetSamplingRules/GetSamplingTargets (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsx-ray.html); and cloudwatch:PutMetricData (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatch.html), further scoped by a condition restricting it to the bedrock-agentcore metrics namespace. logs:DescribeLogGroups likewise does not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html), so it is scoped to the log-group resource type (log-group:*) - the tightest scope the action accepts - rather than a bare \"*\". The AWS-managed-image ECR pull (HarnessImageEcrPull, always granted; a bring-your-own container adds its own repository ARN alongside it) scopes the repository name to harness-<region> but wildcards the account segment because the managed image lives in an AWS-owned registry account that varies by region and is not knowable at synth; the repository name is pinned, so this is the tightest scope available. The cross-region inference-profile grant (BedrockInferenceProfileModelInvocation, emitted only for an inference-profile modelId) wildcards the REGION segment of the destination foundation-model ARN because a profile routes to destination regions that are not knowable at synth; the partition and model name are pinned, and the grant is bounded by a StringLike condition on bedrock:InferenceProfileArn so it is usable only through this profile (https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-prereq.html). The remaining wildcards are narrowed to the service-managed harness resource prefixes (CloudWatch Logs log-group, log-stream, and PutResourcePolicy ARN prefixes under /aws/bedrock-agentcore/runtimes/, AgentCore workload-identity, and the AWS-owned default browser & code-interpreter prefixes) rather than a bare \"*\". Residual breadth: the logs:PutResourcePolicy resource prefix (/aws/bedrock-agentcore/runtimes/*) spans every AgentCore runtime log group in the account, not just this harness's group, because the service generates the runtime id only after this role is built, so the exact log-group ARN is not knowable at synth. This is accepted: the action is scoped to the AgentCore runtimes log-group prefix (never a bare \"*\"), and tightening to the specific group would require a custom resource to resolve the service-generated id post-create.",
               "id": "AwsSolutions-IAM5"
             }
           ]
@@ -827,10 +1451,7 @@
         "PolicyDocument": {
           "Statement": [
             {
-              "Action": [
-                "bedrock:InvokeModel",
-                "bedrock:InvokeModelWithResponseStream"
-              ],
+              "Action": ["bedrock:InvokeModel", "bedrock:InvokeModelWithResponseStream"],
               "Effect": "Allow",
               "Resource": "arn:test-partition:bedrock:test-region::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0",
               "Sid": "BedrockModelInvocation"
@@ -847,10 +1468,7 @@
               "Sid": "XRayTracingAccess"
             },
             {
-              "Action": [
-                "logs:CreateLogGroup",
-                "logs:DescribeLogStreams"
-              ],
+              "Action": ["logs:CreateLogGroup", "logs:DescribeLogStreams"],
               "Effect": "Allow",
               "Resource": "arn:test-partition:logs:test-region:test-account:log-group:/aws/bedrock-agentcore/runtimes/*",
               "Sid": "CloudWatchLogsGroup"
@@ -862,10 +1480,7 @@
               "Sid": "CloudWatchLogsDescribeGroups"
             },
             {
-              "Action": [
-                "logs:CreateLogStream",
-                "logs:PutLogEvents"
-              ],
+              "Action": ["logs:CreateLogStream", "logs:PutLogEvents"],
               "Effect": "Allow",
               "Resource": "arn:test-partition:logs:test-region:test-account:log-group:/aws/bedrock-agentcore/runtimes/*:log-stream:*",
               "Sid": "CloudWatchLogsStream"
@@ -888,10 +1503,7 @@
               "Sid": "CloudWatchMetricsPublish"
             },
             {
-              "Action": [
-                "bedrock-agentcore:GetWorkloadAccessToken",
-                "bedrock-agentcore:GetWorkloadAccessTokenForJWT"
-              ],
+              "Action": ["bedrock-agentcore:GetWorkloadAccessToken", "bedrock-agentcore:GetWorkloadAccessTokenForJWT"],
               "Effect": "Allow",
               "Resource": [
                 "arn:test-partition:bedrock-agentcore:test-region:test-account:workload-identity-directory/default",
@@ -932,11 +1544,7 @@
               "Sid": "DenyRoleAssumption"
             },
             {
-              "Action": [
-                "ecr:GetDownloadUrlForLayer",
-                "ecr:BatchGetImage",
-                "ecr:BatchCheckLayerAvailability"
-              ],
+              "Action": ["ecr:GetDownloadUrlForLayer", "ecr:BatchGetImage", "ecr:BatchCheckLayerAvailability"],
               "Effect": "Allow",
               "Resource": [
                 "arn:test-partition:ecr:test-region:*:repository/harness-test-region",
@@ -970,10 +1578,7 @@
               "Sid": "AllowApplyBedrockGuardrail"
             },
             {
-              "Action": [
-                "kms:Decrypt",
-                "kms:DescribeKey"
-              ],
+              "Action": ["kms:Decrypt", "kms:DescribeKey"],
               "Condition": {
                 "StringLike": {
                   "kms:ViaService": "bedrock.test-region.amazonaws.com"
@@ -981,10 +1586,7 @@
               },
               "Effect": "Allow",
               "Resource": {
-                "Fn::GetAtt": [
-                  "bedrockcmk710EFABC",
-                  "Arn"
-                ]
+                "Fn::GetAtt": ["bedrockcmk710EFABC", "Arn"]
               },
               "Sid": "GuardrailKmsDecrypt"
             },
@@ -992,10 +1594,7 @@
               "Action": "bedrock-agentcore:InvokeGateway",
               "Effect": "Allow",
               "Resource": {
-                "Fn::GetAtt": [
-                  "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
-                  "GatewayArn"
-                ]
+                "Fn::GetAtt": ["bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035", "GatewayArn"]
               },
               "Sid": "AllowInvokeGateway"
             }
@@ -1012,6 +1611,7 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-harness-l3-construct/lib/bedrock-agentcore-harness-l3-construct.ts] Wildcard resources are required for actions that do not support resource-level permissions, per the AWS service-authorization reference for each service: ECR GetAuthorizationToken (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonelasticcontainerregistry.html); X-Ray tracing PutTraceSegments/PutTelemetryRecords/GetSamplingRules/GetSamplingTargets (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsx-ray.html); and cloudwatch:PutMetricData (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatch.html), further scoped by a condition restricting it to the bedrock-agentcore metrics namespace. logs:DescribeLogGroups likewise does not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html), so it is scoped to the log-group resource type (log-group:*) - the tightest scope the action accepts - rather than a bare \"*\". The AWS-managed-image ECR pull (HarnessImageEcrPull, always granted; a bring-your-own container adds its own repository ARN alongside it) scopes the repository name to harness-<region> but wildcards the account segment because the managed image lives in an AWS-owned registry account that varies by region and is not knowable at synth; the repository name is pinned, so this is the tightest scope available. The cross-region inference-profile grant (BedrockInferenceProfileModelInvocation, emitted only for an inference-profile modelId) wildcards the REGION segment of the destination foundation-model ARN because a profile routes to destination regions that are not knowable at synth; the partition and model name are pinned, and the grant is bounded by a StringLike condition on bedrock:InferenceProfileArn so it is usable only through this profile (https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-prereq.html). The remaining wildcards are narrowed to the service-managed harness resource prefixes (CloudWatch Logs log-group, log-stream, and PutResourcePolicy ARN prefixes under /aws/bedrock-agentcore/runtimes/, AgentCore workload-identity, and the AWS-owned default browser & code-interpreter prefixes) rather than a bare \"*\". Residual breadth: the logs:PutResourcePolicy resource prefix (/aws/bedrock-agentcore/runtimes/*) spans every AgentCore runtime log group in the account, not just this harness's group, because the service generates the runtime id only after this role is built, so the exact log-group ARN is not knowable at synth. This is accepted: the action is scoped to the AgentCore runtimes log-group prefix (never a bare \"*\"), and tightening to the specific group would require a custom resource to resolve the service-generated id post-create.",
               "id": "AwsSolutions-IAM5"
             }
           ]
@@ -1038,6 +1638,7 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-harness-l3-construct/lib/bedrock-agentcore-harness-l3-construct.ts] Wildcard resources are required for actions that do not support resource-level permissions, per the AWS service-authorization reference for each service: ECR GetAuthorizationToken (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonelasticcontainerregistry.html); X-Ray tracing PutTraceSegments/PutTelemetryRecords/GetSamplingRules/GetSamplingTargets (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsx-ray.html); and cloudwatch:PutMetricData (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatch.html), further scoped by a condition restricting it to the bedrock-agentcore metrics namespace. logs:DescribeLogGroups likewise does not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html), so it is scoped to the log-group resource type (log-group:*) - the tightest scope the action accepts - rather than a bare \"*\". The AWS-managed-image ECR pull (HarnessImageEcrPull, always granted; a bring-your-own container adds its own repository ARN alongside it) scopes the repository name to harness-<region> but wildcards the account segment because the managed image lives in an AWS-owned registry account that varies by region and is not knowable at synth; the repository name is pinned, so this is the tightest scope available. The cross-region inference-profile grant (BedrockInferenceProfileModelInvocation, emitted only for an inference-profile modelId) wildcards the REGION segment of the destination foundation-model ARN because a profile routes to destination regions that are not knowable at synth; the partition and model name are pinned, and the grant is bounded by a StringLike condition on bedrock:InferenceProfileArn so it is usable only through this profile (https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-prereq.html). The remaining wildcards are narrowed to the service-managed harness resource prefixes (CloudWatch Logs log-group, log-stream, and PutResourcePolicy ARN prefixes under /aws/bedrock-agentcore/runtimes/, AgentCore workload-identity, and the AWS-owned default browser & code-interpreter prefixes) rather than a bare \"*\". Residual breadth: the logs:PutResourcePolicy resource prefix (/aws/bedrock-agentcore/runtimes/*) spans every AgentCore runtime log group in the account, not just this harness's group, because the service generates the runtime id only after this role is built, so the exact log-group ARN is not knowable at synth. This is accepted: the action is scoped to the AgentCore runtimes log-group prefix (never a bare \"*\"), and tightening to the specific group would require a custom resource to resolve the service-generated id post-create.",
               "id": "AwsSolutions-IAM5"
             }
           ]
@@ -1084,6 +1685,7 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-harness-l3-construct/lib/bedrock-agentcore-harness-l3-construct.ts] Wildcard resources are required for actions that do not support resource-level permissions, per the AWS service-authorization reference for each service: ECR GetAuthorizationToken (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonelasticcontainerregistry.html); X-Ray tracing PutTraceSegments/PutTelemetryRecords/GetSamplingRules/GetSamplingTargets (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsx-ray.html); and cloudwatch:PutMetricData (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatch.html), further scoped by a condition restricting it to the bedrock-agentcore metrics namespace. logs:DescribeLogGroups likewise does not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html), so it is scoped to the log-group resource type (log-group:*) - the tightest scope the action accepts - rather than a bare \"*\". The AWS-managed-image ECR pull (HarnessImageEcrPull, always granted; a bring-your-own container adds its own repository ARN alongside it) scopes the repository name to harness-<region> but wildcards the account segment because the managed image lives in an AWS-owned registry account that varies by region and is not knowable at synth; the repository name is pinned, so this is the tightest scope available. The cross-region inference-profile grant (BedrockInferenceProfileModelInvocation, emitted only for an inference-profile modelId) wildcards the REGION segment of the destination foundation-model ARN because a profile routes to destination regions that are not knowable at synth; the partition and model name are pinned, and the grant is bounded by a StringLike condition on bedrock:InferenceProfileArn so it is usable only through this profile (https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-prereq.html). The remaining wildcards are narrowed to the service-managed harness resource prefixes (CloudWatch Logs log-group, log-stream, and PutResourcePolicy ARN prefixes under /aws/bedrock-agentcore/runtimes/, AgentCore workload-identity, and the AWS-owned default browser & code-interpreter prefixes) rather than a bare \"*\". Residual breadth: the logs:PutResourcePolicy resource prefix (/aws/bedrock-agentcore/runtimes/*) spans every AgentCore runtime log group in the account, not just this harness's group, because the service generates the runtime id only after this role is built, so the exact log-group ARN is not knowable at synth. This is accepted: the action is scoped to the AgentCore runtimes log-group prefix (never a bare \"*\"), and tightening to the specific group would require a custom resource to resolve the service-generated id post-create.",
               "id": "AwsSolutions-IAM5"
             }
           ]
@@ -1093,19 +1695,11 @@
     "bedrockbuilderbedrockharnesscomprehensiveharnessHarness2ED69A7F": {
       "Type": "AWS::BedrockAgentCore::Harness",
       "Properties": {
-        "AllowedTools": [
-          "get_order_status",
-          "@gateway_tools",
-          "@builtin"
-        ],
+        "AllowedTools": ["get_order_status", "@gateway_tools", "@builtin"],
         "AuthorizerConfiguration": {
           "CustomJWTAuthorizer": {
-            "AllowedAudience": [
-              "support-clients"
-            ],
-            "AllowedClients": [
-              "support-app"
-            ],
+            "AllowedAudience": ["support-clients"],
+            "AllowedClients": ["support-app"],
             "DiscoveryUrl": "https://example.com/.well-known/openid-configuration"
           }
         },
@@ -1119,11 +1713,15 @@
               "NetworkMode": "VPC",
               "NetworkModeConfig": {
                 "SecurityGroups": [
-                  "sg-0123456789abcdef0"
+                  "sg-0123456789abcdef0",
+                  {
+                    "Fn::GetAtt": [
+                      "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointAccessClientSecurityGroup20BA78DB",
+                      "GroupId"
+                    ]
+                  }
                 ],
-                "Subnets": [
-                  "subnet-0123456789abcdef0"
-                ]
+                "Subnets": ["subnet-0123456789abcdef0"]
               }
             }
           }
@@ -1138,10 +1736,7 @@
           "SUPPORT_QUEUE": "tier-1"
         },
         "ExecutionRoleArn": {
-          "Fn::GetAtt": [
-            "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRoleF8BB3373",
-            "Arn"
-          ]
+          "Fn::GetAtt": ["bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRoleF8BB3373", "Arn"]
         },
         "HarnessName": "test_org_test_env_test_domain___1d2dffae",
         "MaxIterations": 10,
@@ -1221,9 +1816,7 @@
                       "description": "The order identifier"
                     }
                   },
-                  "required": [
-                    "orderId"
-                  ]
+                  "required": ["orderId"]
                 }
               }
             },
@@ -1234,10 +1827,7 @@
             "Config": {
               "AgentCoreGateway": {
                 "GatewayArn": {
-                  "Fn::GetAtt": [
-                    "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
-                    "GatewayArn"
-                  ]
+                  "Fn::GetAtt": ["bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035", "GatewayArn"]
                 },
                 "OutboundAuth": {
                   "AwsIam": {}
@@ -1269,10 +1859,7 @@
       "Type": "AWS::BedrockAgentCore::HarnessEndpoint",
       "Properties": {
         "HarnessId": {
-          "Fn::GetAtt": [
-            "bedrockbuilderbedrockharnesscomprehensiveharnessHarness2ED69A7F",
-            "HarnessId"
-          ]
+          "Fn::GetAtt": ["bedrockbuilderbedrockharnesscomprehensiveharnessHarness2ED69A7F", "HarnessId"]
         },
         "EndpointName": "test_org_test_env_test_domain_test_bed__1a0a7c64",
         "Description": "Production endpoint pinned to a released harness version",
@@ -1300,18 +1887,13 @@
           }
         ]
       },
-      "DependsOn": [
-        "bedrockbuilderbedrockharnesscomprehensiveharnessHarness2ED69A7F"
-      ]
+      "DependsOn": ["bedrockbuilderbedrockharnesscomprehensiveharnessHarness2ED69A7F"]
     },
     "bedrockbuilderbedrockharnesscomprehensiveharnessLogProtectionB3D075A6": {
       "Type": "Custom::AgentCoreLogProtection",
       "Properties": {
         "ServiceToken": {
-          "Fn::GetAtt": [
-            "customAgentCoreLogProtectionproviderframeworkonEvent185E2063",
-            "Arn"
-          ]
+          "Fn::GetAtt": ["customAgentCoreLogProtectionproviderframeworkonEvent185E2063", "Arn"]
         },
         "runtimeId": {
           "Fn::GetAtt": [
@@ -1320,10 +1902,7 @@
           ]
         },
         "kmsKeyArn": {
-          "Fn::GetAtt": [
-            "bedrockcmk710EFABC",
-            "Arn"
-          ]
+          "Fn::GetAtt": ["bedrockcmk710EFABC", "Arn"]
         },
         "retentionDays": "90",
         "dataProtectionPolicy": "{\"Name\":\"agentcore-harness-data-protection\",\"Version\":\"2021-06-01\",\"Statement\":[{\"Sid\":\"audit-policy\",\"DataIdentifier\":[\"arn:aws:dataprotection::aws:data-identifier/EmailAddress\",\"arn:aws:dataprotection::aws:data-identifier/CreditCardNumber\",\"arn:aws:dataprotection::aws:data-identifier/Ssn-US\",\"arn:aws:dataprotection::aws:data-identifier/Name\",\"arn:aws:dataprotection::aws:data-identifier/Address\",\"arn:aws:dataprotection::aws:data-identifier/PhoneNumber-US\",\"arn:aws:dataprotection::aws:data-identifier/IpAddress\",\"arn:aws:dataprotection::aws:data-identifier/DriversLicense-US\",\"arn:aws:dataprotection::aws:data-identifier/PassportNumber-US\"],\"Operation\":{\"Audit\":{\"FindingsDestination\":{}}}},{\"Sid\":\"redact-policy\",\"DataIdentifier\":[\"arn:aws:dataprotection::aws:data-identifier/EmailAddress\",\"arn:aws:dataprotection::aws:data-identifier/CreditCardNumber\",\"arn:aws:dataprotection::aws:data-identifier/Ssn-US\",\"arn:aws:dataprotection::aws:data-identifier/Name\",\"arn:aws:dataprotection::aws:data-identifier/Address\",\"arn:aws:dataprotection::aws:data-identifier/PhoneNumber-US\",\"arn:aws:dataprotection::aws:data-identifier/IpAddress\",\"arn:aws:dataprotection::aws:data-identifier/DriversLicense-US\",\"arn:aws:dataprotection::aws:data-identifier/PassportNumber-US\"],\"Operation\":{\"Deidentify\":{\"MaskConfig\":{}}}}]}"
@@ -1334,461 +1913,6 @@
       ],
       "UpdateReplacePolicy": "Delete",
       "DeletionPolicy": "Delete"
-    },
-    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsSecurityGroup6430C772": {
-      "Type": "AWS::EC2::SecurityGroup",
-      "Properties": {
-        "GroupDescription": "test-org-test-env-test-domain-test-bedrock-builder-harness-comprehensive/bedrock-builder/bedrock-harness-comprehensive-harness/VpcEndpoints/SecurityGroup",
-        "GroupName": "test-org-test-env-test-domain-test-bedrock-builder-harness-comprehensive-agentcore-harness-vpce-comprehensive-harness",
-        "SecurityGroupEgress": [
-          {
-            "CidrIp": "255.255.255.255/32",
-            "Description": "Disallow all traffic",
-            "FromPort": 252,
-            "IpProtocol": "icmp",
-            "ToPort": 86
-          }
-        ],
-        "Tags": [
-          {
-            "Key": "mdaa_cdk_app",
-            "Value": "bedrock-builder"
-          },
-          {
-            "Key": "mdaa_domain",
-            "Value": "test-domain"
-          },
-          {
-            "Key": "mdaa_env",
-            "Value": "test-env"
-          },
-          {
-            "Key": "mdaa_module_name",
-            "Value": "test-bedrock-builder-harness-comprehensive"
-          },
-          {
-            "Key": "mdaa_org",
-            "Value": "test-org"
-          }
-        ],
-        "VpcId": "vpc-0123456789abcdef0"
-      }
-    },
-    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsSecurityGroupfromsg0123456789abcdef0tcpPORT44391AEEF4E": {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "Description": "HTTPS from harness security group to AgentCore VPC endpoint",
-        "FromPort": 443,
-        "GroupId": {
-          "Fn::GetAtt": [
-            "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsSecurityGroup6430C772",
-            "GroupId"
-          ]
-        },
-        "IpProtocol": "tcp",
-        "SourceSecurityGroupId": "sg-0123456789abcdef0",
-        "ToPort": 443
-      }
-    },
-    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsSecurityGroupsecuritygroupagentcoreharnessvpcecomprehensiveharnessidssm5B3D183C": {
-      "Type": "AWS::SSM::Parameter",
-      "Properties": {
-        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/security-group/agentcore-harness-vpce-comprehensive-harness/id",
-        "Tags": {
-          "mdaa_cdk_app": "bedrock-builder",
-          "mdaa_domain": "test-domain",
-          "mdaa_env": "test-env",
-          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
-          "mdaa_org": "test-org"
-        },
-        "Type": "String",
-        "Value": {
-          "Fn::GetAtt": [
-            "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsSecurityGroup6430C772",
-            "GroupId"
-          ]
-        }
-      }
-    },
-    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsBedrockRuntimeEndpoint77E969FD": {
-      "Type": "AWS::EC2::VPCEndpoint",
-      "Properties": {
-        "PrivateDnsEnabled": true,
-        "SecurityGroupIds": [
-          {
-            "Fn::GetAtt": [
-              "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsSecurityGroup6430C772",
-              "GroupId"
-            ]
-          }
-        ],
-        "ServiceName": "com.amazonaws.test-region.bedrock-runtime",
-        "SubnetIds": [
-          "subnet-0123456789abcdef0"
-        ],
-        "Tags": [
-          {
-            "Key": "mdaa_cdk_app",
-            "Value": "bedrock-builder"
-          },
-          {
-            "Key": "mdaa_domain",
-            "Value": "test-domain"
-          },
-          {
-            "Key": "mdaa_env",
-            "Value": "test-env"
-          },
-          {
-            "Key": "mdaa_module_name",
-            "Value": "test-bedrock-builder-harness-comprehensive"
-          },
-          {
-            "Key": "mdaa_org",
-            "Value": "test-org"
-          }
-        ],
-        "VpcEndpointType": "Interface",
-        "VpcId": "vpc-0123456789abcdef0"
-      }
-    },
-    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsAgentCoreGatewayEndpoint5C77B5C7": {
-      "Type": "AWS::EC2::VPCEndpoint",
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "bedrock-agentcore:InvokeGateway",
-              "Effect": "Allow",
-              "Principal": "*",
-              "Resource": "*",
-              "Sid": "AgentCoreGatewayInvokeThroughEndpoint"
-            }
-          ],
-          "Version": "2012-10-17"
-        },
-        "PrivateDnsEnabled": true,
-        "SecurityGroupIds": [
-          {
-            "Fn::GetAtt": [
-              "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsSecurityGroup6430C772",
-              "GroupId"
-            ]
-          }
-        ],
-        "ServiceName": "com.amazonaws.test-region.bedrock-agentcore.gateway",
-        "SubnetIds": [
-          "subnet-0123456789abcdef0"
-        ],
-        "Tags": [
-          {
-            "Key": "mdaa_cdk_app",
-            "Value": "bedrock-builder"
-          },
-          {
-            "Key": "mdaa_domain",
-            "Value": "test-domain"
-          },
-          {
-            "Key": "mdaa_env",
-            "Value": "test-env"
-          },
-          {
-            "Key": "mdaa_module_name",
-            "Value": "test-bedrock-builder-harness-comprehensive"
-          },
-          {
-            "Key": "mdaa_org",
-            "Value": "test-org"
-          }
-        ],
-        "VpcEndpointType": "Interface",
-        "VpcId": "vpc-0123456789abcdef0"
-      }
-    },
-    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsEcrApiEndpoint99234CA5": {
-      "Type": "AWS::EC2::VPCEndpoint",
-      "Properties": {
-        "PrivateDnsEnabled": true,
-        "SecurityGroupIds": [
-          {
-            "Fn::GetAtt": [
-              "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsSecurityGroup6430C772",
-              "GroupId"
-            ]
-          }
-        ],
-        "ServiceName": "com.amazonaws.test-region.ecr.api",
-        "SubnetIds": [
-          "subnet-0123456789abcdef0"
-        ],
-        "Tags": [
-          {
-            "Key": "mdaa_cdk_app",
-            "Value": "bedrock-builder"
-          },
-          {
-            "Key": "mdaa_domain",
-            "Value": "test-domain"
-          },
-          {
-            "Key": "mdaa_env",
-            "Value": "test-env"
-          },
-          {
-            "Key": "mdaa_module_name",
-            "Value": "test-bedrock-builder-harness-comprehensive"
-          },
-          {
-            "Key": "mdaa_org",
-            "Value": "test-org"
-          }
-        ],
-        "VpcEndpointType": "Interface",
-        "VpcId": "vpc-0123456789abcdef0"
-      }
-    },
-    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsEcrDockerEndpointDD83ADE7": {
-      "Type": "AWS::EC2::VPCEndpoint",
-      "Properties": {
-        "PrivateDnsEnabled": true,
-        "SecurityGroupIds": [
-          {
-            "Fn::GetAtt": [
-              "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsSecurityGroup6430C772",
-              "GroupId"
-            ]
-          }
-        ],
-        "ServiceName": "com.amazonaws.test-region.ecr.dkr",
-        "SubnetIds": [
-          "subnet-0123456789abcdef0"
-        ],
-        "Tags": [
-          {
-            "Key": "mdaa_cdk_app",
-            "Value": "bedrock-builder"
-          },
-          {
-            "Key": "mdaa_domain",
-            "Value": "test-domain"
-          },
-          {
-            "Key": "mdaa_env",
-            "Value": "test-env"
-          },
-          {
-            "Key": "mdaa_module_name",
-            "Value": "test-bedrock-builder-harness-comprehensive"
-          },
-          {
-            "Key": "mdaa_org",
-            "Value": "test-org"
-          }
-        ],
-        "VpcEndpointType": "Interface",
-        "VpcId": "vpc-0123456789abcdef0"
-      }
-    },
-    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsStsEndpointEA898B65": {
-      "Type": "AWS::EC2::VPCEndpoint",
-      "Properties": {
-        "PrivateDnsEnabled": true,
-        "SecurityGroupIds": [
-          {
-            "Fn::GetAtt": [
-              "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsSecurityGroup6430C772",
-              "GroupId"
-            ]
-          }
-        ],
-        "ServiceName": "com.amazonaws.test-region.sts",
-        "SubnetIds": [
-          "subnet-0123456789abcdef0"
-        ],
-        "Tags": [
-          {
-            "Key": "mdaa_cdk_app",
-            "Value": "bedrock-builder"
-          },
-          {
-            "Key": "mdaa_domain",
-            "Value": "test-domain"
-          },
-          {
-            "Key": "mdaa_env",
-            "Value": "test-env"
-          },
-          {
-            "Key": "mdaa_module_name",
-            "Value": "test-bedrock-builder-harness-comprehensive"
-          },
-          {
-            "Key": "mdaa_org",
-            "Value": "test-org"
-          }
-        ],
-        "VpcEndpointType": "Interface",
-        "VpcId": "vpc-0123456789abcdef0"
-      }
-    },
-    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsS3GatewayEndpoint0A2ACF1D": {
-      "Type": "AWS::EC2::VPCEndpoint",
-      "Properties": {
-        "PolicyDocument": {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Sid": "AllowEcrImageLayerPull",
-              "Effect": "Allow",
-              "Principal": "*",
-              "Action": [
-                "s3:GetObject"
-              ],
-              "Resource": [
-                "arn:test-partition:s3:::prod-test-region-starport-layer-bucket/*"
-              ]
-            },
-            {
-              "Sid": "AllowAdditionalBucketRead",
-              "Effect": "Allow",
-              "Principal": "*",
-              "Action": [
-                "s3:GetObject",
-                "s3:ListBucket"
-              ],
-              "Resource": [
-                "arn:test-partition:s3:::my-shared-bucket",
-                "arn:test-partition:s3:::my-shared-bucket/*"
-              ]
-            }
-          ]
-        },
-        "RouteTableIds": [
-          "rtb-0123456789abcdef0"
-        ],
-        "ServiceName": {
-          "Fn::Join": [
-            "",
-            [
-              "com.amazonaws.",
-              {
-                "Ref": "AWS::Region"
-              },
-              ".s3"
-            ]
-          ]
-        },
-        "Tags": [
-          {
-            "Key": "mdaa_cdk_app",
-            "Value": "bedrock-builder"
-          },
-          {
-            "Key": "mdaa_domain",
-            "Value": "test-domain"
-          },
-          {
-            "Key": "mdaa_env",
-            "Value": "test-env"
-          },
-          {
-            "Key": "mdaa_module_name",
-            "Value": "test-bedrock-builder-harness-comprehensive"
-          },
-          {
-            "Key": "mdaa_org",
-            "Value": "test-org"
-          }
-        ],
-        "VpcEndpointType": "Gateway",
-        "VpcId": "vpc-0123456789abcdef0"
-      }
-    },
-    "bedrockbuilderbedrockharnesscomprehensiveharnessvpcendpointharnesscomprehensiveharnessbedrockRuntimeidssmE383CB52": {
-      "Type": "AWS::SSM::Parameter",
-      "Properties": {
-        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/vpc-endpoint/harness-comprehensive-harness-bedrockruntime/id",
-        "Tags": {
-          "mdaa_cdk_app": "bedrock-builder",
-          "mdaa_domain": "test-domain",
-          "mdaa_env": "test-env",
-          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
-          "mdaa_org": "test-org"
-        },
-        "Type": "String",
-        "Value": {
-          "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsBedrockRuntimeEndpoint77E969FD"
-        }
-      }
-    },
-    "bedrockbuilderbedrockharnesscomprehensiveharnessvpcendpointharnesscomprehensiveharnessagentCoreGatewayidssm4BC9ACF2": {
-      "Type": "AWS::SSM::Parameter",
-      "Properties": {
-        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/vpc-endpoint/harness-comprehensive-harness-agentcoregateway/id",
-        "Tags": {
-          "mdaa_cdk_app": "bedrock-builder",
-          "mdaa_domain": "test-domain",
-          "mdaa_env": "test-env",
-          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
-          "mdaa_org": "test-org"
-        },
-        "Type": "String",
-        "Value": {
-          "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsAgentCoreGatewayEndpoint5C77B5C7"
-        }
-      }
-    },
-    "bedrockbuilderbedrockharnesscomprehensiveharnessvpcendpointharnesscomprehensiveharnessecrApiidssmF328C993": {
-      "Type": "AWS::SSM::Parameter",
-      "Properties": {
-        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/vpc-endpoint/harness-comprehensive-harness-ecrapi/id",
-        "Tags": {
-          "mdaa_cdk_app": "bedrock-builder",
-          "mdaa_domain": "test-domain",
-          "mdaa_env": "test-env",
-          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
-          "mdaa_org": "test-org"
-        },
-        "Type": "String",
-        "Value": {
-          "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsEcrApiEndpoint99234CA5"
-        }
-      }
-    },
-    "bedrockbuilderbedrockharnesscomprehensiveharnessvpcendpointharnesscomprehensiveharnessecrDockeridssm5C3BD7AF": {
-      "Type": "AWS::SSM::Parameter",
-      "Properties": {
-        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/vpc-endpoint/harness-comprehensive-harness-ecrdocker/id",
-        "Tags": {
-          "mdaa_cdk_app": "bedrock-builder",
-          "mdaa_domain": "test-domain",
-          "mdaa_env": "test-env",
-          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
-          "mdaa_org": "test-org"
-        },
-        "Type": "String",
-        "Value": {
-          "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsEcrDockerEndpointDD83ADE7"
-        }
-      }
-    },
-    "bedrockbuilderbedrockharnesscomprehensiveharnessvpcendpointharnesscomprehensiveharnessstsidssmC41A1C2C": {
-      "Type": "AWS::SSM::Parameter",
-      "Properties": {
-        "Name": "/test-org/test-domain/test-bedrock-builder-harness-comprehensive/vpc-endpoint/harness-comprehensive-harness-sts/id",
-        "Tags": {
-          "mdaa_cdk_app": "bedrock-builder",
-          "mdaa_domain": "test-domain",
-          "mdaa_env": "test-env",
-          "mdaa_module_name": "test-bedrock-builder-harness-comprehensive",
-          "mdaa_org": "test-org"
-        },
-        "Type": "String",
-        "Value": {
-          "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsStsEndpointEA898B65"
-        }
-      }
     },
     "bedrockbuilderbedrockharnesscomprehensiveharnessharnesscomprehensiveharnessarnssm0B5DA933": {
       "Type": "AWS::SSM::Parameter",
@@ -1803,10 +1927,7 @@
         },
         "Type": "String",
         "Value": {
-          "Fn::GetAtt": [
-            "bedrockbuilderbedrockharnesscomprehensiveharnessHarness2ED69A7F",
-            "Arn"
-          ]
+          "Fn::GetAtt": ["bedrockbuilderbedrockharnesscomprehensiveharnessHarness2ED69A7F", "Arn"]
         }
       }
     },
@@ -1823,10 +1944,7 @@
         },
         "Type": "String",
         "Value": {
-          "Fn::GetAtt": [
-            "bedrockbuilderbedrockharnesscomprehensiveharnessHarness2ED69A7F",
-            "HarnessId"
-          ]
+          "Fn::GetAtt": ["bedrockbuilderbedrockharnesscomprehensiveharnessHarness2ED69A7F", "HarnessId"]
         }
       }
     },
@@ -1843,10 +1961,7 @@
         },
         "Type": "String",
         "Value": {
-          "Fn::GetAtt": [
-            "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRoleF8BB3373",
-            "Arn"
-          ]
+          "Fn::GetAtt": ["bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRoleF8BB3373", "Arn"]
         }
       }
     },
@@ -1921,10 +2036,7 @@
                         "",
                         [
                           {
-                            "Fn::GetAtt": [
-                              "RoleResDataAdmin0",
-                              "id"
-                            ]
+                            "Fn::GetAtt": ["RoleResDataAdmin0", "id"]
                           },
                           ":*"
                         ]
@@ -1964,11 +2076,7 @@
               "Sid": "CloudWatchLogsEncryption"
             },
             {
-              "Action": [
-                "kms:GenerateDataKey*",
-                "kms:Decrypt",
-                "kms:DescribeKey"
-              ],
+              "Action": ["kms:GenerateDataKey*", "kms:Decrypt", "kms:DescribeKey"],
               "Effect": "Allow",
               "Principal": {
                 "Service": "bedrock.amazonaws.com"
@@ -1977,11 +2085,7 @@
               "Sid": "AllowBedrockServiceForAgents"
             },
             {
-              "Action": [
-                "kms:CreateGrant",
-                "kms:ListGrants",
-                "kms:RevokeGrant"
-              ],
+              "Action": ["kms:CreateGrant", "kms:ListGrants", "kms:RevokeGrant"],
               "Condition": {
                 "Bool": {
                   "kms:GrantIsForAWSResource": "true"
@@ -1999,10 +2103,7 @@
               "Sid": "AllowBedrockServiceToManageGrants"
             },
             {
-              "Action": [
-                "kms:GenerateDataKey",
-                "kms:Decrypt"
-              ],
+              "Action": ["kms:GenerateDataKey", "kms:Decrypt"],
               "Condition": {
                 "StringEquals": {
                   "kms:EncryptionContext:SourceArn": "arn:test-partition:logs:test-region:test-account:*",
@@ -2050,10 +2151,7 @@
       "Properties": {
         "AliasName": "alias/test-org-test-env-test-domain-test-bedrock-builder-harness-comprehensive",
         "TargetKeyId": {
-          "Fn::GetAtt": [
-            "bedrockcmk710EFABC",
-            "Arn"
-          ]
+          "Fn::GetAtt": ["bedrockcmk710EFABC", "Arn"]
         }
       }
     },
@@ -2070,10 +2168,7 @@
         },
         "Type": "String",
         "Value": {
-          "Fn::GetAtt": [
-            "bedrockcmk710EFABC",
-            "Arn"
-          ]
+          "Fn::GetAtt": ["bedrockcmk710EFABC", "Arn"]
         }
       }
     },
@@ -2162,10 +2257,7 @@
         "PolicyDocument": {
           "Statement": [
             {
-              "Action": [
-                "logs:PutLogEvents",
-                "logs:CreateLogStream"
-              ],
+              "Action": ["logs:PutLogEvents", "logs:CreateLogStream"],
               "Effect": "Allow",
               "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-bedrock-builder-harn-56cb00fb*"
             },
@@ -2245,10 +2337,7 @@
               "Action": "kms:DescribeKey",
               "Effect": "Allow",
               "Resource": {
-                "Fn::GetAtt": [
-                  "bedrockcmk710EFABC",
-                  "Arn"
-                ]
+                "Fn::GetAtt": ["bedrockcmk710EFABC", "Arn"]
               }
             }
           ],
@@ -2299,10 +2388,7 @@
         "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-harn-56cb00fb",
         "Handler": "log_protection.lambda_handler",
         "Role": {
-          "Fn::GetAtt": [
-            "customAgentCoreLogProtectionhandlerrole772ADF8C",
-            "Arn"
-          ]
+          "Fn::GetAtt": ["customAgentCoreLogProtectionhandlerrole772ADF8C", "Arn"]
         },
         "Runtime": "python3.14",
         "Tags": [
@@ -2393,9 +2479,7 @@
           "Ref": "customAgentCoreLogProtectionhandlerfunction04508FB7"
         }
       },
-      "DependsOn": [
-        "customAgentCoreLogProtectionhandlerpolicy6DC99A72"
-      ],
+      "DependsOn": ["customAgentCoreLogProtectionhandlerpolicy6DC99A72"],
       "Metadata": {
         "cdk_nag": {
           "rules_to_suppress": [
@@ -2452,15 +2536,10 @@
         },
         "Type": "String",
         "Value": {
-          "Fn::GetAtt": [
-            "customAgentCoreLogProtectionhandlerfunction04508FB7",
-            "Arn"
-          ]
+          "Fn::GetAtt": ["customAgentCoreLogProtectionhandlerfunction04508FB7", "Arn"]
         }
       },
-      "DependsOn": [
-        "customAgentCoreLogProtectionhandlerpolicy6DC99A72"
-      ],
+      "DependsOn": ["customAgentCoreLogProtectionhandlerpolicy6DC99A72"],
       "Metadata": {
         "cdk_nag": {
           "rules_to_suppress": [
@@ -2528,9 +2607,7 @@
           ]
         }
       },
-      "DependsOn": [
-        "customAgentCoreLogProtectionhandlerpolicy6DC99A72"
-      ],
+      "DependsOn": ["customAgentCoreLogProtectionhandlerpolicy6DC99A72"],
       "Metadata": {
         "cdk_nag": {
           "rules_to_suppress": [
@@ -2655,10 +2732,7 @@
         "PolicyDocument": {
           "Statement": [
             {
-              "Action": [
-                "logs:PutLogEvents",
-                "logs:CreateLogStream"
-              ],
+              "Action": ["logs:PutLogEvents", "logs:CreateLogStream"],
               "Effect": "Allow",
               "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-bedrock-builder-harn-47999260*"
             },
@@ -2672,20 +2746,14 @@
               "Effect": "Allow",
               "Resource": [
                 {
-                  "Fn::GetAtt": [
-                    "customAgentCoreLogProtectionhandlerfunction04508FB7",
-                    "Arn"
-                  ]
+                  "Fn::GetAtt": ["customAgentCoreLogProtectionhandlerfunction04508FB7", "Arn"]
                 },
                 {
                   "Fn::Join": [
                     "",
                     [
                       {
-                        "Fn::GetAtt": [
-                          "customAgentCoreLogProtectionhandlerfunction04508FB7",
-                          "Arn"
-                        ]
+                        "Fn::GetAtt": ["customAgentCoreLogProtectionhandlerfunction04508FB7", "Arn"]
                       },
                       ":*"
                     ]
@@ -2697,10 +2765,7 @@
               "Action": "lambda:GetFunction",
               "Effect": "Allow",
               "Resource": {
-                "Fn::GetAtt": [
-                  "customAgentCoreLogProtectionhandlerfunction04508FB7",
-                  "Arn"
-                ]
+                "Fn::GetAtt": ["customAgentCoreLogProtectionhandlerfunction04508FB7", "Arn"]
               }
             }
           ],
@@ -2759,10 +2824,7 @@
         "Environment": {
           "Variables": {
             "USER_ON_EVENT_FUNCTION_ARN": {
-              "Fn::GetAtt": [
-                "customAgentCoreLogProtectionhandlerfunction04508FB7",
-                "Arn"
-              ]
+              "Fn::GetAtt": ["customAgentCoreLogProtectionhandlerfunction04508FB7", "Arn"]
             }
           }
         },
@@ -2773,10 +2835,7 @@
           "LogFormat": "JSON"
         },
         "Role": {
-          "Fn::GetAtt": [
-            "customAgentCoreLogProtectionproviderrole75408012",
-            "Arn"
-          ]
+          "Fn::GetAtt": ["customAgentCoreLogProtectionproviderrole75408012", "Arn"]
         },
         "Runtime": "nodejs24.x",
         "Tags": [
@@ -2880,10 +2939,7 @@
     },
     "bedrockbuilderbedrockgatewayweathergatewayGatewayRolerolebedrockagentcoregatewayweathergatewayarnout3E55BAD1": {
       "Value": {
-        "Fn::GetAtt": [
-          "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE",
-          "Arn"
-        ]
+        "Fn::GetAtt": ["bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE", "Arn"]
       },
       "Export": {
         "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:role:bedrockagentcoregatewayweathergateway:arn"
@@ -2891,10 +2947,7 @@
     },
     "bedrockbuilderbedrockgatewayweathergatewayGatewayRolerolebedrockagentcoregatewayweathergatewayidout476AA435": {
       "Value": {
-        "Fn::GetAtt": [
-          "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE",
-          "RoleId"
-        ]
+        "Fn::GetAtt": ["bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE", "RoleId"]
       },
       "Export": {
         "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:role:bedrockagentcoregatewayweathergateway:id"
@@ -2910,10 +2963,7 @@
     },
     "bedrockbuilderbedrockgatewayweathergatewayGatewaygatewayweathergatewayarnout1F926E20": {
       "Value": {
-        "Fn::GetAtt": [
-          "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
-          "GatewayArn"
-        ]
+        "Fn::GetAtt": ["bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035", "GatewayArn"]
       },
       "Export": {
         "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:gateway:weathergateway:arn"
@@ -2921,10 +2971,7 @@
     },
     "bedrockbuilderbedrockgatewayweathergatewayGatewaygatewayweathergatewayidout3DEE1B02": {
       "Value": {
-        "Fn::GetAtt": [
-          "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
-          "GatewayIdentifier"
-        ]
+        "Fn::GetAtt": ["bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035", "GatewayIdentifier"]
       },
       "Export": {
         "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:gateway:weathergateway:id"
@@ -2932,10 +2979,7 @@
     },
     "bedrockbuilderbedrockgatewayweathergatewayGatewaygatewayweathergatewayurloutC65C0B6D": {
       "Value": {
-        "Fn::GetAtt": [
-          "bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035",
-          "GatewayUrl"
-        ]
+        "Fn::GetAtt": ["bedrockbuilderbedrockgatewayweathergatewayGateway49EDB035", "GatewayUrl"]
       },
       "Export": {
         "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:gateway:weathergateway:url"
@@ -2949,10 +2993,7 @@
     },
     "bedrockbuilderbedrockgatewayweathergatewaygatewayweathergatewayrolearnoutD2A470A1": {
       "Value": {
-        "Fn::GetAtt": [
-          "bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE",
-          "Arn"
-        ]
+        "Fn::GetAtt": ["bedrockbuilderbedrockgatewayweathergatewayGatewayRoleC0C381AE", "Arn"]
       },
       "Export": {
         "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:gateway:weathergateway:role-arn"
@@ -2960,10 +3001,7 @@
     },
     "bedrockbuilderbedrockgatewayweathergatewaygatewayweathergatewaykmskeyarnoutFEC39C32": {
       "Value": {
-        "Fn::GetAtt": [
-          "bedrockcmk710EFABC",
-          "Arn"
-        ]
+        "Fn::GetAtt": ["bedrockcmk710EFABC", "Arn"]
       },
       "Export": {
         "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:gateway:weathergateway:kms-key-arn"
@@ -3005,12 +3043,55 @@
         "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:managed-policy:bedrockagentcoregatewaycmkweathergateway:name"
       }
     },
-    "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRolerolebedrockagentcoreharnesscomprehensiveharnessarnout6460F1BE": {
+    "bedrockbuildervpcendpointsagentcoreprivatebedrockruntimesecuritygroupsecuritygroupvpcendpointagentcoreprivatebedrockruntimeidout74A78801": {
+      "Value": {
+        "Fn::GetAtt": ["bedrockbuildervpcendpointsagentcoreprivatebedrockruntimesecuritygroup02459AB3", "GroupId"]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:security-group:vpcendpointagentcoreprivatebedrockruntime:id"
+      }
+    },
+    "bedrockbuildervpcendpointsagentcoreprivateecrapisecuritygroupsecuritygroupvpcendpointagentcoreprivateecrapiidout385FA853": {
+      "Value": {
+        "Fn::GetAtt": ["bedrockbuildervpcendpointsagentcoreprivateecrapisecuritygroupF3150F7C", "GroupId"]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:security-group:vpcendpointagentcoreprivateecrapi:id"
+      }
+    },
+    "bedrockbuildervpcendpointsagentcoreprivateecrdkrsecuritygroupsecuritygroupvpcendpointagentcoreprivateecrdkridout92B48A03": {
+      "Value": {
+        "Fn::GetAtt": ["bedrockbuildervpcendpointsagentcoreprivateecrdkrsecuritygroup29F6983D", "GroupId"]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:security-group:vpcendpointagentcoreprivateecrdkr:id"
+      }
+    },
+    "bedrockbuildervpcendpointsagentcoreprivatebedrockagentcoregatewaysecuritygroupsecuritygroupvpcendpointagentcoreprivatebedrockagentcoregatewayidout1959367F": {
       "Value": {
         "Fn::GetAtt": [
-          "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRoleF8BB3373",
-          "Arn"
+          "bedrockbuildervpcendpointsagentcoreprivatebedrockagentcoregatewaysecuritygroup670C9E61",
+          "GroupId"
         ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:security-group:vpcendpointagentcoreprivatebedrockagentcoregateway:id"
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointAccessClientSecurityGroupsecuritygroupagentcoreharnessvpceclientcomprehensiveharnessidout81FA6621": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointAccessClientSecurityGroup20BA78DB",
+          "GroupId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:security-group:agentcoreharnessvpceclientcomprehensiveharness:id"
+      }
+    },
+    "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRolerolebedrockagentcoreharnesscomprehensiveharnessarnout6460F1BE": {
+      "Value": {
+        "Fn::GetAtt": ["bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRoleF8BB3373", "Arn"]
       },
       "Export": {
         "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:role:bedrockagentcoreharnesscomprehensiveharness:arn"
@@ -3018,10 +3099,7 @@
     },
     "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRolerolebedrockagentcoreharnesscomprehensiveharnessidout986E6C4C": {
       "Value": {
-        "Fn::GetAtt": [
-          "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRoleF8BB3373",
-          "RoleId"
-        ]
+        "Fn::GetAtt": ["bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRoleF8BB3373", "RoleId"]
       },
       "Export": {
         "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:role:bedrockagentcoreharnesscomprehensiveharness:id"
@@ -3071,63 +3149,9 @@
         "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:managed-policy:agentcoreharnesscomprehensiveharness:name"
       }
     },
-    "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsSecurityGroupsecuritygroupagentcoreharnessvpcecomprehensiveharnessidoutD10AD6D6": {
-      "Value": {
-        "Fn::GetAtt": [
-          "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsSecurityGroup6430C772",
-          "GroupId"
-        ]
-      },
-      "Export": {
-        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:security-group:agentcoreharnessvpcecomprehensiveharness:id"
-      }
-    },
-    "bedrockbuilderbedrockharnesscomprehensiveharnessvpcendpointharnesscomprehensiveharnessbedrockRuntimeidout7EFC0783": {
-      "Value": {
-        "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsBedrockRuntimeEndpoint77E969FD"
-      },
-      "Export": {
-        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:vpc-endpoint:harnesscomprehensiveharnessbedrockruntime:id"
-      }
-    },
-    "bedrockbuilderbedrockharnesscomprehensiveharnessvpcendpointharnesscomprehensiveharnessagentCoreGatewayidout96D536BA": {
-      "Value": {
-        "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsAgentCoreGatewayEndpoint5C77B5C7"
-      },
-      "Export": {
-        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:vpc-endpoint:harnesscomprehensiveharnessagentcoregateway:id"
-      }
-    },
-    "bedrockbuilderbedrockharnesscomprehensiveharnessvpcendpointharnesscomprehensiveharnessecrApiidout7B87443C": {
-      "Value": {
-        "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsEcrApiEndpoint99234CA5"
-      },
-      "Export": {
-        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:vpc-endpoint:harnesscomprehensiveharnessecrapi:id"
-      }
-    },
-    "bedrockbuilderbedrockharnesscomprehensiveharnessvpcendpointharnesscomprehensiveharnessecrDockeridout607C4B65": {
-      "Value": {
-        "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsEcrDockerEndpointDD83ADE7"
-      },
-      "Export": {
-        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:vpc-endpoint:harnesscomprehensiveharnessecrdocker:id"
-      }
-    },
-    "bedrockbuilderbedrockharnesscomprehensiveharnessvpcendpointharnesscomprehensiveharnessstsidout2E39EF63": {
-      "Value": {
-        "Ref": "bedrockbuilderbedrockharnesscomprehensiveharnessVpcEndpointsStsEndpointEA898B65"
-      },
-      "Export": {
-        "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:vpc-endpoint:harnesscomprehensiveharnesssts:id"
-      }
-    },
     "bedrockbuilderbedrockharnesscomprehensiveharnessharnesscomprehensiveharnessarnout5E382F94": {
       "Value": {
-        "Fn::GetAtt": [
-          "bedrockbuilderbedrockharnesscomprehensiveharnessHarness2ED69A7F",
-          "Arn"
-        ]
+        "Fn::GetAtt": ["bedrockbuilderbedrockharnesscomprehensiveharnessHarness2ED69A7F", "Arn"]
       },
       "Export": {
         "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:harness:comprehensiveharness:arn"
@@ -3135,10 +3159,7 @@
     },
     "bedrockbuilderbedrockharnesscomprehensiveharnessharnesscomprehensiveharnessidout3CFBECF1": {
       "Value": {
-        "Fn::GetAtt": [
-          "bedrockbuilderbedrockharnesscomprehensiveharnessHarness2ED69A7F",
-          "HarnessId"
-        ]
+        "Fn::GetAtt": ["bedrockbuilderbedrockharnesscomprehensiveharnessHarness2ED69A7F", "HarnessId"]
       },
       "Export": {
         "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:harness:comprehensiveharness:id"
@@ -3146,10 +3167,7 @@
     },
     "bedrockbuilderbedrockharnesscomprehensiveharnessharnesscomprehensiveharnessrolearnout76C5BBA7": {
       "Value": {
-        "Fn::GetAtt": [
-          "bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRoleF8BB3373",
-          "Arn"
-        ]
+        "Fn::GetAtt": ["bedrockbuilderbedrockharnesscomprehensiveharnessHarnessRoleF8BB3373", "Arn"]
       },
       "Export": {
         "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:harness:comprehensiveharness:role-arn"
@@ -3165,10 +3183,7 @@
     },
     "bedrockcmkkmsarnout0D3BC511": {
       "Value": {
-        "Fn::GetAtt": [
-          "bedrockcmk710EFABC",
-          "Arn"
-        ]
+        "Fn::GetAtt": ["bedrockcmk710EFABC", "Arn"]
       },
       "Export": {
         "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:kms:arn"
@@ -3192,10 +3207,7 @@
     },
     "customAgentCoreLogProtectionhandlerfunctionlambdaAgentCoreLogProtectionhandlerarnout04AFBBA1": {
       "Value": {
-        "Fn::GetAtt": [
-          "customAgentCoreLogProtectionhandlerfunction04508FB7",
-          "Arn"
-        ]
+        "Fn::GetAtt": ["customAgentCoreLogProtectionhandlerfunction04508FB7", "Arn"]
       },
       "Export": {
         "Name": "test-org:test-domain:test-bedrock-builder-harness-comprehensive:lambda:agentcorelogprotectionhandler:arn"
@@ -3226,13 +3238,7 @@
             "Fn::Not": [
               {
                 "Fn::Contains": [
-                  [
-                    "1",
-                    "2",
-                    "3",
-                    "4",
-                    "5"
-                  ],
+                  ["1", "2", "3", "4", "5"],
                   {
                     "Ref": "BootstrapVersion"
                   }

@@ -3,5 +3,4 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export * from './bedrock-agentcore-harness-l3-construct';
-export * from './vpc-endpoint-access';
+export * from './vpc-endpoint-l3-construct';

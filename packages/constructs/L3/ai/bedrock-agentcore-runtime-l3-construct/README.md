@@ -76,7 +76,7 @@ const runtime = new BedrockAgentcoreRuntimeL3Construct(this, 'MyRuntime', {
 - `vpcId`: VPC ID (required when `enforceVpcOnly` or `vpcEndpoint` is set)
 - `vpcEndpoint`: Create the AgentCore interface VPC endpoint. Presence opts in; omit to use a pre-existing endpoint (only one per service per VPC may enable Private DNS)
   - `endpointPolicy.allowPrincipals`: Restrict the endpoint policy to specific IAM principal ARNs. Defaults to `*`, which is required for JWT/OAuth callers — do not set on JWT-authorized runtimes
-  - `createSupportingEndpoints`: Also create ECR API, ECR Docker, STS, and CloudWatch Logs endpoints, for private subnets reaching those services over PrivateLink. These four only — validate your runtime's own egress before removing a NAT gateway.
+  - `createSupportingEndpoints`: Also create ECR API, ECR Docker, STS, and CloudWatch Logs endpoints, for private subnets reaching those services over PrivateLink. These four only - validate your runtime's own egress before removing a NAT gateway.
 
 Note: All runtimes are deployed in VPC mode for security. The network mode is automatically set to VPC.
 

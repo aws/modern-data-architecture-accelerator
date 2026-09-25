@@ -14,12 +14,14 @@ import {
   HarnessBedrockApiFormat,
   HarnessGuardrailTrace,
   HarnessTruncationStrategy,
-  HarnessVpcEndpointName,
 } from '../lib';
 
 // networkConfiguration is required (MDAA enforces VPC mode), so every harness under test supplies a
 // minimal valid VPC config. Tests that specifically exercise network behaviour override it inline.
 const NET = { securityGroups: ['sg-test'], subnets: ['subnet-test'] };
+
+/** Standalone security-group rule resources, as opposed to rules inlined on a group. */
+const RULE_TYPES = new Set(['AWS::EC2::SecurityGroupIngress', 'AWS::EC2::SecurityGroupEgress']);
 
 describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
   let testApp: MdaaTestApp;
@@ -29,7 +31,7 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
   beforeEach(() => {
     testApp = new MdaaTestApp();
     roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
-    // The harness is a pure key consumer — the caller (orchestrating module) provides the CMK.
+    // The harness is a pure key consumer - the caller (orchestrating module) provides the CMK.
     // A rotation-enabled in-stack key stands in for the module's shared CMK here (rotation keeps
     // the compliance/cdk-nag checks clean, matching what the orchestrator actually provisions).
     kmsKey = new Key(testApp.testStack, 'TestKmsKey', { enableKeyRotation: true });
@@ -141,7 +143,7 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
     });
 
     test('should resolve a full ARN model identifier as-is', () => {
-      const modelArn = 'arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-sonnet-4-6-20250514-v1:0';
+      const modelArn = 'arn:aws:bedrock:test-region::foundation-model/anthropic.claude-sonnet-4-6-20250514-v1:0';
       const constructProps: BedrockAgentcoreHarnessL3ConstructProps = {
         harnessName: 'arn-model-harness',
         modelId: modelArn,
@@ -162,10 +164,10 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
   });
 
   describe('Model API Format', () => {
-    // apiFormat is not caller-configurable: the construct always renders converse_stream — the only
+    // apiFormat is not caller-configurable: the construct always renders converse_stream - the only
     // format wired today (see HarnessBedrockApiFormat) and the only one Bedrock Guardrails support.
     // The OpenAI-compatible Mantle formats ('responses' / 'chat_completions') route to a separate
-    // `bedrock-mantle` endpoint host with no VPC-mode private route (see the NOTE in vpc-endpoints.ts).
+    // `bedrock-mantle` endpoint host, for which no interface endpoint service exists.
     test('should always render Model.BedrockModelConfig.ApiFormat = converse_stream', () => {
       const constructProps: BedrockAgentcoreHarnessL3ConstructProps = {
         harnessName: 'api-format-harness',
@@ -359,7 +361,7 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
         harnessName: 'ref-role-harness',
         modelId: 'anthropic.claude-sonnet-4-6-20250514-v1:0',
         systemPrompt: 'Be concise.',
-        role: { arn: 'arn:aws:iam::123456789012:role/existing-role' },
+        role: { arn: 'arn:aws:iam::test-account:role/existing-role' },
         networkConfiguration: NET,
         kmsKey,
         naming: testApp.naming,
@@ -370,7 +372,7 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
       const template = Template.fromStack(testApp.testStack);
 
       template.hasResourceProperties('AWS::BedrockAgentCore::Harness', {
-        ExecutionRoleArn: 'arn:aws:iam::123456789012:role/existing-role',
+        ExecutionRoleArn: 'arn:aws:iam::test-account:role/existing-role',
       });
 
       // Two roles present belong to the always-on log-protection custom resource
@@ -378,7 +380,7 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
       template.resourceCountIs('AWS::IAM::Role', 2);
 
       // The execution permission set must attach to the *referenced* role (via the managed policy's
-      // Roles), not be silently dropped — otherwise the harness deploys green and fails at first
+      // Roles), not be silently dropped - otherwise the harness deploys green and fails at first
       // invoke. The imported role's name ('existing-role') is what CloudFormation references.
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         Roles: ['existing-role'],
@@ -390,7 +392,7 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
 
     test('should make the created harness depend on its execution-role managed policy', () => {
       // The permission set attaches policy-side (MdaaManagedPolicy `roles: [role]`), which creates no
-      // implicit CfnHarness→policy dependency. Without the explicit dependency added by the construct,
+      // implicit CfnHarness->policy dependency. Without the explicit dependency added by the construct,
       // CreateHarness can run before the policy attaches and the first deploy fails with
       // `NotStabilized: Role validation failed`. Assert the DependsOn edge is present.
       const constructProps: BedrockAgentcoreHarnessL3ConstructProps = {
@@ -519,12 +521,12 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
 
     // An application inference profile needs the same paired foundation-model grant a system profile
     // does, but its id is opaque so that grant cannot be scoped at synth. Accepting one would emit a
-    // role holding invoke on the profile alone — deploys clean, then AccessDeniedException at first
+    // role holding invoke on the profile alone - deploys clean, then AccessDeniedException at first
     // invoke. Reject at synth instead; the error must name the supported alternatives.
     test('should throw for an application inference profile ARN rather than under-scoping the role', () => {
       const constructProps: BedrockAgentcoreHarnessL3ConstructProps = {
         harnessName: 'app-profile-harness',
-        modelId: 'arn:aws:bedrock:us-east-1:123456789012:application-inference-profile/abc123def456',
+        modelId: 'arn:aws:bedrock:test-region:test-account:application-inference-profile/abc123def456',
         systemPrompt: 'Be concise.',
         networkConfiguration: NET,
         kmsKey,
@@ -575,10 +577,10 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
         guardrail: { id: 'abc123', version: '1' },
         tools: {
           gateway_tools: {
-            agentCoreGateway: { gatewayArn: 'arn:aws:bedrock-agentcore:us-east-1:123456789012:gateway/my-gw' },
+            agentCoreGateway: { gatewayArn: 'arn:aws:bedrock-agentcore:test-region:test-account:gateway/my-gw' },
           },
         },
-        container: { containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-harness:latest' },
+        container: { containerUri: 'test-account.dkr.ecr.test-region.amazonaws.com/my-harness:latest' },
         networkConfiguration: NET,
         kmsKey,
         naming: testApp.naming,
@@ -707,7 +709,8 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
         systemPrompt: 'Be concise.',
         authorizerConfiguration: {
           customJwt: {
-            discoveryUrl: 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_test/.well-known/openid-configuration',
+            discoveryUrl:
+              'https://cognito-idp.test-region.amazonaws.com/test-region_test/.well-known/openid-configuration',
             allowedAudience: ['client-id-1', 'client-id-2'],
             allowedClients: ['client-id-1'],
           },
@@ -724,7 +727,8 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
       template.hasResourceProperties('AWS::BedrockAgentCore::Harness', {
         AuthorizerConfiguration: {
           CustomJWTAuthorizer: {
-            DiscoveryUrl: 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_test/.well-known/openid-configuration',
+            DiscoveryUrl:
+              'https://cognito-idp.test-region.amazonaws.com/test-region_test/.well-known/openid-configuration',
             AllowedAudience: ['client-id-1', 'client-id-2'],
             AllowedClients: ['client-id-1'],
           },
@@ -835,7 +839,7 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
         tools: {
           both: {
             inlineFunction: { description: 'x', inputSchema: { type: 'object' } },
-            agentCoreGateway: { gatewayArn: 'arn:aws:bedrock-agentcore:us-east-1:123456789012:gateway/my-gw' },
+            agentCoreGateway: { gatewayArn: 'arn:aws:bedrock-agentcore:test-region:test-account:gateway/my-gw' },
           },
         },
         networkConfiguration: NET,
@@ -936,7 +940,7 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
 
   describe('AgentCore Gateway Tool', () => {
     test('should render an agentcore_gateway tool with a literal ARN and grant scoped InvokeGateway', () => {
-      const gatewayArn = 'arn:aws:bedrock-agentcore:us-east-1:123456789012:gateway/my-gw';
+      const gatewayArn = 'arn:aws:bedrock-agentcore:test-region:test-account:gateway/my-gw';
       const constructProps: BedrockAgentcoreHarnessL3ConstructProps = {
         harnessName: 'gw-literal-harness',
         modelId: 'anthropic.claude-sonnet-4-6-20250514-v1:0',
@@ -981,7 +985,7 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
     });
 
     test('should resolve a config:<name> gatewayArn reference against the gateways map', () => {
-      const gatewayArn = 'arn:aws:bedrock-agentcore:us-east-1:123456789012:gateway/resolved-gw';
+      const gatewayArn = 'arn:aws:bedrock-agentcore:test-region:test-account:gateway/resolved-gw';
       const constructProps: BedrockAgentcoreHarnessL3ConstructProps = {
         harnessName: 'gw-config-harness',
         modelId: 'anthropic.claude-sonnet-4-6-20250514-v1:0',
@@ -1004,11 +1008,11 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
 
     // Regression: `tools` is keyed by tool name, so two gateway tools cannot collide on one name. When
     // it was a list, a duplicate name silently collapsed both tools onto the last gateway's ARN and
-    // dropped the first gateway from AllowInvokeGateway — no synth error. Distinct keys must stay
+    // dropped the first gateway from AllowInvokeGateway - no synth error. Distinct keys must stay
     // distinct end to end: one tool and one grant per gateway.
     test('should keep two gateway tools independent, wiring and granting each gateway separately', () => {
-      const gatewayArnA = 'arn:aws:bedrock-agentcore:us-east-1:123456789012:gateway/gw-alpha';
-      const gatewayArnB = 'arn:aws:bedrock-agentcore:us-east-1:123456789012:gateway/gw-beta';
+      const gatewayArnA = 'arn:aws:bedrock-agentcore:test-region:test-account:gateway/gw-alpha';
+      const gatewayArnB = 'arn:aws:bedrock-agentcore:test-region:test-account:gateway/gw-beta';
       const constructProps: BedrockAgentcoreHarnessL3ConstructProps = {
         harnessName: 'gw-multi-harness',
         modelId: 'anthropic.claude-sonnet-4-6-20250514-v1:0',
@@ -1026,7 +1030,7 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
       new BedrockAgentcoreHarnessL3Construct(testApp.testStack, 'gw-multi-harness-construct', constructProps);
       const template = Template.fromStack(testApp.testStack);
 
-      // Each tool keeps its own gateway ARN — no last-write-wins collapse.
+      // Each tool keeps its own gateway ARN - no last-write-wins collapse.
       template.hasResourceProperties('AWS::BedrockAgentCore::Harness', {
         Tools: [
           Match.objectLike({ Name: 'alpha_tools', Config: { AgentCoreGateway: { GatewayArn: gatewayArnA } } }),
@@ -1065,7 +1069,7 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
 
     test('should throw when an agentCoreGateway gatewayArn is an empty string', () => {
       // Regression: an empty gatewayArn is not a `config:` reference, so it would pass through as a
-      // literal and render `resources: ['']` on AllowInvokeGateway plus `GatewayArn: ""` — a deploy-time
+      // literal and render `resources: ['']` on AllowInvokeGateway plus `GatewayArn: ""` - a deploy-time
       // MalformedPolicyDocument. Fail at synth instead.
       const constructProps: BedrockAgentcoreHarnessL3ConstructProps = {
         harnessName: 'gw-empty-harness',
@@ -1133,8 +1137,8 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
                 trace: 'enabled',
               },
             },
-            // The harness always renders the Converse (converse_stream) API — the only format that
-            // carries guardrailConfig — so a guarded harness is always self-consistent.
+            // The harness always renders the Converse (converse_stream) API - the only format that
+            // carries guardrailConfig - so a guarded harness is always self-consistent.
             ApiFormat: 'converse_stream',
           },
         },
@@ -1189,7 +1193,7 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
     });
 
     test('should not double-wrap a guardrail id that is already a full ARN', () => {
-      const guardrailArn = 'arn:aws:bedrock:us-east-1:123456789012:guardrail/gr-abc123';
+      const guardrailArn = 'arn:aws:bedrock:test-region:test-account:guardrail/gr-abc123';
       const constructProps: BedrockAgentcoreHarnessL3ConstructProps = {
         harnessName: 'guardrail-arn-harness',
         modelId: 'anthropic.claude-sonnet-4-6-20250514-v1:0',
@@ -1204,7 +1208,7 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
       new BedrockAgentcoreHarnessL3Construct(testApp.testStack, 'guardrail-arn-harness-construct', constructProps);
       const template = Template.fromStack(testApp.testStack);
 
-      // The ApplyGuardrail grant is scoped to the ARN verbatim — never re-wrapped into
+      // The ApplyGuardrail grant is scoped to the ARN verbatim - never re-wrapped into
       // '...:guardrail/arn:aws:bedrock:...'.
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
@@ -1569,7 +1573,7 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
         harnessName: 'over-max-allowed-tools-harness',
         modelId: 'anthropic.claude-sonnet-4-6-20250514-v1:0',
         systemPrompt: 'Be concise.',
-        // 65 entries — one over the AllowedTools CFN cap of 64.
+        // 65 entries - one over the AllowedTools CFN cap of 64.
         allowedTools: Array.from({ length: 65 }, (_, i) => `tool_${i}`),
         networkConfiguration: NET,
         kmsKey,
@@ -1665,7 +1669,7 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
         harnessName: 'container-harness',
         modelId: 'anthropic.claude-sonnet-4-6-20250514-v1:0',
         systemPrompt: 'Be concise.',
-        container: { containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-harness:latest' },
+        container: { containerUri: 'test-account.dkr.ecr.test-region.amazonaws.com/my-harness:latest' },
         networkConfiguration: NET,
         kmsKey,
         naming: testApp.naming,
@@ -1678,7 +1682,7 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
       template.hasResourceProperties('AWS::BedrockAgentCore::Harness', {
         EnvironmentArtifact: {
           ContainerConfiguration: {
-            ContainerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-harness:latest',
+            ContainerUri: 'test-account.dkr.ecr.test-region.amazonaws.com/my-harness:latest',
           },
         },
       });
@@ -1692,7 +1696,7 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
               Sid: 'HarnessImageEcrPull',
               Resource: Match.arrayWith([
                 'arn:test-partition:ecr:test-region:*:repository/harness-test-region',
-                'arn:test-partition:ecr:us-east-1:123456789012:repository/my-harness',
+                'arn:test-partition:ecr:test-region:test-account:repository/my-harness',
               ]),
             }),
           ]),
@@ -1810,24 +1814,49 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
     });
   });
 
-  describe('VPC Endpoints', () => {
+  describe('VPC endpoint wiring', () => {
     const VPCE_NET = {
       securityGroups: ['sg-0123456789abcdef0'],
       subnets: ['subnet-0123456789abcdef0'],
-      vpcId: 'vpc-0123456789abcdef0',
+      vpcEndpoints: 'agentcore-private',
     };
     const GATEWAY_TOOL = {
       gateway_tools: {
-        agentCoreGateway: { gatewayArn: 'arn:aws:bedrock-agentcore:us-east-1:123456789012:gateway/my-gw' },
+        agentCoreGateway: { gatewayArn: 'arn:aws:bedrock-agentcore:test-region:test-account:gateway/my-gw' },
       },
     };
 
-    /** Builds a harness with the given network config, returning the synthesized template. */
+    /** The services every VPC-mode harness derives regardless of its tool configuration. */
+    const ALWAYS_REQUIRED_SERVICES = ['bedrock-runtime', 'ecr.api', 'ecr.dkr', 'sts', 'logs'];
+    const AGENTCORE_GATEWAY_SERVICE = 'bedrock-agentcore.gateway';
+
+    /**
+     * The endpoints the orchestrating module resolved for this harness from the set it references,
+     * already narrowed to the services the harness derives.
+     */
+    function resolved(services: string[]) {
+      return {
+        vpcId: 'vpc-0123456789abcdef0',
+        securityGroupIds: Object.fromEntries(
+          services.map(service => [service, `sg-vpce-${service.replace(/\./g, '-')}`]),
+        ),
+      };
+    }
+
+    /**
+     * Builds a harness with the given network config, returning the synthesized template. The resolved
+     * access defaults to whatever the network config's set reference implies, so a harness referencing no
+     * set gets none - matching what the orchestrating module does.
+     */
     function synth(
       id: string,
       networkConfiguration: BedrockAgentcoreHarnessL3ConstructProps['networkConfiguration'],
       tools?: BedrockAgentcoreHarnessL3ConstructProps['tools'],
+      accessOverride?: BedrockAgentcoreHarnessL3ConstructProps['vpcEndpointAccess'],
     ): Template {
+      const derived = networkConfiguration.vpcEndpoints
+        ? resolved(tools ? [...ALWAYS_REQUIRED_SERVICES, AGENTCORE_GATEWAY_SERVICE] : ALWAYS_REQUIRED_SERVICES)
+        : undefined;
       new BedrockAgentcoreHarnessL3Construct(testApp.testStack, `${id}-construct`, {
         harnessName: id,
         modelId: 'anthropic.claude-sonnet-4-6-20250514-v1:0',
@@ -1835,236 +1864,122 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
         networkConfiguration,
         tools,
         kmsKey,
+        vpcEndpointAccess: accessOverride ?? derived,
         naming: testApp.naming,
         roleHelper,
       });
       return Template.fromStack(testApp.testStack);
     }
 
-    /** ServiceName of every interface endpoint in the template. */
-    function interfaceServices(template: Template): string[] {
-      return Object.values(template.findResources('AWS::EC2::VPCEndpoint'))
-        .filter(endpoint => endpoint.Properties?.VpcEndpointType !== 'Gateway')
-        .map(endpoint => JSON.stringify(endpoint.Properties?.ServiceName));
-    }
+    test('should create no endpoints or connectivity wiring when no set is referenced', () => {
+      const template = synth('no-vpce-harness', {
+        securityGroups: ['sg-0123456789abcdef0'],
+        subnets: ['subnet-0123456789abcdef0'],
+      });
 
-    test('should create nothing when vpcEndpoints is not configured', () => {
-      const template = synth('no-vpce-harness', VPCE_NET);
-
-      // Endpoints are opt-in: they cost money, and a VPC may already have them.
       template.resourceCountIs('AWS::EC2::VPCEndpoint', 0);
+      template.resourceCountIs('AWS::EC2::SecurityGroup', 0);
+      template.resourceCountIs('AWS::EC2::SecurityGroupIngress', 0);
     });
 
-    test('should derive the always-needed endpoint set, without a gateway endpoint', () => {
-      const template = synth('derived-harness', { ...VPCE_NET, vpcEndpoints: {} });
-
-      // Every session runs inference and pulls an image, so these are unconditional. The AgentCore
-      // data-plane endpoint is absent by design: it serves inbound callers, not the session's egress.
-      const services = interfaceServices(template);
-      expect(services).toHaveLength(5);
-      ['bedrock-runtime', 'ecr.api', 'ecr.dkr', '.sts', '.logs'].forEach(service => {
-        expect(services.some(name => name.includes(service))).toBe(true);
-      });
-      expect(services.some(name => name.includes('bedrock-agentcore'))).toBe(false);
-
-      // Private DNS is the whole point of these endpoints: without it the default regional hostnames
-      // keep resolving to public IPs, so a no-NAT session silently fails while the stack deploys fine.
-      // Assert it on every interface endpoint (a gateway endpoint has no such property).
-      const interfaceEndpoints = Object.values(template.findResources('AWS::EC2::VPCEndpoint')).filter(
-        endpoint => endpoint.Properties?.VpcEndpointType !== 'Gateway',
-      );
-      expect(interfaceEndpoints).toHaveLength(5);
-      interfaceEndpoints.forEach(endpoint => {
-        expect(endpoint.Properties?.PrivateDnsEnabled).toBe(true);
-      });
-    });
-
-    test('should add the gateway endpoint only when a gateway tool is declared', () => {
-      const template = synth('gw-harness', { ...VPCE_NET, vpcEndpoints: {} }, GATEWAY_TOOL);
-
-      // Without this endpoint the gateway tool load fails at first invoke with a DNS error.
-      expect(interfaceServices(template).some(name => name.includes('bedrock-agentcore.gateway'))).toBe(true);
-    });
-
-    test('should scope the gateway endpoint to InvokeGateway and leave every other endpoint unpoliced', () => {
-      const template = synth('gw-policy-harness', { ...VPCE_NET, vpcEndpoints: {} }, GATEWAY_TOOL);
-
-      const interfaceEndpoints = Object.values(template.findResources('AWS::EC2::VPCEndpoint')).filter(
-        endpoint => endpoint.Properties?.VpcEndpointType !== 'Gateway',
-      );
-      const isGateway = (endpoint: (typeof interfaceEndpoints)[number]) =>
-        JSON.stringify(endpoint.Properties?.ServiceName).includes('bedrock-agentcore.gateway');
-
-      // The gateway endpoint's only legitimate traffic is a single data-plane action, so it is scoped to
-      // InvokeGateway with StarPrincipal (a session's execution-role identity is not matchable here — the
-      // gateway ARN scope lives on that identity policy). Mirrors the Runtime endpoint's posture.
-      const gatewayEndpoints = interfaceEndpoints.filter(isGateway);
-      expect(gatewayEndpoints).toHaveLength(1);
-      expect(gatewayEndpoints[0].Properties?.PolicyDocument).toEqual({
-        Version: '2012-10-17',
-        Statement: [
-          {
-            Sid: 'AgentCoreGatewayInvokeThroughEndpoint',
-            Effect: 'Allow',
-            Principal: '*',
-            Action: 'bedrock-agentcore:InvokeGateway',
-            Resource: '*',
-          },
-        ],
+    test('should treat a null set reference as opted out, as YAML with no value parses it', () => {
+      const template = synth('null-ref-harness', {
+        securityGroups: ['sg-123'],
+        subnets: ['subnet-a'],
+        vpcEndpoints: null as unknown as string,
       });
 
-      // Every other interface endpoint (Bedrock runtime, ECR API/Docker, STS, Logs) is shared and
-      // multi-action, so it deliberately carries no endpoint policy — scoping it would break the
-      // harness's own image pulls and unrelated VPC-wide traffic.
-      const others = interfaceEndpoints.filter(endpoint => !isGateway(endpoint));
-      expect(others).toHaveLength(5);
-      others.forEach(endpoint => {
-        expect(endpoint.Properties?.PolicyDocument).toBeUndefined();
-      });
+      template.resourceCountIs('AWS::EC2::SecurityGroupIngress', 0);
     });
 
-    test('should not create an S3 gateway endpoint unless route tables are supplied', () => {
-      const template = synth('no-rtb-harness', { ...VPCE_NET, vpcEndpoints: {} });
+    test('should create only consumer-side wiring, never an endpoint', () => {
+      const template = synth('consumer-harness', VPCE_NET);
 
-      // A gateway endpoint attaches to route tables, and imported subnets expose none.
-      const gatewayType = Object.values(template.findResources('AWS::EC2::VPCEndpoint')).filter(
-        endpoint => endpoint.Properties?.VpcEndpointType === 'Gateway',
-      );
-      expect(gatewayType).toHaveLength(0);
-    });
-
-    test('should scope the S3 gateway endpoint policy to the ECR image-layer bucket', () => {
-      const template = synth('s3-harness', {
-        ...VPCE_NET,
-        vpcEndpoints: { s3RouteTableIds: ['rtb-0123456789abcdef0'] },
-      });
-
-      // Without an explicit policy the endpoint inherits S3 full access for every subnet on these
-      // route tables - an exfiltration path for any co-located principal.
-      template.hasResourceProperties('AWS::EC2::VPCEndpoint', {
-        VpcEndpointType: 'Gateway',
-        RouteTableIds: ['rtb-0123456789abcdef0'],
-        PolicyDocument: {
-          Version: '2012-10-17',
-          Statement: [
-            {
-              Sid: 'AllowEcrImageLayerPull',
-              Effect: 'Allow',
-              Principal: '*',
-              Action: ['s3:GetObject'],
-              Resource: ['arn:test-partition:s3:::prod-test-region-starport-layer-bucket/*'],
-            },
-          ],
-        },
-      });
-    });
-
-    test('should readmit additional buckets without broadening the layer-bucket grant', () => {
-      const template = synth('s3-extra-harness', {
-        ...VPCE_NET,
-        vpcEndpoints: {
-          s3RouteTableIds: ['rtb-0123456789abcdef0'],
-          additionalS3BucketArns: ['arn:aws:s3:::my-bucket', 'arn:aws:s3:::my-bucket/*'],
-        },
-      });
-
-      template.hasResourceProperties('AWS::EC2::VPCEndpoint', {
-        VpcEndpointType: 'Gateway',
-        PolicyDocument: Match.objectLike({
-          Statement: [
-            Match.objectLike({ Sid: 'AllowEcrImageLayerPull', Action: ['s3:GetObject'] }),
-            Match.objectLike({
-              Sid: 'AllowAdditionalBucketRead',
-              Action: ['s3:GetObject', 's3:ListBucket'],
-              Resource: ['arn:aws:s3:::my-bucket', 'arn:aws:s3:::my-bucket/*'],
-            }),
-          ],
-        }),
-      });
-    });
-
-    test('should skip excluded endpoints so a VPC that already has them can deploy', () => {
-      const template = synth('exclude-harness', {
-        ...VPCE_NET,
-        // Only one endpoint with Private DNS is allowed per service per VPC, so an endpoint the VPC
-        // already has (e.g. from LZA) must be excluded or the deploy fails.
-        vpcEndpoints: {
-          exclude: [HarnessVpcEndpointName.LOGS, HarnessVpcEndpointName.STS],
-          s3RouteTableIds: ['rtb-0123456789abcdef0'],
-        },
-      });
-
-      const services = interfaceServices(template);
-      expect(services.some(name => name.includes('.logs'))).toBe(false);
-      expect(services.some(name => name.includes('.sts'))).toBe(false);
-      expect(services.some(name => name.includes('bedrock-runtime'))).toBe(true);
-    });
-
-    test('should allow excluding the S3 gateway endpoint even when route tables are supplied', () => {
-      const template = synth('exclude-s3-harness', {
-        ...VPCE_NET,
-        vpcEndpoints: { exclude: [HarnessVpcEndpointName.S3], s3RouteTableIds: ['rtb-0123456789abcdef0'] },
-      });
-
-      const gatewayType = Object.values(template.findResources('AWS::EC2::VPCEndpoint')).filter(
-        endpoint => endpoint.Properties?.VpcEndpointType === 'Gateway',
-      );
-      expect(gatewayType).toHaveLength(0);
-    });
-
-    test('should throw when vpcEndpoints is configured without vpcId', () => {
-      expect(() =>
-        synth('novpc-harness', {
-          securityGroups: ['sg-123'],
-          subnets: ['subnet-a'],
-          vpcEndpoints: {},
-        }),
-      ).toThrow('networkConfiguration.vpcId is required when networkConfiguration.vpcEndpoints is configured');
-    });
-
-    test('should throw at synth on a malformed additionalS3BucketArns entry', () => {
-      // A typo'd ARN would otherwise reach CloudFormation and fail as a MalformedPolicyDocument on the
-      // S3 gateway endpoint policy; catch it at synth with a clear message instead.
-      expect(() =>
-        synth('bad-s3-arn-harness', {
-          ...VPCE_NET,
-          vpcEndpoints: {
-            s3RouteTableIds: ['rtb-0123456789abcdef0'],
-            additionalS3BucketArns: ['arn:aws:s3:::ok-bucket', 'not-an-arn'],
-          },
-        }),
-      ).toThrow('additionalS3BucketArns[1]" must be a valid S3 ARN');
-    });
-
-    test('should restrict endpoint ingress to the harness security groups only', () => {
-      const template = synth('sg-harness', { ...VPCE_NET, vpcEndpoints: {} });
-
-      // open: false — no VPC-CIDR ingress, which the AgentCore security guidance calls a common miss.
+      // The whole point of the split: the orchestrating module owns the endpoints (one set per VPC), the
+      // harness owns a client SG and its rules and nothing else.
+      template.resourceCountIs('AWS::EC2::VPCEndpoint', 0);
       template.resourceCountIs('AWS::EC2::SecurityGroup', 1);
+      template.resourceCountIs('AWS::EC2::SecurityGroupIngress', ALWAYS_REQUIRED_SERVICES.length);
+    });
+
+    test('should grant HTTPS from its own client security group on each resolved endpoint group', () => {
+      const template = synth('ingress-harness', VPCE_NET);
+
+      // A client SG per harness is what keeps endpoint ingress rules per consumer: harnesses sharing a
+      // set share the endpoints, and their rules differ by source rather than colliding.
       template.hasResourceProperties('AWS::EC2::SecurityGroupIngress', {
+        GroupId: 'sg-vpce-bedrock-runtime',
         IpProtocol: 'tcp',
         FromPort: 443,
         ToPort: 443,
-        SourceSecurityGroupId: 'sg-0123456789abcdef0',
       });
       Object.values(template.findResources('AWS::EC2::SecurityGroupIngress')).forEach(rule => {
         expect(rule.Properties.CidrIp).toBeUndefined();
+        expect(rule.Properties.SourceSecurityGroupId).toBeDefined();
       });
     });
 
-    // The endpoint SG name carries a per-harness `nameScope` qualifier. Without it, two
-    // endpoint-configured harnesses in one module synth two SGs with the SAME GroupName and the deploy
-    // fails on the collision — invisible at synth, so assert the names are distinct here.
-    test('should give each endpoint-configured harness a distinctly named security group', () => {
-      // Both harnesses must exist before the single synth — the helper synthesizes on every call, and
-      // CDK forbids modifying the tree after the first synthesis.
-      ['sg-scope-a-harness', 'sg-scope-b-harness'].forEach(harnessName => {
+    test('should create the client security group in the set VPC', () => {
+      const template = synth('vpc-harness', VPCE_NET);
+
+      template.hasResourceProperties('AWS::EC2::SecurityGroup', { VpcId: 'vpc-0123456789abcdef0' });
+    });
+
+    test('should attach the client security group to the harness alongside the configured groups', () => {
+      const template = synth('sg-attach-harness', VPCE_NET);
+
+      // Without this the sessions have no membership in the group the endpoints admit, so the harness
+      // reaches READY and then hangs at first invoke.
+      const harness = Object.values(template.findResources('AWS::BedrockAgentCore::Harness'))[0];
+      const groups = harness.Properties?.Environment?.AgentCoreRuntimeEnvironment?.NetworkConfiguration
+        ?.NetworkModeConfig?.SecurityGroups as unknown[];
+      expect(groups).toHaveLength(2);
+      expect(groups[0]).toEqual('sg-0123456789abcdef0');
+    });
+
+    test('should egress only HTTPS to the resolved endpoint security groups', () => {
+      const template = synth('egress-harness', VPCE_NET);
+
+      template.hasResourceProperties('AWS::EC2::SecurityGroupEgress', {
+        DestinationSecurityGroupId: 'sg-vpce-bedrock-runtime',
+        IpProtocol: 'tcp',
+        FromPort: 443,
+        ToPort: 443,
+      });
+    });
+
+    /** Logical IDs of every security-group rule in a template, sorted. */
+    function ruleLogicalIds(template: Template): string[] {
+      return Object.entries(template.toJSON().Resources as { [id: string]: { Type: string } })
+        .filter(([, resource]) => RULE_TYPES.has(resource.Type))
+        .map(([logicalId]) => logicalId)
+        .sort();
+    }
+
+    test('should key both rules of a pair on the service, not on its position', () => {
+      // CDK names an egress rule after its peer, and for an unresolved token that name is a positional
+      // counter ({IndirectPeer}, {IndirectPeer2}, ...). Adding or removing one service would renumber the
+      // rest, and every property of a rule being create-only, CloudFormation would author a replacement
+      // identical to a rule it has not deleted yet: InvalidPermission.Duplicate on update.
+      const ids = ruleLogicalIds(synth('stable-id-harness', VPCE_NET));
+
+      expect(ids).toHaveLength(2 * ALWAYS_REQUIRED_SERVICES.length);
+      expect(ids.filter(id => id.includes('IndirectPeer'))).toHaveLength(0);
+      ALWAYS_REQUIRED_SERVICES.forEach(service => {
+        const flattened = service.replace(/[.-]/g, '');
+        expect(ids.filter(id => id.toLowerCase().includes(flattened))).toHaveLength(2);
+      });
+    });
+
+    test('should name the client security group per harness so co-located harnesses do not collide', () => {
+      ['name-a-harness', 'name-b-harness'].forEach(harnessName => {
         new BedrockAgentcoreHarnessL3Construct(testApp.testStack, `${harnessName}-construct`, {
           harnessName,
           modelId: 'anthropic.claude-sonnet-4-6-20250514-v1:0',
           systemPrompt: 'Be concise.',
-          networkConfiguration: { ...VPCE_NET, vpcEndpoints: {} },
+          networkConfiguration: VPCE_NET,
           kmsKey,
+          vpcEndpointAccess: resolved(ALWAYS_REQUIRED_SERVICES),
           naming: testApp.naming,
           roleHelper,
         });
@@ -2073,51 +1988,87 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
 
       const groupNames = Object.values(template.findResources('AWS::EC2::SecurityGroup'))
         .map(sg => sg.Properties?.GroupName as string)
-        .filter(name => typeof name === 'string' && name.includes('vpce'));
+        .filter(name => typeof name === 'string' && name.includes('name-') && name.includes('harness'));
 
       expect(groupNames).toHaveLength(2);
       expect(new Set(groupNames).size).toBe(2);
-      expect(groupNames.some(name => name.endsWith('sg-scope-a-harness'))).toBe(true);
-      expect(groupNames.some(name => name.endsWith('sg-scope-b-harness'))).toBe(true);
     });
 
-    test('should leave the supporting interface endpoints on their service-default policy', () => {
-      // No gateway tool, so the only interface endpoints are the supporting set (Bedrock runtime,
-      // ECR API/Docker, STS, Logs). Each is traversed outbound by the AgentCore service and the harness
-      // execution role across many actions, and Private DNS makes them VPC-wide, so restricting actions
-      // would deny the harness's own pulls and break unrelated workloads — IAM identity policy governs
-      // access instead. (The gateway endpoint, which IS scoped, is covered by its own test above.)
-      const template = synth('nopolicy-harness', { ...VPCE_NET, vpcEndpoints: {} });
+    test('should wire the gateway endpoint for a harness declaring a gateway tool', () => {
+      const template = synth('gw-harness', VPCE_NET, GATEWAY_TOOL);
 
-      const interfaceEndpoints = Object.values(template.findResources('AWS::EC2::VPCEndpoint')).filter(
-        endpoint => endpoint.Properties?.VpcEndpointType !== 'Gateway',
+      template.hasResourceProperties('AWS::EC2::SecurityGroupIngress', {
+        GroupId: 'sg-vpce-bedrock-agentcore-gateway',
+      });
+      template.resourceCountIs('AWS::EC2::SecurityGroupIngress', ALWAYS_REQUIRED_SERVICES.length + 1);
+    });
+
+    test('should wire only the endpoints resolved, so a non-gateway harness never reaches the gateway', () => {
+      // The orchestrating module provisions the union its VPC needs but resolves only what this harness
+      // derives, so a harness sharing a set with a gateway harness is granted no access to that endpoint.
+      const template = synth('no-gw-harness', VPCE_NET);
+
+      const ingressGroups = Object.values(template.findResources('AWS::EC2::SecurityGroupIngress')).map(
+        rule => rule.Properties?.GroupId as string,
       );
-      expect(interfaceEndpoints).toHaveLength(5);
-      interfaceEndpoints.forEach(endpoint => {
-        expect(endpoint.Properties?.PolicyDocument).toBeUndefined();
-      });
+      expect(ingressGroups).not.toContain('sg-vpce-bedrock-agentcore-gateway');
+      expect(ingressGroups).toHaveLength(ALWAYS_REQUIRED_SERVICES.length);
     });
 
-    test('should publish an SSM parameter per interface endpoint', () => {
-      const template = synth('ssm-harness', { ...VPCE_NET, vpcEndpoints: {} });
+    test('should wire nothing for a service the set marks external', () => {
+      // An external service is reached without an endpoint the set manages, so it is absent from the
+      // resolved map and gets no rule pair.
+      const template = synth('external-harness', VPCE_NET, undefined, resolved(['bedrock-runtime']));
 
-      // One parameter per created endpoint, keyed by endpoint name (MDAA lowercases the SSM path).
-      ['bedrockruntime', 'ecrapi', 'ecrdocker', 'sts', 'logs'].forEach(name => {
-        template.hasResourceProperties('AWS::SSM::Parameter', {
-          Name: `/test-org/test-domain/test-module/vpc-endpoint/harness-ssm-harness-${name}/id`,
-        });
-      });
+      template.resourceCountIs('AWS::EC2::SecurityGroupIngress', 1);
+      template.resourceCountIs('AWS::EC2::SecurityGroupEgress', 1);
     });
 
-    test('should tolerate a duplicated subnet id', () => {
-      // Subnet ids become child construct ids, so a repeat would collide without deduplication.
+    test('should throw when a set is referenced but the orchestrator resolved nothing', () => {
+      // Guards the construct being used directly rather than through the module that owns the sets, so
+      // it is built without the helper's derived access.
+      expect(
+        () =>
+          new BedrockAgentcoreHarnessL3Construct(testApp.testStack, 'unresolved-harness-construct', {
+            harnessName: 'unresolved-harness',
+            modelId: 'anthropic.claude-sonnet-4-6-20250514-v1:0',
+            systemPrompt: 'Be concise.',
+            networkConfiguration: VPCE_NET,
+            kmsKey,
+            naming: testApp.naming,
+            roleHelper,
+          }),
+      ).toThrow('references set "agentcore-private", which is resolved by the module that owns the sets');
+    });
+
+    test('should throw on a blank set reference', () => {
+      expect(() => synth('blank-ref-harness', { ...VPCE_NET, vpcEndpoints: '   ' })).toThrow(
+        'must name a VPC endpoint set declared in the module',
+      );
+    });
+
+    test('should throw on a non-string set reference instead of a TypeError', () => {
+      expect(() => synth('numeric-ref-harness', { ...VPCE_NET, vpcEndpoints: 123 as unknown as string })).toThrow(
+        'must name a VPC endpoint set declared in the module',
+      );
+    });
+
+    test('should throw when the configured security groups leave no room for the client group', () => {
       expect(() =>
-        synth('dup-subnet-harness', {
+        synth('sg-full-harness', {
           ...VPCE_NET,
-          subnets: ['subnet-0123456789abcdef0', 'subnet-0123456789abcdef0'],
-          vpcEndpoints: {},
+          securityGroups: Array.from({ length: 16 }, (_unused, index) => `sg-${index}`),
         }),
-      ).not.toThrow();
+      ).toThrow('can contain at most 15 entries');
+    });
+
+    test('should publish no endpoint SSM parameters (the endpoints are in-stack resources)', () => {
+      const template = synth('no-ssm-harness', VPCE_NET);
+
+      const endpointParams = Object.values(template.findResources('AWS::SSM::Parameter')).filter(param =>
+        JSON.stringify(param.Properties?.Name).includes('vpc-endpoint'),
+      );
+      expect(endpointParams).toHaveLength(0);
     });
   });
 
@@ -2263,7 +2214,7 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
     });
 
     test('should default TargetVersion to the harness current version when not pinned', () => {
-      // No explicit targetVersion → the endpoint must default to the harness's current version
+      // No explicit targetVersion -> the endpoint must default to the harness's current version
       // (CfnHarness.attrVersion, a Fn::GetAtt) so a named endpoint ADVANCES on every redeploy instead of
       // freezing at its create-time version. Assert the property is the harness Version GetAtt.
       const constructProps: BedrockAgentcoreHarnessL3ConstructProps = {
@@ -2288,7 +2239,7 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
     });
 
     // The endpoint is a raw CfnResource (no typed CfnHarnessEndpoint in the pinned CDK), so it is not
-    // ITaggable and the app-level Tags.of(stack) aspect skips it — it would deploy untagged while the
+    // ITaggable and the app-level Tags.of(stack) aspect skips it - it would deploy untagged while the
     // Harness it fronts is tagged, silently outside cost-allocation and ownership attribution. The module
     // tags are therefore rendered directly, and must match what the Harness carries.
     test('should tag the HarnessEndpoint with the module tags, matching the Harness', () => {
@@ -2408,7 +2359,7 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
     });
 
     // An empty string is falsy, so the old guard returned before the pattern check and `?? attrVersion`
-    // preserved it (?? only falls back on null/undefined) — emitting TargetVersion: "" against the CFN
+    // preserved it (?? only falls back on null/undefined) - emitting TargetVersion: "" against the CFN
     // pattern. It must fail at synth instead.
     test('should throw for a present-but-blank endpoint targetVersion', () => {
       const constructProps: BedrockAgentcoreHarnessL3ConstructProps = {
@@ -2487,7 +2438,7 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
       new BedrockAgentcoreHarnessL3Construct(testApp.testStack, 'trunc-sw-default-harness-construct', constructProps);
       const template = Template.fromStack(testApp.testStack);
 
-      // With no tuning field set, the strategy renders alone — no Config block (service default window).
+      // With no tuning field set, the strategy renders alone - no Config block (service default window).
       template.hasResourceProperties('AWS::BedrockAgentCore::Harness', {
         Truncation: { Strategy: 'sliding_window', Config: Match.absent() },
       });
@@ -2704,7 +2655,7 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
     });
   });
 
-  describe('Execution Role — baseline permissions', () => {
+  describe('Execution Role - baseline permissions', () => {
     test('should include the baseline harness permission set (private-ECR harness image pull, X-Ray, logs, metrics, workload identity, browser, code-interpreter)', () => {
       const constructProps: BedrockAgentcoreHarnessL3ConstructProps = {
         harnessName: 'iam-baseline-harness',
@@ -2740,7 +2691,7 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
           'AgentCoreBrowserDefault',
           'AgentCoreCodeInterpreterDefault',
           // No BYO container, so the AWS-managed image is pulled from the private harness-<region>
-          // repo — the unified harness-image ECR grants must be present.
+          // repo - the unified harness-image ECR grants must be present.
           'HarnessImageEcrPull',
           'HarnessImageEcrToken',
         ]),
@@ -2758,7 +2709,7 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
       expect(JSON.stringify(managedImagePull!.Resource)).toContain('repository/harness-');
 
       // logs:PutResourcePolicy is permission-management and DOES honor its resourceArn, so it must be
-      // scoped to the harness's own AgentCore runtimes log-group prefix — never a bare '*', which would
+      // scoped to the harness's own AgentCore runtimes log-group prefix - never a bare '*', which would
       // let one harness role rewrite every log group's resource policy account-wide.
       const statements = harnessPolicy!.Properties.PolicyDocument.Statement as {
         Sid?: string;

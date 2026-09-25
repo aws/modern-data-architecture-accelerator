@@ -360,7 +360,7 @@ describe('Utils - resolveModelArn', () => {
     });
 
     test('uses the whole profile id as the model name when it has no region prefix (no dot)', () => {
-      // A profile id with no dot never reaches the prefix-strip path, so the id is used verbatim —
+      // A profile id with no dot never reaches the prefix-strip path, so the id is used verbatim -
       // this exercises the firstDot < 0 branch of the model-name derivation.
       const profileArn = 'arn:aws:bedrock:us-east-1:123456789012:inference-profile/some-model-v1';
 
@@ -377,7 +377,7 @@ describe('Utils - resolveModelArn', () => {
       ).toEqual([]);
     });
 
-    // [] here means "not derivable", NOT "no paired grant needed" — an application inference profile does
+    // [] here means "not derivable", NOT "no paired grant needed" - an application inference profile does
     // require one, but its id is opaque. Callers must reject or otherwise handle these; the harness L3
     // rejects them at synth rather than auto-generating an under-scoped role.
     test('returns [] for an application-inference-profile ARN (pairing not derivable from an opaque id)', () => {

@@ -14,6 +14,7 @@ import {
   NamedGatewayProps,
   NamedGatewayTargetProps,
   NamedHarnessProps,
+  NamedVpcEndpointSetProps,
 } from '@aws-mdaa/bedrock-builder-l3-construct';
 import { Schema } from 'ajv';
 import { Stack } from 'aws-cdk-lib';
@@ -136,8 +137,8 @@ export interface BedrockBuilderConfigContents extends MdaaBaseConfigContents {
    **/
   readonly gatewayTargets?: NamedGatewayTargetProps;
   /**
-   * Bedrock AgentCore Harness configurations — a declarative agent loop (model + system prompt +
-   * tools) — keyed by harness name. A harness's `guardrail.id` and
+   * Bedrock AgentCore Harness configurations - a declarative agent loop (model + system prompt +
+   * tools) - keyed by harness name. A harness's `guardrail.id` and
    * `tools[].agentCoreGateway.gatewayArn` may use a `config:<name>` reference into the sibling
    * `guardrails` / `gateways` maps, resolved to the live resource.
    *
@@ -148,6 +149,24 @@ export interface BedrockBuilderConfigContents extends MdaaBaseConfigContents {
    * Validation: Optional; NamedHarnessProps (map of harness name to config)
    **/
   readonly harnesses?: NamedHarnessProps;
+  /**
+   * VPC endpoint sets, keyed by set name, giving a harness's sessions a private outbound path
+   * (no NAT/internet). A harness references one by name from its `networkConfiguration.vpcEndpoints`;
+   * every harness referencing a set shares its endpoints.
+   *
+   * Which endpoints exist is derived from the referencing harnesses, so a set only states which VPC it
+   * serves, where created endpoints go, and how each derived endpoint is reached - created here, an
+   * existing one to wire to, or reached without an endpoint the set manages. Endpoint policies are
+   * derived and not configurable.
+   *
+   * Use cases: private (no-NAT) harness sessions, reusing centrally provisioned endpoints
+   *
+   * AWS: AWS::EC2::VPCEndpoint (Interface and Gateway)
+   *
+   * Validation: Optional; NamedVpcEndpointSetProps; each set must name a distinct VPC and be referenced
+   * by at least one harness
+   **/
+  readonly vpcEndpoints?: NamedVpcEndpointSetProps;
 }
 
 export class BedrockBuilderConfigParser extends MdaaAppConfigParser<BedrockBuilderConfigContents> {
@@ -205,6 +224,8 @@ export class BedrockBuilderConfigParser extends MdaaAppConfigParser<BedrockBuild
    * (Optional) AgentCore Harness configurations
    */
   public readonly harnesses?: NamedHarnessProps;
+  /** VPC endpoint sets referenced by the module's harnesses. */
+  public readonly vpcEndpoints?: NamedVpcEndpointSetProps;
 
   constructor(stack: Stack, props: MdaaAppConfigParserProps) {
     super(stack, props, configSchema as Schema);
@@ -219,5 +240,6 @@ export class BedrockBuilderConfigParser extends MdaaAppConfigParser<BedrockBuild
     this.gateways = this.configContents.gateways;
     this.gatewayTargets = this.configContents.gatewayTargets;
     this.harnesses = this.configContents.harnesses;
+    this.vpcEndpoints = this.configContents.vpcEndpoints;
   }
 }

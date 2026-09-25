@@ -24,14 +24,14 @@ import { DEFAULT_ACTIONS } from '@aws-mdaa/agentcore-shared';
 export interface VpcEndpointPolicyProperty {
   /**
    * IAM principal ARNs allowed to invoke AgentCore through this endpoint.
-   * When omitted, the policy allows any principal ("*") — required for
+   * When omitted, the policy allows any principal ("*") - required for
    * OAuth/JWT-authenticated runtimes, since OAuth callers have no IAM identity
    * visible to the endpoint policy (access control is then enforced by the
    * runtime's resource-based policy and JWT authorizer).
    *
    * Recommended for SigV4/IAM-authenticated runtimes: set to the specific
    * caller role ARNs for least-privilege endpoint access. Do NOT set on
-   * JWT-authorized runtimes — OAuth callers cannot match an ARN principal,
+   * JWT-authorized runtimes - OAuth callers cannot match an ARN principal,
    * so restricting principals would lock them out entirely.
    *
    * Use cases: Restricting SigV4 callers to specific roles, defense in depth
@@ -54,7 +54,7 @@ export interface VpcEndpointPolicyProperty {
  * request context required by VPC-only resource policies (enforceVpcOnly).
  *
  * If the VPC already has a bedrock-agentcore endpoint (e.g., created by LZA or
- * a central networking team), omit this configuration entirely — only one
+ * a central networking team), omit this configuration entirely - only one
  * endpoint with Private DNS is allowed per service per VPC, and a second one
  * will fail to deploy.
  *
@@ -68,7 +68,7 @@ export interface VpcEndpointProperty {
   /**
    * Endpoint policy controlling access through the endpoint.
    * Defaults to allowing any principal ("*") restricted to AgentCore invoke
-   * actions — the correct default for OAuth-authenticated runtimes.
+   * actions - the correct default for OAuth-authenticated runtimes.
    *
    * Use cases: Least-privilege endpoint access for IAM callers
    *
@@ -81,7 +81,7 @@ export interface VpcEndpointProperty {
    * Also create supporting interface endpoints commonly required in VPC mode
    * without internet access: ECR API, ECR Docker, STS, and CloudWatch Logs.
    *
-   * This creates those four interface endpoints and nothing else — it is not by itself a complete
+   * This creates those four interface endpoints and nothing else - it is not by itself a complete
    * no-NAT configuration. Validate egress for your own runtime image and workload before removing a
    * NAT gateway, and provision any further endpoints out of band.
    *
@@ -131,7 +131,7 @@ const SUPPORTING_ENDPOINT_SERVICES: { id: string; service: InterfaceVpcEndpointA
  *
  * - Private DNS enabled, so the default regional endpoint resolves to the private IP
  * - Endpoint ENI security group allowing inbound HTTPS (443) only from the
- *   application security groups — not the entire VPC CIDR
+ *   application security groups - not the entire VPC CIDR
  * - Endpoint policy restricted to AgentCore invoke actions; principals default to "*"
  *   (required for OAuth callers) unless specific IAM principal ARNs are configured
  * - Optional supporting endpoints (ECR API/Docker, STS, CloudWatch Logs) for
@@ -141,10 +141,11 @@ const SUPPORTING_ENDPOINT_SERVICES: { id: string; service: InterfaceVpcEndpointA
  * resource type (Runtime, Tools, Memory, Identity); the Gateway uses a distinct
  * endpoint (bedrock-agentcore.gateway), not created here.
  *
- * NOTE: this builder lives in the Runtime L3 package; the sibling Harness L3 keeps a
- * parallel implementation (HarnessVpcEndpoints). They are intentionally not shared: the
- * Runtime's two-list supporting-endpoint design and the Harness's derived-set /
- * endpoint-exclude semantics differ, so a single shared copy would have to reconcile them.
+ * NOTE: this builder provisions endpoints per workload, unlike the sibling Harness L3, whose endpoints
+ * are owned by the orchestrating Bedrock Builder module and created once per VPC across every harness
+ * that opts in. An interface endpoint with Private DNS is a VPC-wide singleton per service, so a Runtime
+ * with createSupportingEndpoints and a harness covering the same service in one VPC will fail mid-deploy
+ * on the duplicate. Keep the two out of the same VPC until Runtimes move under that orchestration too.
  */
 export function createAgentCoreVpcEndpoint(
   scope: Construct,
@@ -182,7 +183,7 @@ export function createAgentCoreVpcEndpoint(
     securityGroups: [securityGroup],
     lookupSupportedAzs: false,
     subnets: { subnets },
-    // 'open' would add an ingress rule from the entire VPC CIDR — the security
+    // 'open' would add an ingress rule from the entire VPC CIDR - the security
     // guidance calls this out as a common miss. Access is via application SGs only.
     open: false,
   });
@@ -206,7 +207,7 @@ export function createAgentCoreVpcEndpoint(
   // these supporting endpoints (ECR/STS/Logs) carry AWS's default full-access endpoint policy. An
   // account-scoped `aws:PrincipalAccount` condition would be cheap defence-in-depth (access is
   // otherwise governed by the execution role's identity policy). The AgentCore Harness construct's
-  // interface endpoints share this default — apply the condition in both.
+  // interface endpoints share this default - apply the condition in both.
   const supportingEndpoints: InterfaceVpcEndpoint[] = props.vpcEndpointConfig.createSupportingEndpoints
     ? SUPPORTING_ENDPOINT_SERVICES.map(
         ({ id: endpointId, service }) =>

@@ -21,7 +21,7 @@ import { aws_bedrockagentcore as bedrockagentcore, CfnResource, Stack } from 'aw
 import { Effect, IRole, PolicyDocument, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { Construct } from 'constructs';
-import { HarnessVpcEndpoints, HarnessVpcEndpointsProperty } from './vpc-endpoints';
+import { HarnessVpcEndpointAccess, ResolvedVpcEndpointAccess } from './vpc-endpoint-access';
 import {
   buildAuthorizerConfiguration,
   buildEnvironment,
@@ -48,11 +48,11 @@ export {
  *
  * Only `converse_stream` is wired today. The OpenAI-compatible Bedrock Mantle formats (`responses` /
  * `chat_completions`) are deliberately out of scope: they route to a different endpoint host
- * (`bedrock-mantle`), for which this construct provisions no VPC route, so a VPC-mode harness using
- * them would reach READY and then hang at first invoke. See {@link HarnessVpcEndpointName} in
- * ./vpc-endpoints for what adding them would require. The enum is retained (rather than collapsed to
- * a string constant) so those values can be added — and exposed as a config option — alongside their
- * VPC endpoints later.
+ * (`bedrock-mantle`), which is not among the endpoint services a VPC-mode harness derives, so a
+ * VPC-mode harness using them would reach READY and then hang at first invoke. See
+ * `requiredHarnessVpcEndpoints` in ./vpc-endpoint-access for the derived endpoints; adding a format
+ * means adding one there. The enum is retained (rather than collapsed to a string constant)
+ * so those values can be added, and exposed as a config option, alongside their endpoint services.
  *
  * AWS: `Model.BedrockModelConfig.ApiFormat`
  */
@@ -89,7 +89,7 @@ export enum HarnessGuardrailTrace {
  *
  * Use cases: content filtering, responsible-AI controls on the Harness's model calls
  *
- * AWS: `Model.BedrockModelConfig.AdditionalParams.guardrailConfig` (escape hatch — see class doc)
+ * AWS: `Model.BedrockModelConfig.AdditionalParams.guardrailConfig` (escape hatch - see class doc)
  *
  * Validation: `id` required; `version` required unless `id` is a `config:<name>` reference (the
  * referenced guardrail's live version is used)
@@ -132,7 +132,7 @@ export interface HarnessGuardrailAssociation {
 
 /**
  * Inline function tool: a tool definition the model can call, with no execution binding. The
- * caller (harness invoker) is responsible for executing the function and returning the result —
+ * caller (harness invoker) is responsible for executing the function and returning the result -
  * the Harness itself does not invoke anything for this tool type.
  *
  * Use cases: client-side tool execution, tools implemented outside AWS, RETURN_CONTROL-style tools
@@ -167,7 +167,7 @@ export interface HarnessInlineFunctionToolProperty {
 /**
  * AgentCore Gateway tool: wires the Harness to an existing Bedrock AgentCore Gateway's tool
  * surface. MDAA supports only `AWS_IAM` outbound auth (the gateway invoked with the Harness's own
- * execution role) — `oauth`/`none` are not yet exposed.
+ * execution role) - `oauth`/`none` are not yet exposed.
  *
  * Use cases: exposing gateway-fronted Lambda/OpenAPI/Smithy tools to the agent loop
  *
@@ -227,13 +227,13 @@ export interface HarnessToolProperty {
 /**
  * Map of tool name to {@link HarnessToolProperty}. The key becomes `HarnessTool.Name`, the callable
  * tool identifier surfaced to the model and the value `allowedTools` entries refer to. Keying by name
- * rather than using a list makes duplicate tool names unrepresentable — the service documents
+ * rather than using a list makes duplicate tool names unrepresentable - the service documents
  * `HarnessTool.Name` as unique, and a duplicate would otherwise silently collapse two tools onto one
  * gateway and drop the other's IAM grant.
  */
 export interface NamedHarnessToolProps {
   /** @jsii ignore */
-  [toolName: string]: HarnessToolProperty;
+  readonly [toolName: string]: HarnessToolProperty;
 }
 
 /**
@@ -328,7 +328,7 @@ export interface HarnessModelConfigProperty {
 
 /**
  * Container configuration for the Harness's underlying AgentCore Runtime environment. Only a
- * pre-built ECR image URI is supported — the typed L1 `ContainerConfigurationProperty` exposes
+ * pre-built ECR image URI is supported - the typed L1 `ContainerConfigurationProperty` exposes
  * `containerUri` alone (no build-from-source), matching the harness's managed-runtime model.
  *
  * Use cases: bring-your-own container image for the harness runtime environment
@@ -362,17 +362,21 @@ export interface HarnessContainerProperty {
  *
  * AWS: `Environment.AgentCoreRuntimeEnvironment.NetworkConfiguration` (`NetworkMode: VPC`)
  *
- * Validation: securityGroups and subnets each required with 1-16 items
+ * Validation: securityGroups and subnets each required with 1-16 items; securityGroups is capped at 15
+ * when `vpcEndpoints` is set, to leave room for the endpoint client group the Harness adds
  */
 export interface HarnessNetworkProperty {
   /**
    * Security group IDs controlling inbound/outbound traffic for the harness's runtime sessions.
    *
+   * When `vpcEndpoints` names a set, at most 15 may be listed: the Harness adds one endpoint client
+   * security group of its own, and the service's own bound is 16 members in total.
+   *
    * Use cases: network access control, traffic filtering, security boundaries
    *
    * AWS: `VpcConfig.SecurityGroups`
    *
-   * Validation: Required; String[]; 1-16 security group IDs
+   * Validation: Required; String[]; 1-16 security group IDs, or 1-15 when `vpcEndpoints` is set
    *
    * @minItems 1
    * @maxItems 16
@@ -392,35 +396,34 @@ export interface HarnessNetworkProperty {
    **/
   readonly subnets: string[];
   /**
-   * VPC ID hosting the harness's runtime sessions. Required only when `vpcEndpoints` is configured
-   * (the VPC in which the endpoints are created); omit it when relying on VPC endpoints provisioned
-   * out of band (e.g. by LZA or a central networking team).
+   * Name of a VPC endpoint set, declared in the orchestrating module's own `vpcEndpoints` map, giving
+   * this Harness's sessions a private outbound path (no NAT/internet). Omit it for a Harness whose
+   * egress follows the VPC's existing path.
    *
-   * Use cases: MDAA-managed VPC endpoint creation
+   * Which endpoints the Harness needs is derived from its own configuration - model inference, the
+   * container image pull (registry API, Docker registry, and image layers over S3), credential vending,
+   * log delivery, and the AgentCore Gateway service when the Harness declares a gateway tool - so no
+   * service name, subnet, route table, policy, or security group ID appears here. The set declares only
+   * how each of those is reached in its VPC: created there, an existing endpoint to wire to, or reached
+   * without an endpoint the set manages. What stays yours to get right is that the subnets above belong to
+   * the VPC the referenced set names - that pairing is rejected at deploy, not at synth.
    *
-   * AWS: VPC ID for the harness's VPC endpoints
+   * The endpoints belong to the VPC rather than to the Harness. Every Harness referencing one set shares
+   * its endpoints, each wired to only the endpoints it needs. Remove a set in the same change as the last
+   * Harness referencing it: a declared set no Harness references is rejected at synth.
    *
-   * Validation: Optional; String; required when `vpcEndpoints` is set
+   * Use cases: no-NAT Harness sessions, VPC-mode gateway tools, firewalled environments
+   *
+   * AWS: consumer-side AWS::EC2::SecurityGroupIngress / SecurityGroupEgress against the set's endpoints
+   *
+   * Validation: Optional; String; must name a set in the module's `vpcEndpoints` map
    **/
-  readonly vpcId?: string;
-  /**
-   * Optional MDAA-managed creation of the VPC endpoints the harness's runtime sessions need for
-   * outbound access (no NAT/internet). Presence of this block opts in; which endpoints are created is
-   * derived from this harness's own configuration rather than listed, so a needed endpoint cannot be
-   * omitted by accident. Use its `exclude` list for endpoints the VPC already has.
-   *
-   * Use cases: no-NAT (fully private) harness sessions, VPC-mode gateway tools
-   *
-   * AWS: AWS::EC2::VPCEndpoint (Interface and Gateway)
-   *
-   * Validation: Optional; HarnessVpcEndpointsProperty; requires `vpcId` when present
-   **/
-  readonly vpcEndpoints?: HarnessVpcEndpointsProperty;
+  readonly vpcEndpoints?: string;
 }
 
 /**
  * A skill available to the Harness's agent loop: a filesystem path to a skill definition baked into
- * the runtime image. Only the `path` source is exposed — the CloudFormation `HarnessSkill` schema
+ * the runtime image. Only the `path` source is exposed - the CloudFormation `HarnessSkill` schema
  * also defines `Git`, `S3`, and `AwsSkills` sources, but the pinned CDK L1's `HarnessSkillProperty`
  * types only `path`.
  *
@@ -503,7 +506,7 @@ export enum HarnessTruncationStrategy {
   SLIDING_WINDOW = 'sliding_window',
   /** Summarize older context to stay within the window (see the summarization tuning fields). */
   SUMMARIZATION = 'summarization',
-  /** Do not truncate — let the model reject an over-long context. */
+  /** Do not truncate - let the model reject an over-long context. */
   NONE = 'none',
 }
 
@@ -583,7 +586,7 @@ export interface HarnessTruncationProperty {
 }
 
 /**
- * Complete configuration for a Bedrock AgentCore Harness — a declarative agent loop (model +
+ * Complete configuration for a Bedrock AgentCore Harness - a declarative agent loop (model +
  * system prompt + tools).
  *
  * Use cases: conversational AI agents, tool-using agents, RAG agents (via gateway tools)
@@ -687,7 +690,7 @@ export interface HarnessConfigProps {
   readonly guardrail?: HarnessGuardrailAssociation;
   /**
    * Inbound authorization configuration. Provide `customJwt` for JWT/OIDC inbound auth, or omit it
-   * to use AWS IAM (SigV4) — the Harness's no-configuration fallback.
+   * to use AWS IAM (SigV4) - the Harness's no-configuration fallback.
    *
    * Use cases: inbound access control
    *
@@ -712,7 +715,7 @@ export interface HarnessConfigProps {
    * agent may select during invocation. Supports the AgentCore `allowedTools` patterns (`*`, plain
    * names, `@builtin`, `@server/tool`, globs). Omit to allow all tools.
    *
-   * Note: `allowedTools` scopes LLM tool selection during `InvokeHarness` only — it does not gate
+   * Note: `allowedTools` scopes LLM tool selection during `InvokeHarness` only - it does not gate
    * the separate `InvokeAgentRuntimeCommand` API (which executes commands directly, without the
    * LLM). To prevent direct command execution, do not grant `bedrock-agentcore:InvokeAgentRuntimeCommand`.
    *
@@ -754,7 +757,7 @@ export interface HarnessConfigProps {
    * VPC network configuration for the harness's runtime sessions, placing them behind your own
    * security groups and subnets for private access to internal resources. Required: MDAA enforces
    * VPC network isolation for the harness (`NetworkMode: VPC`), mirroring the AgentCore Runtime
-   * construct — there is no public-network option.
+   * construct - there is no public-network option.
    *
    * Use cases: private access to internal resources, network isolation
    *
@@ -825,14 +828,14 @@ export interface HarnessConfigProps {
    * CloudWatch Logs retention period for the Harness's service-created log groups, in days. Accepts
    * any CloudWatch Logs `RetentionDays` value; `9999` (`RetentionDays.INFINITE`) means never-expire
    * and can be set explicitly to lock indefinite retention into config. Omitting the field is
-   * equivalent to `9999` — no retention policy is applied, leaving the log groups at CloudWatch's
+   * equivalent to `9999` - no retention policy is applied, leaving the log groups at CloudWatch's
    * never-expire default (logs are kept, and billed, forever) unless a finite value is set.
    *
    * Use cases: log retention policy, cost management
    *
    * AWS: CloudWatch Logs log group retention
    *
-   * Validation: Optional; Number; must be a valid RetentionDays value (9999 for never-expire) — validated at synth
+   * Validation: Optional; Number; must be a valid RetentionDays value (9999 for never-expire) - validated at synth
    * @default 9999
    **/
   readonly logRetentionDays?: number;
@@ -844,13 +847,21 @@ export interface ResolvedGuardrailRef {
   readonly guardrailVersion: string;
 }
 
-/** Map of guardrail name to its resolved id/version, for `guardrail.id: config:<name>` references. */
+/**
+ * Map of guardrail name to its resolved id/version, for `guardrail.id: config:<name>` references.
+ *
+ * Deliberately mutable, unlike the config interfaces above: the orchestrating module accumulates this
+ * as it creates each guardrail, then passes the finished map in.
+ */
 export interface ResolvedGuardrailRefMap {
   /** @jsii ignore */
   [name: string]: ResolvedGuardrailRef;
 }
 
-/** Map of gateway name to its live ARN, for `tools[].agentCoreGateway.gatewayArn: config:<name>` references. */
+/**
+ * Map of gateway name to its live ARN, for `tools[].agentCoreGateway.gatewayArn: config:<name>`
+ * references. Mutable for the same reason as {@link ResolvedGuardrailRefMap}.
+ */
 export interface ResolvedGatewayArnMap {
   /** @jsii ignore */
   [name: string]: string;
@@ -866,7 +877,7 @@ export interface BedrockAgentcoreHarnessL3ConstructProps extends MdaaL3Construct
   readonly harnessName: string;
   /**
    * The customer-managed KMS key for the Harness's log-group encryption, provided by the caller. The
-   * harness is a pure key consumer — it never provisions, imports, or mutates the key — so its logs
+   * harness is a pure key consumer - it never provisions, imports, or mutates the key - so its logs
    * are never left on an AWS-managed key. A live {@link IKey} construct input (not part of the
    * serializable {@link HarnessConfigProps}), hence on the standalone construct props.
    *
@@ -889,6 +900,12 @@ export interface BedrockAgentcoreHarnessL3ConstructProps extends MdaaL3Construct
    * `tools[].agentCoreGateway.gatewayArn: config:<name>` references.
    */
   readonly gateways?: ResolvedGatewayArnMap;
+  /**
+   * The VPC endpoints this Harness reaches, resolved by the orchestrating module from the set named in
+   * `networkConfiguration.vpcEndpoints` and narrowed to the services this Harness derives. The Harness
+   * only wires itself to them - it creates, modifies, and deletes no endpoint of its own.
+   */
+  readonly vpcEndpointAccess?: ResolvedVpcEndpointAccess;
 }
 
 interface ResolvedGuardrail {
@@ -909,13 +926,13 @@ const HARNESS_ENDPOINT_CFN_TYPE = 'AWS::BedrockAgentCore::HarnessEndpoint';
 // HarnessName CFN pattern is `^[a-zA-Z][a-zA-Z0-9_]{0,39}$` (max 40 chars). MDAA naming truncates
 // (hashing the suffix) to this length before sanitization so the deployed name always validates.
 const MAX_HARNESS_NAME_LENGTH = 40;
-// The harness always calls the model over the Converse (`converse_stream`) API — the only format
+// The harness always calls the model over the Converse (`converse_stream`) API - the only format
 // wired today and the only one Bedrock Guardrails support (see HarnessBedrockApiFormat). It is not a
 // caller-facing option; the value is pinned here and set on every rendered harness.
 const HARNESS_API_FORMAT = HarnessBedrockApiFormat.CONVERSE_STREAM;
 
 /**
- * Deploys a Bedrock AgentCore Harness — a declarative agent loop (model + system prompt + tools) —
+ * Deploys a Bedrock AgentCore Harness - a declarative agent loop (model + system prompt + tools) -
  * with a create-or-reference execution role scoped to the resolved model ARN, always-on CMK log
  * protection (via a caller-provided key), and optional JWT inbound auth, guardrail, and tools.
  *
@@ -927,7 +944,7 @@ const HARNESS_API_FORMAT = HarnessBedrockApiFormat.CONVERSE_STREAM;
  * A couple of fields still lag the CDK L1 and are rendered via CDK escape hatches, to be dropped for
  * the typed fields once a CDK bump adds them:
  * - Guardrail config: `HarnessBedrockModelConfigProperty` has no `AdditionalParams`, so the guardrail
- *   config is rendered via `addPropertyOverride('Model.BedrockModelConfig.AdditionalParams', …)`. The
+ *   config is rendered via `addPropertyOverride('Model.BedrockModelConfig.AdditionalParams', ...)`. The
  *   `apiFormat` (Converse) that guardrails require is a typed field and is set directly, not via
  *   override.
  * - Harness endpoint: there is no typed `CfnHarnessEndpoint` L1 class, so the endpoint is rendered
@@ -948,6 +965,7 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
     const modelArn = resolveModelArn(props.modelId, this.partition, this.region, this.account);
     const guardrail = this.resolveGuardrail(props.guardrail, props.guardrails);
     const gatewayArns = this.resolveGatewayArns(props.tools, props.gateways);
+    const endpointAccess = this.createVpcEndpointAccess(props);
 
     // The service creates the harness's own workload-identity resource with a name of the form
     // `harness_<HarnessName>-<serviceHash>`, so the execution-role grant for it must be scoped to this
@@ -984,7 +1002,7 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
           temperature: props.modelConfig?.temperature,
           topP: props.modelConfig?.topP,
           maxTokens: props.modelConfig?.maxTokens,
-          // The harness always uses the Converse (`converse_stream`) API — the only format wired today
+          // The harness always uses the Converse (`converse_stream`) API - the only format wired today
           // and the only one carrying guardrailConfig. Pinned from the typed enum rather than exposed
           // as a caller option (see HarnessBedrockApiFormat).
           apiFormat: HARNESS_API_FORMAT,
@@ -995,7 +1013,7 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
       maxIterations: props.maxIterations,
       maxTokens: props.maxTokens,
       timeoutSeconds: props.timeoutSeconds,
-      environment: buildEnvironment(props),
+      environment: buildEnvironment(props, endpointAccess?.securityGroupId),
       environmentArtifact: buildEnvironmentArtifact(props.container),
       environmentVariables: props.environmentVariables,
       authorizerConfiguration: buildAuthorizerConfiguration(props.authorizerConfiguration),
@@ -1011,7 +1029,7 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
     this.harness = new bedrockagentcore.CfnHarness(this, 'Harness', harnessProps);
 
     // CreateHarness validates the execution role, but the permission set is attached policy-side
-    // (MdaaManagedPolicy `roles: [role]`), which creates no CfnHarness→policy dependency. Without an
+    // (MdaaManagedPolicy `roles: [role]`), which creates no CfnHarness->policy dependency. Without an
     // explicit dependency the harness can be created before the policy attaches, so the first deploy
     // of a same-stack created role fails with `NotStabilized: Role validation failed`. Depend on the
     // policy so it is in place before CreateHarness runs.
@@ -1028,63 +1046,28 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
     }
 
     this.createLogProtection(props);
-    this.createVpcEndpoints(props, gatewayArns);
     this.storeSSMParameters(props.harnessName, roleArn);
   }
 
   /**
-   * Creates the harness's outbound VPC endpoints when `networkConfiguration.vpcEndpoints` is
-   * configured, delegating to {@link HarnessVpcEndpoints}. Which endpoints are created is derived
-   * there from this harness's own configuration — the gateway endpoint is added exactly when an
-   * `agentcore_gateway` tool is declared — so a needed endpoint cannot be omitted by accident.
-   *
-   * GAP — no `enforceVpcOnly` equivalent. The Runtime construct can attach an
-   * `AWS::BedrockAgentCore::ResourcePolicy` with an `aws:SourceVpc` condition to restrict inbound
-   * invocation to the VPC; the Harness cannot, because the resource-policy API supports only
-   * Runtime+Endpoint, Gateway, and Memory — not Harness — and `InvokeHarness` is not a resource-policy
-   * action. This matters most for a JWT/OAuth harness, whose callers a VPC-endpoint policy cannot
-   * restrict (no IAM identity) and SCPs cannot bind, leaving an `aws:SourceVpc` deny the only inbound
-   * network-boundary lever. See the module README for the closure path via the underlying runtime.
+   * Creates only the Harness side of private endpoint connectivity. The orchestrating module owns the
+   * endpoint resources, their policies, placement, and lifecycle - one set per VPC, shared by every
+   * Harness referencing it; the Harness adds a client security group unique to itself and one rule pair
+   * per endpoint it reaches.
    */
-  private createVpcEndpoints(
+  private createVpcEndpointAccess(
     props: BedrockAgentcoreHarnessL3ConstructProps,
-    gatewayArns: { [toolName: string]: string },
-  ): void {
-    const config = props.networkConfiguration.vpcEndpoints;
-    if (!config) {
-      return;
+  ): HarnessVpcEndpointAccess | undefined {
+    // The config field is the opt-in and the injected object is its resolution, so both are required:
+    // validateHarnessConfig has already rejected a reference the orchestrator did not resolve, and a
+    // resolution without a reference is ignored rather than wired.
+    if (!props.networkConfiguration.vpcEndpoints || !props.vpcEndpointAccess) {
+      return undefined;
     }
-
-    if (!props.networkConfiguration.vpcId) {
-      throw new Error(
-        'networkConfiguration.vpcId is required when networkConfiguration.vpcEndpoints is configured. ' +
-          "The VPC ID identifies the VPC in which the harness's VPC endpoints are created.",
-      );
-    }
-
-    const endpoints = new HarnessVpcEndpoints(this, 'VpcEndpoints', {
-      vpcId: props.networkConfiguration.vpcId,
-      subnetIds: props.networkConfiguration.subnets,
-      ingressSecurityGroupIds: props.networkConfiguration.securityGroups,
-      config: config,
-      hasGatewayTool: Object.keys(gatewayArns).length > 0,
-      // Scope the endpoint SG name to this harness so several endpoint-configured harnesses can
-      // coexist in one module without colliding SG names / SSM parameters.
-      nameScope: props.harnessName,
+    return new HarnessVpcEndpointAccess(this, 'VpcEndpointAccess', {
+      harnessName: props.harnessName,
+      access: props.vpcEndpointAccess,
       naming: this.props.naming,
-    });
-
-    // Publish each interface endpoint's id, keyed by its endpoint name. Gateway-type endpoints are not
-    // published: traffic reaches them via route-table prefix lists rather than by connecting to an id,
-    // so there is nothing for a caller to reference.
-    Object.entries(endpoints.interfaceEndpoints).forEach(([name, endpoint]) => {
-      new MdaaParamAndOutput(this, {
-        resourceType: 'vpc-endpoint',
-        resourceId: `harness-${props.harnessName}-${name}`,
-        name: 'id',
-        value: endpoint.vpcEndpointId,
-        ...this.props,
-      });
     });
   }
 
@@ -1174,7 +1157,7 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
 
   /**
    * Renders the guardrail escape hatch: `Model.BedrockModelConfig.AdditionalParams.guardrailConfig`.
-   * The pinned CDK L1's `HarnessBedrockModelConfigProperty` has no typed field for `AdditionalParams` —
+   * The pinned CDK L1's `HarnessBedrockModelConfigProperty` has no typed field for `AdditionalParams` -
    * see the class-level documentation. The `ApiFormat: converse_stream` guardrails require is always
    * set directly on the typed `bedrockModelConfig.apiFormat` field (no override), guardrail or not.
    */
@@ -1191,13 +1174,13 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
   /**
    * Resolves the Harness execution role to an {@link IRole}, then attaches its scoped
    * customer-managed execution permissions. The role is either:
-   * - **referenced** — via `props.role` (an {@link MdaaRoleRef} resolvable by name, ARN, or id), so
+   * - **referenced** - via `props.role` (an {@link MdaaRoleRef} resolvable by name, ARN, or id), so
    *   one role can be shared across resources (the bedrock-builder pattern); or
-   * - **created** — an `MdaaRole` trusting `bedrock-agentcore.amazonaws.com`, scoped by
+   * - **created** - an `MdaaRole` trusting `bedrock-agentcore.amazonaws.com`, scoped by
    *   aws:SourceAccount / aws:SourceArn.
    *
    * The permission set is attached via a single `MdaaManagedPolicy` with `roles: [role]` (mirroring
-   * the Gateway construct) so it lands on the resolved role whether created or referenced — a
+   * the Gateway construct) so it lands on the resolved role whether created or referenced - a
    * referenced role would otherwise deploy with zero permissions and fail at first invoke.
    */
   private createOrReferenceHarnessRole(
@@ -1230,7 +1213,7 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
    * AgentCore resources in this account/region (service-wide `:*`, NOT `harness/*`).
    *
    * The SourceArn the AgentCore control plane presents at CreateHarness role validation is NOT the
-   * harness ARN — a `harness/...` prefix (whether name-scoped `harness/<name>-*` or broad `harness/*`)
+   * harness ARN - a `harness/...` prefix (whether name-scoped `harness/<name>-*` or broad `harness/*`)
    * fails validation deterministically ("Role validation failed ... trust policy allows assumption").
    * Both were verified to fail on deploy. The service-wide `:*` matches (the AgentCore Runtime construct
    * and the AWS harness-security-guide sample both use `:*`, and the referenced-role path works with it),
@@ -1273,7 +1256,7 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
    *   role-level cdk-nag suppressions are applied; false for a referenced role we do not own.
    * @returns the `MdaaManagedPolicy` carrying the permission set, so the caller can make the
    *   `CfnHarness` depend on it (the policy-side attachment creates no implicit dependency, and
-   *   CreateHarness would otherwise race ahead of the permissions — `NotStabilized`).
+   *   CreateHarness would otherwise race ahead of the permissions - `NotStabilized`).
    */
   private attachHarnessRolePolicy(
     role: IRole,
@@ -1289,8 +1272,8 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
     // each Sid matches a Sid in that sample. Where the doc uses broad sample resources
     // (foundation-model/* + bedrock:::*), MDAA scopes tighter per the doc's own production-hardening
     // note. The set is assembled one builder per statement group so each grant surface is reviewable
-    // in isolation; the group order below (model → observability → AgentCore runtime/tools → ECR image
-    // pull → guardrail → gateway) is preserved. The doc's AgentCore Memory statement is omitted: memory
+    // in isolation; the group order below (model -> observability -> AgentCore runtime/tools -> ECR image
+    // pull -> guardrail -> gateway) is preserved. The doc's AgentCore Memory statement is omitted: memory
     // is disabled (Memory.Disabled), so the agent loop makes no memory calls.
     const policyStatements: PolicyStatement[] = [
       ...this.buildModelInvocationStatements(modelArn),
@@ -1308,8 +1291,8 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
     // Rendered as a customer-managed policy via the MDAA wrapper (AwsSolutions-IAM4 suppressed below,
     // required for compliance). MdaaManagedPolicy applies compliant naming and warns via
     // checkPolicyLength() as the document approaches the IAM customer-managed-policy size ceiling of
-    // 6,144 characters; the worst case here — all conditionals fired (guardrail + gateway +
-    // custom-container) — is well under that ceiling (asserted in the unit tests).
+    // 6,144 characters; the worst case here - all conditionals fired (guardrail + gateway +
+    // custom-container) - is well under that ceiling (asserted in the unit tests).
     const harnessManagedPolicy = new MdaaManagedPolicy(this, 'HarnessManagedPolicy', {
       naming: this.props.naming,
       managedPolicyName: `agentcore-harness-${props.harnessName}`,
@@ -1331,8 +1314,8 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
         'further scoped by a condition restricting it to the bedrock-agentcore metrics namespace. ' +
         'logs:DescribeLogGroups likewise does not support resource-level permissions ' +
         '(https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html), ' +
-        'so it is scoped to the log-group resource type (log-group:*) — the tightest scope the action ' +
-        'accepts — rather than a bare "*". ' +
+        'so it is scoped to the log-group resource type (log-group:*) - the tightest scope the action ' +
+        'accepts - rather than a bare "*". ' +
         'The AWS-managed-image ECR pull (HarnessImageEcrPull, always granted; a bring-your-own ' +
         'container adds its own repository ARN alongside it) scopes the repository name to ' +
         'harness-<region> but wildcards the account segment ' +
@@ -1393,7 +1376,7 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
       modelActions.push('bedrock:GetInferenceProfile');
     }
     // A cross-region inference profile routes invocation to the underlying foundation model in each
-    // destination region, so invoke on the profile ARN alone yields AccessDeniedException — the paired
+    // destination region, so invoke on the profile ARN alone yields AccessDeniedException - the paired
     // foundation-model ARN(s) must also be granted (empty for a plain foundation-model id).
     const foundationModelArns = inferenceProfileFoundationModelArns(modelArn);
 
@@ -1406,7 +1389,7 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
       }),
     ];
 
-    // BedrockInferenceProfileModelInvocation — the destination foundation model(s) an inference profile
+    // BedrockInferenceProfileModelInvocation - the destination foundation model(s) an inference profile
     // routes to, gated by bedrock:InferenceProfileArn so the grant is usable ONLY through this profile
     // (per the Bedrock inference-profile IAM docs). Region is wildcarded because destinations are not
     // knowable at synth; the condition keeps least privilege on the model itself.
@@ -1437,7 +1420,7 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
   private buildObservabilityStatements(): PolicyStatement[] {
     const { partition, account, region } = this;
     return [
-      // XRayTracingAccess — the harness emits distributed traces to X-Ray. These tracing actions do
+      // XRayTracingAccess - the harness emits distributed traces to X-Ray. These tracing actions do
       // not support resource-level permissions (service-level operations), so the doc's sample grants
       // them on '*'.
       new PolicyStatement({
@@ -1451,7 +1434,7 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
         ],
         resources: ['*'],
       }),
-      // CloudWatchLogsGroup — the service creates the harness's log group under the runtime prefix and
+      // CloudWatchLogsGroup - the service creates the harness's log group under the runtime prefix and
       // enumerates its streams. Split from the stream-write statement to match the doc's sample (and
       // the AgentCore Runtime construct), which scopes group-level actions to the log-group ARN.
       new PolicyStatement({
@@ -1460,7 +1443,7 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
         actions: ['logs:CreateLogGroup', 'logs:DescribeLogStreams'],
         resources: [`arn:${partition}:logs:${region}:${account}:log-group:/aws/bedrock-agentcore/runtimes/*`],
       }),
-      // CloudWatchLogsDescribeGroups — logs:DescribeLogGroups does not support resource-level
+      // CloudWatchLogsDescribeGroups - logs:DescribeLogGroups does not support resource-level
       // permissions, but the doc's sample scopes it to the log-group resource type (log-group:*)
       // rather than a bare '*'; MDAA matches that tighter posture.
       new PolicyStatement({
@@ -1469,7 +1452,7 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
         actions: ['logs:DescribeLogGroups'],
         resources: [`arn:${partition}:logs:${region}:${account}:log-group:*`],
       }),
-      // CloudWatchLogsStream — the actual per-stream writes, scoped to the log-stream ARN under the
+      // CloudWatchLogsStream - the actual per-stream writes, scoped to the log-stream ARN under the
       // runtime prefix (doc sample splits these out from the group-level actions above).
       new PolicyStatement({
         sid: 'CloudWatchLogsStream',
@@ -1479,7 +1462,7 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
           `arn:${partition}:logs:${region}:${account}:log-group:/aws/bedrock-agentcore/runtimes/*:log-stream:*`,
         ],
       }),
-      // CloudWatchLogsPutResourcePolicy — the service attaches a resource policy to the harness's log
+      // CloudWatchLogsPutResourcePolicy - the service attaches a resource policy to the harness's log
       // group so it can deliver logs there. logs:PutResourcePolicy DOES take a resourceArn (a LogGroup
       // ARN) and IAM enforces it, and it is permission-management (it rewrites a group's resource
       // policy), so a bare '*' would let one harness role alter every log group's policy account-wide.
@@ -1491,7 +1474,7 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
         actions: ['logs:PutResourcePolicy'],
         resources: [`arn:${partition}:logs:${region}:${account}:log-group:/aws/bedrock-agentcore/runtimes/*`],
       }),
-      // CloudWatchMetricsPublish — cloudwatch:PutMetricData does not support resource-level
+      // CloudWatchMetricsPublish - cloudwatch:PutMetricData does not support resource-level
       // permissions; scoped by the bedrock-agentcore namespace condition (the most restrictive posture
       // possible for this action), matching the doc's sample.
       new PolicyStatement({
@@ -1517,7 +1500,7 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
   private buildAgentCoreRuntimeStatements(harnessResourceName: string): PolicyStatement[] {
     const { partition, account, region } = this;
     return [
-      // AgentCoreWorkloadIdentity — the harness workload obtains its workload-access tokens from the
+      // AgentCoreWorkloadIdentity - the harness workload obtains its workload-access tokens from the
       // default workload-identity directory. The service names the workload identity
       // `harness_<HarnessName>-<serviceHash>`, so this is scoped to this harness's resolved name plus a
       // trailing '*' for the service-generated hash suffix (matching the doc's sample resource shape).
@@ -1530,7 +1513,7 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
           `arn:${partition}:bedrock-agentcore:${region}:${account}:workload-identity-directory/default/workload-identity/harness_${harnessResourceName}*`,
         ],
       }),
-      // AgentCoreBrowserDefault — the built-in AWS-managed browser tool. Scoped to the AWS-owned
+      // AgentCoreBrowserDefault - the built-in AWS-managed browser tool. Scoped to the AWS-owned
       // browser resource prefix (account segment is literal 'aws'); matches the doc's sample.
       new PolicyStatement({
         sid: 'AgentCoreBrowserDefault',
@@ -1546,7 +1529,7 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
         ],
         resources: [`arn:${partition}:bedrock-agentcore:${region}:aws:browser/*`],
       }),
-      // AgentCoreCodeInterpreterDefault — the built-in AWS-managed code-interpreter tool. Scoped to
+      // AgentCoreCodeInterpreterDefault - the built-in AWS-managed code-interpreter tool. Scoped to
       // the AWS-owned code-interpreter resource prefix (account segment is literal 'aws'); matches the
       // doc's sample.
       new PolicyStatement({
@@ -1561,7 +1544,7 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
         ],
         resources: [`arn:${partition}:bedrock-agentcore:${region}:aws:code-interpreter/*`],
       }),
-      // DenyRoleAssumption — the harness never switches roles, so deny sts:AssumeRole on this role.
+      // DenyRoleAssumption - the harness never switches roles, so deny sts:AssumeRole on this role.
       // Per the harness security guide, a caller can override model additionalParams (e.g. aws_role_name)
       // at invoke time to attempt role assumption from the execution role; this explicit Deny closes that
       // path regardless of what the loop is coaxed into requesting.
@@ -1575,10 +1558,10 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
   }
 
   /**
-   * HarnessImageEcrPull / HarnessImageEcrToken — the harness pulls its container image(s) from private
+   * HarnessImageEcrPull / HarnessImageEcrToken - the harness pulls its container image(s) from private
    * ECR (MDAA always enforces VPC mode, so never from ECR Public), which needs a private-ECR auth token
    * (ecr:GetAuthorizationToken) plus layer/image reads scoped to the repository(ies).
-   *   - The AWS-managed image in the private repo `harness-<region>` is ALWAYS pulled — the service
+   *   - The AWS-managed image in the private repo `harness-<region>` is ALWAYS pulled - the service
    *     pulls that agent-loop image every session, including for a BYO container. Its account is
    *     AWS-owned and varies by region, so the account is wildcarded and the repo name pinned.
    *   - When a BYO container is configured, ALSO grant its resolved repository ARN. Both grants are
@@ -1609,8 +1592,8 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
   }
 
   /**
-   * Guardrail grants (empty when no guardrail is configured): AllowApplyBedrockGuardrail — Bedrock
-   * guardrail enforcement over the Converse API — plus GuardrailKmsDecrypt for the guardrail's CMK.
+   * Guardrail grants (empty when no guardrail is configured): AllowApplyBedrockGuardrail - Bedrock
+   * guardrail enforcement over the Converse API - plus GuardrailKmsDecrypt for the guardrail's CMK.
    * Not in the harness doc's execution-role sample (the harness applies the guardrail via the model's
    * additionalParams), so bedrock:ApplyGuardrail is granted on the resolved guardrail ARN following the
    * standard Bedrock guardrail least-privilege pattern.
@@ -1627,7 +1610,7 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
         actions: ['bedrock:ApplyGuardrail'],
         resources: [guardrail.guardrailArn],
       }),
-      // GuardrailKmsDecrypt — a CMK-encrypted guardrail (module-managed guardrails are encrypted with
+      // GuardrailKmsDecrypt - a CMK-encrypted guardrail (module-managed guardrails are encrypted with
       // props.kmsKey) requires kms:Decrypt on that key for ApplyGuardrail to read the policy material;
       // read-only Decrypt (+ DescribeKey) is sufficient, no encrypt-side access is needed. A literal-id
       // (externally created) guardrail's encryption is not knowable at synth, so the grant is always
@@ -1636,8 +1619,8 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
       // Scoping: under bedrock-builder props.kmsKey is the SINGLE module-wide CMK shared with the agent
       // bucket, knowledge bases, the generated-Lambda pool, and gateways, so an unconditional grant would
       // let this role decrypt any ciphertext under that key. The grant is therefore bounded by a
-      // kms:ViaService condition pinning it to bedrock.<region>.amazonaws.com — mirroring the module key
-      // policy's AllowExecutionRolesToUseKeyWithContext statement (bedrock-builder-l3-construct.ts) — so
+      // kms:ViaService condition pinning it to bedrock.<region>.amazonaws.com - mirroring the module key
+      // policy's AllowExecutionRolesToUseKeyWithContext statement (bedrock-builder-l3-construct.ts) - so
       // the role can use the key only when Bedrock (ApplyGuardrail's owning service) calls KMS on its
       // behalf.
       new PolicyStatement({
@@ -1655,7 +1638,7 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
   }
 
   /**
-   * AllowInvokeGateway (empty when no gateway tools are configured) — doc "AgentCore Gateway"
+   * AllowInvokeGateway (empty when no gateway tools are configured) - doc "AgentCore Gateway"
    * optional-feature statement: added when one or more agentcore_gateway tools are configured
    * (AWS_IAM / SigV4 outbound auth), scoped to the resolved gateway ARN(s) rather than the doc
    * sample's single gateway/* placeholder.
@@ -1677,7 +1660,7 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
 
   /**
    * Applies always-on CMK encryption and log retention to the Harness's service-created log
-   * groups (compliance by default — not gated behind config), using the caller-provided key
+   * groups (compliance by default - not gated behind config), using the caller-provided key
    * (`props.kmsKey`). The harness is a pure key consumer; the key's provisioner grants CloudWatch
    * Logs service use on the key policy. Reuses the shared `createAgentCoreLogProtection` custom
    * resource, keyed on the underlying AgentCore Runtime id (harness logs are published under that
@@ -1737,11 +1720,11 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
         // omitted, default to the harness's CURRENT version (CfnHarness.attrVersion, "incremented on
         // every successful update") so the named endpoint ADVANCES with each redeploy instead of
         // freezing at its create-time version. Without this, a named endpoint stays pinned to v1 while
-        // the harness moves on — and if the execution role was replaced, invoking the stale version
+        // the harness moves on - and if the execution role was replaced, invoking the stale version
         // fails with "execution role cannot be assumed" (unlike DEFAULT, which floats to latest).
         TargetVersion: endpointConfig.targetVersion ?? this.harness.attrVersion,
         // A raw CfnResource is not ITaggable, so the app-level `Tags.of(stack)` aspect skips it and the
-        // endpoint would deploy untagged while the Harness it fronts carries the module tags — leaving it
+        // endpoint would deploy untagged while the Harness it fronts carries the module tags - leaving it
         // outside cost-allocation and ownership attribution. `AWS::BedrockAgentCore::HarnessEndpoint`
         // does support Tags, so render the module tags directly. Remove once a typed
         // `CfnHarnessEndpoint` L1 (ITaggableV2, like CfnRuntimeEndpoint) is available and used instead.

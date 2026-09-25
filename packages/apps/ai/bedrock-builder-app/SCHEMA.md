@@ -6,22 +6,23 @@
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                             | Pattern | Type   | Deprecated | Definition                                          | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| -------------------------------------------------------------------- | ------- | ------ | ---------- | --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [agentBucketArn](#agentBucketArn )                                 | No      | string | No         | -                                                   | Existing S3 bucket ARN for agent data storage.<br />If omitted, a dedicated bucket is created automatically.<br /><br />Use cases: Agent artifact storage, data management, bucket reuse<br /><br />AWS: S3 bucket for Bedrock agent storage<br /><br />Validation: Optional; String; must be valid S3 bucket ARN                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| - [agents](#agents )                                                 | No      | object | No         | In #/definitions/NamedAgentProps                    | Bedrock agent configurations with foundation models, action groups, knowledge base integration, and guardrails.<br /><br />Use cases: AI agent deployment, conversational AI, task automation, intelligent workflows<br /><br />AWS: Amazon Bedrock Agents<br /><br />Validation: Optional; NamedAgentProps (map of agent name to config)                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| + [dataAdminRoles](#dataAdminRoles )                                 | No      | array  | No         | -                                                   | Admin roles granted access to Bedrock agent resources including KMS keys and S3 buckets.<br /><br />Use cases: Administrative access, role-based security, Bedrock resource management<br /><br />AWS: IAM roles for Bedrock resource administration<br /><br />Validation: Required; MdaaRoleRef[]                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| - [gatewayTargets](#gatewayTargets )                                 | No      | object | No         | In #/definitions/NamedGatewayTargetProps            | Bedrock AgentCore Gateway target definitions (MCP tool sources), keyed by target name.<br />Declared as a sibling of \`gateways\` (not nested) to keep the config flat; a gateway attaches a<br />target by naming its key in the gateway's \`targets\` list. Each target must be referenced by<br />exactly one gateway.<br /><br />Use cases: defining MCP tool sources (e.g. Lambda tools) once and referencing them from a gateway<br /><br />AWS: AWS::BedrockAgentCore::GatewayTarget<br /><br />Validation: Optional; NamedGatewayTargetProps (map of target name to config)                                                                                                                                                                                     |
-| - [gateways](#gateways )                                             | No      | object | No         | In #/definitions/NamedGatewayProps                  | Bedrock AgentCore Gateway configurations (compliant MCP servers), keyed by gateway name.<br />Each gateway references its tool targets by name from the sibling \`gatewayTargets\` map, and may<br />reuse Lambdas from \`lambdaFunctions\` via \`generated-function:<name>\` references.<br /><br />Use cases: exposing a unified MCP tool surface with per-tool authorization, agent tool gateways<br /><br />AWS: Amazon Bedrock AgentCore Gateway<br /><br />Validation: Optional; NamedGatewayProps (map of gateway name to config)                                                                                                                                                                                                                                |
-| - [guardrails](#guardrails )                                         | No      | object | No         | In #/definitions/NamedGuardrailProps                | Guardrail configurations for AI safety, content filtering, and responsible AI deployment.<br /><br />Use cases: AI safety controls, content filtering, responsible AI, content moderation<br /><br />AWS: Bedrock Guardrails<br /><br />Validation: Optional; NamedGuardrailProps (map of guardrail name to config)                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| - [harnesses](#harnesses )                                           | No      | object | No         | In #/definitions/NamedHarnessProps                  | Bedrock AgentCore Harness configurations — a declarative agent loop (model + system prompt +<br />tools) — keyed by harness name. A harness's \`guardrail.id\` and<br />\`tools[].agentCoreGateway.gatewayArn\` may use a \`config:<name>\` reference into the sibling<br />\`guardrails\` / \`gateways\` maps, resolved to the live resource.<br /><br />Use cases: declarative tool-using/RAG agents<br /><br />AWS: AWS::BedrockAgentCore::Harness<br /><br />Validation: Optional; NamedHarnessProps (map of harness name to config)                                                                                                                                                                                                                                |
-| - [kmsKeyArn](#kmsKeyArn )                                           | No      | string | No         | -                                                   | Existing KMS key ARN for encrypting all Bedrock resources in this module — agents, knowledge<br />bases, guardrails, the shared Lambda pool, and AgentCore gateways all use this single key.<br />If omitted, one customer-managed key is created automatically and shared across them.<br /><br />When an existing key is provided, its key policy must already grant the required service and<br />execution-role use (the module cannot mutate an imported key's policy) — including the AgentCore<br />gateway grants when gateways are configured.<br /><br />Use cases: Customer-controlled encryption, security compliance, key reuse<br /><br />AWS: KMS key for Bedrock resource encryption<br /><br />Validation: Optional; String; must be valid KMS key ARN |
-| - [knowledgeBases](#knowledgeBases )                                 | No      | object | No         | In #/definitions/NamedKnowledgeBaseProps            | Knowledge base configurations with S3/SharePoint data sources and custom parsing strategies.<br />Enables document ingestion, embedding generation, and retrieval for RAG applications.<br /><br />Use cases: Knowledge management, document processing, question-answering, information retrieval<br /><br />AWS: Bedrock Knowledge Bases<br /><br />Validation: Optional; NamedKnowledgeBaseProps (map of KB name to config)                                                                                                                                                                                                                                                                                                                                          |
-| - [lambdaFunctions](#lambdaFunctions )                               | No      | object | No         | In #/definitions/LambdaFunctionProps                | Lambda functions and layers for Bedrock agent action groups.<br />Enables custom business logic, API integrations, and business process automation within agents.<br /><br />Use cases: Custom action group logic, external API integration, business process automation<br /><br />AWS: Lambda functions/layers for Bedrock agent action groups<br /><br />Validation: Optional; LambdaFunctionProps                                                                                                                                                                                                                                                                                                                                                                   |
-| - [nag_suppressions](#nag_suppressions )                             | No      | object | No         | In #/definitions/MdaaNagSuppressionConfigs          | Q-ENHANCED-PROPERTY<br />Optional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.<br /><br />Use cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions<br /><br />AWS: CDK Nag suppressions for compliance rule management and security exception documentation<br /><br />Validation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management                                                                                          |
-| - [sagemakerBlueprint](#sagemakerBlueprint )                         | No      | object | No         | In #/definitions/MdaaSageMakerCustomBluePrintConfig | Q-ENHANCED-PROPERTY<br />Optional SageMaker blueprint configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a SageMaker blueprint instead of direct deployment for governed access and compliance.<br /><br />Use cases: Governed deployment; Self-service provisioning; SageMaker integration; Controlled access<br /><br />AWS: SageMaker blueprint configuration for governed infrastructure deployment and self-service provisioning<br /><br />Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables SageMaker deployment mode                                                                                                         |
-| - [service_catalog_product_config](#service_catalog_product_config ) | No      | object | No         | In #/definitions/MdaaServiceCatalogProductConfig    | Q-ENHANCED-PROPERTY<br />Optional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.<br /><br />Use cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access<br /><br />AWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning<br /><br />Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode                                                                                 |
-| - [vectorStores](#vectorStores )                                     | No      | object | No         | In #/definitions/NamedVectorStoreProps              | Vector store configurations for knowledge bases (OpenSearch Serverless or Aurora).<br />Provides vector database storage for semantic search and retrieval-augmented generation.<br /><br />Use cases: Semantic search, RAG applications, knowledge retrieval, embedding storage<br /><br />AWS: OpenSearch Serverless or Aurora vector stores for Bedrock knowledge bases<br /><br />Validation: Optional; NamedVectorStoreProps (map of store name to config)                                                                                                                                                                                                                                                                                                         |
+| Property                                                             | Pattern | Type   | Deprecated | Definition                                          | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| -------------------------------------------------------------------- | ------- | ------ | ---------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [agentBucketArn](#agentBucketArn )                                 | No      | string | No         | -                                                   | Existing S3 bucket ARN for agent data storage.<br />If omitted, a dedicated bucket is created automatically.<br /><br />Use cases: Agent artifact storage, data management, bucket reuse<br /><br />AWS: S3 bucket for Bedrock agent storage<br /><br />Validation: Optional; String; must be valid S3 bucket ARN                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [agents](#agents )                                                 | No      | object | No         | In #/definitions/NamedAgentProps                    | Bedrock agent configurations with foundation models, action groups, knowledge base integration, and guardrails.<br /><br />Use cases: AI agent deployment, conversational AI, task automation, intelligent workflows<br /><br />AWS: Amazon Bedrock Agents<br /><br />Validation: Optional; NamedAgentProps (map of agent name to config)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| + [dataAdminRoles](#dataAdminRoles )                                 | No      | array  | No         | -                                                   | Admin roles granted access to Bedrock agent resources including KMS keys and S3 buckets.<br /><br />Use cases: Administrative access, role-based security, Bedrock resource management<br /><br />AWS: IAM roles for Bedrock resource administration<br /><br />Validation: Required; MdaaRoleRef[]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| - [gatewayTargets](#gatewayTargets )                                 | No      | object | No         | In #/definitions/NamedGatewayTargetProps            | Bedrock AgentCore Gateway target definitions (MCP tool sources), keyed by target name.<br />Declared as a sibling of \`gateways\` (not nested) to keep the config flat; a gateway attaches a<br />target by naming its key in the gateway's \`targets\` list. Each target must be referenced by<br />exactly one gateway.<br /><br />Use cases: defining MCP tool sources (e.g. Lambda tools) once and referencing them from a gateway<br /><br />AWS: AWS::BedrockAgentCore::GatewayTarget<br /><br />Validation: Optional; NamedGatewayTargetProps (map of target name to config)                                                                                                                                                                                                                                                                                                                                                |
+| - [gateways](#gateways )                                             | No      | object | No         | In #/definitions/NamedGatewayProps                  | Bedrock AgentCore Gateway configurations (compliant MCP servers), keyed by gateway name.<br />Each gateway references its tool targets by name from the sibling \`gatewayTargets\` map, and may<br />reuse Lambdas from \`lambdaFunctions\` via \`generated-function:<name>\` references.<br /><br />Use cases: exposing a unified MCP tool surface with per-tool authorization, agent tool gateways<br /><br />AWS: Amazon Bedrock AgentCore Gateway<br /><br />Validation: Optional; NamedGatewayProps (map of gateway name to config)                                                                                                                                                                                                                                                                                                                                                                                           |
+| - [guardrails](#guardrails )                                         | No      | object | No         | In #/definitions/NamedGuardrailProps                | Guardrail configurations for AI safety, content filtering, and responsible AI deployment.<br /><br />Use cases: AI safety controls, content filtering, responsible AI, content moderation<br /><br />AWS: Bedrock Guardrails<br /><br />Validation: Optional; NamedGuardrailProps (map of guardrail name to config)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| - [harnesses](#harnesses )                                           | No      | object | No         | In #/definitions/NamedHarnessProps                  | Bedrock AgentCore Harness configurations - a declarative agent loop (model + system prompt +<br />tools) - keyed by harness name. A harness's \`guardrail.id\` and<br />\`tools[].agentCoreGateway.gatewayArn\` may use a \`config:<name>\` reference into the sibling<br />\`guardrails\` / \`gateways\` maps, resolved to the live resource.<br /><br />Use cases: declarative tool-using/RAG agents<br /><br />AWS: AWS::BedrockAgentCore::Harness<br /><br />Validation: Optional; NamedHarnessProps (map of harness name to config)                                                                                                                                                                                                                                                                                                                                                                                           |
+| - [kmsKeyArn](#kmsKeyArn )                                           | No      | string | No         | -                                                   | Existing KMS key ARN for encrypting all Bedrock resources in this module — agents, knowledge<br />bases, guardrails, the shared Lambda pool, and AgentCore gateways all use this single key.<br />If omitted, one customer-managed key is created automatically and shared across them.<br /><br />When an existing key is provided, its key policy must already grant the required service and<br />execution-role use (the module cannot mutate an imported key's policy) — including the AgentCore<br />gateway grants when gateways are configured.<br /><br />Use cases: Customer-controlled encryption, security compliance, key reuse<br /><br />AWS: KMS key for Bedrock resource encryption<br /><br />Validation: Optional; String; must be valid KMS key ARN                                                                                                                                                            |
+| - [knowledgeBases](#knowledgeBases )                                 | No      | object | No         | In #/definitions/NamedKnowledgeBaseProps            | Knowledge base configurations with S3/SharePoint data sources and custom parsing strategies.<br />Enables document ingestion, embedding generation, and retrieval for RAG applications.<br /><br />Use cases: Knowledge management, document processing, question-answering, information retrieval<br /><br />AWS: Bedrock Knowledge Bases<br /><br />Validation: Optional; NamedKnowledgeBaseProps (map of KB name to config)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| - [lambdaFunctions](#lambdaFunctions )                               | No      | object | No         | In #/definitions/LambdaFunctionProps                | Lambda functions and layers for Bedrock agent action groups.<br />Enables custom business logic, API integrations, and business process automation within agents.<br /><br />Use cases: Custom action group logic, external API integration, business process automation<br /><br />AWS: Lambda functions/layers for Bedrock agent action groups<br /><br />Validation: Optional; LambdaFunctionProps                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| - [nag_suppressions](#nag_suppressions )                             | No      | object | No         | In #/definitions/MdaaNagSuppressionConfigs          | Q-ENHANCED-PROPERTY<br />Optional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.<br /><br />Use cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions<br /><br />AWS: CDK Nag suppressions for compliance rule management and security exception documentation<br /><br />Validation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management                                                                                                                                                                                                                                                     |
+| - [sagemakerBlueprint](#sagemakerBlueprint )                         | No      | object | No         | In #/definitions/MdaaSageMakerCustomBluePrintConfig | Q-ENHANCED-PROPERTY<br />Optional SageMaker blueprint configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a SageMaker blueprint instead of direct deployment for governed access and compliance.<br /><br />Use cases: Governed deployment; Self-service provisioning; SageMaker integration; Controlled access<br /><br />AWS: SageMaker blueprint configuration for governed infrastructure deployment and self-service provisioning<br /><br />Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables SageMaker deployment mode                                                                                                                                                                                                                                                                    |
+| - [service_catalog_product_config](#service_catalog_product_config ) | No      | object | No         | In #/definitions/MdaaServiceCatalogProductConfig    | Q-ENHANCED-PROPERTY<br />Optional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.<br /><br />Use cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access<br /><br />AWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning<br /><br />Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode                                                                                                                                                                                                                                            |
+| - [vectorStores](#vectorStores )                                     | No      | object | No         | In #/definitions/NamedVectorStoreProps              | Vector store configurations for knowledge bases (OpenSearch Serverless or Aurora).<br />Provides vector database storage for semantic search and retrieval-augmented generation.<br /><br />Use cases: Semantic search, RAG applications, knowledge retrieval, embedding storage<br /><br />AWS: OpenSearch Serverless or Aurora vector stores for Bedrock knowledge bases<br /><br />Validation: Optional; NamedVectorStoreProps (map of store name to config)                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| - [vpcEndpoints](#vpcEndpoints )                                     | No      | object | No         | In #/definitions/NamedVpcEndpointSetProps           | VPC endpoint sets, keyed by set name, giving a harness's sessions a private outbound path<br />(no NAT/internet). A harness references one by name from its \`networkConfiguration.vpcEndpoints\`;<br />every harness referencing a set shares its endpoints.<br /><br />Which endpoints exist is derived from the referencing harnesses, so a set only states which VPC it<br />serves, where created endpoints go, and how each derived endpoint is reached - created here, an<br />existing one to wire to, or reached without an endpoint the set manages. Endpoint policies are<br />derived and not configurable.<br /><br />Use cases: private (no-NAT) harness sessions, reusing centrally provisioned endpoints<br /><br />AWS: AWS::EC2::VPCEndpoint (Interface and Gateway)<br /><br />Validation: Optional; NamedVpcEndpointSetProps; each set must name a distinct VPC and be referenced<br />by at least one harness |
 
 ## <a name="agentBucketArn"></a>1. Property `root > agentBucketArn`
 
@@ -4418,7 +4419,7 @@ Validation: Optional; {@link GatewayLogDeliveryProperty}
 | Property                                                                           | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | - [enabled](#gateways_additionalProperties_logDelivery_enabled )                   | No      | boolean | No         | -          | Whether to provision the vended log-delivery pipeline. Defaults to \`true\` (audit-by-default).<br />Set \`false\` to opt out — not recommended, as gateway audit logs are then not captured.<br /><br />Use cases: opting out of audit log capture<br /><br />AWS: gates creation of the DeliverySource / DeliveryDestination / Delivery + destination log group<br /><br />Validation: Optional; Boolean                                                                                                                                                                                                                                                                                                                                                                                    |
-| - [logRetentionDays](#gateways_additionalProperties_logDelivery_logRetentionDays ) | No      | number  | No         | -          | Retention (in days) for the destination log group. Accepts any CloudWatch Logs \`RetentionDays\`<br />value (e.g. 7, 30, 90, 365); \`9999\` (\`RetentionDays.INFINITE\`) means never-expire and can be set<br />explicitly to lock indefinite retention into config. Omitting the field is equivalent to \`9999\`<br />(the MDAA audit-log default) so logs are never silently dropped; set a finite value for cost or a<br />compliance window.<br /><br />Use cases: cost control, compliance retention windows<br /><br />AWS: AWS::Logs::LogGroup RetentionInDays<br /><br />Validation: Optional; must be a valid CloudWatch Logs RetentionDays value (9999 for never-expire)<br />— validated at synth (an unsupported value throws from the constructor rather than failing at deploy) |
+| - [logRetentionDays](#gateways_additionalProperties_logDelivery_logRetentionDays ) | No      | number  | No         | -          | Retention (in days) for the destination log group. Accepts any CloudWatch Logs \`RetentionDays\`<br />value (e.g. 7, 30, 90, 365); \`9999\` (\`RetentionDays.INFINITE\`) means never-expire and can be set<br />explicitly to lock indefinite retention into config. Omitting the field is equivalent to \`9999\`<br />(the MDAA audit-log default) so logs are never silently dropped; set a finite value for cost or a<br />compliance window.<br /><br />Use cases: cost control, compliance retention windows<br /><br />AWS: AWS::Logs::LogGroup RetentionInDays<br /><br />Validation: Optional; must be a valid CloudWatch Logs RetentionDays value (9999 for never-expire)<br />- validated at synth (an unsupported value throws from the constructor rather than failing at deploy) |
 
 ##### <a name="gateways_additionalProperties_logDelivery_enabled"></a>5.1.5.1. Property `root > gateways > additionalProperties > logDelivery > enabled`
 
@@ -4456,7 +4457,7 @@ Use cases: cost control, compliance retention windows
 AWS: AWS::Logs::LogGroup RetentionInDays
 
 Validation: Optional; must be a valid CloudWatch Logs RetentionDays value (9999 for never-expire)
-— validated at synth (an unsupported value throws from the constructor rather than failing at deploy)
+- validated at synth (an unsupported value throws from the constructor rather than failing at deploy)
 
 #### <a name="gateways_additionalProperties_protocolConfiguration"></a>5.1.6. Property `root > gateways > additionalProperties > protocolConfiguration`
 
@@ -5301,8 +5302,8 @@ Tokens are special objects that participate in synthesis.
 | **Additional properties** | [Each additional property must conform to the schema](#harnesses_additionalProperties) |
 | **Defined in**            | #/definitions/NamedHarnessProps                                                        |
 
-**Description:** Bedrock AgentCore Harness configurations — a declarative agent loop (model + system prompt +
-tools) — keyed by harness name. A harness's `guardrail.id` and
+**Description:** Bedrock AgentCore Harness configurations - a declarative agent loop (model + system prompt +
+tools) - keyed by harness name. A harness's `guardrail.id` and
 `tools[].agentCoreGateway.gatewayArn` may use a `config:<name>` reference into the sibling
 `guardrails` / `gateways` maps, resolved to the live resource.
 
@@ -5314,7 +5315,7 @@ Validation: Optional; NamedHarnessProps (map of harness name to config)
 
 | Property                               | Pattern | Type   | Deprecated | Definition                          | Title/Description                                                                                                                                                                                                                                                                                                                                               |
 | -------------------------------------- | ------- | ------ | ---------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [](#harnesses_additionalProperties ) | No      | object | No         | In #/definitions/HarnessConfigProps | Complete configuration for a Bedrock AgentCore Harness — a declarative agent loop (model +<br />system prompt + tools).<br /><br />Use cases: conversational AI agents, tool-using agents, RAG agents (via gateway tools)<br /><br />AWS: \`AWS::BedrockAgentCore::Harness\`<br /><br />Validation: modelId, systemPrompt and networkConfiguration are required |
+| - [](#harnesses_additionalProperties ) | No      | object | No         | In #/definitions/HarnessConfigProps | Complete configuration for a Bedrock AgentCore Harness - a declarative agent loop (model +<br />system prompt + tools).<br /><br />Use cases: conversational AI agents, tool-using agents, RAG agents (via gateway tools)<br /><br />AWS: \`AWS::BedrockAgentCore::Harness\`<br /><br />Validation: modelId, systemPrompt and networkConfiguration are required |
 
 ### <a name="harnesses_additionalProperties"></a>7.1. Property `root > harnesses > HarnessConfigProps`
 
@@ -5325,7 +5326,7 @@ Validation: Optional; NamedHarnessProps (map of harness name to config)
 | **Additional properties** | Not allowed                      |
 | **Defined in**            | #/definitions/HarnessConfigProps |
 
-**Description:** Complete configuration for a Bedrock AgentCore Harness — a declarative agent loop (model +
+**Description:** Complete configuration for a Bedrock AgentCore Harness - a declarative agent loop (model +
 system prompt + tools).
 
 Use cases: conversational AI agents, tool-using agents, RAG agents (via gateway tools)
@@ -5336,20 +5337,20 @@ Validation: modelId, systemPrompt and networkConfiguration are required
 
 | Property                                                                              | Pattern | Type            | Deprecated | Definition                                                                                 | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | ------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [allowedTools](#harnesses_additionalProperties_allowedTools )                       | No      | array of string | No         | -                                                                                          | Tool allowlist controlling which tools (including the built-in \`shell\` / \`file_operations\`) the<br />agent may select during invocation. Supports the AgentCore \`allowedTools\` patterns (\`*\`, plain<br />names, \`@builtin\`, \`@server/tool\`, globs). Omit to allow all tools.<br /><br />Note: \`allowedTools\` scopes LLM tool selection during \`InvokeHarness\` only — it does not gate<br />the separate \`InvokeAgentRuntimeCommand\` API (which executes commands directly, without the<br />LLM). To prevent direct command execution, do not grant \`bedrock-agentcore:InvokeAgentRuntimeCommand\`.<br /><br />Use cases: restricting the default \`shell\`/\`file_operations\` tools, reducing tool-definition<br />token overhead<br /><br />AWS: \`AllowedTools\`<br /><br />Validation: Optional; String[]; 1-64 entries |
-| - [authorizerConfiguration](#harnesses_additionalProperties_authorizerConfiguration ) | No      | object          | No         | Same as [authorizerConfiguration](#gateways_additionalProperties_authorizerConfiguration ) | Inbound authorization configuration. Provide \`customJwt\` for JWT/OIDC inbound auth, or omit it<br />to use AWS IAM (SigV4) — the Harness's no-configuration fallback.<br /><br />Use cases: inbound access control<br /><br />AWS: \`AuthorizerConfiguration\`<br /><br />Validation: Optional; valid customJwt when present                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [allowedTools](#harnesses_additionalProperties_allowedTools )                       | No      | array of string | No         | -                                                                                          | Tool allowlist controlling which tools (including the built-in \`shell\` / \`file_operations\`) the<br />agent may select during invocation. Supports the AgentCore \`allowedTools\` patterns (\`*\`, plain<br />names, \`@builtin\`, \`@server/tool\`, globs). Omit to allow all tools.<br /><br />Note: \`allowedTools\` scopes LLM tool selection during \`InvokeHarness\` only - it does not gate<br />the separate \`InvokeAgentRuntimeCommand\` API (which executes commands directly, without the<br />LLM). To prevent direct command execution, do not grant \`bedrock-agentcore:InvokeAgentRuntimeCommand\`.<br /><br />Use cases: restricting the default \`shell\`/\`file_operations\` tools, reducing tool-definition<br />token overhead<br /><br />AWS: \`AllowedTools\`<br /><br />Validation: Optional; String[]; 1-64 entries |
+| - [authorizerConfiguration](#harnesses_additionalProperties_authorizerConfiguration ) | No      | object          | No         | Same as [authorizerConfiguration](#gateways_additionalProperties_authorizerConfiguration ) | Inbound authorization configuration. Provide \`customJwt\` for JWT/OIDC inbound auth, or omit it<br />to use AWS IAM (SigV4) - the Harness's no-configuration fallback.<br /><br />Use cases: inbound access control<br /><br />AWS: \`AuthorizerConfiguration\`<br /><br />Validation: Optional; valid customJwt when present                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | - [container](#harnesses_additionalProperties_container )                             | No      | object          | No         | In #/definitions/HarnessContainerProperty                                                  | Bring-your-own container image for the harness's underlying runtime environment (pre-built ECR<br />image URI). Omit to use the AWS-managed harness container.<br /><br />Use cases: custom runtime image<br /><br />AWS: \`EnvironmentArtifact.ContainerConfiguration\`<br /><br />Validation: Optional; HarnessContainerProperty                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | - [dataProtection](#harnesses_additionalProperties_dataProtection )                   | No      | object          | No         | In #/definitions/DataProtectionProperty                                                    | CloudWatch Data Protection configuration for the Harness's service-created log groups. PII<br />masking and CMK encryption are always-on and cannot be disabled; this only tightens the posture<br />by adding identifiers on top of the built-in floor.<br /><br />Use cases: extending PII masking with additional identifiers<br /><br />AWS: CloudWatch Logs Data Protection Policy<br /><br />Validation: Optional; DataProtectionProperty; additive only                                                                                                                                                                                                                                                                                                                                                                                  |
 | - [endpoint](#harnesses_additionalProperties_endpoint )                               | No      | object          | No         | In #/definitions/HarnessEndpointProperty                                                   | Named, versioned invocation endpoint for the harness. Omit to invoke the harness's default<br />(latest) version directly.<br /><br />Use cases: pinning callers to a specific harness version, blue/green endpoint management<br /><br />AWS: \`AWS::BedrockAgentCore::HarnessEndpoint\`<br /><br />Validation: Optional; HarnessEndpointProperty                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | - [environmentVariables](#harnesses_additionalProperties_environmentVariables )       | No      | object          | No         | -                                                                                          | Key-value environment variables passed to the harness runtime environment.<br /><br />Use cases: runtime configuration, environment customization<br /><br />AWS: \`EnvironmentVariables\`<br /><br />Validation: Optional; Record<string, string>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | - [guardrail](#harnesses_additionalProperties_guardrail )                             | No      | object          | No         | In #/definitions/HarnessGuardrailAssociation                                               | Guardrail association for content filtering on the Harness's model calls. Rendered via a CDK<br />property-override escape hatch (the pinned CDK L1 lags the CloudFormation spec for this field);<br />see the class-level documentation.<br /><br />Use cases: responsible-AI content filtering, safety controls<br /><br />AWS: \`Model.BedrockModelConfig.AdditionalParams.guardrailConfig\` (escape hatch)<br /><br />Validation: Optional; HarnessGuardrailAssociation                                                                                                                                                                                                                                                                                                                                                                     |
 | - [lifecycleConfiguration](#harnesses_additionalProperties_lifecycleConfiguration )   | No      | object          | No         | In #/definitions/HarnessLifecycleProperty                                                  | Idle-session and runtime lifecycle settings for the underlying AgentCore Runtime environment.<br /><br />Use cases: cost control, session cleanup<br /><br />AWS: \`Environment.AgentCoreRuntimeEnvironment.LifecycleConfiguration\`<br /><br />Validation: Optional; HarnessLifecycleProperty                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [logRetentionDays](#harnesses_additionalProperties_logRetentionDays )               | No      | number          | No         | -                                                                                          | CloudWatch Logs retention period for the Harness's service-created log groups, in days. Accepts<br />any CloudWatch Logs \`RetentionDays\` value; \`9999\` (\`RetentionDays.INFINITE\`) means never-expire<br />and can be set explicitly to lock indefinite retention into config. Omitting the field is<br />equivalent to \`9999\` — no retention policy is applied, leaving the log groups at CloudWatch's<br />never-expire default (logs are kept, and billed, forever) unless a finite value is set.<br /><br />Use cases: log retention policy, cost management<br /><br />AWS: CloudWatch Logs log group retention<br /><br />Validation: Optional; Number; must be a valid RetentionDays value (9999 for never-expire) — validated at synth                                                                                           |
+| - [logRetentionDays](#harnesses_additionalProperties_logRetentionDays )               | No      | number          | No         | -                                                                                          | CloudWatch Logs retention period for the Harness's service-created log groups, in days. Accepts<br />any CloudWatch Logs \`RetentionDays\` value; \`9999\` (\`RetentionDays.INFINITE\`) means never-expire<br />and can be set explicitly to lock indefinite retention into config. Omitting the field is<br />equivalent to \`9999\` - no retention policy is applied, leaving the log groups at CloudWatch's<br />never-expire default (logs are kept, and billed, forever) unless a finite value is set.<br /><br />Use cases: log retention policy, cost management<br /><br />AWS: CloudWatch Logs log group retention<br /><br />Validation: Optional; Number; must be a valid RetentionDays value (9999 for never-expire) - validated at synth                                                                                           |
 | - [maxIterations](#harnesses_additionalProperties_maxIterations )                     | No      | number          | No         | -                                                                                          | Maximum number of iterations the agent loop can execute per invocation.<br /><br />Use cases: bounding tool-call loops, cost control<br /><br />AWS: \`MaxIterations\`<br /><br />Validation: Optional; Integer >= 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [maxTokens](#harnesses_additionalProperties_maxTokens )                             | No      | number          | No         | -                                                                                          | Global maximum tokens the harness may generate across the whole agent-loop invocation (distinct<br />from \`modelConfig.maxTokens\`, which bounds a single model call). A hard cost cap on total<br />generation per invocation.<br /><br />Use cases: cost control, bounding total generation per invocation<br /><br />AWS: \`MaxTokens\`<br /><br />Validation: Optional; Number; >= 1                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | - [modelConfig](#harnesses_additionalProperties_modelConfig )                         | No      | object          | No         | In #/definitions/HarnessModelConfigProperty                                                | Model sampling configuration (temperature, top-p, max tokens). Mirrors the CFN<br />\`HarnessBedrockModelConfig\` sampling fields.<br /><br />Use cases: tuning response determinism, diversity, and length limits<br /><br />AWS: \`Model.BedrockModelConfig\`<br /><br />Validation: Optional; HarnessModelConfigProperty                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | + [modelId](#harnesses_additionalProperties_modelId )                                 | No      | string          | No         | -                                                                                          | Foundation model identifier for the agent loop. Accepts an on-demand model id, a cross-region<br />(system) inference profile id, or a full foundation-model / system inference-profile ARN<br />(resolved via \`resolveModelArn\`). **Application** inference profile ARNs<br />(\`application-inference-profile/...\`) are rejected at synth: their underlying foundation model is<br />not derivable, so the paired invoke grant an inference profile requires cannot be scoped.<br /><br />Use cases: selecting the reasoning model for the agent loop<br /><br />AWS: \`Model.BedrockModelConfig.ModelId\`<br /><br />Validation: Required; String; not an application-inference-profile ARN                                                                                                                                               |
-| + [networkConfiguration](#harnesses_additionalProperties_networkConfiguration )       | No      | object          | No         | In #/definitions/HarnessNetworkProperty                                                    | VPC network configuration for the harness's runtime sessions, placing them behind your own<br />security groups and subnets for private access to internal resources. Required: MDAA enforces<br />VPC network isolation for the harness (\`NetworkMode: VPC\`), mirroring the AgentCore Runtime<br />construct — there is no public-network option.<br /><br />Use cases: private access to internal resources, network isolation<br /><br />AWS: \`Environment.AgentCoreRuntimeEnvironment.NetworkConfiguration\` (\`NetworkMode: VPC\`)<br /><br />Validation: Required; HarnessNetworkProperty; 1-16 security groups and subnets                                                                                                                                                                                                            |
+| + [networkConfiguration](#harnesses_additionalProperties_networkConfiguration )       | No      | object          | No         | In #/definitions/HarnessNetworkProperty                                                    | VPC network configuration for the harness's runtime sessions, placing them behind your own<br />security groups and subnets for private access to internal resources. Required: MDAA enforces<br />VPC network isolation for the harness (\`NetworkMode: VPC\`), mirroring the AgentCore Runtime<br />construct - there is no public-network option.<br /><br />Use cases: private access to internal resources, network isolation<br /><br />AWS: \`Environment.AgentCoreRuntimeEnvironment.NetworkConfiguration\` (\`NetworkMode: VPC\`)<br /><br />Validation: Required; HarnessNetworkProperty; 1-16 security groups and subnets                                                                                                                                                                                                            |
 | - [role](#harnesses_additionalProperties_role )                                       | No      | object          | No         | Same as [role](#agents_additionalProperties_role )                                         | Existing IAM role reference for the Harness execution role. If omitted, MDAA creates a role<br />trusting \`bedrock-agentcore.amazonaws.com\`, scoped to this account/harness.<br /><br />Use cases: role reuse, centralized permission management<br /><br />AWS: \`ExecutionRoleArn\`<br /><br />Validation: Optional; MdaaRoleRef                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [skills](#harnesses_additionalProperties_skills )                                   | No      | array           | No         | -                                                                                          | Skills injected into the agent's context: filesystem paths to skill definitions baked into the<br />runtime image. Only the \`path\` skill source is exposed (the CDK L1 types only \`path\`); git / S3 /<br />awsSkills sources documented in the CloudFormation \`HarnessSkill\` schema are not yet supported.<br /><br />Use cases: injecting curated instruction/script bundles into the agent<br /><br />AWS: \`Skills\`<br /><br />Validation: Optional; HarnessSkillProperty[]; each path non-empty                                                                                                                                                                                                                                                                                                                                      |
 | + [systemPrompt](#harnesses_additionalProperties_systemPrompt )                       | No      | string          | No         | -                                                                                          | System prompt defining the agent's behavior and instructions.<br /><br />Use cases: agent persona, task instructions, behavioral constraints<br /><br />AWS: \`SystemPrompt\` (one text block)<br /><br />Validation: Required; String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
@@ -5368,7 +5369,7 @@ Validation: modelId, systemPrompt and networkConfiguration are required
 agent may select during invocation. Supports the AgentCore `allowedTools` patterns (`*`, plain
 names, `@builtin`, `@server/tool`, globs). Omit to allow all tools.
 
-Note: `allowedTools` scopes LLM tool selection during `InvokeHarness` only — it does not gate
+Note: `allowedTools` scopes LLM tool selection during `InvokeHarness` only - it does not gate
 the separate `InvokeAgentRuntimeCommand` API (which executes commands directly, without the
 LLM). To prevent direct command execution, do not grant `bedrock-agentcore:InvokeAgentRuntimeCommand`.
 
@@ -5408,7 +5409,7 @@ Validation: Optional; String[]; 1-64 entries
 | **Same definition as**    | [authorizerConfiguration](#gateways_additionalProperties_authorizerConfiguration) |
 
 **Description:** Inbound authorization configuration. Provide `customJwt` for JWT/OIDC inbound auth, or omit it
-to use AWS IAM (SigV4) — the Harness's no-configuration fallback.
+to use AWS IAM (SigV4) - the Harness's no-configuration fallback.
 
 Use cases: inbound access control
 
@@ -5771,14 +5772,14 @@ Validation: Optional; Number; 60-28800 seconds
 **Description:** CloudWatch Logs retention period for the Harness's service-created log groups, in days. Accepts
 any CloudWatch Logs `RetentionDays` value; `9999` (`RetentionDays.INFINITE`) means never-expire
 and can be set explicitly to lock indefinite retention into config. Omitting the field is
-equivalent to `9999` — no retention policy is applied, leaving the log groups at CloudWatch's
+equivalent to `9999` - no retention policy is applied, leaving the log groups at CloudWatch's
 never-expire default (logs are kept, and billed, forever) unless a finite value is set.
 
 Use cases: log retention policy, cost management
 
 AWS: CloudWatch Logs log group retention
 
-Validation: Optional; Number; must be a valid RetentionDays value (9999 for never-expire) — validated at synth
+Validation: Optional; Number; must be a valid RetentionDays value (9999 for never-expire) - validated at synth
 
 #### <a name="harnesses_additionalProperties_maxIterations"></a>7.1.10. Property `root > harnesses > additionalProperties > maxIterations`
 
@@ -5934,7 +5935,7 @@ Validation: Required; String; not an application-inference-profile ARN
 **Description:** VPC network configuration for the harness's runtime sessions, placing them behind your own
 security groups and subnets for private access to internal resources. Required: MDAA enforces
 VPC network isolation for the harness (`NetworkMode: VPC`), mirroring the AgentCore Runtime
-construct — there is no public-network option.
+construct - there is no public-network option.
 
 Use cases: private access to internal resources, network isolation
 
@@ -5942,12 +5943,11 @@ AWS: `Environment.AgentCoreRuntimeEnvironment.NetworkConfiguration` (`NetworkMod
 
 Validation: Required; HarnessNetworkProperty; 1-16 security groups and subnets
 
-| Property                                                                                 | Pattern | Type            | Deprecated | Definition                                   | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| ---------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| + [securityGroups](#harnesses_additionalProperties_networkConfiguration_securityGroups ) | No      | array of string | No         | -                                            | Security group IDs controlling inbound/outbound traffic for the harness's runtime sessions.<br /><br />Use cases: network access control, traffic filtering, security boundaries<br /><br />AWS: \`VpcConfig.SecurityGroups\`<br /><br />Validation: Required; String[]; 1-16 security group IDs                                                                                                                                                                                                                                                                                                                                                 |
-| + [subnets](#harnesses_additionalProperties_networkConfiguration_subnets )               | No      | array of string | No         | -                                            | Subnet IDs for the harness's runtime session placement, enabling multi-AZ deployment.<br /><br />Use cases: multi-AZ deployment, network isolation, high availability<br /><br />AWS: \`VpcConfig.Subnets\`<br /><br />Validation: Required; String[]; 1-16 subnet IDs                                                                                                                                                                                                                                                                                                                                                                           |
-| - [vpcEndpoints](#harnesses_additionalProperties_networkConfiguration_vpcEndpoints )     | No      | object          | No         | In #/definitions/HarnessVpcEndpointsProperty | Optional MDAA-managed creation of the VPC endpoints the harness's runtime sessions need for<br />outbound access (no NAT/internet). Presence of this block opts in; which endpoints are created is<br />derived from this harness's own configuration rather than listed, so a needed endpoint cannot be<br />omitted by accident. Use its \`exclude\` list for endpoints the VPC already has.<br /><br />Use cases: no-NAT (fully private) harness sessions, VPC-mode gateway tools<br /><br />AWS: AWS::EC2::VPCEndpoint (Interface and Gateway)<br /><br />Validation: Optional; HarnessVpcEndpointsProperty; requires \`vpcId\` when present |
-| - [vpcId](#harnesses_additionalProperties_networkConfiguration_vpcId )                   | No      | string          | No         | -                                            | VPC ID hosting the harness's runtime sessions. Required only when \`vpcEndpoints\` is configured<br />(the VPC in which the endpoints are created); omit it when relying on VPC endpoints provisioned<br />out of band (e.g. by LZA or a central networking team).<br /><br />Use cases: MDAA-managed VPC endpoint creation<br /><br />AWS: VPC ID for the harness's VPC endpoints<br /><br />Validation: Optional; String; required when \`vpcEndpoints\` is set                                                                                                                                                                                |
+| Property                                                                                 | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ---------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| + [securityGroups](#harnesses_additionalProperties_networkConfiguration_securityGroups ) | No      | array of string | No         | -          | Security group IDs controlling inbound/outbound traffic for the harness's runtime sessions.<br /><br />When \`vpcEndpoints\` names a set, at most 15 may be listed: the Harness adds one endpoint client<br />security group of its own, and the service's own bound is 16 members in total.<br /><br />Use cases: network access control, traffic filtering, security boundaries<br /><br />AWS: \`VpcConfig.SecurityGroups\`<br /><br />Validation: Required; String[]; 1-16 security group IDs, or 1-15 when \`vpcEndpoints\` is set                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| + [subnets](#harnesses_additionalProperties_networkConfiguration_subnets )               | No      | array of string | No         | -          | Subnet IDs for the harness's runtime session placement, enabling multi-AZ deployment.<br /><br />Use cases: multi-AZ deployment, network isolation, high availability<br /><br />AWS: \`VpcConfig.Subnets\`<br /><br />Validation: Required; String[]; 1-16 subnet IDs                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| - [vpcEndpoints](#harnesses_additionalProperties_networkConfiguration_vpcEndpoints )     | No      | string          | No         | -          | Name of a VPC endpoint set, declared in the orchestrating module's own \`vpcEndpoints\` map, giving<br />this Harness's sessions a private outbound path (no NAT/internet). Omit it for a Harness whose<br />egress follows the VPC's existing path.<br /><br />Which endpoints the Harness needs is derived from its own configuration - model inference, the<br />container image pull (registry API, Docker registry, and image layers over S3), credential vending,<br />log delivery, and the AgentCore Gateway service when the Harness declares a gateway tool - so no<br />service name, subnet, route table, policy, or security group ID appears here. The set declares only<br />how each of those is reached in its VPC: created there, an existing endpoint to wire to, or reached<br />without an endpoint the set manages. What stays yours to get right is that the subnets above belong to<br />the VPC the referenced set names - that pairing is rejected at deploy, not at synth.<br /><br />The endpoints belong to the VPC rather than to the Harness. Every Harness referencing one set shares<br />its endpoints, each wired to only the endpoints it needs. Remove a set in the same change as the last<br />Harness referencing it: a declared set no Harness references is rejected at synth.<br /><br />Use cases: no-NAT Harness sessions, VPC-mode gateway tools, firewalled environments<br /><br />AWS: consumer-side AWS::EC2::SecurityGroupIngress / SecurityGroupEgress against the set's endpoints<br /><br />Validation: Optional; String; must name a set in the module's \`vpcEndpoints\` map |
 
 ##### <a name="harnesses_additionalProperties_networkConfiguration_securityGroups"></a>7.1.14.1. Property `root > harnesses > additionalProperties > networkConfiguration > securityGroups`
 
@@ -5958,11 +5958,14 @@ Validation: Required; HarnessNetworkProperty; 1-16 security groups and subnets
 
 **Description:** Security group IDs controlling inbound/outbound traffic for the harness's runtime sessions.
 
+When `vpcEndpoints` names a set, at most 15 may be listed: the Harness adds one endpoint client
+security group of its own, and the service's own bound is 16 members in total.
+
 Use cases: network access control, traffic filtering, security boundaries
 
 AWS: `VpcConfig.SecurityGroups`
 
-Validation: Required; String[]; 1-16 security group IDs
+Validation: Required; String[]; 1-16 security group IDs, or 1-15 when `vpcEndpoints` is set
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -6019,185 +6022,32 @@ Validation: Required; String[]; 1-16 subnet IDs
 
 ##### <a name="harnesses_additionalProperties_networkConfiguration_vpcEndpoints"></a>7.1.14.3. Property `root > harnesses > additionalProperties > networkConfiguration > vpcEndpoints`
 
-|                           |                                           |
-| ------------------------- | ----------------------------------------- |
-| **Type**                  | `object`                                  |
-| **Required**              | No                                        |
-| **Additional properties** | Not allowed                               |
-| **Defined in**            | #/definitions/HarnessVpcEndpointsProperty |
-
-**Description:** Optional MDAA-managed creation of the VPC endpoints the harness's runtime sessions need for
-outbound access (no NAT/internet). Presence of this block opts in; which endpoints are created is
-derived from this harness's own configuration rather than listed, so a needed endpoint cannot be
-omitted by accident. Use its `exclude` list for endpoints the VPC already has.
-
-Use cases: no-NAT (fully private) harness sessions, VPC-mode gateway tools
-
-AWS: AWS::EC2::VPCEndpoint (Interface and Gateway)
-
-Validation: Optional; HarnessVpcEndpointsProperty; requires `vpcId` when present
-
-| Property                                                                                                              | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| --------------------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| - [additionalS3BucketArns](#harnesses_additionalProperties_networkConfiguration_vpcEndpoints_additionalS3BucketArns ) | No      | array of string | No         | -          | Additional S3 resource ARNs to allow read access to through the S3 gateway endpoint, on top of the<br />ECR image-layer bucket. Supply these when other workloads share the named route tables and would<br />otherwise lose S3 access through the endpoint. Grants \`s3:GetObject\` / \`s3:ListBucket\`; pass bucket<br />and/or object ARNs as needed.<br /><br />Use cases: readmitting co-located workloads' buckets on shared route tables<br /><br />AWS: Resource element of the S3 gateway endpoint policy<br /><br />Validation: Optional; String[]; valid S3 ARNs                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| - [exclude](#harnesses_additionalProperties_networkConfiguration_vpcEndpoints_exclude )                               | No      | array           | No         | -          | Endpoints to skip because the VPC already has them (created by LZA or a central networking team,<br />for example). Only one endpoint with Private DNS is allowed per service per VPC, so an<br />unexcluded duplicate fails to deploy.<br /><br />Use cases: coexisting with centrally provisioned VPC endpoints<br /><br />AWS: AWS::EC2::VPCEndpoint<br /><br />Validation: Optional; each entry a {@link HarnessVpcEndpointName} value                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| - [s3RouteTableIds](#harnesses_additionalProperties_networkConfiguration_vpcEndpoints_s3RouteTableIds )               | No      | array of string | No         | -          | Route table IDs to associate the S3 **gateway** endpoint with, enabling container image-layer<br />downloads. Supply these for a no-NAT VPC; omit them to skip the S3 endpoint (image layers then<br />need NAT or an out-of-band S3 path).<br /><br />A gateway endpoint installs prefix-list routes into route tables rather than placing ENIs in<br />subnets, and imported subnets expose no discoverable route table, so the tables must be named<br />explicitly.<br /><br />IMPORTANT — blast radius: the endpoint therefore intercepts **all** S3 traffic from every subnet<br />associated with these route tables, not just the harness's. MDAA scopes its endpoint policy to the<br />ECR image-layer bucket, so other workloads sharing these route tables lose S3 access through this<br />endpoint unless their buckets are named in {@link additionalS3BucketArns}. If those workloads need<br />broad S3 access, provision the S3 gateway endpoint out of band instead of enabling it here.<br /><br />Use cases: no-NAT container image-layer pulls from the ECR layer bucket<br /><br />AWS: RouteTableIds of the S3 gateway VPC endpoint<br /><br />Validation: Optional; String[]; non-empty when provided |
-
-###### <a name="harnesses_additionalProperties_networkConfiguration_vpcEndpoints_additionalS3BucketArns"></a>7.1.14.3.1. Property `root > harnesses > additionalProperties > networkConfiguration > vpcEndpoints > additionalS3BucketArns`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of string` |
-| **Required** | No                |
-
-**Description:** Additional S3 resource ARNs to allow read access to through the S3 gateway endpoint, on top of the
-ECR image-layer bucket. Supply these when other workloads share the named route tables and would
-otherwise lose S3 access through the endpoint. Grants `s3:GetObject` / `s3:ListBucket`; pass bucket
-and/or object ARNs as needed.
-
-Use cases: readmitting co-located workloads' buckets on shared route tables
-
-AWS: Resource element of the S3 gateway endpoint policy
-
-Validation: Optional; String[]; valid S3 ARNs
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                                                                                | Description |
-| ------------------------------------------------------------------------------------------------------------------------------ | ----------- |
-| [additionalS3BucketArns items](#harnesses_additionalProperties_networkConfiguration_vpcEndpoints_additionalS3BucketArns_items) | -           |
-
-###### <a name="harnesses_additionalProperties_networkConfiguration_vpcEndpoints_additionalS3BucketArns_items"></a>7.1.14.3.1.1. root > harnesses > additionalProperties > networkConfiguration > vpcEndpoints > additionalS3BucketArns > additionalS3BucketArns items
-
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="harnesses_additionalProperties_networkConfiguration_vpcEndpoints_exclude"></a>7.1.14.3.2. Property `root > harnesses > additionalProperties > networkConfiguration > vpcEndpoints > exclude`
+**Description:** Name of a VPC endpoint set, declared in the orchestrating module's own `vpcEndpoints` map, giving
+this Harness's sessions a private outbound path (no NAT/internet). Omit it for a Harness whose
+egress follows the VPC's existing path.
 
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
+Which endpoints the Harness needs is derived from its own configuration - model inference, the
+container image pull (registry API, Docker registry, and image layers over S3), credential vending,
+log delivery, and the AgentCore Gateway service when the Harness declares a gateway tool - so no
+service name, subnet, route table, policy, or security group ID appears here. The set declares only
+how each of those is reached in its VPC: created there, an existing endpoint to wire to, or reached
+without an endpoint the set manages. What stays yours to get right is that the subnets above belong to
+the VPC the referenced set names - that pairing is rejected at deploy, not at synth.
 
-**Description:** Endpoints to skip because the VPC already has them (created by LZA or a central networking team,
-for example). Only one endpoint with Private DNS is allowed per service per VPC, so an
-unexcluded duplicate fails to deploy.
+The endpoints belong to the VPC rather than to the Harness. Every Harness referencing one set shares
+its endpoints, each wired to only the endpoints it needs. Remove a set in the same change as the last
+Harness referencing it: a declared set no Harness references is rejected at synth.
 
-Use cases: coexisting with centrally provisioned VPC endpoints
+Use cases: no-NAT Harness sessions, VPC-mode gateway tools, firewalled environments
 
-AWS: AWS::EC2::VPCEndpoint
+AWS: consumer-side AWS::EC2::SecurityGroupIngress / SecurityGroupEgress against the set's endpoints
 
-Validation: Optional; each entry a {@link HarnessVpcEndpointName} value
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                                                           | Description                                                                                       |
-| --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| [HarnessVpcEndpointName](#harnesses_additionalProperties_networkConfiguration_vpcEndpoints_exclude_items) | A VPC endpoint the Harness's runtime sessions use for outbound access. Every value here is an ... |
-
-###### <a name="harnesses_additionalProperties_networkConfiguration_vpcEndpoints_exclude_items"></a>7.1.14.3.2.1. root > harnesses > additionalProperties > networkConfiguration > vpcEndpoints > exclude > HarnessVpcEndpointName
-
-|                |                                      |
-| -------------- | ------------------------------------ |
-| **Type**       | `enum (of string)`                   |
-| **Required**   | No                                   |
-| **Defined in** | #/definitions/HarnessVpcEndpointName |
-
-**Description:** A VPC endpoint the Harness's runtime sessions use for outbound access. Every value here is an
-endpoint the harness itself calls — there is deliberately no AgentCore data-plane
-(`com.amazonaws.{region}.bedrock-agentcore`) entry: per the AgentCore PrivateLink documentation
-that endpoint serves *inbound* API connectivity for callers reaching `InvokeHarness` privately,
-which is a property of the caller's VPC rather than of the harness's session subnets. It is also a
-per-VPC singleton, so N harnesses in one module could not each create one. Provision it alongside
-whatever invokes the harness.
-
-Used with {@link HarnessVpcEndpointsProperty.exclude} to skip endpoints the VPC already has.
-
-Must be one of:
-* "bedrockRuntime"
-* "agentCoreGateway"
-* "ecrApi"
-* "ecrDocker"
-* "sts"
-* "logs"
-* "s3"
-
-###### <a name="harnesses_additionalProperties_networkConfiguration_vpcEndpoints_s3RouteTableIds"></a>7.1.14.3.3. Property `root > harnesses > additionalProperties > networkConfiguration > vpcEndpoints > s3RouteTableIds`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of string` |
-| **Required** | No                |
-
-**Description:** Route table IDs to associate the S3 **gateway** endpoint with, enabling container image-layer
-downloads. Supply these for a no-NAT VPC; omit them to skip the S3 endpoint (image layers then
-need NAT or an out-of-band S3 path).
-
-A gateway endpoint installs prefix-list routes into route tables rather than placing ENIs in
-subnets, and imported subnets expose no discoverable route table, so the tables must be named
-explicitly.
-
-IMPORTANT — blast radius: the endpoint therefore intercepts **all** S3 traffic from every subnet
-associated with these route tables, not just the harness's. MDAA scopes its endpoint policy to the
-ECR image-layer bucket, so other workloads sharing these route tables lose S3 access through this
-endpoint unless their buckets are named in {@link additionalS3BucketArns}. If those workloads need
-broad S3 access, provision the S3 gateway endpoint out of band instead of enabling it here.
-
-Use cases: no-NAT container image-layer pulls from the ECR layer bucket
-
-AWS: RouteTableIds of the S3 gateway VPC endpoint
-
-Validation: Optional; String[]; non-empty when provided
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | 1                  |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                                                                  | Description |
-| ---------------------------------------------------------------------------------------------------------------- | ----------- |
-| [s3RouteTableIds items](#harnesses_additionalProperties_networkConfiguration_vpcEndpoints_s3RouteTableIds_items) | -           |
-
-###### <a name="harnesses_additionalProperties_networkConfiguration_vpcEndpoints_s3RouteTableIds_items"></a>7.1.14.3.3.1. root > harnesses > additionalProperties > networkConfiguration > vpcEndpoints > s3RouteTableIds > s3RouteTableIds items
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-##### <a name="harnesses_additionalProperties_networkConfiguration_vpcId"></a>7.1.14.4. Property `root > harnesses > additionalProperties > networkConfiguration > vpcId`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** VPC ID hosting the harness's runtime sessions. Required only when `vpcEndpoints` is configured
-(the VPC in which the endpoints are created); omit it when relying on VPC endpoints provisioned
-out of band (e.g. by LZA or a central networking team).
-
-Use cases: MDAA-managed VPC endpoint creation
-
-AWS: VPC ID for the harness's VPC endpoints
-
-Validation: Optional; String; required when `vpcEndpoints` is set
+Validation: Optional; String; must name a set in the module's `vpcEndpoints` map
 
 #### <a name="harnesses_additionalProperties_role"></a>7.1.15. Property `root > harnesses > additionalProperties > role`
 
@@ -6256,7 +6106,7 @@ Validation: Optional; HarnessSkillProperty[]; each path non-empty
 | **Defined in**            | #/definitions/HarnessSkillProperty |
 
 **Description:** A skill available to the Harness's agent loop: a filesystem path to a skill definition baked into
-the runtime image. Only the `path` source is exposed — the CloudFormation `HarnessSkill` schema
+the runtime image. Only the `path` source is exposed - the CloudFormation `HarnessSkill` schema
 also defines `Git`, `S3`, and `AwsSkills` sources, but the pinned CDK L1's `HarnessSkillProperty`
 types only `path`.
 
@@ -14810,5 +14660,363 @@ Must be one of:
 | **Required** | Yes      |
 
 **Description:** VPC ID for vector store network isolation
+
+## <a name="vpcEndpoints"></a>15. Property `root > vpcEndpoints`
+
+|                           |                                                                                           |
+| ------------------------- | ----------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                  |
+| **Required**              | No                                                                                        |
+| **Additional properties** | [Each additional property must conform to the schema](#vpcEndpoints_additionalProperties) |
+| **Defined in**            | #/definitions/NamedVpcEndpointSetProps                                                    |
+
+**Description:** VPC endpoint sets, keyed by set name, giving a harness's sessions a private outbound path
+(no NAT/internet). A harness references one by name from its `networkConfiguration.vpcEndpoints`;
+every harness referencing a set shares its endpoints.
+
+Which endpoints exist is derived from the referencing harnesses, so a set only states which VPC it
+serves, where created endpoints go, and how each derived endpoint is reached - created here, an
+existing one to wire to, or reached without an endpoint the set manages. Endpoint policies are
+derived and not configurable.
+
+Use cases: private (no-NAT) harness sessions, reusing centrally provisioned endpoints
+
+AWS: AWS::EC2::VPCEndpoint (Interface and Gateway)
+
+Validation: Optional; NamedVpcEndpointSetProps; each set must name a distinct VPC and be referenced
+by at least one harness
+
+| Property                                  | Pattern | Type   | Deprecated | Definition                           | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ----------------------------------------- | ------- | ------ | ---------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [](#vpcEndpoints_additionalProperties ) | No      | object | No         | In #/definitions/VpcEndpointSetProps | One VPC's endpoint set: which VPC it serves, where created endpoints go, and how each endpoint the<br />referencing consumers need is provided. A consumer references a set by name from its own<br />configuration, and the endpoints belong to the VPC rather than to any one consumer - AWS allows a<br />single Private DNS interface endpoint per service per VPC, so one set owns them and every consumer<br />referencing it shares them.<br /><br />Which endpoints exist is derived from the consumers, never added here: a set can only say how each<br />derived endpoint is reached. Omitting an endpoint property means it is created; see<br />{@link VpcEndpointProps} for the other two states.<br /><br />Endpoint policies are derived too, and are not configurable: the AgentCore Gateway endpoint is scoped<br />to gateway invocation and the S3 gateway endpoint to the ECR image-layer bucket, while the<br />multi-action supporting services keep the AWS default - Private DNS makes an interface endpoint<br />VPC-wide, so restricting those would deny unrelated workloads in the same VPC. That default permits<br />every action on those services in any account, so a set is a private network path and not an<br />authorization boundary: what a session may reach through it stays governed by its execution role.<br /><br />Use cases: private (no-NAT) AgentCore Harness sessions, reusing centrally provisioned endpoints,<br />keeping selected services on the VPC's existing egress path<br /><br />Validation: \`vpcId\` and \`subnetIds\` required; exactly one of \`routeTableIds\` and<br />\`s3ImageLayers.external\`; each set must name a distinct VPC and be referenced by at least one consumer |
+
+### <a name="vpcEndpoints_additionalProperties"></a>15.1. Property `root > vpcEndpoints > VpcEndpointSetProps`
+
+|                           |                                   |
+| ------------------------- | --------------------------------- |
+| **Type**                  | `object`                          |
+| **Required**              | No                                |
+| **Additional properties** | Not allowed                       |
+| **Defined in**            | #/definitions/VpcEndpointSetProps |
+
+**Description:** One VPC's endpoint set: which VPC it serves, where created endpoints go, and how each endpoint the
+referencing consumers need is provided. A consumer references a set by name from its own
+configuration, and the endpoints belong to the VPC rather than to any one consumer - AWS allows a
+single Private DNS interface endpoint per service per VPC, so one set owns them and every consumer
+referencing it shares them.
+
+Which endpoints exist is derived from the consumers, never added here: a set can only say how each
+derived endpoint is reached. Omitting an endpoint property means it is created; see
+{@link VpcEndpointProps} for the other two states.
+
+Endpoint policies are derived too, and are not configurable: the AgentCore Gateway endpoint is scoped
+to gateway invocation and the S3 gateway endpoint to the ECR image-layer bucket, while the
+multi-action supporting services keep the AWS default - Private DNS makes an interface endpoint
+VPC-wide, so restricting those would deny unrelated workloads in the same VPC. That default permits
+every action on those services in any account, so a set is a private network path and not an
+authorization boundary: what a session may reach through it stays governed by its execution role.
+
+Use cases: private (no-NAT) AgentCore Harness sessions, reusing centrally provisioned endpoints,
+keeping selected services on the VPC's existing egress path
+
+Validation: `vpcId` and `subnetIds` required; exactly one of `routeTableIds` and
+`s3ImageLayers.external`; each set must name a distinct VPC and be referenced by at least one consumer
+
+| Property                                                                   | Pattern | Type            | Deprecated | Definition                                                                       | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| -------------------------------------------------------------------------- | ------- | --------------- | ---------- | -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [agentCoreGateway](#vpcEndpoints_additionalProperties_agentCoreGateway ) | No      | object          | No         | In #/definitions/VpcEndpointProps                                                | AgentCore Gateway - the gateway's MCP host, a distinct service from the AgentCore data plane. Needed<br />only by a consumer declaring an \`agentCoreGateway\` tool; without it the tool load fails with a DNS<br />"Name or service not known" error.<br /><br />Validation: Optional; VpcEndpointProps; only valid when a referencing consumer declares a gateway<br />tool; omit to have it created                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| - [bedrockRuntime](#vpcEndpoints_additionalProperties_bedrockRuntime )     | No      | object          | No         | Same as [agentCoreGateway](#vpcEndpoints_additionalProperties_agentCoreGateway ) | Amazon Bedrock runtime, for model inference over the Converse API. Every AgentCore Harness needs it;<br />without a path it reaches READY and every invoke hangs.<br /><br />Validation: Optional; VpcEndpointProps; omit to have it created                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| - [ecrApi](#vpcEndpoints_additionalProperties_ecrApi )                     | No      | object          | No         | Same as [agentCoreGateway](#vpcEndpoints_additionalProperties_agentCoreGateway ) | Amazon ECR API, for the registry calls a session's container image pull makes.<br /><br />Validation: Optional; VpcEndpointProps; omit to have it created                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [ecrDocker](#vpcEndpoints_additionalProperties_ecrDocker )               | No      | object          | No         | Same as [agentCoreGateway](#vpcEndpoints_additionalProperties_agentCoreGateway ) | Amazon ECR Docker Registry, for the registry protocol of the image pull.<br /><br />Validation: Optional; VpcEndpointProps; omit to have it created                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| - [logs](#vpcEndpoints_additionalProperties_logs )                         | No      | object          | No         | Same as [agentCoreGateway](#vpcEndpoints_additionalProperties_agentCoreGateway ) | Amazon CloudWatch Logs, for log delivery from a session.<br /><br />Validation: Optional; VpcEndpointProps; omit to have it created                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| - [routeTableIds](#vpcEndpoints_additionalProperties_routeTableIds )       | No      | array of string | No         | -                                                                                | Route tables that receive the S3 gateway endpoint's prefix-list route, enabling container image-layer<br />downloads: image layers are served from the ECR layer bucket over S3, so the ECR interface endpoints<br />alone cannot complete a pull in a VPC with no NAT.<br /><br />IMPORTANT - blast radius: the endpoint intercepts **all** S3 traffic from every subnet associated<br />with these route tables, and its derived policy allows only the ECR image-layer read. If other<br />workloads share these route tables and need broader S3 access, provision the S3 gateway endpoint out<br />of band and set \`s3ImageLayers.external\` instead.<br /><br />Use cases: no-NAT container image-layer pulls<br /><br />AWS: RouteTableIds<br /><br />Validation: Required unless \`s3ImageLayers.external\` is set, and mutually exclusive with it; String[] |
+| - [s3ImageLayers](#vpcEndpoints_additionalProperties_s3ImageLayers )       | No      | object          | No         | In #/definitions/S3ImageLayerEndpointProps                                       | Amazon S3, reached through a **gateway** endpoint, for container image layers. Created from the set's<br />\`routeTableIds\`; set \`external\` here when S3 is already reachable.<br /><br />Validation: Optional; S3ImageLayerEndpointProps                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| - [sts](#vpcEndpoints_additionalProperties_sts )                           | No      | object          | No         | Same as [agentCoreGateway](#vpcEndpoints_additionalProperties_agentCoreGateway ) | AWS STS, for credential vending inside a session.<br /><br />Validation: Optional; VpcEndpointProps; omit to have it created                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| + [subnetIds](#vpcEndpoints_additionalProperties_subnetIds )               | No      | array of string | No         | -                                                                                | Subnets for the ENIs of every interface endpoint created by this set, unless an endpoint overrides<br />it. An interface endpoint takes at most one subnet per availability zone, and is reachable from any<br />zone - so covering fewer zones costs less in endpoint ENI hours and more in cross-zone data.<br /><br />Use cases: multi-AZ endpoint placement, endpoint ENI cost control<br /><br />AWS: SubnetIds<br /><br />Validation: Required; String[]; at least one, at most one per availability zone                                                                                                                                                                                                                                                                                                                                                       |
+| + [vpcId](#vpcEndpoints_additionalProperties_vpcId )                       | No      | string          | No         | -                                                                                | VPC the endpoints are created in, and in which each referencing consumer's endpoint client security<br />group is created.<br /><br />Use cases: private workload connectivity in a specific VPC<br /><br />AWS: VpcId<br /><br />Validation: Required; String; each set must name a distinct VPC                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+
+#### <a name="vpcEndpoints_additionalProperties_agentCoreGateway"></a>15.1.1. Property `root > vpcEndpoints > additionalProperties > agentCoreGateway`
+
+|                           |                                |
+| ------------------------- | ------------------------------ |
+| **Type**                  | `object`                       |
+| **Required**              | No                             |
+| **Additional properties** | Not allowed                    |
+| **Defined in**            | #/definitions/VpcEndpointProps |
+
+**Description:** AgentCore Gateway - the gateway's MCP host, a distinct service from the AgentCore data plane. Needed
+only by a consumer declaring an `agentCoreGateway` tool; without it the tool load fails with a DNS
+"Name or service not known" error.
+
+Validation: Optional; VpcEndpointProps; only valid when a referencing consumer declares a gateway
+tool; omit to have it created
+
+| Property                                                                                  | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| ----------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [external](#vpcEndpoints_additionalProperties_agentCoreGateway_external )               | No      | boolean         | No         | -          | Mark this service as reached without an endpoint this set manages - over NAT or an internet gateway,<br />or through an existing endpoint whose security group you do not want named here. Nothing is created<br />and nothing is wired for it.<br /><br />Use cases: keeping some services on the VPC's existing egress path, coexisting with an endpoint<br />whose security group is not shared<br /><br />Validation: Optional; Boolean; mutually exclusive with \`securityGroupId\` and \`subnetIds\`                                                                                                                                                                                                    |
+| - [securityGroupId](#vpcEndpoints_additionalProperties_agentCoreGateway_securityGroupId ) | No      | string          | No         | -          | Security group of an endpoint that already exists in this VPC, provisioned by a landing zone or a<br />central networking team. The endpoint is not created; each consumer is granted HTTPS egress to this<br />group and one ingress rule is added to it from the consumer's own client security group.<br /><br />The endpoint's own id is not needed - nothing here references it - and its endpoint policy stays as<br />its owner wrote it.<br /><br />Use cases: reusing centrally provisioned interface endpoints<br /><br />AWS: consumer-side AWS::EC2::SecurityGroupIngress on the existing endpoint's security group<br /><br />Validation: Optional; String; mutually exclusive with \`external\` |
+| - [subnetIds](#vpcEndpoints_additionalProperties_agentCoreGateway_subnetIds )             | No      | array of string | No         | -          | Subnets for this endpoint's ENIs, overriding the set's \`subnetIds\`. Use it for a service available<br />in fewer availability zones than the rest, or to keep one endpoint's ENI cost down.<br /><br />Use cases: per-service endpoint placement, endpoint ENI cost control<br /><br />AWS: SubnetIds<br /><br />Validation: Optional; String[]; at most one subnet per availability zone; only valid on a created<br />endpoint                                                                                                                                                                                                                                                                            |
+
+##### <a name="vpcEndpoints_additionalProperties_agentCoreGateway_external"></a>15.1.1.1. Property `root > vpcEndpoints > additionalProperties > agentCoreGateway > external`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Mark this service as reached without an endpoint this set manages - over NAT or an internet gateway,
+or through an existing endpoint whose security group you do not want named here. Nothing is created
+and nothing is wired for it.
+
+Use cases: keeping some services on the VPC's existing egress path, coexisting with an endpoint
+whose security group is not shared
+
+Validation: Optional; Boolean; mutually exclusive with `securityGroupId` and `subnetIds`
+
+##### <a name="vpcEndpoints_additionalProperties_agentCoreGateway_securityGroupId"></a>15.1.1.2. Property `root > vpcEndpoints > additionalProperties > agentCoreGateway > securityGroupId`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Security group of an endpoint that already exists in this VPC, provisioned by a landing zone or a
+central networking team. The endpoint is not created; each consumer is granted HTTPS egress to this
+group and one ingress rule is added to it from the consumer's own client security group.
+
+The endpoint's own id is not needed - nothing here references it - and its endpoint policy stays as
+its owner wrote it.
+
+Use cases: reusing centrally provisioned interface endpoints
+
+AWS: consumer-side AWS::EC2::SecurityGroupIngress on the existing endpoint's security group
+
+Validation: Optional; String; mutually exclusive with `external`
+
+##### <a name="vpcEndpoints_additionalProperties_agentCoreGateway_subnetIds"></a>15.1.1.3. Property `root > vpcEndpoints > additionalProperties > agentCoreGateway > subnetIds`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+**Description:** Subnets for this endpoint's ENIs, overriding the set's `subnetIds`. Use it for a service available
+in fewer availability zones than the rest, or to keep one endpoint's ENI cost down.
+
+Use cases: per-service endpoint placement, endpoint ENI cost control
+
+AWS: SubnetIds
+
+Validation: Optional; String[]; at most one subnet per availability zone; only valid on a created
+endpoint
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | 1                  |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                        | Description |
+| -------------------------------------------------------------------------------------- | ----------- |
+| [subnetIds items](#vpcEndpoints_additionalProperties_agentCoreGateway_subnetIds_items) | -           |
+
+###### <a name="vpcEndpoints_additionalProperties_agentCoreGateway_subnetIds_items"></a>15.1.1.3.1. root > vpcEndpoints > additionalProperties > agentCoreGateway > subnetIds > subnetIds items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="vpcEndpoints_additionalProperties_bedrockRuntime"></a>15.1.2. Property `root > vpcEndpoints > additionalProperties > bedrockRuntime`
+
+|                           |                                                                         |
+| ------------------------- | ----------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                |
+| **Required**              | No                                                                      |
+| **Additional properties** | Not allowed                                                             |
+| **Same definition as**    | [agentCoreGateway](#vpcEndpoints_additionalProperties_agentCoreGateway) |
+
+**Description:** Amazon Bedrock runtime, for model inference over the Converse API. Every AgentCore Harness needs it;
+without a path it reaches READY and every invoke hangs.
+
+Validation: Optional; VpcEndpointProps; omit to have it created
+
+#### <a name="vpcEndpoints_additionalProperties_ecrApi"></a>15.1.3. Property `root > vpcEndpoints > additionalProperties > ecrApi`
+
+|                           |                                                                         |
+| ------------------------- | ----------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                |
+| **Required**              | No                                                                      |
+| **Additional properties** | Not allowed                                                             |
+| **Same definition as**    | [agentCoreGateway](#vpcEndpoints_additionalProperties_agentCoreGateway) |
+
+**Description:** Amazon ECR API, for the registry calls a session's container image pull makes.
+
+Validation: Optional; VpcEndpointProps; omit to have it created
+
+#### <a name="vpcEndpoints_additionalProperties_ecrDocker"></a>15.1.4. Property `root > vpcEndpoints > additionalProperties > ecrDocker`
+
+|                           |                                                                         |
+| ------------------------- | ----------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                |
+| **Required**              | No                                                                      |
+| **Additional properties** | Not allowed                                                             |
+| **Same definition as**    | [agentCoreGateway](#vpcEndpoints_additionalProperties_agentCoreGateway) |
+
+**Description:** Amazon ECR Docker Registry, for the registry protocol of the image pull.
+
+Validation: Optional; VpcEndpointProps; omit to have it created
+
+#### <a name="vpcEndpoints_additionalProperties_logs"></a>15.1.5. Property `root > vpcEndpoints > additionalProperties > logs`
+
+|                           |                                                                         |
+| ------------------------- | ----------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                |
+| **Required**              | No                                                                      |
+| **Additional properties** | Not allowed                                                             |
+| **Same definition as**    | [agentCoreGateway](#vpcEndpoints_additionalProperties_agentCoreGateway) |
+
+**Description:** Amazon CloudWatch Logs, for log delivery from a session.
+
+Validation: Optional; VpcEndpointProps; omit to have it created
+
+#### <a name="vpcEndpoints_additionalProperties_routeTableIds"></a>15.1.6. Property `root > vpcEndpoints > additionalProperties > routeTableIds`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+**Description:** Route tables that receive the S3 gateway endpoint's prefix-list route, enabling container image-layer
+downloads: image layers are served from the ECR layer bucket over S3, so the ECR interface endpoints
+alone cannot complete a pull in a VPC with no NAT.
+
+IMPORTANT - blast radius: the endpoint intercepts **all** S3 traffic from every subnet associated
+with these route tables, and its derived policy allows only the ECR image-layer read. If other
+workloads share these route tables and need broader S3 access, provision the S3 gateway endpoint out
+of band and set `s3ImageLayers.external` instead.
+
+Use cases: no-NAT container image-layer pulls
+
+AWS: RouteTableIds
+
+Validation: Required unless `s3ImageLayers.external` is set, and mutually exclusive with it; String[]
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | 1                  |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                               | Description |
+| ----------------------------------------------------------------------------- | ----------- |
+| [routeTableIds items](#vpcEndpoints_additionalProperties_routeTableIds_items) | -           |
+
+##### <a name="vpcEndpoints_additionalProperties_routeTableIds_items"></a>15.1.6.1. root > vpcEndpoints > additionalProperties > routeTableIds > routeTableIds items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="vpcEndpoints_additionalProperties_s3ImageLayers"></a>15.1.7. Property `root > vpcEndpoints > additionalProperties > s3ImageLayers`
+
+|                           |                                         |
+| ------------------------- | --------------------------------------- |
+| **Type**                  | `object`                                |
+| **Required**              | No                                      |
+| **Additional properties** | Not allowed                             |
+| **Defined in**            | #/definitions/S3ImageLayerEndpointProps |
+
+**Description:** Amazon S3, reached through a **gateway** endpoint, for container image layers. Created from the set's
+`routeTableIds`; set `external` here when S3 is already reachable.
+
+Validation: Optional; S3ImageLayerEndpointProps
+
+| Property                                                                 | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                           |
+| ------------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [external](#vpcEndpoints_additionalProperties_s3ImageLayers_external ) | No      | boolean | No         | -          | Mark S3 as already reachable, so no gateway endpoint is created for image layers. Set this for a VPC<br />with NAT, or one whose S3 gateway endpoint was provisioned elsewhere - a route table carries a<br />service's prefix-list route from only one endpoint, so creating a second fails at deploy.<br /><br />Validation: Required when the set has no \`routeTableIds\`; mutually exclusive with them |
+
+##### <a name="vpcEndpoints_additionalProperties_s3ImageLayers_external"></a>15.1.7.1. Property `root > vpcEndpoints > additionalProperties > s3ImageLayers > external`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Mark S3 as already reachable, so no gateway endpoint is created for image layers. Set this for a VPC
+with NAT, or one whose S3 gateway endpoint was provisioned elsewhere - a route table carries a
+service's prefix-list route from only one endpoint, so creating a second fails at deploy.
+
+Validation: Required when the set has no `routeTableIds`; mutually exclusive with them
+
+#### <a name="vpcEndpoints_additionalProperties_sts"></a>15.1.8. Property `root > vpcEndpoints > additionalProperties > sts`
+
+|                           |                                                                         |
+| ------------------------- | ----------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                |
+| **Required**              | No                                                                      |
+| **Additional properties** | Not allowed                                                             |
+| **Same definition as**    | [agentCoreGateway](#vpcEndpoints_additionalProperties_agentCoreGateway) |
+
+**Description:** AWS STS, for credential vending inside a session.
+
+Validation: Optional; VpcEndpointProps; omit to have it created
+
+#### <a name="vpcEndpoints_additionalProperties_subnetIds"></a>15.1.9. Property `root > vpcEndpoints > additionalProperties > subnetIds`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | Yes               |
+
+**Description:** Subnets for the ENIs of every interface endpoint created by this set, unless an endpoint overrides
+it. An interface endpoint takes at most one subnet per availability zone, and is reachable from any
+zone - so covering fewer zones costs less in endpoint ENI hours and more in cross-zone data.
+
+Use cases: multi-AZ endpoint placement, endpoint ENI cost control
+
+AWS: SubnetIds
+
+Validation: Required; String[]; at least one, at most one per availability zone
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | 1                  |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                       | Description |
+| --------------------------------------------------------------------- | ----------- |
+| [subnetIds items](#vpcEndpoints_additionalProperties_subnetIds_items) | -           |
+
+##### <a name="vpcEndpoints_additionalProperties_subnetIds_items"></a>15.1.9.1. root > vpcEndpoints > additionalProperties > subnetIds > subnetIds items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="vpcEndpoints_additionalProperties_vpcId"></a>15.1.10. Property `root > vpcEndpoints > additionalProperties > vpcId`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** VPC the endpoints are created in, and in which each referencing consumer's endpoint client security
+group is created.
+
+Use cases: private workload connectivity in a specific VPC
+
+AWS: VpcId
+
+Validation: Required; String; each set must name a distinct VPC
 
 ----------------------------------------------------------------------------------------------------------------------------

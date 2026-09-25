@@ -12,7 +12,7 @@ import {
   validateCustomJwtAuthorizer,
   validateLogRetentionDays,
 } from '@aws-mdaa/agentcore-shared';
-import { aws_bedrockagentcore as bedrockagentcore, Token } from 'aws-cdk-lib';
+import { aws_bedrockagentcore as bedrockagentcore } from 'aws-cdk-lib';
 import {
   BedrockAgentcoreHarnessL3ConstructProps,
   HarnessContainerProperty,
@@ -27,9 +27,10 @@ import {
   HarnessTruncationStrategy,
   NamedHarnessToolProps,
 } from './bedrock-agentcore-harness-l3-construct';
+import { validateHarnessVpcEndpoints } from './vpc-endpoint-access';
 
 // allowedTools list upper bound from the CloudFormation `Harness.AllowedTools` spec. An empty list
-// is treated as unset (field omitted → all tools allowed), so only the maximum is enforced.
+// is treated as unset (field omitted -> all tools allowed), so only the maximum is enforced.
 const ALLOWED_TOOLS_MAX = 64;
 // Model sampling bounds from the CloudFormation `HarnessBedrockModelConfig` spec.
 const TEMPERATURE_MIN = 0;
@@ -45,11 +46,6 @@ const TOOL_NAME_MAX_LENGTH = 64;
 const INLINE_FUNCTION_DESCRIPTION_MAX_LENGTH = 4096;
 // Endpoint `Description` bounds from the CloudFormation `HarnessEndpoint` spec: optional, 1-256 chars.
 const ENDPOINT_DESCRIPTION_MAX_LENGTH = 256;
-// S3 ARN shape for `additionalS3BucketArns`: `arn:<partition>:s3:::<bucket>[/<key>]`. S3 ARNs carry no
-// region or account segment; the optional trailing path admits object-key and wildcard ARNs. Matches
-// the healthlake construct's bucket-ARN check, extended to accept an object-key suffix.
-const S3_ARN_PATTERN = /^arn:[^:]+:s3:::[^/]+(\/.*)?$/;
-
 /**
  * Fail-fast validation of the entire config before any resource is built, covering constraints the
  * L1/CloudFormation would otherwise only reject at deploy: required strings, model sampling bounds,
@@ -80,6 +76,7 @@ export function validateHarnessConfig(props: BedrockAgentcoreHarnessL3ConstructP
   validateAllowedTools(props.allowedTools);
   validateSkills(props.skills);
   validateNetworkConfiguration(props.networkConfiguration);
+  validateHarnessVpcEndpoints(props.networkConfiguration, props.vpcEndpointAccess);
   validateContainer(props.container);
   validateEndpoint(props.endpoint);
   validateTruncation(props.truncation);
@@ -124,7 +121,7 @@ export function validateSkills(skills?: HarnessSkillProperty[]): void {
 
 /**
  * Validates the required VPC network configuration against the CloudFormation `VpcConfig` bounds:
- * `networkConfiguration` itself is required (MDAA enforces VPC mode — there is no public-network
+ * `networkConfiguration` itself is required (MDAA enforces VPC mode - there is no public-network
  * option), and `securityGroups` and `subnets` are each required with the CloudFormation bounds
  * (the bound-check itself is shared with the Runtime construct via
  * {@link validateAgentcoreVpcNetworkMembers}).
@@ -138,28 +135,6 @@ export function validateNetworkConfiguration(networkConfiguration?: HarnessNetwo
   }
   const { securityGroups, subnets } = networkConfiguration;
   validateAgentcoreVpcNetworkMembers(securityGroups, subnets, 'Harness');
-  validateAdditionalS3BucketArns(networkConfiguration.vpcEndpoints?.additionalS3BucketArns);
-}
-
-/**
- * Validates each `additionalS3BucketArns` entry is a well-formed S3 ARN
- * (`arn:<partition>:s3:::<bucket>[/<key>]`), so a typo fails at synth with a clear message rather than
- * surfacing as a CloudFormation `MalformedPolicyDocument` when the S3 gateway endpoint policy is
- * created. CDK tokens (unresolved cross-stack ARNs) are accepted unchecked, mirroring the healthlake
- * construct's bucket-ARN validation.
- */
-export function validateAdditionalS3BucketArns(additionalS3BucketArns?: string[]): void {
-  (additionalS3BucketArns ?? []).forEach((arn, index) => {
-    if (Token.isUnresolved(arn)) {
-      return;
-    }
-    if (!arn || !S3_ARN_PATTERN.test(arn)) {
-      throw new Error(
-        `Harness "networkConfiguration.vpcEndpoints.additionalS3BucketArns[${index}]" must be a valid S3 ` +
-          `ARN (arn:<partition>:s3:::<bucket>[/<key>]); received "${arn}".`,
-      );
-    }
-  });
 }
 
 /**
@@ -180,7 +155,7 @@ export function validateContainer(container?: HarnessContainerProperty): void {
  * `description` is 1-256 characters and `targetVersion` matches `^([1-9][0-9]{0,4})$`, so either
  * failing fails at synth rather than deploy.
  *
- * Each field is guarded individually — a single function-wide `if (!endpoint?.targetVersion) return`
+ * Each field is guarded individually - a single function-wide `if (!endpoint?.targetVersion) return`
  * would skip every other field whenever `targetVersion` is unset, and would also let a
  * present-but-empty `targetVersion` through (empty string is falsy), which `?? attrVersion` then
  * preserves rather than defaulting, emitting `TargetVersion: ""` against the CFN pattern.
@@ -289,7 +264,7 @@ export function validateGuardrail(guardrail?: HarnessGuardrailAssociation): void
  * [inference-profile prerequisites](https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-prereq.html)).
  * A system profile id carries its foundation model name, so the construct derives that paired grant;
  * an application inference profile id is opaque, so it cannot. Accepting one would auto-generate an
- * execution role holding invoke on the profile alone — a harness that deploys clean and then fails at
+ * execution role holding invoke on the profile alone - a harness that deploys clean and then fails at
  * first invoke with `AccessDeniedException`. Failing here instead keeps that outcome impossible.
  */
 export function validateModelId(modelId: string): void {
@@ -353,7 +328,7 @@ export function validateEnumMember<T extends Record<string, string>>(
 /**
  * Fail-fast validation of the tools map before any resource is built: each tool's name (the map key,
  * which becomes `HarnessTool.Name`) matches the CloudFormation pattern (`^[a-zA-Z0-9_-]+$`, 1-64
- * chars), sets exactly one of `inlineFunction` / `agentCoreGateway`, and — for inline functions —
+ * chars), sets exactly one of `inlineFunction` / `agentCoreGateway`, and - for inline functions -
  * carries a `description` within the `HarnessInlineFunctionConfig.Description` bounds (1-4096 chars).
  *
  * Uniqueness needs no check: the map key structurally guarantees it.
@@ -377,7 +352,7 @@ export function validateTools(tools?: NamedHarnessToolProps): void {
     if (tool.agentCoreGateway) {
       // A non-empty gatewayArn is required: an empty string is not a `config:` reference, so it would
       // pass through as a literal and land as `resources: ['']` on the AllowInvokeGateway statement and
-      // `GatewayArn: ""` on the tool — a deploy-time MalformedPolicyDocument rather than a synth error.
+      // `GatewayArn: ""` on the tool - a deploy-time MalformedPolicyDocument rather than a synth error.
       const gatewayArn = tool.agentCoreGateway.gatewayArn;
       if (!gatewayArn || gatewayArn.trim().length === 0) {
         throw new Error(
@@ -408,13 +383,14 @@ export function validateTools(tools?: NamedHarnessToolProps): void {
  */
 export function buildEnvironment(
   props: BedrockAgentcoreHarnessL3ConstructProps,
+  additionalSecurityGroupId?: string,
 ): bedrockagentcore.CfnHarness.HarnessEnvironmentProviderProperty {
   const lifecycleConfiguration = props.lifecycleConfiguration
     ? buildLifecycleConfiguration(props.lifecycleConfiguration)
     : undefined;
   // networkConfiguration is required (MDAA enforces VPC mode), so the environment provider is
   // always emitted with a NetworkMode: VPC network configuration.
-  const networkConfiguration = buildNetworkConfiguration(props.networkConfiguration);
+  const networkConfiguration = buildNetworkConfiguration(props.networkConfiguration, additionalSecurityGroupId);
 
   return {
     agentCoreRuntimeEnvironment: {
@@ -445,9 +421,13 @@ export function buildLifecycleConfiguration(
  */
 export function buildNetworkConfiguration(
   networkConfig: HarnessNetworkProperty,
+  additionalSecurityGroupId?: string,
 ): bedrockagentcore.CfnHarness.NetworkConfigurationProperty {
   // Shared VPC-mode builder (single source of truth for MDAA's NetworkMode: VPC enforcement).
-  return buildAgentcoreVpcNetworkConfiguration(networkConfig.securityGroups, networkConfig.subnets);
+  const securityGroups = additionalSecurityGroupId
+    ? [...networkConfig.securityGroups, additionalSecurityGroupId]
+    : networkConfig.securityGroups;
+  return buildAgentcoreVpcNetworkConfiguration(securityGroups, networkConfig.subnets);
 }
 
 /**
@@ -482,7 +462,7 @@ export function buildSkills(
 
 /**
  * Builds the typed `Truncation` configuration (validated by {@link validateTruncation}). The
- * strategy-specific `config` block is emitted only for the matching strategy — `none` renders the
+ * strategy-specific `config` block is emitted only for the matching strategy - `none` renders the
  * strategy alone. Returns undefined when no `truncation` block is set so the service default applies.
  */
 export function buildTruncation(

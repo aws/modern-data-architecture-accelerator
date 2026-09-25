@@ -1448,7 +1448,7 @@
         },
         "DataProtectionProperty": {
             "additionalProperties": false,
-            "description": "CloudWatch Data Protection configuration for the AgentCore service-created log groups.\n\nData Protection (PII masking) and customer-managed KMS encryption are always-on, built-in\nbehavior for the AgentCore modules and cannot be disabled — sensitive data (emails, SSNs, credit\ncard numbers, etc.) is automatically masked in log events on ingestion. This optional\nconfiguration only allows tightening the posture (adding identifiers); it can never reduce the\nbuilt-in compliance baseline.\n\nUse cases: extending PII masking with additional identifiers, future protection options\n\nAWS: CloudWatch Logs Data Protection Policy\n\nValidation: Optional; additionalIdentifiers only adds to the built-in identifier set",
+            "description": "CloudWatch Data Protection configuration for the AgentCore service-created log groups.\n\nData Protection (PII masking) and customer-managed KMS encryption are always-on, built-in\nbehavior for the AgentCore modules and cannot be disabled - sensitive data (emails, SSNs, credit\ncard numbers, etc.) is automatically masked in log events on ingestion. This optional\nconfiguration only allows tightening the posture (adding identifiers); it can never reduce the\nbuilt-in compliance baseline.\n\nUse cases: extending PII masking with additional identifiers, future protection options\n\nAWS: CloudWatch Logs Data Protection Policy\n\nValidation: Optional; additionalIdentifiers only adds to the built-in identifier set",
             "properties": {
                 "additionalIdentifiers": {
                     "description": "Additional AWS-managed data identifiers to mask, on top of the built-in\ncomprehensive set (EmailAddress, CreditCardNumber, Ssn-US, Name, Address,\nPhoneNumber-US, IpAddress). Each entry is a name matching an AWS-managed data\nidentifier (e.g., \"DriversLicense-US\", \"PassportNumber-US\").\n\nThis field is additive only - it cannot remove or override the built-in\nidentifiers, so it can never reduce the masking baseline.\n\nUse cases: stricter PII masking, organization-specific identifier requirements\n\nAWS: CloudWatch Logs managed data identifiers\n\nValidation: Optional; String[]; must be valid AWS data identifier names",
@@ -2037,7 +2037,7 @@
                 },
                 "logRetentionDays": {
                     "default": 9999,
-                    "description": "Retention (in days) for the destination log group. Accepts any CloudWatch Logs `RetentionDays`\nvalue (e.g. 7, 30, 90, 365); `9999` (`RetentionDays.INFINITE`) means never-expire and can be set\nexplicitly to lock indefinite retention into config. Omitting the field is equivalent to `9999`\n(the MDAA audit-log default) so logs are never silently dropped; set a finite value for cost or a\ncompliance window.\n\nUse cases: cost control, compliance retention windows\n\nAWS: AWS::Logs::LogGroup RetentionInDays\n\nValidation: Optional; must be a valid CloudWatch Logs RetentionDays value (9999 for never-expire)\n— validated at synth (an unsupported value throws from the constructor rather than failing at deploy)",
+                    "description": "Retention (in days) for the destination log group. Accepts any CloudWatch Logs `RetentionDays`\nvalue (e.g. 7, 30, 90, 365); `9999` (`RetentionDays.INFINITE`) means never-expire and can be set\nexplicitly to lock indefinite retention into config. Omitting the field is equivalent to `9999`\n(the MDAA audit-log default) so logs are never silently dropped; set a finite value for cost or a\ncompliance window.\n\nUse cases: cost control, compliance retention windows\n\nAWS: AWS::Logs::LogGroup RetentionInDays\n\nValidation: Optional; must be a valid CloudWatch Logs RetentionDays value (9999 for never-expire)\n- validated at synth (an unsupported value throws from the constructor rather than failing at deploy)",
                     "type": "number"
                 }
             },
@@ -2312,7 +2312,7 @@
         },
         "HarnessAgentCoreGatewayToolProperty": {
             "additionalProperties": false,
-            "description": "AgentCore Gateway tool: wires the Harness to an existing Bedrock AgentCore Gateway's tool\nsurface. MDAA supports only `AWS_IAM` outbound auth (the gateway invoked with the Harness's own\nexecution role) — `oauth`/`none` are not yet exposed.\n\nUse cases: exposing gateway-fronted Lambda/OpenAPI/Smithy tools to the agent loop\n\nAWS: `HarnessTool` with `type: agentcore_gateway`, `config.agentCoreGateway`\n\nValidation: gatewayArn required",
+            "description": "AgentCore Gateway tool: wires the Harness to an existing Bedrock AgentCore Gateway's tool\nsurface. MDAA supports only `AWS_IAM` outbound auth (the gateway invoked with the Harness's own\nexecution role) - `oauth`/`none` are not yet exposed.\n\nUse cases: exposing gateway-fronted Lambda/OpenAPI/Smithy tools to the agent loop\n\nAWS: `HarnessTool` with `type: agentcore_gateway`, `config.agentCoreGateway`\n\nValidation: gatewayArn required",
             "properties": {
                 "gatewayArn": {
                     "description": "The gateway to attach, either a literal Gateway ARN or a `config:<name>` reference into the\norchestrating module's own gateway map (e.g. `bedrock-builder`'s `gateways:`), resolved to the\nlive gateway's ARN at synth time.\n\nUse cases: attaching a gateway created in the same module (no SSM round-trip), attaching an\nexternally created gateway by ARN\n\nAWS: `HarnessAgentCoreGatewayConfig.GatewayArn`\n\nValidation: Required; String; literal ARN or `config:<name>`",
@@ -2326,10 +2326,10 @@
         },
         "HarnessConfigProps": {
             "additionalProperties": false,
-            "description": "Complete configuration for a Bedrock AgentCore Harness — a declarative agent loop (model +\nsystem prompt + tools).\n\nUse cases: conversational AI agents, tool-using agents, RAG agents (via gateway tools)\n\nAWS: `AWS::BedrockAgentCore::Harness`\n\nValidation: modelId, systemPrompt and networkConfiguration are required",
+            "description": "Complete configuration for a Bedrock AgentCore Harness - a declarative agent loop (model +\nsystem prompt + tools).\n\nUse cases: conversational AI agents, tool-using agents, RAG agents (via gateway tools)\n\nAWS: `AWS::BedrockAgentCore::Harness`\n\nValidation: modelId, systemPrompt and networkConfiguration are required",
             "properties": {
                 "allowedTools": {
-                    "description": "Tool allowlist controlling which tools (including the built-in `shell` / `file_operations`) the\nagent may select during invocation. Supports the AgentCore `allowedTools` patterns (`*`, plain\nnames, `@builtin`, `@server/tool`, globs). Omit to allow all tools.\n\nNote: `allowedTools` scopes LLM tool selection during `InvokeHarness` only — it does not gate\nthe separate `InvokeAgentRuntimeCommand` API (which executes commands directly, without the\nLLM). To prevent direct command execution, do not grant `bedrock-agentcore:InvokeAgentRuntimeCommand`.\n\nUse cases: restricting the default `shell`/`file_operations` tools, reducing tool-definition\ntoken overhead\n\nAWS: `AllowedTools`\n\nValidation: Optional; String[]; 1-64 entries",
+                    "description": "Tool allowlist controlling which tools (including the built-in `shell` / `file_operations`) the\nagent may select during invocation. Supports the AgentCore `allowedTools` patterns (`*`, plain\nnames, `@builtin`, `@server/tool`, globs). Omit to allow all tools.\n\nNote: `allowedTools` scopes LLM tool selection during `InvokeHarness` only - it does not gate\nthe separate `InvokeAgentRuntimeCommand` API (which executes commands directly, without the\nLLM). To prevent direct command execution, do not grant `bedrock-agentcore:InvokeAgentRuntimeCommand`.\n\nUse cases: restricting the default `shell`/`file_operations` tools, reducing tool-definition\ntoken overhead\n\nAWS: `AllowedTools`\n\nValidation: Optional; String[]; 1-64 entries",
                     "items": {
                         "type": "string"
                     },
@@ -2339,7 +2339,7 @@
                 },
                 "authorizerConfiguration": {
                     "$ref": "#/definitions/AgentcoreAuthorizerConfigProperty",
-                    "description": "Inbound authorization configuration. Provide `customJwt` for JWT/OIDC inbound auth, or omit it\nto use AWS IAM (SigV4) — the Harness's no-configuration fallback.\n\nUse cases: inbound access control\n\nAWS: `AuthorizerConfiguration`\n\nValidation: Optional; valid customJwt when present"
+                    "description": "Inbound authorization configuration. Provide `customJwt` for JWT/OIDC inbound auth, or omit it\nto use AWS IAM (SigV4) - the Harness's no-configuration fallback.\n\nUse cases: inbound access control\n\nAWS: `AuthorizerConfiguration`\n\nValidation: Optional; valid customJwt when present"
                 },
                 "container": {
                     "$ref": "#/definitions/HarnessContainerProperty",
@@ -2370,7 +2370,7 @@
                 },
                 "logRetentionDays": {
                     "default": 9999,
-                    "description": "CloudWatch Logs retention period for the Harness's service-created log groups, in days. Accepts\nany CloudWatch Logs `RetentionDays` value; `9999` (`RetentionDays.INFINITE`) means never-expire\nand can be set explicitly to lock indefinite retention into config. Omitting the field is\nequivalent to `9999` — no retention policy is applied, leaving the log groups at CloudWatch's\nnever-expire default (logs are kept, and billed, forever) unless a finite value is set.\n\nUse cases: log retention policy, cost management\n\nAWS: CloudWatch Logs log group retention\n\nValidation: Optional; Number; must be a valid RetentionDays value (9999 for never-expire) — validated at synth",
+                    "description": "CloudWatch Logs retention period for the Harness's service-created log groups, in days. Accepts\nany CloudWatch Logs `RetentionDays` value; `9999` (`RetentionDays.INFINITE`) means never-expire\nand can be set explicitly to lock indefinite retention into config. Omitting the field is\nequivalent to `9999` - no retention policy is applied, leaving the log groups at CloudWatch's\nnever-expire default (logs are kept, and billed, forever) unless a finite value is set.\n\nUse cases: log retention policy, cost management\n\nAWS: CloudWatch Logs log group retention\n\nValidation: Optional; Number; must be a valid RetentionDays value (9999 for never-expire) - validated at synth",
                     "type": "number"
                 },
                 "maxIterations": {
@@ -2393,7 +2393,7 @@
                 },
                 "networkConfiguration": {
                     "$ref": "#/definitions/HarnessNetworkProperty",
-                    "description": "VPC network configuration for the harness's runtime sessions, placing them behind your own\nsecurity groups and subnets for private access to internal resources. Required: MDAA enforces\nVPC network isolation for the harness (`NetworkMode: VPC`), mirroring the AgentCore Runtime\nconstruct — there is no public-network option.\n\nUse cases: private access to internal resources, network isolation\n\nAWS: `Environment.AgentCoreRuntimeEnvironment.NetworkConfiguration` (`NetworkMode: VPC`)\n\nValidation: Required; HarnessNetworkProperty; 1-16 security groups and subnets"
+                    "description": "VPC network configuration for the harness's runtime sessions, placing them behind your own\nsecurity groups and subnets for private access to internal resources. Required: MDAA enforces\nVPC network isolation for the harness (`NetworkMode: VPC`), mirroring the AgentCore Runtime\nconstruct - there is no public-network option.\n\nUse cases: private access to internal resources, network isolation\n\nAWS: `Environment.AgentCoreRuntimeEnvironment.NetworkConfiguration` (`NetworkMode: VPC`)\n\nValidation: Required; HarnessNetworkProperty; 1-16 security groups and subnets"
                 },
                 "role": {
                     "$ref": "#/definitions/MdaaRoleRef",
@@ -2433,7 +2433,7 @@
         },
         "HarnessContainerProperty": {
             "additionalProperties": false,
-            "description": "Container configuration for the Harness's underlying AgentCore Runtime environment. Only a\npre-built ECR image URI is supported — the typed L1 `ContainerConfigurationProperty` exposes\n`containerUri` alone (no build-from-source), matching the harness's managed-runtime model.\n\nUse cases: bring-your-own container image for the harness runtime environment\n\nAWS: `EnvironmentArtifact.ContainerConfiguration`\n\nValidation: containerUri required; must be a valid ECR image URI",
+            "description": "Container configuration for the Harness's underlying AgentCore Runtime environment. Only a\npre-built ECR image URI is supported - the typed L1 `ContainerConfigurationProperty` exposes\n`containerUri` alone (no build-from-source), matching the harness's managed-runtime model.\n\nUse cases: bring-your-own container image for the harness runtime environment\n\nAWS: `EnvironmentArtifact.ContainerConfiguration`\n\nValidation: containerUri required; must be a valid ECR image URI",
             "properties": {
                 "containerUri": {
                     "description": "Pre-built container image URI from ECR\n(`{account}.dkr.ecr.{region}.amazonaws.com/{repository}[:{tag}|@{digest}]`). The execution role\nis granted scoped `ecr:GetDownloadUrlForLayer` / `ecr:BatchGetImage` pull permissions on the\nparsed repository.\n\nUse cases: custom runtime image, image reuse across harnesses\n\nAWS: `ContainerConfiguration.ContainerUri`\n\nValidation: Required; String; valid ECR image URI",
@@ -2468,7 +2468,7 @@
         },
         "HarnessGuardrailAssociation": {
             "additionalProperties": false,
-            "description": "Guardrail association for a Harness: a `config:<name>` reference into a sibling `guardrails` map,\nor a literal guardrail id.\n\nUse cases: content filtering, responsible-AI controls on the Harness's model calls\n\nAWS: `Model.BedrockModelConfig.AdditionalParams.guardrailConfig` (escape hatch — see class doc)\n\nValidation: `id` required; `version` required unless `id` is a `config:<name>` reference (the\nreferenced guardrail's live version is used)",
+            "description": "Guardrail association for a Harness: a `config:<name>` reference into a sibling `guardrails` map,\nor a literal guardrail id.\n\nUse cases: content filtering, responsible-AI controls on the Harness's model calls\n\nAWS: `Model.BedrockModelConfig.AdditionalParams.guardrailConfig` (escape hatch - see class doc)\n\nValidation: `id` required; `version` required unless `id` is a `config:<name>` reference (the\nreferenced guardrail's live version is used)",
             "properties": {
                 "id": {
                     "description": "Guardrail identifier: a `config:<name>` reference into a sibling `guardrails` map, or a literal\nguardrail id.\n\nUse cases: referencing a module-managed guardrail, referencing an externally created guardrail\n\nAWS: `GuardrailConfig.GuardrailIdentifier`\n\nValidation: Required; String",
@@ -2496,7 +2496,7 @@
         },
         "HarnessInlineFunctionToolProperty": {
             "additionalProperties": false,
-            "description": "Inline function tool: a tool definition the model can call, with no execution binding. The\ncaller (harness invoker) is responsible for executing the function and returning the result —\nthe Harness itself does not invoke anything for this tool type.\n\nUse cases: client-side tool execution, tools implemented outside AWS, RETURN_CONTROL-style tools\n\nAWS: `HarnessTool` with `type: inline_function`, `config.inlineFunction`\n\nValidation: description and inputSchema both required",
+            "description": "Inline function tool: a tool definition the model can call, with no execution binding. The\ncaller (harness invoker) is responsible for executing the function and returning the result -\nthe Harness itself does not invoke anything for this tool type.\n\nUse cases: client-side tool execution, tools implemented outside AWS, RETURN_CONTROL-style tools\n\nAWS: `HarnessTool` with `type: inline_function`, `config.inlineFunction`\n\nValidation: description and inputSchema both required",
             "properties": {
                 "description": {
                     "description": "Description of what the tool does, shown to the model for tool selection.\n\nUse cases: tool selection guidance for the model\n\nAWS: `HarnessInlineFunctionConfig.Description`\n\nValidation: Required; String",
@@ -2559,10 +2559,10 @@
         },
         "HarnessNetworkProperty": {
             "additionalProperties": false,
-            "description": "VPC network configuration for the Harness's underlying AgentCore Runtime environment. Mirrors the\nAgentCore Runtime construct's VPC surface (MDAA enforces VPC mode); the harness maps it onto\n`Environment.AgentCoreRuntimeEnvironment.NetworkConfiguration` with `NetworkMode: VPC`.\n\nUse cases: private access to internal resources, network isolation, security boundaries\n\nAWS: `Environment.AgentCoreRuntimeEnvironment.NetworkConfiguration` (`NetworkMode: VPC`)\n\nValidation: securityGroups and subnets each required with 1-16 items",
+            "description": "VPC network configuration for the Harness's underlying AgentCore Runtime environment. Mirrors the\nAgentCore Runtime construct's VPC surface (MDAA enforces VPC mode); the harness maps it onto\n`Environment.AgentCoreRuntimeEnvironment.NetworkConfiguration` with `NetworkMode: VPC`.\n\nUse cases: private access to internal resources, network isolation, security boundaries\n\nAWS: `Environment.AgentCoreRuntimeEnvironment.NetworkConfiguration` (`NetworkMode: VPC`)\n\nValidation: securityGroups and subnets each required with 1-16 items; securityGroups is capped at 15\nwhen `vpcEndpoints` is set, to leave room for the endpoint client group the Harness adds",
             "properties": {
                 "securityGroups": {
-                    "description": "Security group IDs controlling inbound/outbound traffic for the harness's runtime sessions.\n\nUse cases: network access control, traffic filtering, security boundaries\n\nAWS: `VpcConfig.SecurityGroups`\n\nValidation: Required; String[]; 1-16 security group IDs",
+                    "description": "Security group IDs controlling inbound/outbound traffic for the harness's runtime sessions.\n\nWhen `vpcEndpoints` names a set, at most 15 may be listed: the Harness adds one endpoint client\nsecurity group of its own, and the service's own bound is 16 members in total.\n\nUse cases: network access control, traffic filtering, security boundaries\n\nAWS: `VpcConfig.SecurityGroups`\n\nValidation: Required; String[]; 1-16 security group IDs, or 1-15 when `vpcEndpoints` is set",
                     "items": {
                         "type": "string"
                     },
@@ -2580,11 +2580,7 @@
                     "type": "array"
                 },
                 "vpcEndpoints": {
-                    "$ref": "#/definitions/HarnessVpcEndpointsProperty",
-                    "description": "Optional MDAA-managed creation of the VPC endpoints the harness's runtime sessions need for\noutbound access (no NAT/internet). Presence of this block opts in; which endpoints are created is\nderived from this harness's own configuration rather than listed, so a needed endpoint cannot be\nomitted by accident. Use its `exclude` list for endpoints the VPC already has.\n\nUse cases: no-NAT (fully private) harness sessions, VPC-mode gateway tools\n\nAWS: AWS::EC2::VPCEndpoint (Interface and Gateway)\n\nValidation: Optional; HarnessVpcEndpointsProperty; requires `vpcId` when present"
-                },
-                "vpcId": {
-                    "description": "VPC ID hosting the harness's runtime sessions. Required only when `vpcEndpoints` is configured\n(the VPC in which the endpoints are created); omit it when relying on VPC endpoints provisioned\nout of band (e.g. by LZA or a central networking team).\n\nUse cases: MDAA-managed VPC endpoint creation\n\nAWS: VPC ID for the harness's VPC endpoints\n\nValidation: Optional; String; required when `vpcEndpoints` is set",
+                    "description": "Name of a VPC endpoint set, declared in the orchestrating module's own `vpcEndpoints` map, giving\nthis Harness's sessions a private outbound path (no NAT/internet). Omit it for a Harness whose\negress follows the VPC's existing path.\n\nWhich endpoints the Harness needs is derived from its own configuration - model inference, the\ncontainer image pull (registry API, Docker registry, and image layers over S3), credential vending,\nlog delivery, and the AgentCore Gateway service when the Harness declares a gateway tool - so no\nservice name, subnet, route table, policy, or security group ID appears here. The set declares only\nhow each of those is reached in its VPC: created there, an existing endpoint to wire to, or reached\nwithout an endpoint the set manages. What stays yours to get right is that the subnets above belong to\nthe VPC the referenced set names - that pairing is rejected at deploy, not at synth.\n\nThe endpoints belong to the VPC rather than to the Harness. Every Harness referencing one set shares\nits endpoints, each wired to only the endpoints it needs. Remove a set in the same change as the last\nHarness referencing it: a declared set no Harness references is rejected at synth.\n\nUse cases: no-NAT Harness sessions, VPC-mode gateway tools, firewalled environments\n\nAWS: consumer-side AWS::EC2::SecurityGroupIngress / SecurityGroupEgress against the set's endpoints\n\nValidation: Optional; String; must name a set in the module's `vpcEndpoints` map",
                     "type": "string"
                 }
             },
@@ -2596,7 +2592,7 @@
         },
         "HarnessSkillProperty": {
             "additionalProperties": false,
-            "description": "A skill available to the Harness's agent loop: a filesystem path to a skill definition baked into\nthe runtime image. Only the `path` source is exposed — the CloudFormation `HarnessSkill` schema\nalso defines `Git`, `S3`, and `AwsSkills` sources, but the pinned CDK L1's `HarnessSkillProperty`\ntypes only `path`.\n\nUse cases: injecting curated markdown/script skill bundles into the agent's context\n\nAWS: `Skills[]` (`HarnessSkill.Path`)\n\nValidation: path required, non-empty",
+            "description": "A skill available to the Harness's agent loop: a filesystem path to a skill definition baked into\nthe runtime image. Only the `path` source is exposed - the CloudFormation `HarnessSkill` schema\nalso defines `Git`, `S3`, and `AwsSkills` sources, but the pinned CDK L1's `HarnessSkillProperty`\ntypes only `path`.\n\nUse cases: injecting curated markdown/script skill bundles into the agent's context\n\nAWS: `Skills[]` (`HarnessSkill.Path`)\n\nValidation: path required, non-empty",
             "properties": {
                 "path": {
                     "description": "Filesystem path to the skill definition inside the runtime image.\n\nUse cases: referencing a skill bundled into a bring-your-own container\n\nAWS: `HarnessSkill.Path`\n\nValidation: Required; String; non-empty",
@@ -2665,48 +2661,6 @@
                 "none"
             ],
             "type": "string"
-        },
-        "HarnessVpcEndpointName": {
-            "description": "A VPC endpoint the Harness's runtime sessions use for outbound access. Every value here is an\nendpoint the harness itself calls — there is deliberately no AgentCore data-plane\n(`com.amazonaws.{region}.bedrock-agentcore`) entry: per the AgentCore PrivateLink documentation\nthat endpoint serves *inbound* API connectivity for callers reaching `InvokeHarness` privately,\nwhich is a property of the caller's VPC rather than of the harness's session subnets. It is also a\nper-VPC singleton, so N harnesses in one module could not each create one. Provision it alongside\nwhatever invokes the harness.\n\nUsed with {@link HarnessVpcEndpointsProperty.exclude} to skip endpoints the VPC already has.",
-            "enum": [
-                "bedrockRuntime",
-                "agentCoreGateway",
-                "ecrApi",
-                "ecrDocker",
-                "sts",
-                "logs",
-                "s3"
-            ],
-            "type": "string"
-        },
-        "HarnessVpcEndpointsProperty": {
-            "additionalProperties": false,
-            "description": "MDAA-managed VPC endpoints giving a VPC-mode Harness's runtime sessions a private outbound path\n(no NAT/internet). Presence of this configuration opts in to endpoint creation.\n\nWhich endpoints are created is **derived** from the harness's own configuration rather than listed\nhere: the managed agent loop always calls Bedrock for inference and always pulls a container image,\nand the AgentCore Gateway endpoint is added exactly when the harness declares an\n`agentcore_gateway` tool. That removes the failure mode where a hand-listed selection omits an\nendpoint the harness needs — such a harness deploys cleanly and fails only at first invoke, with\nerrors (a DNS failure, a hang, an image-pull timeout) that do not obviously point at a missing\nendpoint.\n\nUse {@link exclude} for endpoints the VPC already has: only one endpoint with Private DNS is\nallowed per service per VPC, so a duplicate fails to deploy.\n\nNo endpoint policy is exposed as a config knob. The supporting interface endpoints (Bedrock runtime,\nECR API/Docker, STS, Logs) carry no policy: each is traversed *outbound* by the AgentCore service and\nthis harness's execution role across a range of actions, and Private DNS makes an interface endpoint\nVPC-wide, so restricting their actions would deny the harness's own image pulls and break unrelated\nworkloads in the same VPC — access to those is governed by the execution role's identity policy\n(scoped to the resolved model, gateway, and repository ARNs) instead. Two endpoints are scoped rather\nthan left to the default, because each carries only one kind of legitimate traffic: the AgentCore\nGateway interface endpoint carries an action-scoped (`bedrock-agentcore:InvokeGateway`) StarPrincipal\npolicy — its sole traffic is gateway data-plane invokes, management going to the separate\nbedrock-agentcore-control service — and the S3 gateway endpoint carries a resource-scoped policy (see\n{@link s3RouteTableIds}).\n\nUse cases: fully private (no-NAT) harness sessions, VPC-mode gateway tools\n\nAWS: AWS::EC2::VPCEndpoint (Interface and Gateway)\n\nValidation: Optional; requires `networkConfiguration.vpcId` when present",
-            "properties": {
-                "additionalS3BucketArns": {
-                    "description": "Additional S3 resource ARNs to allow read access to through the S3 gateway endpoint, on top of the\nECR image-layer bucket. Supply these when other workloads share the named route tables and would\notherwise lose S3 access through the endpoint. Grants `s3:GetObject` / `s3:ListBucket`; pass bucket\nand/or object ARNs as needed.\n\nUse cases: readmitting co-located workloads' buckets on shared route tables\n\nAWS: Resource element of the S3 gateway endpoint policy\n\nValidation: Optional; String[]; valid S3 ARNs",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "exclude": {
-                    "description": "Endpoints to skip because the VPC already has them (created by LZA or a central networking team,\nfor example). Only one endpoint with Private DNS is allowed per service per VPC, so an\nunexcluded duplicate fails to deploy.\n\nUse cases: coexisting with centrally provisioned VPC endpoints\n\nAWS: AWS::EC2::VPCEndpoint\n\nValidation: Optional; each entry a {@link HarnessVpcEndpointName} value",
-                    "items": {
-                        "$ref": "#/definitions/HarnessVpcEndpointName"
-                    },
-                    "type": "array"
-                },
-                "s3RouteTableIds": {
-                    "description": "Route table IDs to associate the S3 **gateway** endpoint with, enabling container image-layer\ndownloads. Supply these for a no-NAT VPC; omit them to skip the S3 endpoint (image layers then\nneed NAT or an out-of-band S3 path).\n\nA gateway endpoint installs prefix-list routes into route tables rather than placing ENIs in\nsubnets, and imported subnets expose no discoverable route table, so the tables must be named\nexplicitly.\n\nIMPORTANT — blast radius: the endpoint therefore intercepts **all** S3 traffic from every subnet\nassociated with these route tables, not just the harness's. MDAA scopes its endpoint policy to the\nECR image-layer bucket, so other workloads sharing these route tables lose S3 access through this\nendpoint unless their buckets are named in {@link additionalS3BucketArns}. If those workloads need\nbroad S3 access, provision the S3 gateway endpoint out of band instead of enabling it here.\n\nUse cases: no-NAT container image-layer pulls from the ECR layer bucket\n\nAWS: RouteTableIds of the S3 gateway VPC endpoint\n\nValidation: Optional; String[]; non-empty when provided",
-                    "items": {
-                        "type": "string"
-                    },
-                    "minItems": 1,
-                    "type": "array"
-                }
-            },
-            "type": "object"
         },
         "HierarchicalChunking": {
             "additionalProperties": false,
@@ -4630,7 +4584,7 @@
             "additionalProperties": {
                 "$ref": "#/definitions/HarnessToolProperty"
             },
-            "description": "Map of tool name to {@link HarnessToolProperty}. The key becomes `HarnessTool.Name`, the callable\ntool identifier surfaced to the model and the value `allowedTools` entries refer to. Keying by name\nrather than using a list makes duplicate tool names unrepresentable — the service documents\n`HarnessTool.Name` as unique, and a duplicate would otherwise silently collapse two tools onto one\ngateway and drop the other's IAM grant.",
+            "description": "Map of tool name to {@link HarnessToolProperty}. The key becomes `HarnessTool.Name`, the callable\ntool identifier surfaced to the model and the value `allowedTools` entries refer to. Keying by name\nrather than using a list makes duplicate tool names unrepresentable - the service documents\n`HarnessTool.Name` as unique, and a duplicate would otherwise silently collapse two tools onto one\ngateway and drop the other's IAM grant.",
             "type": "object"
         },
         "NamedKnowledgeBaseProps": {
@@ -4678,6 +4632,13 @@
                 ]
             },
             "description": "Named collection of vector store configurations for mapping",
+            "type": "object"
+        },
+        "NamedVpcEndpointSetProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/VpcEndpointSetProps"
+            },
+            "description": "Map of set name to {@link VpcEndpointSetProps}. The key is referenced by name from a consumer's\nconfiguration, and names the set's endpoint security groups.\n\nValidation: keys must be unique ignoring case, since they are woven into security group names, which\nMDAA naming lowercases",
             "type": "object"
         },
         "Node": {
@@ -5096,6 +5057,17 @@
             "required": [
                 "buckets"
             ],
+            "type": "object"
+        },
+        "S3ImageLayerEndpointProps": {
+            "additionalProperties": false,
+            "description": "How the S3 gateway endpoint for container image layers is provided. It has only the `external` state\nof {@link VpcEndpointProps}: a gateway endpoint has no security group to wire, so an existing one\nneeds nothing from this set, and its placement comes from the set's `routeTableIds` rather than from\nsubnets.\n\nUse cases: a VPC where S3 is already reachable over NAT or an existing endpoint\n\nAWS: AWS::EC2::VPCEndpoint (Gateway)\n\nValidation: mutually exclusive with the set's `routeTableIds`",
+            "properties": {
+                "external": {
+                    "description": "Mark S3 as already reachable, so no gateway endpoint is created for image layers. Set this for a VPC\nwith NAT, or one whose S3 gateway endpoint was provisioned elsewhere - a route table carries a\nservice's prefix-list route from only one endpoint, so creating a second fails at deploy.\n\nValidation: Required when the set has no `routeTableIds`; mutually exclusive with them",
+                    "type": "boolean"
+                }
+            },
             "type": "object"
         },
         "SecurityGroupReference": {
@@ -5802,6 +5774,88 @@
                 "vpcId"
             ],
             "type": "object"
+        },
+        "VpcEndpointProps": {
+            "additionalProperties": false,
+            "description": "How one endpoint of a set is provided. Every endpoint a referencing consumer needs is in exactly one\nof three states, and the state is chosen by which fields are set:\n\n- **created** - the property is omitted, or set with neither `securityGroupId` nor `external`\n- **brought** - `securityGroupId` names an endpoint that already exists; it is wired, not created\n- **external** - `external: true`; reached without an endpoint this set manages (over NAT, or through\n  an endpoint whose security group is not named here), so it is neither created nor wired\n\nUse cases: coexisting with landing-zone or central-networking endpoints, keeping some services on the\nVPC's existing egress path\n\nAWS: AWS::EC2::VPCEndpoint (Interface)\n\nValidation: `external` and `securityGroupId` are mutually exclusive; `subnetIds` applies only to a\ncreated endpoint",
+            "properties": {
+                "external": {
+                    "description": "Mark this service as reached without an endpoint this set manages - over NAT or an internet gateway,\nor through an existing endpoint whose security group you do not want named here. Nothing is created\nand nothing is wired for it.\n\nUse cases: keeping some services on the VPC's existing egress path, coexisting with an endpoint\nwhose security group is not shared\n\nValidation: Optional; Boolean; mutually exclusive with `securityGroupId` and `subnetIds`",
+                    "type": "boolean"
+                },
+                "securityGroupId": {
+                    "description": "Security group of an endpoint that already exists in this VPC, provisioned by a landing zone or a\ncentral networking team. The endpoint is not created; each consumer is granted HTTPS egress to this\ngroup and one ingress rule is added to it from the consumer's own client security group.\n\nThe endpoint's own id is not needed - nothing here references it - and its endpoint policy stays as\nits owner wrote it.\n\nUse cases: reusing centrally provisioned interface endpoints\n\nAWS: consumer-side AWS::EC2::SecurityGroupIngress on the existing endpoint's security group\n\nValidation: Optional; String; mutually exclusive with `external`",
+                    "type": "string"
+                },
+                "subnetIds": {
+                    "description": "Subnets for this endpoint's ENIs, overriding the set's `subnetIds`. Use it for a service available\nin fewer availability zones than the rest, or to keep one endpoint's ENI cost down.\n\nUse cases: per-service endpoint placement, endpoint ENI cost control\n\nAWS: SubnetIds\n\nValidation: Optional; String[]; at most one subnet per availability zone; only valid on a created\nendpoint",
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "VpcEndpointSetProps": {
+            "additionalProperties": false,
+            "description": "One VPC's endpoint set: which VPC it serves, where created endpoints go, and how each endpoint the\nreferencing consumers need is provided. A consumer references a set by name from its own\nconfiguration, and the endpoints belong to the VPC rather than to any one consumer - AWS allows a\nsingle Private DNS interface endpoint per service per VPC, so one set owns them and every consumer\nreferencing it shares them.\n\nWhich endpoints exist is derived from the consumers, never added here: a set can only say how each\nderived endpoint is reached. Omitting an endpoint property means it is created; see\n{@link VpcEndpointProps} for the other two states.\n\nEndpoint policies are derived too, and are not configurable: the AgentCore Gateway endpoint is scoped\nto gateway invocation and the S3 gateway endpoint to the ECR image-layer bucket, while the\nmulti-action supporting services keep the AWS default - Private DNS makes an interface endpoint\nVPC-wide, so restricting those would deny unrelated workloads in the same VPC. That default permits\nevery action on those services in any account, so a set is a private network path and not an\nauthorization boundary: what a session may reach through it stays governed by its execution role.\n\nUse cases: private (no-NAT) AgentCore Harness sessions, reusing centrally provisioned endpoints,\nkeeping selected services on the VPC's existing egress path\n\nValidation: `vpcId` and `subnetIds` required; exactly one of `routeTableIds` and\n`s3ImageLayers.external`; each set must name a distinct VPC and be referenced by at least one consumer",
+            "properties": {
+                "agentCoreGateway": {
+                    "$ref": "#/definitions/VpcEndpointProps",
+                    "description": "AgentCore Gateway - the gateway's MCP host, a distinct service from the AgentCore data plane. Needed\nonly by a consumer declaring an `agentCoreGateway` tool; without it the tool load fails with a DNS\n\"Name or service not known\" error.\n\nValidation: Optional; VpcEndpointProps; only valid when a referencing consumer declares a gateway\ntool; omit to have it created"
+                },
+                "bedrockRuntime": {
+                    "$ref": "#/definitions/VpcEndpointProps",
+                    "description": "Amazon Bedrock runtime, for model inference over the Converse API. Every AgentCore Harness needs it;\nwithout a path it reaches READY and every invoke hangs.\n\nValidation: Optional; VpcEndpointProps; omit to have it created"
+                },
+                "ecrApi": {
+                    "$ref": "#/definitions/VpcEndpointProps",
+                    "description": "Amazon ECR API, for the registry calls a session's container image pull makes.\n\nValidation: Optional; VpcEndpointProps; omit to have it created"
+                },
+                "ecrDocker": {
+                    "$ref": "#/definitions/VpcEndpointProps",
+                    "description": "Amazon ECR Docker Registry, for the registry protocol of the image pull.\n\nValidation: Optional; VpcEndpointProps; omit to have it created"
+                },
+                "logs": {
+                    "$ref": "#/definitions/VpcEndpointProps",
+                    "description": "Amazon CloudWatch Logs, for log delivery from a session.\n\nValidation: Optional; VpcEndpointProps; omit to have it created"
+                },
+                "routeTableIds": {
+                    "description": "Route tables that receive the S3 gateway endpoint's prefix-list route, enabling container image-layer\ndownloads: image layers are served from the ECR layer bucket over S3, so the ECR interface endpoints\nalone cannot complete a pull in a VPC with no NAT.\n\nIMPORTANT - blast radius: the endpoint intercepts **all** S3 traffic from every subnet associated\nwith these route tables, and its derived policy allows only the ECR image-layer read. If other\nworkloads share these route tables and need broader S3 access, provision the S3 gateway endpoint out\nof band and set `s3ImageLayers.external` instead.\n\nUse cases: no-NAT container image-layer pulls\n\nAWS: RouteTableIds\n\nValidation: Required unless `s3ImageLayers.external` is set, and mutually exclusive with it; String[]",
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "s3ImageLayers": {
+                    "$ref": "#/definitions/S3ImageLayerEndpointProps",
+                    "description": "Amazon S3, reached through a **gateway** endpoint, for container image layers. Created from the set's\n`routeTableIds`; set `external` here when S3 is already reachable.\n\nValidation: Optional; S3ImageLayerEndpointProps"
+                },
+                "sts": {
+                    "$ref": "#/definitions/VpcEndpointProps",
+                    "description": "AWS STS, for credential vending inside a session.\n\nValidation: Optional; VpcEndpointProps; omit to have it created"
+                },
+                "subnetIds": {
+                    "description": "Subnets for the ENIs of every interface endpoint created by this set, unless an endpoint overrides\nit. An interface endpoint takes at most one subnet per availability zone, and is reachable from any\nzone - so covering fewer zones costs less in endpoint ENI hours and more in cross-zone data.\n\nUse cases: multi-AZ endpoint placement, endpoint ENI cost control\n\nAWS: SubnetIds\n\nValidation: Required; String[]; at least one, at most one per availability zone",
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "vpcId": {
+                    "description": "VPC the endpoints are created in, and in which each referencing consumer's endpoint client security\ngroup is created.\n\nUse cases: private workload connectivity in a specific VPC\n\nAWS: VpcId\n\nValidation: Required; String; each set must name a distinct VPC",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subnetIds",
+                "vpcId"
+            ],
+            "type": "object"
         }
     },
     "properties": {
@@ -5834,7 +5888,7 @@
         },
         "harnesses": {
             "$ref": "#/definitions/NamedHarnessProps",
-            "description": "Bedrock AgentCore Harness configurations — a declarative agent loop (model + system prompt +\ntools) — keyed by harness name. A harness's `guardrail.id` and\n`tools[].agentCoreGateway.gatewayArn` may use a `config:<name>` reference into the sibling\n`guardrails` / `gateways` maps, resolved to the live resource.\n\nUse cases: declarative tool-using/RAG agents\n\nAWS: AWS::BedrockAgentCore::Harness\n\nValidation: Optional; NamedHarnessProps (map of harness name to config)"
+            "description": "Bedrock AgentCore Harness configurations - a declarative agent loop (model + system prompt +\ntools) - keyed by harness name. A harness's `guardrail.id` and\n`tools[].agentCoreGateway.gatewayArn` may use a `config:<name>` reference into the sibling\n`guardrails` / `gateways` maps, resolved to the live resource.\n\nUse cases: declarative tool-using/RAG agents\n\nAWS: AWS::BedrockAgentCore::Harness\n\nValidation: Optional; NamedHarnessProps (map of harness name to config)"
         },
         "kmsKeyArn": {
             "description": "Existing KMS key ARN for encrypting all Bedrock resources in this module — agents, knowledge\nbases, guardrails, the shared Lambda pool, and AgentCore gateways all use this single key.\nIf omitted, one customer-managed key is created automatically and shared across them.\n\nWhen an existing key is provided, its key policy must already grant the required service and\nexecution-role use (the module cannot mutate an imported key's policy) — including the AgentCore\ngateway grants when gateways are configured.\n\nUse cases: Customer-controlled encryption, security compliance, key reuse\n\nAWS: KMS key for Bedrock resource encryption\n\nValidation: Optional; String; must be valid KMS key ARN",
@@ -5863,6 +5917,10 @@
         "vectorStores": {
             "$ref": "#/definitions/NamedVectorStoreProps",
             "description": "Vector store configurations for knowledge bases (OpenSearch Serverless or Aurora).\nProvides vector database storage for semantic search and retrieval-augmented generation.\n\nUse cases: Semantic search, RAG applications, knowledge retrieval, embedding storage\n\nAWS: OpenSearch Serverless or Aurora vector stores for Bedrock knowledge bases\n\nValidation: Optional; NamedVectorStoreProps (map of store name to config)"
+        },
+        "vpcEndpoints": {
+            "$ref": "#/definitions/NamedVpcEndpointSetProps",
+            "description": "VPC endpoint sets, keyed by set name, giving a harness's sessions a private outbound path\n(no NAT/internet). A harness references one by name from its `networkConfiguration.vpcEndpoints`;\nevery harness referencing a set shares its endpoints.\n\nWhich endpoints exist is derived from the referencing harnesses, so a set only states which VPC it\nserves, where created endpoints go, and how each derived endpoint is reached - created here, an\nexisting one to wire to, or reached without an endpoint the set manages. Endpoint policies are\nderived and not configurable.\n\nUse cases: private (no-NAT) harness sessions, reusing centrally provisioned endpoints\n\nAWS: AWS::EC2::VPCEndpoint (Interface and Gateway)\n\nValidation: Optional; NamedVpcEndpointSetProps; each set must name a distinct VPC and be referenced\nby at least one harness"
         }
     },
     "required": [

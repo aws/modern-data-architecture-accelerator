@@ -11,7 +11,7 @@ describe('buildDataProtectionPolicy', () => {
 
   // The floor is pinned to literal names on purpose. Every other assertion in this file derives
   // its expectation from BUILTIN_DATA_IDENTIFIERS, so it would still pass if an identifier were
-  // deleted from the constant — silently unmasking that category in agent logs. This test is the
+  // deleted from the constant - silently unmasking that category in agent logs. This test is the
   // one that fails on such a change, so the documented "mandatory compliance floor ... cannot be
   // reduced" guarantee is actually enforced. Additions belong at the end of the list.
   it('pins the built-in PII floor so it cannot be silently reduced', () => {

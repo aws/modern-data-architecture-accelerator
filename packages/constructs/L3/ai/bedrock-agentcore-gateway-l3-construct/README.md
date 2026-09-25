@@ -55,6 +55,7 @@ const gateway = new BedrockAgentcoreGatewayL3Construct(this, 'MyGateway', {
 ## Configuration Options
 
 ### Gateway Properties
+
 - `gatewayName`: Name of the gateway (required). MDAA-named and sanitized to the gateway pattern `^([0-9a-zA-Z][-]?){1,48}$` (no underscores)
 - `description`: Optional description. 1-200 characters (no character-set restriction)
 - `authorizerConfiguration`: Inbound authorization (optional, shared with the AgentCore Runtime module). Provide `customJwt`, or omit it for AWS IAM (see Inbound Authorization). `NONE` and `AUTHENTICATE_ONLY` are not exposed
@@ -67,6 +68,7 @@ const gateway = new BedrockAgentcoreGatewayL3Construct(this, 'MyGateway', {
 - `logDelivery`: Gateway audit log delivery (optional; omit for the compliant default). Controls the CMK-encrypted CloudWatch Logs vended delivery pipeline — see [Audit Logging](#audit-logging)
 
 ### JWT Authorizer
+
 - `discoveryUrl`: OIDC discovery URL (required; must end with `/.well-known/openid-configuration`)
 - `allowedAudience`: Array of allowed audience values (optional)
 - `allowedClients`: Array of allowed client IDs (optional)
@@ -75,7 +77,7 @@ The `customJwt` shape is shared with the AgentCore Runtime module (`@aws-mdaa/ag
 
 ### MCP Protocol Configuration
 
-Currently, MCP is the only protocol the gateway service supports, so `protocolType` is always `MCP` (the construct sets it; it is not user-configurable). `supportedVersions` selects which MCP protocol *versions* the gateway accepts — these are MCP versions, not alternative protocols.
+Currently, MCP is the only protocol the gateway service supports, so `protocolType` is always `MCP` (the construct sets it; it is not user-configurable). `supportedVersions` selects which MCP protocol _versions_ the gateway accepts - these are MCP versions, not alternative protocols.
 
 - `instructions`: System instructions surfaced to agents via MCP
 - `searchType`: `SEMANTIC` (enables natural-language tool discovery); omit to disable (the service has no `NONE` value)
@@ -121,6 +123,7 @@ Each target's `targetConfiguration` sets exactly one tool source. The configurat
 Targets take no KMS key of their own: encryption at rest is gateway-scoped (the gateway CMK encrypts the gateway and its target configurations), and `AWS::BedrockAgentCore::GatewayTarget` exposes no KMS parameter. Target types that need encryption (e.g. an OAuth credential-provider secret, or a CMK-encrypted S3 tool schema) rely on the key of that other resource (the secret / the bucket), not the gateway CMK.
 
 #### Target Properties
+
 - `description`: Optional target description (1-200 characters; validated at synth)
 - `targetConfiguration`: The tool source — exactly one target type. Currently `lambda`:
   - `targetConfiguration.lambda.lambdaArn`: ARN of the tool Lambda; the gateway role is granted scoped `lambda:InvokeFunction` on exactly this ARN
@@ -134,9 +137,9 @@ Targets take no KMS key of their own: encryption at rest is gateway-scoped (the 
 
 AgentCore Gateway prefixes every tool with the name of the target it is served through, so that tools from different targets never collide in the gateway's unified catalog. The tool name visible over MCP follows the pattern `${target_name}___${tool_name}` (three underscores) — e.g. a target providing `getWeather` surfaces as `<target-name>___getWeather`. See [Understand how AgentCore Gateway tools are named](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-tool-naming.html).
 
-**MDAA-named target exception.** Like every other MDAA resource (and consistent with the AgentCore Runtime construct), the target name is MDAA-named: the map key is prefixed with `org-env-domain-module` and sanitized to the service's name pattern (`^([0-9a-zA-Z][-]?){1,100}$`). This makes the target name — and therefore the tool-name prefix — deployment-specific and long (e.g. `acme-prod-datalake-tools-weather___getWeather`). This is intentional: it keeps target names governed and unique per environment, and because each environment deploys its own gateway (its own MCP endpoint) and target names are unique only *within a gateway*, tool catalogs never span gateways — the full prefix introduces no cross-gateway collision.
+**MDAA-named target exception.** Like every other MDAA resource (and consistent with the AgentCore Runtime construct), the target name is MDAA-named: the map key is prefixed with `org-env-domain-module` and sanitized to the service's name pattern (`^([0-9a-zA-Z][-]?){1,100}$`). This makes the target name - and therefore the tool-name prefix - deployment-specific and long (e.g. `acme-prod-datalake-tools-weather___getWeather`). This is intentional: it keeps target names governed and unique per environment, and because each environment deploys its own gateway (its own MCP endpoint) and target names are unique only _within a gateway_, tool catalogs never span gateways - the full prefix introduces no cross-gateway collision.
 
-**Impact on your Lambda: none beyond what AWS already requires.** A Lambda target handler must strip the target-name prefix from the incoming tool name regardless of how the target is named — this is an AWS requirement for *all* Lambda targets, not an MDAA one. AWS's published handler boilerplate strips by splitting on the `___` delimiter and keeping the tail, so it is independent of the prefix's length or content (the MDAA prefix needs no special handling). The tool name is delivered on the Lambda `context` object as `bedrockAgentCoreToolName` — see [Lambda function input format](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-add-target-lambda.html#gateway-building-lambda-input):
+**Impact on your Lambda: none beyond what AWS already requires.** A Lambda target handler must strip the target-name prefix from the incoming tool name regardless of how the target is named - this is an AWS requirement for _all_ Lambda targets, not an MDAA one. AWS's published handler boilerplate strips by splitting on the `___` delimiter and keeping the tail, so it is independent of the prefix's length or content (the MDAA prefix needs no special handling). The tool name is delivered on the Lambda `context` object as `bedrockAgentCoreToolName` - see [Lambda function input format](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-add-target-lambda.html#gateway-building-lambda-input):
 
 ```python
 def lambda_handler(event, context):
@@ -187,9 +190,11 @@ targets:
 ```
 
 ### KMS Encryption
+
 - `kmsKey`: **Required.** The customer-managed CMK is resolved and provided by the caller (the orchestrating module/app), mirroring the Bedrock Knowledge Base construct — the gateway is a pure key consumer: it does not create, import, or mutate the key, so it is never left on an AWS-managed key. The gateway's `KmsKeyArn` is always populated from the provided key.
 
 The key's policy must grant (added by whoever provisions the key, not by this construct):
+
 - The gateway execution role: `kms:DescribeKey`, `kms:Decrypt`, `kms:GenerateDataKey` (scoped via `kms:ViaService` to `bedrock-agentcore.{region}.amazonaws.com`), plus `kms:CreateGrant` constrained to an `EncryptionContextSubset` grant whose operations are limited to `Decrypt`/`GenerateDataKey`. These mirror the [AWS gateway encryption prerequisites](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-encryption.html).
 - The two CloudWatch Logs grants required for CMK-encrypted vended log delivery (see [Audit Logging](#audit-logging)).
 
@@ -227,7 +232,7 @@ When `protocolConfiguration.searchType` is set to `SEMANTIC`, the gateway expose
 
 ### Deploy-time IAM prerequisite (important)
 
-Creating a gateway with `searchType: SEMANTIC` requires the **deploying principal** to hold `bedrock-agentcore:SynchronizeGatewayTargets`. AWS requires this on the *creating* identity, not the gateway execution role (see the [AWS gateway-create docs](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-create.html): "For an identity to create a gateway with semantic search, ensure that it has permissions to use the `bedrock-agentcore:SynchronizeGatewayTargets` IAM action").
+Creating a gateway with `searchType: SEMANTIC` requires the **deploying principal** to hold `bedrock-agentcore:SynchronizeGatewayTargets`. AWS requires this on the _creating_ identity, not the gateway execution role (see the [AWS gateway-create docs](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-create.html): "For an identity to create a gateway with semantic search, ensure that it has permissions to use the `bedrock-agentcore:SynchronizeGatewayTargets` IAM action").
 
 It is a control-plane permission and is intentionally **NOT** granted to the gateway execution role by this construct — synchronization is done by the operator/deployer, not the role the gateway service assumes at runtime (granting it to the execution role would be a least-privilege violation and wouldn't help the create call anyway, since the deployer's session predates any stack-added policy). If missing, the `CreateGateway` operation fails with an access-denied error and the stack rolls back. (A gateway without semantic search — the default — does not need it.)
 
@@ -235,7 +240,7 @@ See **Deploy-time prerequisites** under IAM Permissions for the full list of per
 
 ## Audit Logging
 
-Gateway invocation/audit logs are **captured and CMK-encrypted by default**. Unlike the AgentCore Runtime — which auto-creates a service log group that the runtime module then discovers and CMK-encrypts — the AgentCore service **does not configure any log destination for a gateway by default**. Per the AWS observability documentation ([Add observability to your AgentCore resources](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-configure.html)): *"for memory, gateway, and built-in tool resources, AgentCore doesn't configure log destinations for you automatically."* Because there is no service-created log group to discover, the runtime module's discover-and-encrypt approach does not apply here; this construct therefore **actively provisions** a vended log-delivery pipeline (via the shared `createMdaaVendedLogDelivery` helper in `@aws-mdaa/cloudwatch-constructs`, also used by the Bedrock Knowledge Base module): a CMK-encrypted destination log group plus a delivery source on the gateway ARN → a delivery destination → a delivery.
+Gateway invocation/audit logs are **captured and CMK-encrypted by default**. Unlike the AgentCore Runtime - which auto-creates a service log group that the runtime module then discovers and CMK-encrypts - the AgentCore service **does not configure any log destination for a gateway by default**. Per the AWS observability documentation ([Add observability to your AgentCore resources](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-configure.html)): _"for memory, gateway, and built-in tool resources, AgentCore doesn't configure log destinations for you automatically."_ Because there is no service-created log group to discover, the runtime module's discover-and-encrypt approach does not apply here; this construct therefore **actively provisions** a vended log-delivery pipeline (via the shared `createMdaaVendedLogDelivery` helper in `@aws-mdaa/cloudwatch-constructs`, also used by the Bedrock Knowledge Base module): a CMK-encrypted destination log group plus a delivery source on the gateway ARN -> a delivery destination -> a delivery.
 
 By default the construct creates:
 
@@ -244,7 +249,7 @@ By default the construct creates:
 
 Configure it via the optional `logDelivery` property:
 
-- `logDelivery.logRetentionDays`: retention (in days) for the destination log group. Must be a valid CloudWatch Logs `RetentionDays` value (e.g. `7`, `30`, `90`, `365`), or `9999` (`RetentionDays.INFINITE`) to lock never-expire into config explicitly rather than relying on omission. Omit it for indefinite retention (the default). Set a finite value for cost control or a bounded compliance window.
+- `logDelivery.logRetentionDays`: retention (in days) for the destination log group. Must be a valid CloudWatch Logs `RetentionDays` value (e.g. `7`, `30`, `90`, `365`), or `9999` (`RetentionDays.INFINITE`) for explicit never-expire. Omit it for indefinite retention (the default). Set a finite value for cost control or a bounded compliance window.
 - `logDelivery.enabled`: set to `false` to opt out of the pipeline entirely (not recommended — gateway audit logs are then not captured). Defaults to `true`.
 
 ```yaml
@@ -269,12 +274,14 @@ Without both grants, the CMK-encrypted log group / delivery fails at deploy with
 ## IAM Permissions
 
 MDAA attaches to the gateway execution role only the permissions the gateway's runtime identity actually needs:
+
 - `lambda:InvokeFunction` scoped to each configured interceptor Lambda ARN (only when interceptors are configured)
 - KMS use on the caller-provided CMK (see KMS Encryption)
 
 With no interceptors, the execution role carries no MDAA-attached identity policy at all (only its trust policy plus the KMS key-policy grant). These are the only permissions MDAA attaches; the module owns them so the gateway works out of the box.
 
 Deliberately **not** granted (least privilege):
+
 - **No CloudWatch Logs permissions** on the execution role. AgentCore gateways do not write logs via the execution role — they use CloudWatch vended log delivery (`delivery.logs.amazonaws.com`), and the AWS gateway service-role prerequisites grant no `logs:*` actions. The construct creates a CMK-encrypted destination log group and vended delivery pipeline (see **Audit Logging**); the CWL / vended-delivery KMS grants live on the key's provisioner and target the **service principals** (`logs.{region}.amazonaws.com` and `delivery.logs.amazonaws.com`), not the execution role — the execution role receives no `logs:*` and no log-group permissions.
 - **No `bedrock-agentcore:SynchronizeGatewayTargets`** — a deploy-time control-plane permission for the deploying principal (see Deploy-time prerequisites below), not the execution role.
 - **No config field for arbitrary extra permissions** (see Role Patterns) — this keeps a role's full grant surface auditable in one place rather than split across the roles module and the gateway config.
@@ -298,6 +305,7 @@ In both cases the `lambda:InvokeFunction` interceptor permission is attached via
 ## SSM Parameters
 
 The construct stores the following information in SSM Parameter Store (resource type `gateway`, resource id the gateway name):
+
 - Gateway ARN: `.../gateway/{gateway-name}/arn`
 - Gateway ID: `.../gateway/{gateway-name}/id`
 - Gateway MCP URL: `.../gateway/{gateway-name}/url`

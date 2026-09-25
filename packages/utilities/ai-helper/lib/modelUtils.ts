@@ -65,7 +65,7 @@ export function resolveModelArn(modelIdentifier: string, partition: string, regi
 /**
  * Given a resolved system inference-profile ARN, returns the foundation-model ARN(s) that must ALSO be
  * granted `bedrock:InvokeModel*` for the profile to work. Per the Bedrock inference-profile IAM docs,
- * granting invoke on the profile ARN alone yields AccessDeniedException — the caller must also hold
+ * granting invoke on the profile ARN alone yields AccessDeniedException - the caller must also hold
  * invoke on the underlying foundation model in each destination region.
  *
  * The destination regions are not knowable from the id, so the region segment is wildcarded (a single
@@ -74,7 +74,7 @@ export function resolveModelArn(modelIdentifier: string, partition: string, regi
  *
  * Returns [] for anything that is not a system `inference-profile/` ARN. On-demand foundation-model and
  * custom-model ARNs genuinely need no paired grant. An `application-inference-profile/` ARN DOES need
- * one, but its id is opaque so the underlying foundation model cannot be derived here — callers must
+ * one, but its id is opaque so the underlying foundation model cannot be derived here - callers must
  * handle that case explicitly rather than reading [] as "no paired grant required".
  */
 export function inferenceProfileFoundationModelArns(modelArn: string): string[] {

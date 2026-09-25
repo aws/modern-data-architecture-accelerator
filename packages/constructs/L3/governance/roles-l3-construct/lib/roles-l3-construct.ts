@@ -660,14 +660,14 @@ export class RolesL3Construct extends MdaaL3Construct {
 
   /**
    * Returns true only if the supplied trust conditions actually scope the OIDC trust to the given
-   * provider — i.e. a positively-matching condition operator contains a key prefixed with
+   * provider - i.e. a positively-matching condition operator contains a key prefixed with
    * `<providerId>:` (typically `:sub`, or `:aud` for Cognito identity pools) whose value is not a bare
    * `*` wildcard. This deliberately rejects:
    *  - empty conditions (`{}`, `{ StringLike: {} }`),
    *  - conditions that only constrain unrelated keys (e.g. `aws:RequestTag/*`),
    *  - a provider claim matched against `*` (e.g. `{ StringLike: { 'gitlab.com:sub': '*' } }`), and
    *  - operators that do not positively pin the claim: negation (`StringNotEquals`/`StringNotLike`,
-   *    which mean "any identity except…"), set operators satisfied when the claim is absent
+   *    which mean "any identity except..."), set operators satisfied when the claim is absent
    *    (`ForAllValues:*`), `*IfExists` variants (satisfied when the claim is absent), and `Null`.
    * all of which leave the OIDC principal effectively unscoped. It does not attempt to judge how narrow
    * a non-`*` value is: partial wildcards are legitimately used by operators and cannot be reliably
@@ -693,7 +693,7 @@ export class RolesL3Construct extends MdaaL3Construct {
    * A condition operator positively pins the claim only if it asserts the claim equals/matches a value
    * that is present in the request. Negation operators (`StringNotEquals`/`StringNotLike`) invert the
    * meaning, `ForAllValues:*` is vacuously satisfied when the claim is absent, `*IfExists` is satisfied
-   * when the claim is absent, and `Null` tests presence rather than value — none of these constrain
+   * when the claim is absent, and `Null` tests presence rather than value - none of these constrain
    * *which* identity may assume the role, so they do not count as scoping the OIDC trust.
    */
   private static isPositiveMatchOperator(operator: string): boolean {

@@ -231,7 +231,7 @@ export interface BedrockAgentcoreRuntimeConfigContents extends MdaaBaseConfigCon
   /**
    * CloudWatch Logs retention period for the runtime log group, in days. Accepts any CloudWatch Logs
    * `RetentionDays` value; `9999` (`RetentionDays.INFINITE`) means never-expire and can be set
-   * explicitly to lock indefinite retention into config. Omitting the field is equivalent to `9999` —
+   * explicitly to lock indefinite retention into config. Omitting the field is equivalent to `9999` -
    * no retention policy is applied, leaving the service-created log groups at CloudWatch's
    * never-expire default (logs are kept, and billed, forever) unless a finite value is set.
    *

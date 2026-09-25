@@ -45,9 +45,15 @@ import {
   HarnessConfigProps,
   ResolvedGatewayArnMap,
   ResolvedGuardrailRefMap,
-  validateHarnessVpcEndpointCollisions,
+  ResolvedVpcEndpointAccess,
 } from '@aws-mdaa/bedrock-agentcore-harness-l3-construct';
+import { VpcEndpointL3Construct } from '@aws-mdaa/vpc-endpoint-l3-construct';
 import { NamedOpensearchServerlessProps, validateAndGroupVpcEndpoints } from './vpc-endpoint-validator';
+import {
+  NamedVpcEndpointSetProps,
+  reconcileVpcEndpointSets,
+  vpcEndpointAccessForHarness,
+} from './supporting-vpc-endpoints';
 
 /**
  * Lambda function and layer configuration for Bedrock agent action groups.
@@ -264,8 +270,8 @@ export interface BedrockBuilderL3ConstructProps extends MdaaL3ConstructProps {
    **/
   readonly gatewayTargets?: NamedGatewayTargetProps;
   /**
-   * Bedrock AgentCore Harness configurations — a declarative agent loop (model + system prompt +
-   * tools) — keyed by harness name. A harness's `guardrail.id` and
+   * Bedrock AgentCore Harness configurations - a declarative agent loop (model + system prompt +
+   * tools) - keyed by harness name. A harness's `guardrail.id` and
    * `tools[].agentCoreGateway.gatewayArn` may use a `config:<name>` reference into the sibling
    * `guardrails` / `gateways` maps, resolved to the live resource.
    *
@@ -276,6 +282,24 @@ export interface BedrockBuilderL3ConstructProps extends MdaaL3ConstructProps {
    * Validation: Optional; NamedHarnessProps (map of harness name to config)
    **/
   readonly harnesses?: NamedHarnessProps;
+  /**
+   * VPC endpoint sets, keyed by set name, giving a harness's sessions a private outbound path
+   * (no NAT/internet). A harness references one by name from its `networkConfiguration.vpcEndpoints`;
+   * every harness referencing a set shares its endpoints.
+   *
+   * Which endpoints exist is derived from the referencing harnesses, so a set only states which VPC it
+   * serves, where created endpoints go, and how each derived endpoint is reached - created here, an
+   * existing one to wire to, or reached without an endpoint the set manages. Endpoint policies are
+   * derived and not configurable.
+   *
+   * Use cases: private (no-NAT) harness sessions, reusing centrally provisioned endpoints
+   *
+   * AWS: AWS::EC2::VPCEndpoint (Interface and Gateway)
+   *
+   * Validation: Optional; NamedVpcEndpointSetProps; each set must name a distinct VPC and be referenced
+   * by at least one harness
+   **/
+  readonly vpcEndpoints?: NamedVpcEndpointSetProps;
 }
 
 /**
@@ -424,7 +448,9 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
    * injecting the shared module CMK (the harness is a pure key consumer for its log-group
    * encryption) and passing through the resolved gateway ARN map (for
    * `tools[].agentCoreGateway.gatewayArn: config:<name>` references) and the module's guardrails
-   * (for `guardrail.id: config:<name>` references). No-op when no harnesses are configured.
+   * (for `guardrail.id: config:<name>` references). Creates no harness when none are configured, but
+   * still reconciles the declared endpoint sets, since a set with no harness to reference it is an
+   * error rather than a no-op.
    *
    * The shared CMK already grants CloudWatch Logs service use on its key policy (see
    * {@link getOrCreateKmsKey}), which is all the harness's log-protection custom resource needs.
@@ -436,36 +462,13 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
     guardrails: { [name: string]: bedrock.CfnGuardrail },
   ): void {
     const harnessEntries = Object.entries(props.harnesses || {});
+    // Reconciled before the no-harness return, because reconciliation is what rejects a set nothing
+    // references - and a config declaring sets with no harnesses at all is the widest form of that.
+    // With no sets declared it reconciles nothing and creates nothing, so the ordering costs nothing.
+    const endpointsBySet = this.createVpcEndpointSets(props);
     if (harnessEntries.length === 0) {
       return;
     }
-
-    // Fail fast on cross-harness VPC-endpoint collisions before instantiating: two harnesses that
-    // configure endpoints in the same VPC either duplicate an endpoint (deploy fails) or diverge on
-    // security groups (first-invoke hang). The per-harness construct cannot see its siblings, so this
-    // module-level check is the only place the conflict is visible. Harnesses without a resolvable
-    // vpcId+vpcEndpoints create no endpoints (or fail their own vpcId check at instantiation), so they
-    // are not part of the collision set.
-    validateHarnessVpcEndpointCollisions(
-      // flatMap (not filter().map()): destructuring narrows vpcId/vpcEndpoints to non-optional inside
-      // the guarded branch, so the collision entry needs no non-null assertions. A plain boolean
-      // .filter() would not carry that narrowing into a subsequent .map().
-      harnessEntries.flatMap(([harnessName, config]) => {
-        const { vpcId, vpcEndpoints, securityGroups } = config.networkConfiguration;
-        if (!vpcEndpoints || !vpcId) {
-          return [];
-        }
-        return [
-          {
-            harnessName,
-            vpcId,
-            securityGroups,
-            config: vpcEndpoints,
-            hasGatewayTool: Object.values(config.tools ?? {}).some(tool => tool.agentCoreGateway != null),
-          },
-        ];
-      }),
-    );
 
     const resolvedGuardrails = this.resolveHarnessGuardrailRefs(guardrails);
 
@@ -477,8 +480,49 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
         kmsKey,
         guardrails: resolvedGuardrails,
         gateways: gatewayArns,
+        vpcEndpointAccess: vpcEndpointAccessForHarness(harnessConfig, endpointsBySet, {
+          partition: this.partition,
+          region: this.region,
+        }),
       });
     });
+  }
+
+  /**
+   * Creates the endpoints of each declared VPC endpoint set, and returns each set's endpoint security
+   * groups for the harnesses referencing it to wire themselves to.
+   *
+   * The module owns the endpoints rather than each harness, because an interface endpoint with Private
+   * DNS is a per-service singleton in its VPC: harnesses each creating their own collide as soon as two
+   * share a VPC, and the workaround - hand-listing which harness owns which endpoint - put the conflict
+   * in the customer's config. Reconciling one set per VPC against the harnesses' derived requirements
+   * makes the duplicate unrepresentable, and leaves the endpoints as ordinary members of this stack, so
+   * removing the last harness that referenced a set removes its endpoints too.
+   *
+   * @returns the VPC and per-service endpoint security groups of each set, keyed by set name
+   */
+  private createVpcEndpointSets(props: BedrockBuilderL3ConstructProps): Map<string, ResolvedVpcEndpointAccess> {
+    const reconciled = reconcileVpcEndpointSets(props.vpcEndpoints ?? {}, props.harnesses ?? {}, {
+      partition: this.partition,
+      region: this.region,
+    });
+    return new Map(
+      reconciled.map(set => {
+        // A set whose every endpoint is brought or external creates nothing, so the endpoint construct -
+        // which rejects an empty configuration - is skipped rather than handed nothing to build.
+        const created =
+          set.interfaces.length + set.gateways.length > 0
+            ? new VpcEndpointL3Construct(this, `vpc-endpoints-${set.setName}`, {
+                ...props,
+                vpcId: set.vpcId,
+                nameScope: set.setName,
+                interfaces: set.interfaces,
+                gateways: set.gateways,
+              }).interfaceEndpointSecurityGroupIds
+            : {};
+        return [set.setName, { vpcId: set.vpcId, securityGroupIds: { ...created, ...set.broughtSecurityGroupIds } }];
+      }),
+    );
   }
 
   /**

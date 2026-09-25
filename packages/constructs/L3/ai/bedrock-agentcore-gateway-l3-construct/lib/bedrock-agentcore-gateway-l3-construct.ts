@@ -172,7 +172,7 @@ export interface GatewayLogDeliveryProperty {
    * AWS: AWS::Logs::LogGroup RetentionInDays
    *
    * Validation: Optional; must be a valid CloudWatch Logs RetentionDays value (9999 for never-expire)
-   * — validated at synth (an unsupported value throws from the constructor rather than failing at deploy)
+   * - validated at synth (an unsupported value throws from the constructor rather than failing at deploy)
    * @default 9999
    **/
   readonly logRetentionDays?: number;
@@ -363,7 +363,7 @@ export class BedrockAgentcoreGatewayL3Construct extends MdaaL3Construct {
     this.validateInterceptorLambdaSources(props.interceptors);
     // Fail fast at synth on an invalid log-retention value; CloudWatch Logs RetentionDays accepts
     // only a fixed set of values, and CloudFormation would otherwise reject it at deploy. `9999`
-    // (RetentionDays.INFINITE) is accepted as an explicit never-expire choice — the CDK log group
+    // (RetentionDays.INFINITE) is accepted as an explicit never-expire choice - the CDK log group
     // renders it as no RetentionInDays, the same never-expire result as omitting the field.
     validateLogRetentionDays(props.logDelivery?.logRetentionDays, 'logDelivery.logRetentionDays');
 

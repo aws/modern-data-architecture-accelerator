@@ -1,4 +1,4 @@
-# Minimal Bedrock Builder configuration for an AgentCore Harness — a declarative agent loop
+# Minimal Bedrock Builder configuration for an AgentCore Harness - a declarative agent loop
 # (foundation model + system prompt). Harnesses are configured via the top-level `harnesses` map,
 # independently of `agents`.
 #
@@ -20,7 +20,7 @@ harnesses:
     modelId: 'anthropic.claude-3-sonnet-20240229-v1:0'
     # Required: system prompt defining the agent's behavior.
     systemPrompt: 'You are a helpful assistant.'
-    # Required: MDAA enforces VPC network isolation for the harness runtime (NetworkMode: VPC) — there
+    # Required: MDAA enforces VPC network isolation for the harness runtime (NetworkMode: VPC) - there
     # is no public-network option. Supply the security groups and subnets (1-16 each) that run the
     # harness's runtime sessions in your VPC.
     networkConfiguration:

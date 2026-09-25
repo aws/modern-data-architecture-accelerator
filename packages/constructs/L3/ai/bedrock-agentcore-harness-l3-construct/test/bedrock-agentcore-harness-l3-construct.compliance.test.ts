@@ -15,7 +15,7 @@ const NET = { securityGroups: ['sg-test'], subnets: ['subnet-test'] };
 
 describe('BedrockAgentcoreHarnessL3Construct Compliance Tests', () => {
   // Every other scenario uses a plain foundation-model id, so none of them emits the
-  // BedrockInferenceProfileModelInvocation statement — meaning its region-wildcarded destination
+  // BedrockInferenceProfileModelInvocation statement - meaning its region-wildcarded destination
   // foundation-model ARN (an AwsSolutions-IAM5 finding) was never evaluated by cdk-nag here. This
   // scenario exists so that wildcard is actually exercised and its suppression stays justified.
   describe('Harness with a cross-region inference profile model', () => {
@@ -33,7 +33,7 @@ describe('BedrockAgentcoreHarnessL3Construct Compliance Tests', () => {
 
     new BedrockAgentcoreHarnessL3Construct(stack, 'inference-profile-harness-construct', constructProps);
 
-    // Guard that this scenario really does emit the wildcard it exists to cover — otherwise the nag
+    // Guard that this scenario really does emit the wildcard it exists to cover - otherwise the nag
     // pass below would be vacuous for it.
     test('emits the region-wildcarded destination foundation-model grant', () => {
       const template = Template.fromStack(stack);
@@ -67,14 +67,14 @@ describe('BedrockAgentcoreHarnessL3Construct Compliance Tests', () => {
 
     new BedrockAgentcoreHarnessL3Construct(stack, 'compliant-harness-construct', constructProps);
 
-    // The two headline always-on controls — CMK log encryption and the PII masking floor — are
+    // The two headline always-on controls - CMK log encryption and the PII masking floor - are
     // applied to the service-created log groups through the Custom::AgentCoreLogProtection resource,
     // which cdk-nag does not inspect. The nag pass below would therefore stay green if either were
     // dropped, so assert them directly. The floor is spelled out rather than derived from
     // BUILTIN_DATA_IDENTIFIERS, and each identifier is matched as its fully-qualified
     // `data-identifier/<Name>"` token (closing quote included) so that deleting ANY one fails here.
     // A bare-name match would not: `Address` is a substring of both `EmailAddress` and `IpAddress`, so
-    // `.*Address.*` would still pass with `Address` removed — the `data-identifier/` prefix and closing
+    // `.*Address.*` would still pass with `Address` removed - the `data-identifier/` prefix and closing
     // `"` pin each token to its own ARN element.
     test('applies the always-on CMK log encryption and PII masking floor', () => {
       const template = Template.fromStack(stack);
@@ -102,7 +102,8 @@ describe('BedrockAgentcoreHarnessL3Construct Compliance Tests', () => {
       networkConfiguration: NET,
       authorizerConfiguration: {
         customJwt: {
-          discoveryUrl: 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_test/.well-known/openid-configuration',
+          discoveryUrl:
+            'https://cognito-idp.test-region.amazonaws.com/test-region_test/.well-known/openid-configuration',
           allowedAudience: ['client-id'],
         },
       },
@@ -171,7 +172,7 @@ describe('BedrockAgentcoreHarnessL3Construct Compliance Tests', () => {
       networkConfiguration: NET,
       tools: {
         gateway_tools: {
-          agentCoreGateway: { gatewayArn: 'arn:aws:bedrock-agentcore:us-east-1:123456789012:gateway/my-gw' },
+          agentCoreGateway: { gatewayArn: 'arn:aws:bedrock-agentcore:test-region:test-account:gateway/my-gw' },
         },
       },
       kmsKey: new Key(stack, 'TestKmsKey', { enableKeyRotation: true }),
@@ -192,7 +193,7 @@ describe('BedrockAgentcoreHarnessL3Construct Compliance Tests', () => {
       modelId: 'anthropic.claude-sonnet-4-6-20250514-v1:0',
       systemPrompt: 'You are a helpful assistant.',
       networkConfiguration: NET,
-      role: { arn: 'arn:aws:iam::123456789012:role/existing-role' },
+      role: { arn: 'arn:aws:iam::test-account:role/existing-role' },
       kmsKey: new Key(stack, 'TestKmsKey', { enableKeyRotation: true }),
       naming: testApp.naming,
       roleHelper: new MdaaRoleHelper(stack, testApp.naming),
@@ -232,7 +233,7 @@ describe('BedrockAgentcoreHarnessL3Construct Compliance Tests', () => {
       modelId: 'anthropic.claude-sonnet-4-6-20250514-v1:0',
       systemPrompt: 'You are a helpful assistant.',
       networkConfiguration: NET,
-      container: { containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-harness:latest' },
+      container: { containerUri: 'test-account.dkr.ecr.test-region.amazonaws.com/my-harness:latest' },
       kmsKey: new Key(stack, 'TestKmsKey', { enableKeyRotation: true }),
       naming: testApp.naming,
       roleHelper: new MdaaRoleHelper(stack, testApp.naming),
@@ -256,10 +257,10 @@ describe('BedrockAgentcoreHarnessL3Construct Compliance Tests', () => {
       guardrail: { id: 'abc123', version: '1' },
       tools: {
         gateway_tools: {
-          agentCoreGateway: { gatewayArn: 'arn:aws:bedrock-agentcore:us-east-1:123456789012:gateway/my-gw' },
+          agentCoreGateway: { gatewayArn: 'arn:aws:bedrock-agentcore:test-region:test-account:gateway/my-gw' },
         },
       },
-      container: { containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-harness:latest' },
+      container: { containerUri: 'test-account.dkr.ecr.test-region.amazonaws.com/my-harness:latest' },
       networkConfiguration: NET,
       kmsKey: new Key(stack, 'TestKmsKey', { enableKeyRotation: true }),
       naming: testApp.naming,
@@ -270,25 +271,35 @@ describe('BedrockAgentcoreHarnessL3Construct Compliance Tests', () => {
 
     testApp.checkCdkNagCompliance(stack);
   });
-  describe('Harness with MDAA-managed VPC endpoints', () => {
+  describe('Harness consuming shared VPC endpoints', () => {
     const testApp = new MdaaTestApp();
     const stack = testApp.testStack;
     const constructProps: BedrockAgentcoreHarnessL3ConstructProps = {
       harnessName: 'vpce-compliant-harness',
       modelId: 'anthropic.claude-sonnet-4-6-20250514-v1:0',
       systemPrompt: 'You are a helpful assistant.',
-      // A gateway tool plus S3 route tables exercise the widest endpoint set: the always-created
-      // interface endpoints, the gateway endpoint, and the policied S3 gateway endpoint.
+      // A gateway tool derives the gateway service on top of the always-required set, exercising the
+      // widest consumer wiring: one client security group plus one rule pair per derived service.
       tools: {
         gateway_tools: {
-          agentCoreGateway: { gatewayArn: 'arn:aws:bedrock-agentcore:us-east-1:123456789012:gateway/my-gw' },
+          agentCoreGateway: { gatewayArn: 'arn:aws:bedrock-agentcore:test-region:test-account:gateway/my-gw' },
         },
       },
       networkConfiguration: {
         securityGroups: ['sg-0123456789abcdef0'],
         subnets: ['subnet-0123456789abcdef0'],
+        vpcEndpoints: 'agentcore-private',
+      },
+      vpcEndpointAccess: {
         vpcId: 'vpc-0123456789abcdef0',
-        vpcEndpoints: { s3RouteTableIds: ['rtb-0123456789abcdef0'] },
+        securityGroupIds: {
+          'bedrock-runtime': 'sg-vpce-bedrock-runtime',
+          'ecr.api': 'sg-vpce-ecr-api',
+          'ecr.dkr': 'sg-vpce-ecr-dkr',
+          sts: 'sg-vpce-sts',
+          logs: 'sg-vpce-logs',
+          'bedrock-agentcore.gateway': 'sg-vpce-bedrock-agentcore-gateway',
+        },
       },
       kmsKey: new Key(stack, 'TestKmsKey', { enableKeyRotation: true }),
       naming: testApp.naming,

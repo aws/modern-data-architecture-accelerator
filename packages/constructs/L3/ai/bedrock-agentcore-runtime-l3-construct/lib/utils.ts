@@ -187,7 +187,7 @@ export function buildRequestHeaderConfiguration(
   return { requestHeaderAllowlist: allowlist };
 }
 
-// Re-exported for backward compatibility — the canonical implementation now lives in
+// Re-exported for backward compatibility - the canonical implementation now lives in
 // @aws-mdaa/agentcore-shared (shared with the Harness L3 construct).
 export { sanitizeBedrockAgentcoreName } from '@aws-mdaa/agentcore-shared';
 

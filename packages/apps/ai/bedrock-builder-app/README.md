@@ -19,7 +19,7 @@ This module deploys and integrates the following resources:
 - **Knowledge Base(s)** (Optional) — Bedrock Knowledge Bases with S3 and SharePoint data sources, multiple parsing strategies (default, BDA, Foundation Model, custom), and chunking configurations.
 - **Vector Store(s)** (Optional) — OpenSearch Serverless collections or Aurora Serverless clusters for Knowledge Base vector storage.
 - **Bedrock Guardrail** (Optional) — Content filters, contextual grounding, PII entity detection, and regex-based sensitive information filtering.
-- **AgentCore Harness(es)** (Optional) — Declarative agent loops (model + system prompt + tools) on AgentCore Runtime, declared under `harnesses`. Deploys the harness, a scoped execution role, an optional versioned endpoint, and MDAA-managed VPC endpoints. See the [construct README](../../../constructs/L3/ai/bedrock-agentcore-harness-l3-construct/README.md).
+- **AgentCore Harness(es)** (Optional) - Declarative agent loops (model + system prompt + tools) on AgentCore.
 
 ![bedrock-builder](../../../constructs/L3/ai/bedrock-builder-l3-construct/docs/bedrock-builder.png)
 
@@ -55,7 +55,8 @@ This module is designed in alignment with MDAA security/compliance principles an
   - Lambda functions and Aurora clusters can be VPC-bound with configurable security groups
   - OpenSearch Serverless collections support VPC endpoints
   - No public connectivity to VPC-bound resources
-  - AgentCore Harnesses run in mandatory VPC-only network mode behind an MDAA-managed endpoint security group
+  - AgentCore Harnesses run in mandatory VPC-only network mode, with module-managed VPC endpoints and a per-harness endpoint client security group when a harness references a `vpcEndpoints` set
+  - Module-managed VPC endpoints are a private network path, not an authorization boundary - the supporting service endpoints carry the AWS default policy, which permits their service in any account, so the harness execution role stays the control on what a session can reach
 - **Content Safety**:
   - Guardrails provide content filters and contextual grounding checks
   - PII entity detection and regex-based sensitive information filtering
@@ -65,24 +66,99 @@ This module is designed in alignment with MDAA security/compliance principles an
 
 ## AWS Service Endpoints
 
-The following VPC endpoints may be required for VPC-bound resources (Lambda functions, Aurora Serverless, OpenSearch Serverless, AgentCore Harnesses) if public AWS service endpoint connectivity is unavailable (e.g., private subnets without NAT gateway, firewalled environments, or PrivateLink-only architectures). For a harness, MDAA can create the ones it needs itself — set `networkConfiguration.vpcEndpoints` and see the [construct README](../../../constructs/L3/ai/bedrock-agentcore-harness-l3-construct/README.md#container-and-vpc-networking) for the derived set:
+VPC-bound resources in this module may need VPC endpoints where public AWS service connectivity is unavailable — private subnets without a NAT gateway, firewalled environments, or PrivateLink-only architectures. Some are created for you; the rest are yours to provision.
 
-| AWS Service           | Endpoint Service Name                              | Type      |
-| --------------------- | -------------------------------------------------- | --------- |
-| Bedrock Runtime       | `com.amazonaws.{region}.bedrock-runtime`           | Interface |
-| Bedrock Agent         | `com.amazonaws.{region}.bedrock-agent`             | Interface |
-| ECR API               | `com.amazonaws.{region}.ecr.api`                   | Interface |
-| ECR Docker Registry   | `com.amazonaws.{region}.ecr.dkr`                   | Interface |
-| AgentCore Gateway     | `com.amazonaws.{region}.bedrock-agentcore.gateway` | Interface |
-| Lambda                | `com.amazonaws.{region}.lambda`                    | Interface |
-| KMS                   | `com.amazonaws.{region}.kms`                       | Interface |
-| CloudWatch Logs       | `com.amazonaws.{region}.logs`                      | Interface |
-| STS                   | `com.amazonaws.{region}.sts`                       | Interface |
-| S3                    | `com.amazonaws.{region}.s3`                        | Gateway   |
-| OpenSearch Serverless | `com.amazonaws.{region}.aoss`                      | Interface |
-| RDS                   | `com.amazonaws.{region}.rds`                       | Interface |
+**Created by this module:**
 
-Additional VPC endpoints may be required depending on the AWS services accessed by your custom Lambda function code.
+| Needed by                          | Endpoint service                                                                          | Type                | Notes                                                                                                                                      |
+| ---------------------------------- | ----------------------------------------------------------------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| AgentCore Harness                  | `bedrock-runtime`, `ecr.api`, `ecr.dkr`, `sts`, `logs`, `bedrock-agentcore.gateway`, `s3` | Interface + Gateway | Declared per VPC — see [Harness VPC endpoints](#harness-vpc-endpoints). `bedrock-agentcore.gateway` only for a harness with a gateway tool |
+| OpenSearch Serverless vector store | service-managed OpenSearch Serverless endpoint                                            | —                   | One per VPC. Reuse an existing one with the vector store's `ossVpce`, or a duplicate fails to deploy                                       |
+
+**You provision:**
+
+| Needed by                                   | Endpoint service                                                | Type                |
+| ------------------------------------------- | --------------------------------------------------------------- | ------------------- |
+| Aurora vector store admin-password rotation | `secretsmanager`                                                | Interface           |
+| Your own VPC-bound Lambda action-group code | whatever it calls (`lambda`, `kms`, `bedrock-runtime`, `s3`, …) | Interface / Gateway |
+
+Aurora vector stores enable admin-password rotation unconditionally — every 60 days, not configurable from this module — and the rotation function runs in your VPC. Without a Secrets Manager endpoint or a NAT path it has no route to the API, and the failure is late and quiet: the stack deploys clean and rotation starts failing on the first scheduled run. Aurora itself needs no endpoint — it is reached through its ENIs in your subnets.
+
+### Harness VPC endpoints
+
+Give an AgentCore Harness's sessions a private outbound path by declaring a **VPC endpoint set** and referencing it:
+
+```yaml
+vpcEndpoints:
+  agentcore-private:
+    vpcId: 'vpc-0123456789abcdef0'
+    subnetIds: ['subnet-0123456789abcdef0', 'subnet-0123456789abcdef1']
+    routeTableIds: ['rtb-0123456789abcdef0']
+
+harnesses:
+  support-agent:
+    modelId: 'anthropic.claude-3-sonnet-20240229-v1:0'
+    systemPrompt: 'You are a helpful assistant.'
+    networkConfiguration:
+      securityGroups: ['sg-0123456789abcdef0']
+      subnets: ['subnet-0123456789abcdef0', 'subnet-0123456789abcdef1']
+      vpcEndpoints: 'agentcore-private'
+```
+
+That creates every endpoint the harness needs — `bedrock-runtime`, `ecr.api`, `ecr.dkr`, `sts`, `logs`, an S3 gateway endpoint for container image layers, plus `bedrock-agentcore.gateway` when the harness declares a gateway tool — and wires the harness to them. No service names or endpoint policies are configured, and no security group IDs unless you bring an endpoint that already exists (see below).
+
+**Which endpoints exist is derived from the harnesses, never added by the set.** A set only states which VPC it serves, where created endpoints go, and how each derived endpoint is reached. Every harness referencing a set shares its endpoints (AWS allows one Private DNS interface endpoint per service per VPC), and each harness is wired only to the endpoints it needs from its own client security group. A harness that omits `vpcEndpoints` gets nothing. Remove a set in the same change as the last harness referencing it: a declared set with no referencing harness is a synth error, not a clean teardown.
+
+#### The three states of an endpoint
+
+Each endpoint property is optional, and which fields you set chooses its state:
+
+| State        | How to write it           | What happens                                                                                                                                                                    |
+| ------------ | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **created**  | omit it, or set neither   | Created in the set's `subnetIds`, with its own security group                                                                                                                   |
+| **brought**  | `securityGroupId: 'sg-…'` | Not created. Harnesses are granted HTTPS egress to that group, and one ingress rule is added to it — the endpoint's id isn't needed, and its policy stays as its owner wrote it |
+| **external** | `external: true`          | Neither created nor wired. Reached over NAT, or through an endpoint whose security group you'd rather not name                                                                  |
+
+```yaml
+vpcEndpoints:
+  agentcore-private:
+    vpcId: 'vpc-0123456789abcdef0'
+    subnetIds: ['subnet-0123456789abcdef0', 'subnet-0123456789abcdef1']
+    routeTableIds: ['rtb-0123456789abcdef0']
+    ecrApi:
+      subnetIds: ['subnet-0123456789abcdef0'] # created, one AZ only
+    sts:
+      securityGroupId: 'sg-0centralstsvpce01' # exists already
+    logs:
+      external: true # stays on the VPC's existing path
+```
+
+The endpoint properties are `bedrockRuntime`, `ecrApi`, `ecrDocker`, `sts`, `logs`, `agentCoreGateway`, and `s3ImageLayers`. `s3ImageLayers` takes only `external` — a gateway endpoint has no security group to wire, and its placement comes from the set's `routeTableIds`.
+
+#### Container image layers
+
+Image layers are served from the ECR layer bucket over S3, so the ECR endpoints alone cannot complete a pull. A set must therefore state one of:
+
+- `routeTableIds` — create an S3 gateway endpoint on those route tables. It intercepts **all** S3 traffic from every subnet on them, and its derived policy allows only the image-layer read, so if other workloads share those tables and need broader S3 access, use the option below instead and provision the endpoint out of band.
+- `s3ImageLayers: { external: true }` — S3 is already reachable, over NAT or an endpoint provisioned elsewhere. Required for a VPC that already has an S3 gateway endpoint on those route tables: a route table carries a service's prefix-list route from only one endpoint, so a second fails at deploy.
+
+Stating neither is a synth error, because a no-NAT VPC without image-layer access deploys cleanly and its sessions never start.
+
+#### Rejected at synth
+
+- Both `routeTableIds` and `s3ImageLayers.external`, or neither.
+- `external` together with `securityGroupId`, or `subnetIds` on an endpoint that is brought or external.
+- `agentCoreGateway` configured when no referencing harness declares a gateway tool.
+- Two sets naming the same `vpcId`, or set names differing only in case.
+- A harness referencing an undeclared set, or a set no harness references.
+
+#### Not in the same VPC as an AgentCore Runtime's supporting endpoints
+
+A set's endpoints are owned once per VPC. The `bedrock-agentcore-runtime` module instead provisions its supporting endpoints per runtime, through `networkConfiguration.vpcEndpoint.createSupportingEndpoints`, and both cover `ecr.api`, `ecr.dkr`, `sts` and `logs`. Only one Private DNS endpoint per service per VPC is allowed, so whichever deploys second fails mid-deploy on the duplicate. Keep a set and a `createSupportingEndpoints` runtime in different VPCs, or turn that flag off and let the set serve both.
+
+#### One constraint to plan for
+
+An interface endpoint takes at most one subnet per availability zone. Since a set's `subnetIds` is explicit, that's yours to get right — the endpoints don't have to sit in the same subnets as your sessions, and covering fewer zones costs less in endpoint ENI hours and more in cross-zone data.
 
 ---
 
@@ -127,7 +203,7 @@ Deploys Bedrock agents with action groups, knowledge bases backed by Aurora and 
 
 #### AgentCore Harness Configuration (Minimal)
 
-Deploys a single AgentCore Harness — a declarative agent loop (foundation model + system prompt) configured via the top-level `harnesses` map, independently of `agents`. Sets only the mandatory fields (model, system prompt, VPC network configuration) and takes the default path for everything else. Start here for a quick agent-loop proof-of-concept on AgentCore rather than classic Bedrock Agents.
+Deploys a single AgentCore Harness - a declarative agent loop (foundation model + system prompt) configured via the top-level `harnesses` map, independently of `agents`. Sets only the mandatory fields (model, system prompt, VPC network configuration) and takes the default path for everything else. Start here for a quick agent-loop proof-of-concept on AgentCore rather than classic Bedrock Agents.
 
 [sample-config-harness-minimal.yaml](sample_configs/sample-config-harness-minimal.yaml)
 
@@ -138,7 +214,7 @@ Deploys a single AgentCore Harness — a declarative agent loop (foundation mode
 
 #### AgentCore Harness Configuration (Comprehensive)
 
-Deploys an AgentCore Harness exercising the optional features on a single harness: model sampling and iteration limits, idle/max-lifetime lifecycle, inbound JWT auth, a guardrail and an AgentCore Gateway tool resolved via `config:<name>` references into sibling maps, an inline-function tool, a tool allowlist, skills, a bring-your-own ECR container image, VPC network placement with MDAA-managed endpoints, additive PII masking, log retention, a summarization truncation strategy, and a named versioned endpoint. Use this as a reference for full control over an AgentCore agent loop.
+Deploys an AgentCore Harness exercising the optional harness features: model tuning and lifecycle limits, JWT auth, a guardrail and gateway tool via `config:<name>` references, tools and a tool allowlist, a bring-your-own container, VPC placement with shared VPC endpoints, PII masking, truncation, and a versioned endpoint. Use this as a reference for full control over an AgentCore agent loop.
 
 [sample-config-harness-comprehensive.yaml](sample_configs/sample-config-harness-comprehensive.yaml)
 

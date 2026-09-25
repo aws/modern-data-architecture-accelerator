@@ -1002,7 +1002,7 @@ export interface BedrockAgentcoreRuntimeProps {
    * CloudWatch Logs retention period for the runtime log group, in days. Accepts any CloudWatch Logs
    * `RetentionDays` value; `9999` (`RetentionDays.INFINITE`) means never-expire and can be set
    * explicitly to lock indefinite retention into config. Omitting the field is equivalent to `9999`
-   * — the log-protection Custom Resource applies no retention policy, leaving the service-created log
+   * - the log-protection Custom Resource applies no retention policy, leaving the service-created log
    * groups at CloudWatch's never-expire default (logs are kept, and billed, forever) unless a finite
    * value is set.
    *
@@ -1010,7 +1010,7 @@ export interface BedrockAgentcoreRuntimeProps {
    *
    * AWS: CloudWatch Logs log group retention
    *
-   * Validation: Optional; Number; must be a valid RetentionDays value (9999 for never-expire) — validated at synth
+   * Validation: Optional; Number; must be a valid RetentionDays value (9999 for never-expire) - validated at synth
    * @default 9999
    **/
   readonly logRetentionDays?: number;

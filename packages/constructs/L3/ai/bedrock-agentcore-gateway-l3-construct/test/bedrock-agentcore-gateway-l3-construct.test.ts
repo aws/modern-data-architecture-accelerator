@@ -650,7 +650,7 @@ describe('BedrockAgentcoreGatewayL3Construct', () => {
       expect(logGroup.Properties.LogGroupName as string).toMatch(
         /^\/aws\/vendedlogs\/bedrock-agentcore\/gateway\/APPLICATION_LOGS\/.+/,
       );
-      // CMK-encrypted (KmsKeyId present) with the default indefinite retention — omitting
+      // CMK-encrypted (KmsKeyId present) with the default indefinite retention - omitting
       // logRetentionDays sets no retention, so CDK emits no RetentionInDays (audit-by-default: never
       // drop logs).
       expect(logGroup.Properties.KmsKeyId).toBeDefined();
@@ -659,7 +659,7 @@ describe('BedrockAgentcoreGatewayL3Construct', () => {
 
     test('accepts the never-expire sentinel (9999), rendering no RetentionInDays', () => {
       // 9999 (RetentionDays.INFINITE) is an accepted, explicit never-expire choice: the CDK log group
-      // renders it as no RetentionInDays — the same never-expire result as omitting logRetentionDays.
+      // renders it as no RetentionInDays - the same never-expire result as omitting logRetentionDays.
       new BedrockAgentcoreGatewayL3Construct(testApp.testStack, 'gw', {
         ...baseProps(testApp, roleHelper),
         logDelivery: { logRetentionDays: RetentionDays.INFINITE },

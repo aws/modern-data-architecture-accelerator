@@ -18,7 +18,7 @@ import {
 } from '@aws-mdaa/bedrock-knowledge-base-l3-construct';
 import { BedrockGuardrailProps, NamedGuardrailProps } from '@aws-mdaa/bedrock-guardrail-l3-construct';
 
-// Mock the resolveModelArn function, keeping the module's other exports real — a bare factory would
+// Mock the resolveModelArn function, keeping the module's other exports real - a bare factory would
 // leave them undefined for any construct under test that imports one.
 jest.mock('@aws-mdaa/ai-helper', () => ({
   ...jest.requireActual('@aws-mdaa/ai-helper'),
@@ -3271,8 +3271,8 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
     // one wired to a config:<name> gateway and guardrail defined in the same module, so the compliance
     // pass covers the auto-created execution role and managed policy in both shapes.
     //
-    // Scope note: the harness owns no KMS key of its own — `kmsKey` is a required input and the builder
-    // injects the module CMK — so there is no per-harness key to validate here. The grant-level
+    // Scope note: the harness owns no KMS key of its own - `kmsKey` is a required input and the builder
+    // injects the module CMK - so there is no per-harness key to validate here. The grant-level
     // assertions (InvokeModel, ApplyGuardrail, InvokeGateway) live in bedrock-builder-harness.test.ts;
     // this block is nag coverage plus a presence check, not a policy-content check.
     const testApp = new MdaaTestApp();
@@ -3305,9 +3305,26 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         'full-harness': {
           modelId: 'anthropic.claude-sonnet-4-6-20250514-v1:0',
           systemPrompt: 'You are a helpful assistant.',
-          networkConfiguration: { securityGroups: ['sg-test'], subnets: ['subnet-test'] },
+          // References the set declared below, whose widest endpoint shape - created interface endpoints,
+          // a brought one, and the S3 gateway endpoint - puts the module-owned endpoints and their
+          // security groups through the nag pass alongside the harness's client group and rule pairs.
+          networkConfiguration: {
+            securityGroups: ['sg-test'],
+            subnets: ['subnet-test'],
+            vpcEndpoints: 'agentcore-private',
+          },
           guardrail: { id: 'config:enterprise-guardrail' },
           tools: { gateway_tools: { agentCoreGateway: { gatewayArn: 'config:weather-gateway' } } },
+        },
+      },
+      vpcEndpoints: {
+        'agentcore-private': {
+          vpcId: 'vpc-0123456789abcdef0',
+          subnetIds: ['subnet-0123456789abcdef0', 'subnet-0123456789abcdef1'],
+          routeTableIds: ['rtb-0123456789abcdef0'],
+          // One brought endpoint, so the nag pass also covers an ingress rule added to a security group
+          // this module does not own.
+          sts: { securityGroupId: 'sg-0123456789abcdef0' },
         },
       },
     };
@@ -3317,6 +3334,18 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
     const template = Template.fromStack(testApp.testStack);
     test('Harness resources are present', () => {
       template.resourceCountIs('AWS::BedrockAgentCore::Harness', 2);
+    });
+
+    test('endpoint security groups admit only the harness client group', () => {
+      // An endpoint group is created with no ingress and CDK's `open` default is off, so the only way in
+      // is the rule the harness adds for its own client group - never the whole VPC CIDR.
+      Object.values(template.findResources('AWS::EC2::SecurityGroup')).forEach(group => {
+        expect(group.Properties?.SecurityGroupIngress).toBeUndefined();
+      });
+      Object.values(template.findResources('AWS::EC2::SecurityGroupIngress')).forEach(rule => {
+        expect(rule.Properties?.CidrIp).toBeUndefined();
+        expect(rule.Properties?.SourceSecurityGroupId).toBeDefined();
+      });
     });
 
     testApp.checkCdkNagCompliance(testApp.testStack);

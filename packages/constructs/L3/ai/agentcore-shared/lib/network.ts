@@ -56,7 +56,7 @@ export function validateAgentcoreVpcNetworkMembers(
  * `CfnRuntime` and `CfnHarness` (structurally identical), so callers assign it directly to their
  * typed L1 network property.
  *
- * This helper does not validate — callers validate `securityGroups` / `subnets` themselves (see
+ * This helper does not validate - callers validate `securityGroups` / `subnets` themselves (see
  * {@link NETWORK_MEMBERS_MIN} / {@link NETWORK_MEMBERS_MAX}) before calling.
  */
 export function buildAgentcoreVpcNetworkConfiguration(

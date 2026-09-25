@@ -48,8 +48,8 @@ Additionally, MDAA can be used to build complex, multi-domain and multi-account 
 - **Extend as you grow**: Start with a kit, then add modules for analytics, AI, governance, or data pipelines as your needs evolve.
 - **Multi-account and multi-region**: Deploy across accounts and regions with built-in cross-account trust.
 
-| Without MDAA | With MDAA |
-|---|---|
+| Without MDAA                               | With MDAA                            |
+| ------------------------------------------ | ------------------------------------ |
 | ![From Scratch](docs/mda_from_scratch.png) | ![With MDAA](docs/mda_with_mdaa.png) |
 
 ## Quick Start
@@ -66,18 +66,18 @@ Start by identifying the business problem you need to solve, then select the sta
 
 ![MDAA Working Backwards](docs/working_backwards_starter_kit.png)
 
-| Starter Kit | What you get | Est. Deploy Time |
-|---|---|---|
-| [Minimal](starter_kits/minimal/README.md) | IAM roles, Glue Catalog encryption, LakeFormation settings — build from scratch | ~5–10 min |
-| [GenAI Foundation](starter_kits/genai_foundation/README.md) | Enterprise-ready Bedrock Agent with RAG and knowledge bases | ~10–15 min |
-| [GenAI GAIA Chatbot](starter_kits/genai_gaia_chatbot/README.md) | RAG chatbot backend with document search, auth, and streaming API | ~10–15 min |
-| [Basic DataLake](starter_kits/basic_datalake/README.md) | Encrypted S3 storage, data catalog, SQL queries, audit trail | ~15–20 min |
-| [Basic DataScience Platform](starter_kits/basic_datascience_platform/README.md) | Notebook environment with shared data lake and team isolation | ~20–30 min |
-| [MLOps Platform](starter_kits/mlops_platform/README.md) | Automated train → deploy → monitor pipeline for ML models | ~20–30 min |
-| [DataZone Governed Lakehouse](starter_kits/datazone_governed_lakehouse/README.md) | Data lake with row/column-level security and a data product catalog | ~20–25 min |
-| [SMUS Research Environment](starter_kits/smus_research_environment/README.md) | Self-service ML platform for multiple research teams | ~20–25 min |
-| [Health Data Accelerator](starter_kits/health_data_accelerator/README.md) | Automated pipeline from source databases to a curated data lake | ~30–45 min |
-| [SMUS Data Mesh](starter_kits/smus_data_mesh/README.md) | Multi-account data platform with cross-team data sharing | ~30–45 min |
+| Starter Kit                                                                       | What you get                                                                    | Est. Deploy Time |
+| --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ---------------- |
+| [Minimal](starter_kits/minimal/README.md)                                         | IAM roles, Glue Catalog encryption, LakeFormation settings — build from scratch | ~5–10 min        |
+| [GenAI Foundation](starter_kits/genai_foundation/README.md)                       | Enterprise-ready Bedrock Agent with RAG and knowledge bases                     | ~10–15 min       |
+| [GenAI GAIA Chatbot](starter_kits/genai_gaia_chatbot/README.md)                   | RAG chatbot backend with document search, auth, and streaming API               | ~10–15 min       |
+| [Basic DataLake](starter_kits/basic_datalake/README.md)                           | Encrypted S3 storage, data catalog, SQL queries, audit trail                    | ~15–20 min       |
+| [Basic DataScience Platform](starter_kits/basic_datascience_platform/README.md)   | Notebook environment with shared data lake and team isolation                   | ~20–30 min       |
+| [MLOps Platform](starter_kits/mlops_platform/README.md)                           | Automated train → deploy → monitor pipeline for ML models                       | ~20–30 min       |
+| [DataZone Governed Lakehouse](starter_kits/datazone_governed_lakehouse/README.md) | Data lake with row/column-level security and a data product catalog             | ~20–25 min       |
+| [SMUS Research Environment](starter_kits/smus_research_environment/README.md)     | Self-service ML platform for multiple research teams                            | ~20–25 min       |
+| [Health Data Accelerator](starter_kits/health_data_accelerator/README.md)         | Automated pipeline from source databases to a curated data lake                 | ~30–45 min       |
+| [SMUS Data Mesh](starter_kits/smus_data_mesh/README.md)                           | Multi-account data platform with cross-team data sharing                        | ~30–45 min       |
 
 ### 2. Copy the starter kit configs to your own directory:
 
