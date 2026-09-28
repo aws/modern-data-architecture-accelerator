@@ -1,7 +1,8 @@
 # EC2 module configuration.
-# Provisions EC2 instances with key pairs, security groups, and
-# CloudFormation Init bootstrapping. Supports both Linux and Windows
-# instances with user data scripts and cfnInit configurations.
+# Provisions EC2 instances with key pairs, security groups, persistent
+# network interfaces, and CloudFormation Init bootstrapping. Supports both
+# Linux and Windows instances with user data scripts and cfnInit
+# configurations.
 # This comprehensive config exercises every compatible property at
 # full depth.
 
@@ -281,6 +282,35 @@ cfnInit:
             packageName: httpd
             packageVersions: []
 
+# (Optional) Map of ENI names to network interface configurations.
+# Attach them to an instance below via its networkInterfaces property.
+networkInterfaces:
+  proxy-eni:
+    # Subnet for the interface. Must be in the same AZ as any instance it
+    # is attached to; may differ from the instance's own subnetId, as here,
+    # to multi-home the instance onto a dedicated data-path subnet.
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/subnet/id
+    subnetId: subnet-datapathsubnet
+    # (Optional) Fixed private IP inside the subnet CIDR. Omit to let AWS
+    # assign one.
+    privateIpAddress: 10.0.0.50
+    # Security groups for this interface, by name from the securityGroups
+    # section above. At least one of securityGroups or securityGroupIds is
+    # required; omitting both fails at synth rather than letting EC2 place the
+    # interface in the permissive VPC default security group.
+    securityGroups:
+      - sg1
+    # (Optional) IDs of security groups created outside this config
+    # Example SSM: ssm:/path/to/security-group/id
+    securityGroupIds:
+      - sg-existinginterface
+    # (Optional) Disable source/destination checking so this interface can
+    # forward traffic (proxy / NAT)
+    sourceDestCheck: false
+    # (Optional) Description shown in the EC2 console
+    description: Static proxy data-path interface
+
 # (Optional) Map of instance names to EC2 instance configurations
 instances:
   # Linux instance with named init, key pair, and user data
@@ -318,6 +348,16 @@ instances:
     # (Optional) Disable source/destination checking for NAT or
     # routing instances
     sourceDestCheck: false
+    # (Optional) Secondary network interfaces to attach
+    networkInterfaces:
+      - # Name from the networkInterfaces section above.
+        # Mutually exclusive with networkInterfaceId.
+        networkInterface: proxy-eni
+        # Must be >= 1 and unique per instance
+        deviceIndex: 1
+        # (Optional) Delete the interface when the instance terminates.
+        # Defaults to false.
+        deleteOnTermination: false
 
   # Windows instance with existing security group, custom KMS, and
   # init options
@@ -380,3 +420,9 @@ instances:
     signalCount: 1
     # (Optional) Timeout for creation policy (ISO 8601 duration)
     creationTimeOut: PT25M
+    networkInterfaces:
+      - # ID of an ENI created outside this config.
+        # Mutually exclusive with networkInterface.
+        # Example SSM: ssm:/path/to/eni/id
+        networkInterfaceId: eni-0123456789abcdef0
+        deviceIndex: 1

@@ -9,6 +9,7 @@ import { MdaaTestApp } from '@aws-mdaa/testing';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import { MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaEC2Instance, MdaaEC2InstanceProps, BlockDeviceProps } from '../lib/instance';
+import { ResourceTypeAwareNaming } from './resource-type-aware-naming';
 import {
   Vpc,
   InstanceType,
@@ -118,6 +119,55 @@ describe('MDAA Construct Compliance Tests', () => {
 
   test('LaunchTemplateName uses EC2_INSTANCE resource type', () => {
     const expectedName = testApp.naming.withResourceType(MdaaResourceType.EC2_INSTANCE).resourceName(undefined);
+    template.hasResourceProperties('AWS::EC2::LaunchTemplate', {
+      LaunchTemplateName: expectedName,
+    });
+    template.hasResourceProperties('AWS::EC2::Instance', {
+      LaunchTemplate: Match.objectLike({ LaunchTemplateName: expectedName }),
+    });
+  });
+});
+
+describe('MDAA Construct Resource Type Naming Tests', () => {
+  const testApp = new MdaaTestApp();
+  const naming = new ResourceTypeAwareNaming({
+    cdkNode: testApp.testStack.node,
+    org: 'test-org',
+    env: 'test-env',
+    domain: 'test-domain',
+    moduleName: 'test-module',
+  });
+
+  new MdaaEC2Instance(testApp.testStack, 'typed-construct', {
+    naming: naming,
+    instanceType: InstanceType.of(InstanceClass.M5, InstanceSize.LARGE),
+    machineImage: MachineImage.latestAmazonLinux2023(),
+    vpc: Vpc.fromVpcAttributes(testApp.testStack, 'typed-vpc', {
+      vpcId: 'test-vpc-id',
+      availabilityZones: ['az1'],
+      privateSubnetIds: ['subnet1'],
+    }),
+    instanceSubnet: Subnet.fromSubnetAttributes(testApp.testStack, 'typed-subnet', {
+      subnetId: 'test-sub-id',
+      availabilityZone: 'az1',
+    }),
+    kmsKey: MdaaKmsKey.fromKeyArn(
+      testApp.testStack,
+      'typed-key',
+      'arn:test-partition:kms:test-region:test-account:key/test-key',
+    ),
+    blockDeviceProps: [{ deviceName: '/dev/sda1', volumeSizeInGb: 32, ebsType: EbsDeviceVolumeType.GP3 }],
+    role: MdaaRole.fromRoleArn(
+      testApp.testStack,
+      'typed-role',
+      'arn:test-partition:iam:test-region:test-account:role/test-role',
+    ),
+  });
+
+  const template = Template.fromStack(testApp.testStack);
+
+  test('LaunchTemplateName uses EC2_INSTANCE resource type under resource-type-aware naming', () => {
+    const expectedName = naming.withResourceType(MdaaResourceType.EC2_INSTANCE).resourceName(undefined);
     template.hasResourceProperties('AWS::EC2::LaunchTemplate', {
       LaunchTemplateName: expectedName,
     });

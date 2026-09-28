@@ -182,7 +182,7 @@ MDAA includes 40+ modules for governance, data lakes, pipelines, analytics, AI, 
 <details>
 <summary>Core / Utility Modules</summary>
 
-- [**EC2**](packages/apps/utility/ec2-app/README.md) - Secure EC2 instances and security groups.
+- [**EC2**](packages/apps/utility/ec2-app/README.md) - Secure EC2 instances, security groups, and persistent network interfaces.
 - [**SFTP Transfer Family Server**](packages/apps/utility/sftp-server-app/README.md) - SFTP Transfer Family for data lake ingestion.
 - [**SFTP Transfer Family User Admin**](packages/apps/utility/sftp-users-app/README.md) - Administer SFTP Transfer Family users.
 - [**DataSync**](packages/apps/utility/datasync-app/README.md) - DataSync for on-premises to cloud data movement.

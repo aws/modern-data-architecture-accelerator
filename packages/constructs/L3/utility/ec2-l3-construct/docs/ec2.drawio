@@ -44,7 +44,12 @@
                     <mxGeometry x="5" y="17" width="60.27" height="34" as="geometry"/>
                 </mxCell>
                 <mxCell id="18" value="Instance&lt;br&gt;Profile" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=16;" parent="1" source="10" target="temhnbDpD8ueiIC_QQ7--14" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
+                    <mxGeometry x="0.55" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                        <Array as="points">
+                            <mxPoint x="970" y="589"/>
+                        </Array>
+                    </mxGeometry>
                 </mxCell>
                 <mxCell id="19" value="Launched In" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;fontSize=16;" parent="1" source="10" target="17" edge="1">
                     <mxGeometry relative="1" as="geometry">
@@ -91,6 +96,16 @@
                 </mxCell>
                 <mxCell id="25" value="Bound to" style="edgeStyle=none;html=1;entryX=0;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="22" target="10">
                     <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" value="Network Interface&lt;br&gt;(retained)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#5A30B5;strokeColor=none;dashed=0;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;html=1;fontSize=16;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.elastic_network_interface;" vertex="1" parent="1">
+                    <mxGeometry x="900" y="462" width="78" height="78" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" value="Attaches" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=16;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="10" target="26">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="939" y="569"/>
+                        </Array>
+                    </mxGeometry>
                 </mxCell>
             </root>
         </mxGraphModel>

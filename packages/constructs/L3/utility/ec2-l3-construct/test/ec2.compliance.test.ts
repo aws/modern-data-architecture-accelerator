@@ -6,7 +6,7 @@
 import { BlockDeviceProps, MdaaSecurityGroupRuleProps } from '@aws-mdaa/ec2-constructs';
 import { MdaaRoleHelper, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Annotations, Match, Template } from 'aws-cdk-lib/assertions';
 import { EbsDeviceVolumeType } from 'aws-cdk-lib/aws-ec2';
 import {
   Ec2L3Construct,
@@ -594,5 +594,229 @@ describe('Security Group Rules (existing SGs) per-rule suppressions Tests', () =
       .Metadata?.cdk_nag?.rules_to_suppress;
     expect(suppressions).toBeDefined();
     expect(suppressions?.some(s => s.id === 'AwsSolutions-EC23')).toBe(true);
+  });
+});
+
+describe('Network Interface Tests', () => {
+  const testApp = new MdaaTestApp();
+  const stack = testApp.testStack;
+
+  const constructProps: Ec2L3ConstructProps = {
+    adminRoles: [{ id: 'admin-role-id' }],
+    securityGroups: {
+      'proxy-sg': {
+        vpcId: 'test-vpc-id',
+        ingressRules: {
+          ipv4: [{ cidr: '10.0.0.0/16', port: 3128, protocol: 'tcp' }],
+        },
+      },
+    },
+    networkInterfaces: {
+      'proxy-eni': {
+        subnetId: 'subnet-eni',
+        description: 'Static proxy data-path interface',
+        privateIpAddress: '10.0.1.50',
+        securityGroups: ['proxy-sg'],
+        securityGroupIds: ['sg-existinginterface'],
+        sourceDestCheck: false,
+      },
+      'unattached-eni': {
+        subnetId: 'subnet-eni',
+        securityGroupIds: ['sg-existinginterface'],
+      },
+    },
+    instances: {
+      'proxy-1': {
+        securityGroup: 'proxy-sg',
+        instanceType: 't3.medium',
+        amiId: 'ami-proxy',
+        vpcId: 'test-vpc-id',
+        subnetId: 'test-sub-id',
+        blockDevices: [
+          {
+            deviceName: '/dev/xvda',
+            volumeSizeInGb: 32,
+            ebsType: EbsDeviceVolumeType.GP3,
+          },
+        ],
+        instanceRole: { arn: 'arn:test-partition:iam::test-account:role/test-role' },
+        availabilityZone: 'test-region-a',
+        osType: 'linux',
+        networkInterfaces: [
+          { networkInterface: 'proxy-eni', deviceIndex: 1 },
+          { networkInterfaceId: 'eni-externallyowned', deviceIndex: 2, deleteOnTermination: true },
+        ],
+      },
+    },
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+  };
+
+  const construct = new Ec2L3Construct(stack, 'instances', constructProps);
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  // Logical id of the sole instance, so attachments can be pinned to the instance they target
+  // rather than merely to a device index.
+  const instanceLogicalId = Object.keys(template.findResources('AWS::EC2::Instance'))[0];
+
+  test('Creates one network interface per networkInterfaces entry', () => {
+    template.resourceCountIs('AWS::EC2::NetworkInterface', 2);
+  });
+
+  test('Network interface carries fixed private IP, description and sourceDestCheck', () => {
+    template.hasResourceProperties('AWS::EC2::NetworkInterface', {
+      SubnetId: 'subnet-eni',
+      Description: 'Static proxy data-path interface',
+      PrivateIpAddress: '10.0.1.50',
+      SourceDestCheck: false,
+    });
+  });
+
+  test('Network interface combines named and pre-existing security groups', () => {
+    template.hasResourceProperties('AWS::EC2::NetworkInterface', {
+      PrivateIpAddress: '10.0.1.50',
+      GroupSet: [{ 'Fn::GetAtt': ['instancesproxysg9E755BEF', 'GroupId'] }, 'sg-existinginterface'],
+    });
+  });
+
+  test('Network interface is retained across stack deletion and replacing updates', () => {
+    const interfaces = Object.values(
+      template.findResources('AWS::EC2::NetworkInterface') as Record<
+        string,
+        { DeletionPolicy?: string; UpdateReplacePolicy?: string }
+      >,
+    );
+    expect(interfaces).toHaveLength(2);
+    interfaces.forEach(networkInterface => {
+      expect(networkInterface.DeletionPolicy).toBe('RetainExceptOnCreate');
+      expect(networkInterface.UpdateReplacePolicy).toBe('Retain');
+    });
+  });
+
+  test('Network interface id and private IP are published', () => {
+    template.hasResourceProperties('AWS::SSM::Parameter', {
+      Name: testApp.naming.ssmPath('network-interface/proxy-eni/id'),
+    });
+    template.hasResourceProperties('AWS::SSM::Parameter', {
+      Name: testApp.naming.ssmPath('network-interface/proxy-eni/private-ip'),
+    });
+  });
+
+  test('Attachment is a standalone resource so replacing updates can detach first', () => {
+    template.resourceCountIs('AWS::EC2::NetworkInterfaceAttachment', 2);
+    template.resourceCountIs('AWS::EC2::Instance', 1);
+    template.hasResourceProperties('AWS::EC2::Instance', {
+      NetworkInterfaces: Match.absent(),
+    });
+  });
+
+  test('Attachment of a config-declared interface defaults DeleteOnTermination to false', () => {
+    template.hasResourceProperties('AWS::EC2::NetworkInterfaceAttachment', {
+      InstanceId: { Ref: instanceLogicalId },
+      DeviceIndex: '1',
+      DeleteOnTermination: false,
+      NetworkInterfaceId: { 'Fn::GetAtt': [Match.stringLikeRegexp('.*proxyeni.*'), 'Id'] },
+    });
+  });
+
+  test('Attachment of a config-declared interface is keyed on the interface, not the device index', () => {
+    // The construct id becomes the logical ID, so this is what makes a deviceIndex change, a move
+    // to another instance and an instance rename single-deploy replacements of one resource.
+    const attachments = Object.entries(
+      template.findResources('AWS::EC2::NetworkInterfaceAttachment') as Record<
+        string,
+        { Properties: { DeviceIndex: string } }
+      >,
+    );
+    const byName = attachments.find(([, resource]) => resource.Properties.DeviceIndex === '1');
+    const byId = attachments.find(([, resource]) => resource.Properties.DeviceIndex === '2');
+    expect(byName?.[0]).toMatch(/attachmentnameproxyeni/);
+    expect(byName?.[0]).not.toMatch(/proxy1/);
+    // An ssm: id is an unresolved token at synth, so a by-id attachment stays keyed on the
+    // instance name and device index.
+    expect(byId?.[0]).toMatch(/attachmentidproxy1/);
+  });
+
+  test('Attachment of a pre-existing interface honours an explicit DeleteOnTermination', () => {
+    template.hasResourceProperties('AWS::EC2::NetworkInterfaceAttachment', {
+      InstanceId: { Ref: instanceLogicalId },
+      DeviceIndex: '2',
+      DeleteOnTermination: true,
+      NetworkInterfaceId: 'eni-externallyowned',
+    });
+  });
+
+  test('Interfaces are exposed on the construct for downstream consumers', () => {
+    expect(Object.keys(construct.networkInterfaces).sort()).toEqual(['proxy-eni', 'unattached-eni']);
+  });
+
+  test('An interface no instance attaches is created, and warned about under its ack id', () => {
+    const warnings = Annotations.fromStack(stack).findWarning(
+      '*',
+      Match.stringLikeRegexp(
+        'networkInterfaces declares unattached-eni.*\\[ack: @aws-mdaa/ec2:unattachedNetworkInterface\\]',
+      ),
+    );
+    expect(warnings).toHaveLength(1);
+  });
+
+  test('Every interface carries a non-empty GroupSet', () => {
+    // No interface may reach the template without a security group: EC2 would place it in the
+    // permissive VPC default group, an association absent from the template and from CDK Nag.
+    const groupSets = Object.values(
+      template.findResources('AWS::EC2::NetworkInterface') as Record<string, { Properties: { GroupSet?: unknown[] } }>,
+    ).map(networkInterface => networkInterface.Properties.GroupSet);
+    expect(groupSets).toHaveLength(2);
+    groupSets.forEach(groupSet => expect(groupSet?.length).toBeGreaterThan(0));
+  });
+});
+
+describe('Network Interface Warning Absence Tests', () => {
+  const testApp = new MdaaTestApp();
+  const stack = testApp.testStack;
+
+  // Every declared interface is attached, so the warning has nothing to report. Without this, a
+  // threshold slip -- firing on every synth of every EC2 module -- still satisfies the assertion
+  // above.
+  new Ec2L3Construct(stack, 'instances', {
+    adminRoles: [{ id: 'admin-role-id' }],
+    networkInterfaces: {
+      'proxy-eni': {
+        subnetId: 'subnet-eni',
+        securityGroupIds: ['sg-existinginterface'],
+      },
+    },
+    instances: {
+      'proxy-1': {
+        securityGroupId: 'sg-existinginstance',
+        instanceType: 't3.medium',
+        amiId: 'ami-proxy',
+        vpcId: 'test-vpc-id',
+        subnetId: 'test-sub-id',
+        blockDevices: [
+          {
+            deviceName: '/dev/xvda',
+            volumeSizeInGb: 32,
+            ebsType: EbsDeviceVolumeType.GP3,
+          },
+        ],
+        instanceRole: { arn: 'arn:test-partition:iam::test-account:role/test-role' },
+        availabilityZone: 'test-region-a',
+        osType: 'linux',
+        networkInterfaces: [{ networkInterface: 'proxy-eni', deviceIndex: 1 }],
+      },
+    },
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+  });
+  Template.fromStack(stack);
+
+  test('No unattached-interface warning when every interface is attached', () => {
+    const warnings = Annotations.fromStack(stack).findWarning(
+      '*',
+      Match.stringLikeRegexp('\\[ack: @aws-mdaa/ec2:unattachedNetworkInterface\\]'),
+    );
+    expect(warnings).toHaveLength(0);
   });
 });

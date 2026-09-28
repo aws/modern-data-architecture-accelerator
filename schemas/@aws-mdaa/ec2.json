@@ -1748,6 +1748,13 @@
                     "description": "KMS key ARN for EBS volume encryption. If omitted, the module's KMS CMK is used.\n\nUse cases: Bring-your-own-key EBS encryption; Compliance-specific key management\n\nAWS: KMS key for EBS encryption\n\nValidation: Optional; valid KMS key ARN",
                     "type": "string"
                 },
+                "networkInterfaces": {
+                    "description": "Secondary network interfaces to attach to this instance, either declared in the\nnetworkInterfaces section of this config or referenced by id. The instance always gets its\nown primary interface at device index 0; these are attached at index 1 and above. Each\nattachment defaults to deleteOnTermination: false so the interface outlives the instance.\n\nUse cases: Stable allowlisted private IP for a proxy; Multi-homed instance\n\nAWS: EC2 NetworkInterfaceAttachment\n\nValidation: Optional; array of NetworkInterfaceAttachmentProps. Each interface may be\nattached at most once across the config, and each deviceIndex must be unique per instance",
+                    "items": {
+                        "$ref": "#/definitions/NetworkInterfaceAttachmentProps"
+                    },
+                    "type": "array"
+                },
                 "osType": {
                     "description": "Operating system type. Affects user data script handling and cfn-init behavior.\n\nUse cases: OS-specific bootstrap; Platform-appropriate configuration\n\nAWS: EC2 instance OS type\n\nValidation: Required; \"linux\" | \"windows\" | \"unknown\"",
                     "enum": [
@@ -1770,7 +1777,7 @@
                     "type": "number"
                 },
                 "sourceDestCheck": {
-                    "description": "When false, disables source/destination checking to allow NAT or routing.\n\nUse cases: NAT instance; Custom routing; Network appliance\n\nAWS: EC2 SourceDestCheck\n\nValidation: Optional; boolean",
+                    "description": "When false, disables source/destination checking to allow NAT or routing. Applies to the\ninstance's primary network interface only; a secondary interface attached via\nnetworkInterfaces carries its own sourceDestCheck.\n\nUse cases: NAT instance; Custom routing; Network appliance\n\nAWS: EC2 SourceDestCheck\n\nValidation: Optional; boolean",
                     "type": "boolean"
                 },
                 "subnetId": {
@@ -2773,6 +2780,13 @@
             "description": "Map of key pair names to their configurations.",
             "type": "object"
         },
+        "NamedNetworkInterfaceProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/NetworkInterfaceProps"
+            },
+            "description": "Map of network interface names to their configurations.",
+            "type": "object"
+        },
         "NamedPackageProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/PackageProps"
@@ -2813,6 +2827,74 @@
                 "$ref": "#/definitions/UserProps"
             },
             "description": "Map of user names to their configurations. Linux/UNIX only.",
+            "type": "object"
+        },
+        "NetworkInterfaceAttachmentProps": {
+            "additionalProperties": false,
+            "description": "Attachment of an existing or config-declared network interface to an instance as a secondary\ninterface. Rendered as a standalone NetworkInterfaceAttachment resource, which is what allows\nan instance-replacing update to detach the interface from the old instance before attaching it\nto the new one. The instance's primary interface cannot be customized.",
+            "properties": {
+                "deleteOnTermination": {
+                    "default": false,
+                    "description": "Whether the interface is deleted when the instance terminates. Defaults to false, overriding\nCloudFormation's own default of true, so that the interface and its private IP survive\ntermination and can be attached to a replacement instance.\n\nUse cases: Preserving an allowlisted private IP across instance replacement\n\nAWS: EC2 NetworkInterfaceAttachment DeleteOnTermination\n\nValidation: Optional; boolean",
+                    "type": "boolean"
+                },
+                "deviceIndex": {
+                    "description": "Device index at which the interface is attached.\n\nUse cases: Ordering multiple secondary interfaces on one instance\n\nAWS: EC2 NetworkInterfaceAttachment DeviceIndex\n\nValidation: Required; integer >= 1, unique per instance. Index 0 is the instance's primary\ninterface and is rejected, because a primary interface cannot be detached and would make the\ninstance un-updatable\n\nChanging the index of an already-deployed networkInterface attachment replaces the attachment,\nwhich CloudFormation performs delete-then-create for this resource type, so the interface\ndetaches and re-attaches at the new index in a single deploy. Two edits still need two deploys\n-- remove the entry, deploy, then add it back: changing the index of a networkInterfaceId\nattachment, and moving an interface onto an index that another interface still holds.",
+                    "minimum": 1,
+                    "type": "integer"
+                },
+                "networkInterface": {
+                    "description": "Name of a network interface from the networkInterfaces section of this config.\nMutually exclusive with networkInterfaceId.\n\nUse cases: Attach an interface declared and managed by this config\n\nAWS: EC2 NetworkInterfaceAttachment NetworkInterfaceId\n\nValidation: Optional; must match a key in the networkInterfaces config section;\nexactly one of networkInterface or networkInterfaceId is required",
+                    "type": "string"
+                },
+                "networkInterfaceId": {
+                    "description": "ID of a network interface created outside this config.\nMutually exclusive with networkInterface.\n\nUse cases: Attach an interface created by another module or by hand\n\nAWS: EC2 NetworkInterfaceAttachment NetworkInterfaceId\n\nValidation: Optional; valid network interface ID (eni-...; supports ssm: references);\nexactly one of networkInterface or networkInterfaceId is required",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "deviceIndex"
+            ],
+            "type": "object"
+        },
+        "NetworkInterfaceProps": {
+            "additionalProperties": false,
+            "description": "Elastic network interface (ENI) configuration. An interface is a resource in its own right,\nattached to instances as a secondary interface only (see InstanceProps.networkInterfaces) with\ndeleteOnTermination false, which is what carries its private IP and MAC across the instances it\nis attached to. A secondary interface is not the instance's default route: routing traffic over\nit is OS-level configuration on the instance.",
+            "properties": {
+                "description": {
+                    "description": "Description surfaced in the EC2 console to help operators identify the interface.\n\nUse cases: Identifying a persistent proxy data-path interface among ephemeral ones\n\nAWS: EC2 NetworkInterface Description\n\nValidation: Optional; string",
+                    "type": "string"
+                },
+                "privateIpAddress": {
+                    "description": "Fixed primary private IPv4 address for the interface. This is the address that survives\ninstance replacement, so it is the address to allowlist on downstream firewalls. AWS assigns\nan address from the subnet when omitted.\n\nChanging this on an already-deployed interface replaces it. Because interfaces are retained,\nthe previous interface survives the replacement still holding the old address, so reusing that\naddress elsewhere requires deleting the retained interface out of band first.\n\nUse cases: Allowlisted proxy IP; MAC/IP-stable network appliance\n\nAWS: EC2 NetworkInterface PrivateIpAddress\n\nValidation: Optional; IPv4 address inside the subnet CIDR and not already in use",
+                    "type": "string"
+                },
+                "securityGroupIds": {
+                    "description": "IDs of security groups created outside this config. Combined with securityGroups.\n\nAt least one of securityGroups or securityGroupIds is required; omitting both is rejected at\nsynth rather than leaving the interface in the permissive VPC default security group.\n\nUse cases: Reuse pre-existing VPC security groups on the interface\n\nAWS: EC2 NetworkInterface GroupSet\n\nValidation: Optional if securityGroups is set; valid security group IDs (supports ssm:\nreferences)",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "securityGroups": {
+                    "description": "Names of security groups from the securityGroups section of this config. Combined with\nsecurityGroupIds. These groups govern traffic on this interface independently of the\nsecurity group applied to the instance itself.\n\nAt least one of securityGroups or securityGroupIds is required. Omitting both is rejected at\nsynth, because EC2 would place the interface in the VPC default security group, which permits\nall traffic between its members and all outbound traffic. To use the default group\ndeliberately, name it in securityGroupIds.\n\nUse cases: Reference project-managed security groups by name\n\nAWS: EC2 NetworkInterface GroupSet\n\nValidation: Optional if securityGroupIds is set; each entry must match a key in the\nsecurityGroups config section",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "sourceDestCheck": {
+                    "description": "When false, disables source/destination checking on this interface so it can forward\ntraffic it is neither the source nor the destination of. Source/destination checking is\nper interface: the instance-level sourceDestCheck does not cover a secondary interface.\n\nUse cases: Proxy instance; NAT instance; Traffic inspection appliance\n\nAWS: EC2 NetworkInterface SourceDestCheck\n\nValidation: Optional; boolean",
+                    "type": "boolean"
+                },
+                "subnetId": {
+                    "description": "Subnet in which the interface is created. Determines the interface's availability zone,\nwhich must match the availability zone of any instance it is attached to. May differ from\nthe instance's own subnetId to multi-home the instance within that zone.\n\nUse cases: Multi-homed instances; Dedicated data-path subnet placement\n\nAWS: EC2 NetworkInterface SubnetId\n\nValidation: Required; valid subnet ID (supports ssm: references)",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subnetId"
+            ],
             "type": "object"
         },
         "Node": {
@@ -3749,6 +3831,10 @@
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",
             "description": "Q-ENHANCED-PROPERTY\nOptional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.\n\nUse cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions\n\nAWS: CDK Nag suppressions for compliance rule management and security exception documentation\n\nValidation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management"
+        },
+        "networkInterfaces": {
+            "$ref": "#/definitions/NamedNetworkInterfaceProps",
+            "description": "Elastic network interfaces (ENIs) to create, keyed by name. An interface is a resource in its\nown right, so a fixed privateIpAddress declared here survives replacement or termination of\nwhichever instance it is attached to -- which is what makes it safe to allowlist that IP on\ndownstream firewalls -- and the interface is retained when the stack is deleted. Attach them to\ninstances via the instance's networkInterfaces property; they are always attached as secondary\ninterfaces, never as an instance's primary interface.\n\nUse cases: Stable allowlisted private IP for a proxy or NAT instance; Multi-homed instances\n\nAWS: EC2 NetworkInterface\n\nValidation: Optional; map of network interface name to NetworkInterfaceProps"
         },
         "rules": {
             "$ref": "#/definitions/NamedSecurityGroupRulesProps",

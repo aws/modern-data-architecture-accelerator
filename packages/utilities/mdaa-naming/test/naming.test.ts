@@ -129,6 +129,9 @@ describe('MdaaDefaultResourceNaming', () => {
     expect(naming.withResourceType(MdaaResourceType.BEDROCK_AGENTCORE_HARNESS).resourceName('harness')).toBe(
       naming.resourceName('harness'),
     );
+    expect(naming.withResourceType(MdaaResourceType.EC2_NETWORK_INTERFACE).resourceName('eni')).toBe(
+      naming.resourceName('eni'),
+    );
   });
 
   test('ssmOrgPath', () => {

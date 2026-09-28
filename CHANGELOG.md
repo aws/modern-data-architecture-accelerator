@@ -8,6 +8,10 @@
 
 - Added **AgentCore Harnesses** via a new top-level `harnesses` property: declarative, tool-using agents (model + system prompt + tools) deployed on AgentCore. Additive only - harnesses are created only when the property is set. See the [module README](packages/apps/ai/bedrock-builder-app/README.md) for sample configs and the full config surface.
 
+#### EC2 Module
+
+- Added a top-level `networkInterfaces` property for declaring elastic network interfaces (ENIs) with an optional fixed `privateIpAddress`, plus a per-instance `networkInterfaces` array that attaches them as secondary interfaces, so a proxy or NAT instance keeps an allowlistable private IP and MAC across instance replacement. Additive only — existing configs are unchanged. See the [module README](packages/apps/utility/ec2-app/README.md#network-interfaces) for the operational model, including the OS-level routing and failover you own.
+
 #### Data Lake Module
 
 - Added `additionalBucketKmsKeyArns` and per-bucket `additionalKmsKeyArns` to let buckets accept objects encrypted with keys the module did not create, so Glue jobs can write into a data lake split across several Data Lake modules. Both are optional; existing configs are unchanged. See the [module README](packages/apps/datalake/datalake-app/README.md#trusting-additional-kms-keys).

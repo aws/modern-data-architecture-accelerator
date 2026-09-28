@@ -36,6 +36,119 @@
         "Value": "(SO0320-ec2) Modern Data Architecture Accelerator. Version VERSION"
       }
     },
+    "instancesnetworkinterfaceseniproxyeniA6A60D7F": {
+      "Type": "AWS::EC2::NetworkInterface",
+      "Properties": {
+        "Description": "Static proxy data-path interface",
+        "GroupSet": [
+          {
+            "Fn::GetAtt": [
+              "instancessg185F525A2",
+              "GroupId"
+            ]
+          },
+          "sg-existinginterface"
+        ],
+        "PrivateIpAddress": "10.0.0.50",
+        "SourceDestCheck": false,
+        "SubnetId": "subnet-datapathsubnet",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "ec2"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-ec2-main"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "Name",
+            "Value": "test-org-test-env-test-domain-test-ec2-main-proxy-eni"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "RetainExceptOnCreate"
+    },
+    "instancesnetworkinterfaceseniproxyeninetworkinterfaceproxyeniidssm63233C18": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-ec2-main/network-interface/proxy-eni/id",
+        "Tags": {
+          "mdaa_cdk_app": "ec2",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-ec2-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "instancesnetworkinterfaceseniproxyeniA6A60D7F",
+            "Id"
+          ]
+        }
+      }
+    },
+    "instancesnetworkinterfaceseniproxyeninetworkinterfaceproxyeniprivateipssm203CB2D4": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-ec2-main/network-interface/proxy-eni/private-ip",
+        "Tags": {
+          "mdaa_cdk_app": "ec2",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-ec2-main",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "instancesnetworkinterfaceseniproxyeniA6A60D7F",
+            "PrimaryPrivateIpAddress"
+          ]
+        }
+      }
+    },
+    "instancesnetworkinterfacesattachmentnameproxyeni65F2F511": {
+      "Type": "AWS::EC2::NetworkInterfaceAttachment",
+      "Properties": {
+        "DeleteOnTermination": false,
+        "DeviceIndex": "1",
+        "InstanceId": {
+          "Ref": "instancesinstance1instanceCE8FAF35"
+        },
+        "NetworkInterfaceId": {
+          "Fn::GetAtt": [
+            "instancesnetworkinterfaceseniproxyeniA6A60D7F",
+            "Id"
+          ]
+        }
+      }
+    },
+    "instancesnetworkinterfacesattachmentidinstance21E40C1149": {
+      "Type": "AWS::EC2::NetworkInterfaceAttachment",
+      "Properties": {
+        "DeleteOnTermination": false,
+        "DeviceIndex": "1",
+        "InstanceId": {
+          "Ref": "instancesinstance2instanceB7AD1249"
+        },
+        "NetworkInterfaceId": "eni-0123456789abcdef0"
+      }
+    },
     "instanceskmskey7952A58F": {
       "Type": "AWS::KMS::Key",
       "Properties": {
@@ -3357,6 +3470,28 @@
     }
   },
   "Outputs": {
+    "instancesnetworkinterfaceseniproxyeninetworkinterfaceproxyeniidoutCD92811F": {
+      "Value": {
+        "Fn::GetAtt": [
+          "instancesnetworkinterfaceseniproxyeniA6A60D7F",
+          "Id"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-ec2-main:network-interface:proxyeni:id"
+      }
+    },
+    "instancesnetworkinterfaceseniproxyeninetworkinterfaceproxyeniprivateipoutD756ABCD": {
+      "Value": {
+        "Fn::GetAtt": [
+          "instancesnetworkinterfaceseniproxyeniA6A60D7F",
+          "PrimaryPrivateIpAddress"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-ec2-main:network-interface:proxyeni:private-ip"
+      }
+    },
     "instanceskmskeykmsarnoutA3384016": {
       "Value": {
         "Fn::GetAtt": [

@@ -8,6 +8,7 @@ import {
   NamedInitProps,
   NamedInstanceProps,
   NamedKeyPairProps,
+  NamedNetworkInterfaceProps,
   NamedSecurityGroupProps,
   NamedSecurityGroupRulesProps,
 } from '@aws-mdaa/ec2-l3-construct';
@@ -78,6 +79,21 @@ export interface InstanceConfigContents extends MdaaBaseConfigContents {
    */
   readonly cfnInit?: NamedInitProps;
   /**
+   * Elastic network interfaces (ENIs) to create, keyed by name. An interface is a resource in its
+   * own right, so a fixed privateIpAddress declared here survives replacement or termination of
+   * whichever instance it is attached to -- which is what makes it safe to allowlist that IP on
+   * downstream firewalls -- and the interface is retained when the stack is deleted. Attach them to
+   * instances via the instance's networkInterfaces property; they are always attached as secondary
+   * interfaces, never as an instance's primary interface.
+   *
+   * Use cases: Stable allowlisted private IP for a proxy or NAT instance; Multi-homed instances
+   *
+   * AWS: EC2 NetworkInterface
+   *
+   * Validation: Optional; map of network interface name to NetworkInterfaceProps
+   */
+  readonly networkInterfaces?: NamedNetworkInterfaceProps;
+  /**
    * EC2 instances to deploy. Instances have termination protection enabled and are
    * retained post stack deletion. EBS volumes are encrypted with the module KMS CMK
    * unless a custom kmsKeyArn is specified. AMI root volumes must be listed in
@@ -97,6 +113,7 @@ export class InstanceConfigParser extends MdaaAppConfigParser<InstanceConfigCont
   public readonly securityGroups?: NamedSecurityGroupProps;
   public readonly rules?: NamedSecurityGroupRulesProps;
   public readonly cfnInit?: NamedInitProps;
+  public readonly networkInterfaces?: NamedNetworkInterfaceProps;
   public readonly instances?: NamedInstanceProps;
   public readonly adminRoles: MdaaRoleRef[];
   constructor(stack: Stack, props: MdaaAppConfigParserProps) {
@@ -104,6 +121,7 @@ export class InstanceConfigParser extends MdaaAppConfigParser<InstanceConfigCont
     this.adminRoles = this.configContents.adminRoles;
     this.keyPairs = this.configContents.keyPairs;
     this.cfnInit = this.configContents.cfnInit;
+    this.networkInterfaces = this.configContents.networkInterfaces;
     this.instances = this.configContents.instances;
     this.securityGroups = this.configContents.securityGroups;
     this.rules = this.configContents.rules;

@@ -12,4 +12,6 @@ The EC2 Instance CDK L3 construct is used to configure and deploy a secure EC2 I
 
 * **Security Group** - Will be used by EC2 Instance.
 
+* **Network Interface** - An optional retained ENI, attached to an EC2 Instance as a secondary interface.
+
 * **KMS CMK** - Created if no keyARN is provided. The KMS CMK which will be used to encrypt the root volume.

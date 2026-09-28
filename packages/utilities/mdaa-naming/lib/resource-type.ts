@@ -49,6 +49,7 @@ export enum MdaaResourceType {
   EC2_SECURITY_GROUP = 'sg',
   EC2_VOLUME = 'ebs',
   EC2_KEY_PAIR = 'ec2-key',
+  EC2_NETWORK_INTERFACE = 'eni',
   ECS_CLUSTER = 'ecs',
   ECS_FARGATE = 'ecs-fargate',
   ECS_CONTAINER = 'ecs-container',

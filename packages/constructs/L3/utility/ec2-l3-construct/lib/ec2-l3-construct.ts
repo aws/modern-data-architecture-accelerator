@@ -9,6 +9,8 @@ import {
   MdaaEC2InstanceProps,
   MdaaEC2SecretKeyPair,
   MdaaEC2SecretKeyPairProps,
+  MdaaNetworkInterface,
+  MdaaNetworkInterfaceProps,
   MdaaSecurityGroup,
   MdaaSecurityGroupProps,
   MdaaSecurityGroupRuleProps,
@@ -20,6 +22,7 @@ import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import {
   ApplyCloudFormationInitOptions,
   CfnInstance,
+  CfnNetworkInterfaceAttachment,
   CloudFormationInit,
   ConfigSetProps,
   IMachineImage,
@@ -57,7 +60,7 @@ import { Construct } from 'constructs';
 import { readFileSync } from 'fs';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { NagPackSuppression } from 'cdk-nag';
-import { Duration, Token } from 'aws-cdk-lib';
+import { Annotations, Duration, Token } from 'aws-cdk-lib';
 import { MdaaConfigRefValueTransformer, MdaaConfigRefValueTransformerProps } from '@aws-mdaa/config';
 
 /**
@@ -836,6 +839,170 @@ export interface InitOptionsProps {
   readonly timeout?: number;
 }
 /**
+ * Map of network interface names to their configurations.
+ */
+export interface NamedNetworkInterfaceProps {
+  /** @jsii ignore */
+  readonly [name: string]: NetworkInterfaceProps;
+}
+/**
+ * Elastic network interface (ENI) configuration. An interface is a resource in its own right,
+ * attached to instances as a secondary interface only (see InstanceProps.networkInterfaces) with
+ * deleteOnTermination false, which is what carries its private IP and MAC across the instances it
+ * is attached to. A secondary interface is not the instance's default route: routing traffic over
+ * it is OS-level configuration on the instance.
+ */
+export interface NetworkInterfaceProps {
+  /**
+   * Subnet in which the interface is created. Determines the interface's availability zone,
+   * which must match the availability zone of any instance it is attached to. May differ from
+   * the instance's own subnetId to multi-home the instance within that zone.
+   *
+   * Use cases: Multi-homed instances; Dedicated data-path subnet placement
+   *
+   * AWS: EC2 NetworkInterface SubnetId
+   *
+   * Validation: Required; valid subnet ID (supports ssm: references)
+   */
+  readonly subnetId: string;
+  /**
+   * Description surfaced in the EC2 console to help operators identify the interface.
+   *
+   * Use cases: Identifying a persistent proxy data-path interface among ephemeral ones
+   *
+   * AWS: EC2 NetworkInterface Description
+   *
+   * Validation: Optional; string
+   */
+  readonly description?: string;
+  /**
+   * Fixed primary private IPv4 address for the interface. This is the address that survives
+   * instance replacement, so it is the address to allowlist on downstream firewalls. AWS assigns
+   * an address from the subnet when omitted.
+   *
+   * Changing this on an already-deployed interface replaces it. Because interfaces are retained,
+   * the previous interface survives the replacement still holding the old address, so reusing that
+   * address elsewhere requires deleting the retained interface out of band first.
+   *
+   * Use cases: Allowlisted proxy IP; MAC/IP-stable network appliance
+   *
+   * AWS: EC2 NetworkInterface PrivateIpAddress
+   *
+   * Validation: Optional; IPv4 address inside the subnet CIDR and not already in use
+   */
+  readonly privateIpAddress?: string;
+  /**
+   * Names of security groups from the securityGroups section of this config. Combined with
+   * securityGroupIds. These groups govern traffic on this interface independently of the
+   * security group applied to the instance itself.
+   *
+   * At least one of securityGroups or securityGroupIds is required. Omitting both is rejected at
+   * synth, because EC2 would place the interface in the VPC default security group, which permits
+   * all traffic between its members and all outbound traffic. To use the default group
+   * deliberately, name it in securityGroupIds.
+   *
+   * Use cases: Reference project-managed security groups by name
+   *
+   * AWS: EC2 NetworkInterface GroupSet
+   *
+   * Validation: Optional if securityGroupIds is set; each entry must match a key in the
+   * securityGroups config section
+   */
+  readonly securityGroups?: string[];
+  /**
+   * IDs of security groups created outside this config. Combined with securityGroups.
+   *
+   * At least one of securityGroups or securityGroupIds is required; omitting both is rejected at
+   * synth rather than leaving the interface in the permissive VPC default security group.
+   *
+   * Use cases: Reuse pre-existing VPC security groups on the interface
+   *
+   * AWS: EC2 NetworkInterface GroupSet
+   *
+   * Validation: Optional if securityGroups is set; valid security group IDs (supports ssm:
+   * references)
+   */
+  readonly securityGroupIds?: string[];
+  /**
+   * When false, disables source/destination checking on this interface so it can forward
+   * traffic it is neither the source nor the destination of. Source/destination checking is
+   * per interface: the instance-level sourceDestCheck does not cover a secondary interface.
+   *
+   * Use cases: Proxy instance; NAT instance; Traffic inspection appliance
+   *
+   * AWS: EC2 NetworkInterface SourceDestCheck
+   *
+   * Validation: Optional; boolean
+   */
+  readonly sourceDestCheck?: boolean;
+}
+/**
+ * Attachment of an existing or config-declared network interface to an instance as a secondary
+ * interface. Rendered as a standalone NetworkInterfaceAttachment resource, which is what allows
+ * an instance-replacing update to detach the interface from the old instance before attaching it
+ * to the new one. The instance's primary interface cannot be customized.
+ */
+export interface NetworkInterfaceAttachmentProps {
+  /**
+   * Name of a network interface from the networkInterfaces section of this config.
+   * Mutually exclusive with networkInterfaceId.
+   *
+   * Use cases: Attach an interface declared and managed by this config
+   *
+   * AWS: EC2 NetworkInterfaceAttachment NetworkInterfaceId
+   *
+   * Validation: Optional; must match a key in the networkInterfaces config section;
+   * exactly one of networkInterface or networkInterfaceId is required
+   */
+  readonly networkInterface?: string;
+  /**
+   * ID of a network interface created outside this config.
+   * Mutually exclusive with networkInterface.
+   *
+   * Use cases: Attach an interface created by another module or by hand
+   *
+   * AWS: EC2 NetworkInterfaceAttachment NetworkInterfaceId
+   *
+   * Validation: Optional; valid network interface ID (eni-...; supports ssm: references);
+   * exactly one of networkInterface or networkInterfaceId is required
+   */
+  readonly networkInterfaceId?: string;
+  /**
+   * Device index at which the interface is attached.
+   *
+   * Use cases: Ordering multiple secondary interfaces on one instance
+   *
+   * AWS: EC2 NetworkInterfaceAttachment DeviceIndex
+   *
+   * Validation: Required; integer >= 1, unique per instance. Index 0 is the instance's primary
+   * interface and is rejected, because a primary interface cannot be detached and would make the
+   * instance un-updatable
+   *
+   * Changing the index of an already-deployed networkInterface attachment replaces the attachment,
+   * which CloudFormation performs delete-then-create for this resource type, so the interface
+   * detaches and re-attaches at the new index in a single deploy. Two edits still need two deploys
+   * -- remove the entry, deploy, then add it back: changing the index of a networkInterfaceId
+   * attachment, and moving an interface onto an index that another interface still holds.
+   *
+   * @minimum 1
+   * @TJS-type integer
+   */
+  readonly deviceIndex: number;
+  /**
+   * Whether the interface is deleted when the instance terminates. Defaults to false, overriding
+   * CloudFormation's own default of true, so that the interface and its private IP survive
+   * termination and can be attached to a replacement instance.
+   *
+   * Use cases: Preserving an allowlisted private IP across instance replacement
+   *
+   * AWS: EC2 NetworkInterfaceAttachment DeleteOnTermination
+   *
+   * Validation: Optional; boolean
+   * @default false
+   */
+  readonly deleteOnTermination?: boolean;
+}
+/**
  * Map of instance names to their configurations.
  */
 export interface NamedInstanceProps {
@@ -1036,7 +1203,9 @@ export interface InstanceProps {
    */
   readonly creationTimeOut?: string;
   /**
-   * When false, disables source/destination checking to allow NAT or routing.
+   * When false, disables source/destination checking to allow NAT or routing. Applies to the
+   * instance's primary network interface only; a secondary interface attached via
+   * networkInterfaces carries its own sourceDestCheck.
    *
    * Use cases: NAT instance; Custom routing; Network appliance
    *
@@ -1065,6 +1234,20 @@ export interface InstanceProps {
    * Validation: Optional; key pair must exist in the region
    */
   readonly existingKeyPairName?: string;
+  /**
+   * Secondary network interfaces to attach to this instance, either declared in the
+   * networkInterfaces section of this config or referenced by id. The instance always gets its
+   * own primary interface at device index 0; these are attached at index 1 and above. Each
+   * attachment defaults to deleteOnTermination: false so the interface outlives the instance.
+   *
+   * Use cases: Stable allowlisted private IP for a proxy; Multi-homed instance
+   *
+   * AWS: EC2 NetworkInterfaceAttachment
+   *
+   * Validation: Optional; array of NetworkInterfaceAttachmentProps. Each interface may be
+   * attached at most once across the config, and each deviceIndex must be unique per instance
+   */
+  readonly networkInterfaces?: NetworkInterfaceAttachmentProps[];
 }
 
 /** Internal props for the EC2 L3 construct. */
@@ -1079,6 +1262,8 @@ export interface Ec2L3ConstructProps extends MdaaL3ConstructProps {
   readonly keyPairs?: NamedKeyPairProps;
   /** CloudFormation Init configurations by name. */
   readonly cfnInit?: NamedInitProps;
+  /** Elastic network interface configurations by name. */
+  readonly networkInterfaces?: NamedNetworkInterfaceProps;
   /** EC2 instance configurations by name. */
   readonly instances?: NamedInstanceProps;
 }
@@ -1093,6 +1278,15 @@ export interface Ec2L3ConstructProps extends MdaaL3ConstructProps {
  */
 function sgPeerLabel(sgId: string, index: number): string {
   return Token.isUnresolved(sgId) ? `sgref-${index}` : sgId;
+}
+
+/**
+ * Names an attachment's interface reference in an error message. An `ssm:` networkInterfaceId
+ * reaches this module already resolved to a CloudFormation token, whose ${Token[TOKEN.NN]} form
+ * identifies nothing to a reader, so those are described by how they were referenced instead.
+ */
+function networkInterfaceRefLabel(networkInterfaceRef: string): string {
+  return Token.isUnresolved(networkInterfaceRef) ? '<ssm: networkInterfaceId reference>' : networkInterfaceRef;
 }
 
 //This stack creates and manages an EC2 instance
@@ -1112,8 +1306,23 @@ export class Ec2L3Construct extends MdaaL3Construct {
 
   public readonly keyPairs: { [key: string]: MdaaEC2SecretKeyPair } = {};
   public readonly securityGroups: { [key: string]: MdaaSecurityGroup } = {};
+  public readonly networkInterfaces: { [key: string]: MdaaNetworkInterface } = {};
   public readonly instances: { [key: string]: Instance } = {};
   public readonly cfnInit: { [key: string]: CloudFormationInit } = {};
+  /**
+   * Network interfaces already claimed by an attachment, keyed by the config value that
+   * identifies them (interface name or id), valued by the instance that claimed them. An
+   * interface can only be attached to one instance at a time, so a second claim is a config
+   * error rather than something CloudFormation should be asked to attempt.
+   */
+  private readonly attachedNetworkInterfaces: Map<string, string> = new Map();
+  /**
+   * Scope holding the interface and attachment resources. Construct ids here become the logical IDs
+   * of retained interfaces, so they are kept out of the namespace shared with config-keyed security
+   * groups and instances, where a security group named `eni-proxy` alongside an interface named
+   * `proxy` would otherwise collide.
+   */
+  private readonly networkInterfaceScope = new Construct(this, 'network-interfaces');
   constructor(scope: Construct, id: string, props: Ec2L3ConstructProps) {
     super(scope, id, props);
     this.props = props;
@@ -1123,8 +1332,10 @@ export class Ec2L3Construct extends MdaaL3Construct {
     this.createKeyPairs(props.keyPairs || {});
     this.createSecurityGroups(props.securityGroups || {});
     this.createSecurityGroupRules(props.rules || {});
+    this.createNetworkInterfaces(props.networkInterfaces || {});
     this.cfnInit = this.createInit(props.cfnInit || {});
     this.createInstances(props.instances || {});
+    this.warnOnUnattachedNetworkInterfaces();
   }
 
   private createKeyPairs(namedKeyPairProps: NamedKeyPairProps) {
@@ -1327,6 +1538,195 @@ export class Ec2L3Construct extends MdaaL3Construct {
     return initMap;
   }
 
+  /**
+   * Creates the config-declared elastic network interfaces. Runs after createSecurityGroups so
+   * that an interface can reference a security group from this config by name.
+   */
+  private createNetworkInterfaces(namedNetworkInterfaceProps: NamedNetworkInterfaceProps) {
+    Object.entries(namedNetworkInterfaceProps).forEach(entry => {
+      const networkInterfaceName = entry[0];
+      const networkInterfaceProps = entry[1];
+
+      const securityGroupIds = [
+        ...(networkInterfaceProps.securityGroups ?? []).map(securityGroupName => {
+          const securityGroup = Ec2L3Construct.lookupByName(this.securityGroups, securityGroupName);
+          if (!securityGroup) {
+            throw new Error(
+              `Network Interface ${networkInterfaceName} securityGroups references Security Group ${securityGroupName}, which is not known to this module.`,
+            );
+          }
+          return securityGroup.securityGroupId;
+        }),
+        ...(networkInterfaceProps.securityGroupIds ?? []),
+      ];
+
+      if (securityGroupIds.length === 0) {
+        // EC2 makes the default-group association itself, so it appears in neither the template nor
+        // CDK Nag. Rejected here, as getInstanceSecurityGroup does for an instance.
+        throw new Error(
+          `Network Interface ${networkInterfaceName} specifies neither securityGroups nor securityGroupIds. At least one is required, because EC2 places an interface with no group in the VPC default security group, which permits all traffic between its members and all outbound traffic. To use the default group deliberately, name it in securityGroupIds.`,
+        );
+      }
+
+      const createNetworkInterfaceProps: MdaaNetworkInterfaceProps = {
+        networkInterfaceName: networkInterfaceName,
+        subnetId: networkInterfaceProps.subnetId,
+        description: networkInterfaceProps.description,
+        privateIpAddress: networkInterfaceProps.privateIpAddress,
+        securityGroupIds: securityGroupIds,
+        sourceDestCheck: networkInterfaceProps.sourceDestCheck,
+        naming: this.props.naming,
+      };
+
+      this.networkInterfaces[networkInterfaceName] = new MdaaNetworkInterface(
+        this.networkInterfaceScope,
+        `eni-${networkInterfaceName}`,
+        createNetworkInterfaceProps,
+      );
+    });
+  }
+
+  /**
+   * Attaches the instance's configured secondary network interfaces. Each attachment is a
+   * standalone NetworkInterfaceAttachment rather than an interface baked into the instance's own
+   * network configuration, so that an instance-replacing update can detach the interface from the
+   * outgoing instance before attaching it to the replacement.
+   */
+  private createNetworkInterfaceAttachments(instanceName: string, attachments: NetworkInterfaceAttachmentProps[]) {
+    const instanceDeviceIndexes = new Set<number>();
+    attachments.forEach(attachment => {
+      this.validateDeviceIndex(instanceName, attachment.deviceIndex, instanceDeviceIndexes);
+      const resolved = this.resolveAttachmentNetworkInterface(instanceName, attachment);
+
+      new CfnNetworkInterfaceAttachment(this.networkInterfaceScope, resolved.constructId, {
+        instanceId: this.instances[instanceName].instanceId,
+        networkInterfaceId: resolved.networkInterfaceId,
+        deviceIndex: attachment.deviceIndex.toString(),
+        // CloudFormation's own default is true, which would destroy the interface along with the
+        // instance.
+        deleteOnTermination: attachment.deleteOnTermination ?? false,
+      });
+    });
+  }
+
+  /**
+   * Validates an attachment's device index. Index 0 is the instance's primary interface, which
+   * cannot be detached, so customizing it would leave the instance un-updatable through a normal
+   * deploy.
+   */
+  private validateDeviceIndex(instanceName: string, deviceIndex: number, instanceDeviceIndexes: Set<number>) {
+    if (!Number.isInteger(deviceIndex) || deviceIndex < 1) {
+      throw new Error(
+        `Instance ${instanceName} networkInterfaces deviceIndex must be an integer >= 1, got ${deviceIndex}. Device index 0 is the instance primary network interface, which cannot be detached and so cannot be customized.`,
+      );
+    }
+    if (instanceDeviceIndexes.has(deviceIndex)) {
+      throw new Error(
+        `Instance ${instanceName} networkInterfaces specifies deviceIndex ${deviceIndex} more than once.`,
+      );
+    }
+    instanceDeviceIndexes.add(deviceIndex);
+  }
+
+  /**
+   * Resolves an attachment to the interface it attaches and the construct id of the attachment
+   * resource, enforcing the module's create-by-name vs. reference-by-id convention and that no
+   * interface is claimed twice.
+   *
+   * The construct id becomes the logical ID of the deployed attachment, so a config-declared
+   * interface is keyed on its own name -- unique across the config, per claimNetworkInterface --
+   * which keeps a deviceIndex change, a move to another instance and an instance rename as
+   * replacements of one resource, performed delete-then-create for this type. An ssm:
+   * networkInterfaceId is an unresolved token here and cannot be part of a construct id, so those
+   * attachments stay keyed on the instance name and device index.
+   */
+  private resolveAttachmentNetworkInterface(
+    instanceName: string,
+    attachment: NetworkInterfaceAttachmentProps,
+  ): { networkInterfaceId: string; constructId: string } {
+    if (attachment.networkInterface && attachment.networkInterfaceId) {
+      throw new Error(
+        `Instance ${instanceName} networkInterfaces entry specifies both networkInterface and networkInterfaceId. Exactly one must be specified.`,
+      );
+    }
+    if (attachment.networkInterface) {
+      const networkInterface = Ec2L3Construct.lookupByName(this.networkInterfaces, attachment.networkInterface);
+      if (!networkInterface) {
+        throw new Error(
+          `Instance ${instanceName} networkInterfaces references Network Interface ${attachment.networkInterface}, which is not known to this module.`,
+        );
+      }
+      // Namespaced so that an interface *named* like an id cannot collide with an interface
+      // *referenced* by that id.
+      this.claimNetworkInterface(instanceName, `name:${attachment.networkInterface}`, attachment.networkInterface);
+      return {
+        networkInterfaceId: networkInterface.attrId,
+        constructId: `attachment-name-${attachment.networkInterface}`,
+      };
+    }
+    if (attachment.networkInterfaceId) {
+      this.claimNetworkInterface(instanceName, `id:${attachment.networkInterfaceId}`, attachment.networkInterfaceId);
+      return {
+        networkInterfaceId: attachment.networkInterfaceId,
+        constructId: `attachment-id-${instanceName}-${attachment.deviceIndex}`,
+      };
+    }
+    throw new Error(
+      `Instance ${instanceName} networkInterfaces entry specifies neither networkInterface nor networkInterfaceId. Exactly one must be specified.`,
+    );
+  }
+
+  /**
+   * Records that an instance has claimed an interface, rejecting a second claim. `claimKey` is the
+   * namespaced identity used for collision detection; `networkInterfaceRef` is the config value it
+   * was derived from, named in the error so the message identifies the entry at fault.
+   */
+  private claimNetworkInterface(instanceName: string, claimKey: string, networkInterfaceRef: string) {
+    const claimedBy = this.attachedNetworkInterfaces.get(claimKey);
+    const label = networkInterfaceRefLabel(networkInterfaceRef);
+    if (claimedBy === instanceName) {
+      throw new Error(
+        `Instance ${instanceName} networkInterfaces attaches Network Interface ${label} more than once. An interface can occupy only one device index.`,
+      );
+    }
+    if (claimedBy) {
+      throw new Error(
+        `Network Interface ${label} is attached to both instance ${claimedBy} and instance ${instanceName}. A network interface can be attached to only one instance.`,
+      );
+    }
+    this.attachedNetworkInterfaces.set(claimKey, instanceName);
+  }
+
+  /**
+   * Own-property lookup into a config-keyed map. A plain object inherits from Object.prototype, so
+   * a config key such as `constructor` or `toString` would otherwise resolve to an inherited member
+   * and satisfy a truthiness guard.
+   */
+  private static lookupByName<T>(entries: { [name: string]: T }, name: string): T | undefined {
+    return Object.prototype.hasOwnProperty.call(entries, name) ? entries[name] : undefined;
+  }
+
+  /**
+   * Warns about interfaces declared in the networkInterfaces section that no instance in this
+   * config attaches. Legitimate -- another module can consume an interface through the SSM
+   * parameters published for it -- but because interfaces are retained, a declaration nothing
+   * references also persists in the account indefinitely.
+   */
+  private warnOnUnattachedNetworkInterfaces() {
+    const unattached = Object.keys(this.networkInterfaces).filter(
+      networkInterfaceName => !this.attachedNetworkInterfaces.has(`name:${networkInterfaceName}`),
+    );
+    if (unattached.length > 0) {
+      Annotations.of(this).addWarningV2(
+        '@aws-mdaa/ec2:unattachedNetworkInterface',
+        `networkInterfaces declares ${unattached.join(', ')}, which no instance in this config attaches. ` +
+          `They are still created, and are retained post stack deletion, so they persist in the account until ` +
+          `deleted out of band. This is expected if they are consumed by another module via their SSM parameters; ` +
+          `otherwise remove the declaration.`,
+      );
+    }
+  }
+
   private createInstances(namedInstanceProps: NamedInstanceProps) {
     Object.entries(namedInstanceProps).forEach(entry => {
       const instanceName = entry[0];
@@ -1431,6 +1831,10 @@ export class Ec2L3Construct extends MdaaL3Construct {
             timeout: instanceProps.creationTimeOut,
           },
         };
+      }
+
+      if (instanceProps.networkInterfaces) {
+        this.createNetworkInterfaceAttachments(instanceName, instanceProps.networkInterfaces);
       }
     });
   }
