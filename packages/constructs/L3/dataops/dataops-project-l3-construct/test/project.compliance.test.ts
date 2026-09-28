@@ -493,6 +493,38 @@ describe('MDAA Compliance Stack Tests', () => {
       },
     });
   });
+  test('AthenaResultsEngReadWrite', () => {
+    template.hasResourceProperties('AWS::S3::BucketPolicy', {
+      PolicyDocument: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Action: ['s3:GetObject*', 's3:PutObject', 's3:PutObjectTagging', 's3:DeleteObject'],
+            Condition: {
+              StringLike: {
+                'aws:userId': ['test-eng-super-role-id:*'],
+              },
+            },
+            Effect: 'Allow',
+            Principal: {
+              AWS: '*',
+            },
+            Resource: {
+              'Fn::Join': [
+                '',
+                [
+                  {
+                    'Fn::GetAtt': ['BucketprojectAACC6DD8', 'Arn'],
+                  },
+                  '/athena-results/*',
+                ],
+              ],
+            },
+            Sid: '/athena-results_ReadWrite',
+          }),
+        ]),
+      },
+    });
+  });
   test('GlueTempReadWrite', () => {
     template.hasResourceProperties('AWS::S3::BucketPolicy', {
       PolicyDocument: {

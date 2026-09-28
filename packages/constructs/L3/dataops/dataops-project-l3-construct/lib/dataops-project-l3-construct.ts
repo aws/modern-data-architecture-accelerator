@@ -1539,11 +1539,11 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     });
     rootPolicy.statements().forEach(statement => projectBucket.addToResourcePolicy(statement));
 
-    //Datazone env role and Data Engineers can read/write /athena-results
+    //Datazone env role and Data Engineers can read/write /athena-results (Athena writes query results here under the querying principal's identity)
     const athenaPolicy = new RestrictObjectPrefixToRoles({
       s3Bucket: projectBucket,
       s3Prefix: '/athena-results',
-      readRoleIds: dataEngineerRoleIds,
+      readWriteRoleIds: dataEngineerRoleIds,
       readWritePrincipals: [datazoneUserRole],
     });
     athenaPolicy.statements().forEach(statement => projectBucket.addToResourcePolicy(statement));

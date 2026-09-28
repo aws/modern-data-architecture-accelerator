@@ -22,6 +22,8 @@
 
 - Fixed the role-resolution custom resource Lambda silently having no `logs:CreateLogStream` / `logs:PutLogEvents` permission. Its log-write grant was built from an uncapped name while `MdaaLambdaFunction` caps the function name at 64 characters, so once `org-env-domain-module` reached 52 characters the grant pointed at a log group that never existed. The grant now derives from the same capped function name. This is an in-place `AWS::IAM::Policy` update requiring no replacement, but affected deployments will see a policy diff even with `@aws-mdaa/namingEnforceInlinePolicies` unset.
 
+- Fixed the DataOps Project module so data engineers can write to the `athena-results/` prefix in the project bucket, not just read it — their Athena queries could previously fail with `AccessDenied` when saving results. The grant also lets them overwrite and remove objects under that prefix; the bucket is versioned, so deletes leave a recoverable delete marker and permanent version deletion remains restricted to data admins. Existing deployments will see an in-place bucket policy update requiring no replacement.
+
 ### Removed
 
 - **GAIA v1 removed** (fulfilling the removal target announced in 1.7.0): the `@aws-mdaa/gaia` and `@aws-mdaa/gaia-l3-construct` packages have been deleted. Deployments must use `@aws-mdaa/gaia-v2` and `@aws-mdaa/gaia-v2-l3-construct`, a re-architected GenAI backend that is **not** a drop-in replacement — there is no in-place upgrade. See [MIGRATION_TO_V2.md](packages/apps/ai/gaia-v2-app/MIGRATION_TO_V2.md) for the migration path. **Breaking change.**

@@ -1949,7 +1949,12 @@
               "Sid": "/_ReadWriteSuper"
             },
             {
-              "Action": "s3:GetObject*",
+              "Action": [
+                "s3:GetObject*",
+                "s3:PutObject",
+                "s3:PutObjectTagging",
+                "s3:DeleteObject"
+              ],
               "Condition": {
                 "StringLike": {
                   "aws:userId": [
@@ -1985,7 +1990,7 @@
                   ]
                 ]
               },
-              "Sid": "/athena-results_Read"
+              "Sid": "/athena-results_ReadWrite"
             },
             {
               "Action": [
