@@ -368,7 +368,7 @@ export class DataopsAuroraL3Construct extends MdaaL3Construct {
     const kmsKey = new MdaaKmsKey(this.scope, 'aurora-kms-key', {
       alias: 'aurora',
       naming: this.props.naming,
-      keyAdminRoleIds: allAdminRoles.map(r => r.id()),
+      keyAdminRoles: allAdminRoles,
     });
 
     // Allow RDS/logs to use the KMS key

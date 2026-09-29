@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "@aws-cdk/aws-glue-alpha": "2.220.0-alpha.0",
+    "@aws-mdaa/iam-role-helper": "1.8.1",
     "@aws-mdaa/kms-constructs": "1.8.1",
     "@aws-mdaa/naming": "1.8.1",
     "@aws-mdaa/s3-constructs": "1.8.1",
@@ -37,6 +38,7 @@
   },
   "dependencies": {
     "@aws-cdk/aws-glue-alpha": "2.220.0-alpha.0",
+    "@aws-mdaa/iam-role-helper": "1.8.1",
     "@aws-mdaa/kms-constructs": "1.8.1",
     "@aws-mdaa/naming": "1.8.1",
     "@aws-mdaa/s3-constructs": "1.8.1",
@@ -46,6 +48,7 @@
   },
   "peerDependencies": {
     "@aws-cdk/aws-glue-alpha": "2.220.0-alpha.0",
+    "@aws-mdaa/iam-role-helper": "1.8.1",
     "@aws-mdaa/kms-constructs": "1.8.1",
     "@aws-mdaa/naming": "1.8.1",
     "@aws-mdaa/s3-constructs": "1.8.1",

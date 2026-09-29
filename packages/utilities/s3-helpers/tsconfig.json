@@ -35,6 +35,9 @@
   ],
   "references": [
     {
+      "path": "../iam-role-helper"
+    },
+    {
       "path": "../../constructs/L2/kms-constructs"
     },
     {

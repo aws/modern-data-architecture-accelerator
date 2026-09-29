@@ -550,7 +550,6 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
   private readonly projectExecutionRoles: MdaaResolvableRole[];
   private readonly dataAdminRoles: MdaaResolvableRole[];
   private readonly dataEngineerRoles: MdaaResolvableRole[];
-  private readonly dataAdminRoleIds: string[];
   private readonly projectLevelLFTagsConstruct?: LakeFormationTagsL3Construct;
 
   constructor(scope: Construct, id: string, props: DataOpsProjectL3ConstructProps) {
@@ -566,7 +565,6 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       this.props.dataEngineerRoleRefs,
       'DataEngineer',
     );
-    this.dataAdminRoleIds = this.dataAdminRoles.map(x => x.id());
 
     const projectDeploymentRole = this.createProjectDeploymentRole();
     const lakeFormationLocationRole = this.createLakeFormationRole();
@@ -1479,11 +1477,14 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     });
 
     // Create a KMS Key if we need to make one for the project.
+    const wrappedKeyUserRoles = keyUserRoles.map((role, i) =>
+      MdaaResolvableRole.fromRole(this.scope, `kms-key-user-role-${i}`, role),
+    );
     const kmsKey = new MdaaKmsKey(this.scope, 'ProjectKmsKey', {
       alias: 'cmk',
       naming: this.props.naming,
-      keyAdminRoleIds: this.dataAdminRoleIds,
-      keyUserRoleIds: [...this.getAllRoleIds(), ...keyUserRoles.map(x => x.roleId)],
+      keyAdminRoles: this.dataAdminRoles,
+      keyUserRoles: [...this.getAllRoles(), ...wrappedKeyUserRoles],
     });
     kmsKey.addToResourcePolicy(cloudwatchStatement);
     kmsKey.addToResourcePolicy(projectDeploymentStatement);
@@ -1582,7 +1583,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       principalExcludes: [projectDeploymentRole.roleArn],
     });
     projectBucket.addToResourcePolicy(bucketRestrictPolicy.denyStatement);
-    projectBucket.addToResourcePolicy(bucketRestrictPolicy.allowStatement);
+    bucketRestrictPolicy.allowStatements().forEach(statement => projectBucket.addToResourcePolicy(statement));
 
     // Required so we can auto-wire other stacks/resources to this project resource via SSM
     this.createProjectSSMParam('ssm-bucket-name', `projectBucket/default`, projectBucket.bucketName);

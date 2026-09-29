@@ -339,24 +339,26 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
   protected readonly props: DataWarehouseL3ConstructProps;
   public static readonly defaultClusterPort = 5440;
 
-  private readonly dataAdminRoleIds: string[];
-  private readonly bucketUserRoleIds: string[];
+  private readonly dataAdminRoles: MdaaResolvableRole[];
+  private readonly bucketUserRoles: MdaaResolvableRole[];
   constructor(scope: Construct, id: string, props: DataWarehouseL3ConstructProps) {
     super(scope, id, props);
     this.props = props;
 
-    this.dataAdminRoleIds = this.props.roleHelper
-      .resolveRoleRefsWithOrdinals(this.props.dataAdminRoleRefs, 'DataAdmin')
-      .map(x => x.id());
-    this.bucketUserRoleIds = this.props.roleHelper
-      .resolveRoleRefsWithOrdinals(this.props.warehouseBucketUserRoleRefs || [], 'BucketUsers')
-      .map(x => x.id());
-    const allRoleIds = [...new Set([...this.dataAdminRoleIds, ...this.bucketUserRoleIds])];
+    this.dataAdminRoles = this.props.roleHelper.resolveRoleRefsWithOrdinals(this.props.dataAdminRoleRefs, 'DataAdmin');
+    this.bucketUserRoles = this.props.roleHelper.resolveRoleRefsWithOrdinals(
+      this.props.warehouseBucketUserRoleRefs || [],
+      'BucketUsers',
+    );
+    // De-duplicate by reference id so a role named in both lists is not repeated in bucket policies.
+    const allRoles = [
+      ...new Map([...this.dataAdminRoles, ...this.bucketUserRoles].map(role => [role.refId(), role])).values(),
+    ];
 
     //Use some private helper functions to create the warehouse resources
-    const warehouseKmsKey = this.createWarehouseKMSKey(allRoleIds);
+    const warehouseKmsKey = this.createWarehouseKMSKey(allRoles);
     if (this.props.createWarehouseBucket?.valueOf() == undefined || this.props.createWarehouseBucket.valueOf()) {
-      this.createWarehouseBucket(warehouseKmsKey, allRoleIds);
+      this.createWarehouseBucket(warehouseKmsKey, allRoles);
     }
     const loggingBucket = this.props.enableAuditLoggingToS3 ? this.createLoggingBucket() : undefined;
     const executionRoles = this.props.roleHelper
@@ -817,16 +819,16 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
     return role;
   }
 
-  private createWarehouseKMSKey(allRoleIds: string[]): MdaaKmsKey {
+  private createWarehouseKMSKey(allRoles: MdaaResolvableRole[]): MdaaKmsKey {
     return new MdaaKmsKey(this.scope, 'warehouse-key', {
       alias: 'data-warehouse',
       naming: this.props.naming,
-      keyAdminRoleIds: this.dataAdminRoleIds,
-      keyUserRoleIds: allRoleIds,
+      keyAdminRoles: this.dataAdminRoles,
+      keyUserRoles: allRoles,
     });
   }
 
-  private createWarehouseBucket(warehouseKmsKey: MdaaKmsKey, allRoleIds: string[]): Bucket {
+  private createWarehouseBucket(warehouseKmsKey: MdaaKmsKey, allRoles: MdaaResolvableRole[]): Bucket {
     //This warehouse bucket will be used for data warehouse logging and other S3 offload scenarios
     const warehouseBucket = new MdaaBucket(this.scope, 'warehouse-bucket', {
       encryptionKey: warehouseKmsKey,
@@ -843,8 +845,8 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
     const rootPolicy = new RestrictObjectPrefixToRoles({
       s3Bucket: warehouseBucket,
       s3Prefix: '/',
-      readWriteRoleIds: this.bucketUserRoleIds,
-      readWriteSuperRoleIds: this.dataAdminRoleIds,
+      readWriteRoles: this.bucketUserRoles,
+      readWriteSuperRoles: this.dataAdminRoles,
     });
     rootPolicy.statements().forEach(statement => warehouseBucket.addToResourcePolicy(statement));
 
@@ -852,11 +854,11 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
     //Any role not specified in config is explicitely denied access to the bucket
     const bucketRestrictPolicy = new RestrictBucketToRoles({
       s3Bucket: warehouseBucket,
-      roleExcludeIds: allRoleIds,
+      roleExcludes: allRoles,
     });
 
     warehouseBucket.addToResourcePolicy(bucketRestrictPolicy.denyStatement);
-    warehouseBucket.addToResourcePolicy(bucketRestrictPolicy.allowStatement);
+    bucketRestrictPolicy.allowStatements().forEach(statement => warehouseBucket.addToResourcePolicy(statement));
 
     return warehouseBucket;
   }

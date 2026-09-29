@@ -1650,3 +1650,103 @@ describe('DataLake Outbound Replication role trust policy', () => {
     });
   });
 });
+
+describe('DataLake access policies referencing a role by ARN', () => {
+  const testApp = new MdaaTestApp();
+  const sameAccountArn = 'arn:test-partition:iam::test-account:role/ArnBackedReader';
+
+  const constructProps: DataLakeL3ConstructProps = {
+    buckets: [
+      {
+        bucketZone: 'arn-backed-zone',
+        defaultDeny: true,
+        accessPolicies: [
+          {
+            name: 'arn-backed-policy',
+            s3Prefix: '/data',
+            // An existing role referenced by ARN rather than by id. The id is not known at synth
+            // time, so it arrives as a resolution-CR token in both the bucket policy and the key.
+            readRoleRefs: [{ arn: sameAccountArn }],
+          },
+        ],
+      },
+    ],
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+  };
+
+  new S3DatalakeBucketL3Construct(testApp.testStack, 'test-stack', constructProps);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('the ARN-backed role is resolved through a role resolution custom resource', () => {
+    // A same-account ARN still needs its role id, since same-account grants are scoped by
+    // aws:userId rather than by ARN principal.
+    const crs = Object.keys(template.findResources('AWS::CloudFormation::CustomResource'));
+    expect(crs.length).toBeGreaterThan(0);
+  });
+
+  test('the resolved role id token reaches both the KMS key policy and the bucket policy', () => {
+    const keyStatements = Object.values(template.findResources('AWS::KMS::Key'))[0].Properties.KeyPolicy.Statement;
+    const keyUserIds = keyStatements.flatMap(
+      (stmt: { Condition?: { StringLike?: { 'aws:userId'?: unknown[] } } }) =>
+        stmt.Condition?.StringLike?.['aws:userId'] ?? [],
+    );
+    // Rendered as an Fn::Join over the CR's id attribute rather than a literal.
+    expect(JSON.stringify(keyUserIds)).toContain('Fn::GetAtt');
+
+    const bucketDoc = Object.values(template.findResources('AWS::S3::BucketPolicy'))[0].Properties.PolicyDocument;
+    expect(JSON.stringify(bucketDoc)).toContain('Fn::GetAtt');
+  });
+});
+
+describe('DataLake role de-duplication across access policies on one bucket', () => {
+  const testApp = new MdaaTestApp();
+  const sharedRoleRef: MdaaRoleRef = { id: 'shared-role-id' };
+
+  const constructProps: DataLakeL3ConstructProps = {
+    buckets: [
+      {
+        bucketZone: 'dedup-zone',
+        defaultDeny: true,
+        // The same role reached through two distinct access policies on the same bucket.
+        accessPolicies: [
+          { name: 'policy-one', s3Prefix: '/one', readRoleRefs: [sharedRoleRef] },
+          { name: 'policy-two', s3Prefix: '/two', readRoleRefs: [sharedRoleRef] },
+        ],
+      },
+    ],
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+  };
+
+  new S3DatalakeBucketL3Construct(testApp.testStack, 'test-stack', constructProps);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('the shared role appears once in the KMS key aws:userId allowlist', () => {
+    // createDataLakeKmsKey de-duplicates on refId. Without it the id repeats once per policy and
+    // the key policy grows toward its size limit for no added access.
+    const keyStatements = Object.values(template.findResources('AWS::KMS::Key'))[0].Properties.KeyPolicy.Statement;
+    const keyUserIds = keyStatements.flatMap(
+      (stmt: { Condition?: { StringLike?: { 'aws:userId'?: string[] } } }) =>
+        stmt.Condition?.StringLike?.['aws:userId'] ?? [],
+    );
+    expect(keyUserIds.filter((id: string) => id === 'shared-role-id:*')).toHaveLength(1);
+  });
+
+  test('the shared role appears once in the bucket default-deny exclusion', () => {
+    const bucketDoc = Object.values(template.findResources('AWS::S3::BucketPolicy'))[0].Properties.PolicyDocument;
+    const denyStatement = bucketDoc.Statement.find((s: { Sid: string }) => s.Sid === 'BucketDeny');
+    const excludedIds: string[] = denyStatement.Condition['ForAnyValue:StringNotLike']['aws:userId'];
+    expect(excludedIds.filter(id => id === 'shared-role-id:*')).toHaveLength(1);
+  });
+
+  test('the shared role is still granted read access on both prefixes', () => {
+    // De-duplication must collapse the key and deny entries without dropping either grant.
+    const bucketDoc = Object.values(template.findResources('AWS::S3::BucketPolicy'))[0].Properties.PolicyDocument;
+    const resources = bucketDoc.Statement.flatMap((s: { Resource?: string | string[] }) =>
+      s.Resource === undefined ? [] : [s.Resource].flat(),
+    );
+    expect(JSON.stringify(resources)).toContain('/one/*');
+    expect(JSON.stringify(resources)).toContain('/two/*');
+  });
+});

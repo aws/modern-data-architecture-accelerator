@@ -595,6 +595,64 @@ When MDAA processes a role reference:
 
 Some modules (like Data Lake and Lake Formation) further resolve ARN references to role IDs at deploy time via a custom resource. This ensures that bucket policies and Lake Formation grants reference the immutable role ID rather than the role name, which provides stronger security guarantees.
 
+#### Cross-Account Role References
+
+The role-ID lookup described above calls IAM in the deploying account, so it can only resolve roles that live there. A role in another account is detected automatically: when the account segment of `arn:` differs from the deployment account, MDAA skips the lookup and grants access by ARN instead.
+
+```yaml
+roles:
+  DataEngineer:
+    # Same account: resolved to a role ID, granted via aws:userId
+    - arn: arn:aws:iam::111111111111:role/DataEngineer
+    # Another account: no lookup, granted as an ARN-based principal
+    - arn: arn:aws:iam::222222222222:role/CrossAccountEngineer
+```
+
+This applies to KMS key policies, and to the bucket policies of the Data Lake, Athena Workgroup, Data Warehouse and Audit modules. In a bucket policy the role receives two grants: object-level permissions on the prefixes it is entitled to, and a bucket-level `s3:List*`/`s3:GetBucket*` grant. Both are needed, because object access alone leaves `ListObjectsV2` and `GetBucketLocation` denied, which breaks Glue crawlers, Athena and `aws s3 ls` even though individual object reads succeed.
+
+The resource policy grant is only half of cross-account access. The role's own account must also allow the same S3 and KMS actions in the role's IAM policy. Note too that the bucket-level listing grant covers the whole bucket, not only the prefixes the role is entitled to read.
+
+In a KMS key policy a cross-account role is granted the encrypt and decrypt operations plus `kms:DescribeKey`, which services such as Athena, Glue and Redshift call before using a key. A same-account principal picks DescribeKey up from its own IAM policy, but an external principal only has what the key policy gives it.
+
+**Key administration cannot be delegated across accounts.** KMS honours a cross-account grant only for cryptographic operations and for `CreateGrant`, `DescribeKey`, `GetKeyRotationStatus`, `GetPublicKey`, `ListGrants`, `RetireGrant` and `RevokeGrant`; a grant for anything else has no effect. So a cross-account role listed in a field that feeds key administration (`dataAdminRoles` in most modules) receives only the grant and describe operations listed above, and MDAA emits a CDK warning saying so. Key policy changes, rotation, tagging, aliases, enable/disable and deletion scheduling stay with the account that owns the key. Keep at least one same-account role in those fields so the key remains manageable.
+
+MDAA emits a CDK warning for each cross-account reference. When a resource policy is saved, AWS stores an ARN principal as that role's unique ID, which has two consequences worth planning for. The role must already exist when MDAA deploys, or S3 rejects the bucket policy with `Invalid principal in policy` and KMS rejects the key policy. And a role that is later deleted and recreated with the same name loses access until the policy is applied again, so plan a redeploy alongside any such role rotation.
+
+Detection needs a literal account in the ARN. A reference by `name:` is always expanded in the deployment account, and an ARN that is not known until deploy time (an `ssm:` lookup, or a value carrying a CloudFormation token) cannot be compared against the deployment account at synth time. Both are treated as same-account.
+
+Storing role ARNs in SSM for portability is a common pattern, so an ARN carrying a CloudFormation token gets its own CDK warning at synth time: MDAA reports that it could not read the account from the ARN and is falling back to the lookup, which searches the deploying account by role name only. If the role lives in another account, the deployment fails with `Failed to resolve role`, or, when the deploying account happens to hold a role of the same name, the grant silently goes to that local role instead. If that is your situation, supply all three anchors as described below. The `{{ssm-org:...}}`, `{{ssm-domain:...}}` and `{{ssm-env:...}}` shorthands resolve to a CloudFormation dynamic reference rather than a token, so they take the same fallback but without the warning.
+
+A role reference `arn:` which cannot name a role is rejected at synth time rather than carried into a resource policy. That covers an ARN of a service other than IAM, an IAM ARN whose region segment is not empty (IAM is global, so it always is), and an account which is not a twelve-digit account ID. The most common case is omitting the empty region segment, which shifts every later field left:
+
+```yaml
+# Rejected: missing the empty region segment, so 'role/DataEngineer' lands where the account belongs
+- arn: arn:aws:iam:222222222222:role/DataEngineer
+# Rejected: not an IAM ARN, so it cannot identify a role
+- arn: arn:aws:sts::222222222222:assumed-role/DataEngineer/session
+# Correct: note the double colon
+- arn: arn:aws:iam::222222222222:role/DataEngineer
+```
+
+An `arn:` which is not yet known at synth time is not subject to these checks, since there is nothing to inspect. That covers the `ssm:` prefix, which resolves to a CloudFormation token, and the `{{ssm-org:...}}`, `{{ssm-domain:...}}` and `{{ssm-env:...}}` shorthands, which expand to a CloudFormation dynamic reference.
+
+**Where a role ID is still required.** Some paths still resolve a role to its ID, either because they need something an ARN cannot express, or because they have not been migrated yet:
+
+- the SageMaker Studio domain's user-profile ID conditions, which an ARN cannot express
+- the SageMaker Studio domain's notebook sharing bucket policy
+- the DataOps Project bucket policy and its Lake Formation grants
+
+Against a cross-account role those paths perform the account-scoped lookup, which fails the deployment with `Failed to resolve role` or, if the deploying account holds a role of the same name, resolves to that local role instead. Supply all three anchors to bypass the lookup entirely:
+
+```yaml
+roles:
+  DataEngineer:
+    - id: AROA1234567890EXAMPLE
+      arn: arn:aws:iam::222222222222:role/CrossAccountEngineer
+      name: CrossAccountEngineer
+```
+
+With `id`, `arn` and `name` all given, MDAA has every property it would otherwise resolve, so it never creates the lookup custom resource. The trade-off is that the three values are no longer verified against each other or against the live role, so a stale `id` left behind after the role was recreated will silently grant nothing. Read the role's current unique ID with `aws iam get-role --role-name <name> --query Role.RoleId` in the account that owns it.
+
 #### Optional Flags
 
 ```yaml
@@ -616,7 +674,7 @@ Some modules (like Data Lake and Lake Formation) further resolve ARN references 
 | Style                | When to use                                                                                                                                                                                                      |
 | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `name:`              | Default choice. Simple, readable, works for same-account roles.                                                                                                                                                  |
-| `arn:`               | Cross-account roles, or when the ARN is stored in SSM for portability.                                                                                                                                           |
+| `arn:`               | Cross-account roles, which are automatically handled as ARN-based principals in resource policies when the ARN carries a literal account. Also for a portable ARN stored in SSM, though that hides the account and so falls back to the account-scoped lookup. |
 | `id:`                | When your security policy requires stable references that survive role recreation. Role IDs are immutable — if a role is deleted and recreated with the same name, the ID changes, preventing unintended access. |
 | `generated-role-id:` | Referencing roles created by the MDAA Roles module. Resolves the role ID from SSM parameters automatically.                                                                                                      |
 

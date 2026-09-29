@@ -5,7 +5,7 @@
 
 import { MdaaRoleHelper, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
 import { EbsDeviceVolumeType } from 'aws-cdk-lib/aws-ec2';
 import { AccountPrincipal, Effect } from 'aws-cdk-lib/aws-iam';
 import { OpensearchL3Construct, OpensearchL3ConstructProps } from '../lib';
@@ -385,5 +385,72 @@ describe('MDAA Compliance Stack Tests', () => {
         Endpoint: 'example@example.com',
       });
     });
+  });
+});
+
+describe('Opensearch with a cross-account data admin role', () => {
+  const testApp = new MdaaTestApp();
+  const stack = testApp.testStack;
+  const crossAccountArn = 'arn:test-partition:iam::999999999999:role/CrossAccountOsAdmin';
+
+  const constructProps: OpensearchL3ConstructProps = {
+    domain: {
+      dataAdminRole: { arn: crossAccountArn },
+      opensearchDomainName: 'testOsDomain',
+      vpcId: 'vpcId',
+      subnets: [
+        { subnetId: 'subnet-abc123', availabilityZone: 'test-regiona' },
+        { subnetId: 'subnet-xyz456', availabilityZone: 'test-regionb' },
+      ],
+      securityGroupIngress: { sg: ['sg-903004f8'] },
+      zoneAwareness: { enabled: true, availabilityZoneCount: 2 },
+      capacity: {
+        masterNodes: 3,
+        masterNodeInstanceType: 'c5.large.search',
+        dataNodes: 6,
+        dataNodeInstanceType: 'c5.large.search',
+      },
+      ebs: { enabled: true, volumeSize: 20, volumeType: EbsDeviceVolumeType.GP2 },
+      automatedSnapshotStartHour: 23,
+      opensearchEngineVersion: '2.3',
+      enableVersionUpgrade: true,
+      accessPolicies: [],
+    },
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+  };
+
+  new OpensearchL3Construct(stack, 'xacctstack', constructProps);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('the cross-account data admin gets the delegable key admin actions by ARN principal', () => {
+    // A same-account admin is scoped by aws:userId, which a principal in another account can never
+    // satisfy, so the cross-account admin has to arrive as a direct ARN principal instead.
+    template.hasResourceProperties('AWS::KMS::Key', {
+      KeyPolicy: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Effect: 'Allow',
+            Principal: { AWS: crossAccountArn },
+            Action: Match.arrayWith(['kms:CreateGrant', 'kms:DescribeKey']),
+            Sid: Match.stringLikeRegexp('xacct-admin-stmt'),
+          }),
+        ]),
+      },
+    });
+  });
+
+  test('no aws:userId conditioned admin statement is emitted for the cross-account role', () => {
+    const keyStatements = Object.values(template.findResources('AWS::KMS::Key'))[0].Properties.KeyPolicy.Statement;
+    const userIds = keyStatements.flatMap(
+      (stmt: { Condition?: { StringLike?: { 'aws:userId'?: string[] } } }) =>
+        stmt.Condition?.StringLike?.['aws:userId'] ?? [],
+    );
+    expect(userIds).toHaveLength(0);
+  });
+
+  test('no role resolution custom resource is created for the cross-account role', () => {
+    // Resolving a cross-account role id calls IAM in the deploying account and fails the deploy.
+    expect(Object.keys(template.findResources('AWS::CloudFormation::CustomResource'))).toHaveLength(0);
   });
 });

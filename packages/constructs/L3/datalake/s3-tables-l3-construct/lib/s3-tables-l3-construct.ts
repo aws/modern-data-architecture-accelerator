@@ -4,7 +4,7 @@
  */
 
 import { MdaaParamAndOutput } from '@aws-mdaa/construct';
-import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
+import { MdaaResolvableRole, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { IMdaaKmsKey, MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import {
@@ -136,11 +136,11 @@ export class S3TablesL3Construct extends MdaaL3Construct {
     bucketConfig: TableBucketConfig,
     props: S3TablesL3ConstructProps,
   ): void {
-    // 1. Collect all role IDs from access policies for KMS key policy
-    const allRoleIds = this.collectRoleIds(bucketName, bucketConfig, props.accessPolicies);
+    // 1. Collect all roles from access policies for KMS key policy
+    const allRoles = this.collectRoles(bucketName, bucketConfig, props.accessPolicies);
 
     // 2. Create or resolve KMS key
-    const kmsKey = this.resolveKmsKey(bucketName, bucketConfig, allRoleIds, props);
+    const kmsKey = this.resolveKmsKey(bucketName, bucketConfig, allRoles, props);
 
     // 3. Create table bucket with KMS encryption. Only unreferenced file removal is a
     // table-bucket property; compaction and snapshot management are table properties and
@@ -327,7 +327,7 @@ export class S3TablesL3Construct extends MdaaL3Construct {
   private resolveKmsKey(
     bucketName: string,
     bucketConfig: TableBucketConfig,
-    keyUserRoleIds: string[],
+    keyUserRoles: MdaaResolvableRole[],
     props: S3TablesL3ConstructProps,
   ): IMdaaKmsKey {
     if (bucketConfig.kmsKeyArn) {
@@ -342,7 +342,7 @@ export class S3TablesL3Construct extends MdaaL3Construct {
     return new MdaaKmsKey(this, `kms-${bucketName}`, {
       naming: props.naming,
       alias: bucketName,
-      keyUserRoleIds: keyUserRoleIds,
+      keyUserRoles: keyUserRoles,
     });
   }
 
@@ -383,17 +383,17 @@ export class S3TablesL3Construct extends MdaaL3Construct {
   }
 
   /**
-   * Collects all unique role IDs from access policies referenced by a table bucket, for the KMS key
+   * Collects all unique roles from access policies referenced by a table bucket, for the KMS key
    * policy. Uses the shared bucket+table traversal (collectBucketAndTableRoleRefs) so it cannot drift
-   * from the deny-all baseline's principal collection, then resolves to role IDs and de-duplicates:
-   * a role referenced by more than one access policy would otherwise be repeated in the KMS key
-   * policy (template bloat; harmless for IAM evaluation).
+   * from the deny-all baseline's principal collection, then de-duplicates by reference id: a role
+   * referenced by more than one access policy would otherwise be repeated in the KMS key policy
+   * (template bloat; harmless for IAM evaluation).
    */
-  private collectRoleIds(
+  private collectRoles(
     bucketName: string,
     bucketConfig: TableBucketConfig,
     accessPolicies: { [name: string]: S3TablesAccessPolicyProps },
-  ): string[] {
+  ): MdaaResolvableRole[] {
     const allRoleRefs = collectBucketAndTableRoleRefs(
       bucketConfig.accessPolicies,
       accessPolicies,
@@ -401,6 +401,6 @@ export class S3TablesL3Construct extends MdaaL3Construct {
     );
 
     const resolvedRoles = this.baseprops.roleHelper.resolveRoleRefsWithOrdinals(allRoleRefs, `s3tables-${bucketName}`);
-    return [...new Set(resolvedRoles.map(r => r.id()))];
+    return [...new Map(resolvedRoles.map(r => [r.refId(), r])).values()];
   }
 }

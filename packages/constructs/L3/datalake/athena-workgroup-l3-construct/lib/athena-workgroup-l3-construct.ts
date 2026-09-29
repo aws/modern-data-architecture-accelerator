@@ -5,7 +5,7 @@
 
 import { MdaaAthenaWorkgroup } from '@aws-mdaa/athena-constructs';
 import { MdaaManagedPolicy, MdaaRole } from '@aws-mdaa/iam-constructs';
-import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
+import { MdaaResolvableRole, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { ENCRYPT_ACTIONS, IMdaaKmsKey, MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaResourceType } from '@aws-mdaa/naming';
@@ -52,41 +52,40 @@ export interface MdaaAthenaWorkgroupConfigurationProps {
 export class AthenaWorkgroupL3Construct extends MdaaL3Construct {
   protected readonly props: AthenaWorkgroupL3ConstructProps;
 
-  private dataAdminRoleIds: string[];
-  private athenaUserRoleIds: string[];
-  private athenaUserRoleArns: string[];
-  private resultsBucketOnlyRoleIds: string[];
+  private readonly dataAdminRoles: MdaaResolvableRole[];
+  private readonly athenaUserRoles: MdaaResolvableRole[];
+  private readonly athenaUserRoleArns: string[];
+  private readonly resultsBucketOnlyRoles: MdaaResolvableRole[];
   public workgroup: CfnWorkGroup;
 
   constructor(scope: Construct, id: string, props: AthenaWorkgroupL3ConstructProps) {
     super(scope, id, props);
     this.props = props;
 
-    this.dataAdminRoleIds = this.props.roleHelper
-      .resolveRoleRefsWithOrdinals(this.props.dataAdminRoles, 'DataAdmin')
-      .map(x => x.id());
+    this.dataAdminRoles = this.props.roleHelper.resolveRoleRefsWithOrdinals(this.props.dataAdminRoles, 'DataAdmin');
     const athenaUserResolveds = this.props.roleHelper.resolveRoleRefsWithOrdinals(
       this.props.athenaUserRoles,
       'AthenaUser',
     );
-    this.athenaUserRoleIds = athenaUserResolveds.filter(x => !x.immutable()).map(x => x.id());
-    this.athenaUserRoleArns = athenaUserResolveds.filter(x => !x.immutable()).map(x => x.arn());
-    this.resultsBucketOnlyRoleIds = athenaUserResolveds.filter(x => x.immutable()).map(x => x.id());
+    this.athenaUserRoles = athenaUserResolveds.filter(x => !x.immutable());
+    this.athenaUserRoleArns = this.athenaUserRoles.map(x => x.arn());
+    this.resultsBucketOnlyRoles = athenaUserResolveds.filter(x => x.immutable());
 
-    const allRoleIds = [
-      ...new Set([...this.dataAdminRoleIds, ...this.athenaUserRoleIds, ...this.resultsBucketOnlyRoleIds]),
-    ];
+    // De-duplicate so a role named in both dataAdminRoles and athenaUserRoles is not repeated in
+    // the key policy's aws:userId condition. The role helper returns one object per anchor, so
+    // identity is enough.
+    const allRoles = [...new Set([...this.dataAdminRoles, ...this.athenaUserRoles, ...this.resultsBucketOnlyRoles])];
 
     //Use some private helper functions to create the workgroup resources
     const workgroupKmsKey = props.workgroupKmsKeyArn
       ? MdaaKmsKey.fromKeyArn(this, 'kmsKey', props.workgroupKmsKeyArn)
-      : this.createWorkgroupKMSKey(allRoleIds);
+      : this.createWorkgroupKMSKey(allRoles);
 
     const workgroupBucket = props.workgroupBucketName
       ? MdaaBucket.fromBucketName(this, 'resultsBucket', props.workgroupBucketName)
-      : this.createWorkgroupBucket(workgroupKmsKey, this.dataAdminRoleIds, [
-          ...this.athenaUserRoleIds,
-          ...this.resultsBucketOnlyRoleIds,
+      : this.createWorkgroupBucket(workgroupKmsKey, this.dataAdminRoles, [
+          ...this.athenaUserRoles,
+          ...this.resultsBucketOnlyRoles,
         ]);
 
     this.workgroup = this.createAthenaWorkgroup(workgroupKmsKey, workgroupBucket);
@@ -145,7 +144,7 @@ export class AthenaWorkgroupL3Construct extends MdaaL3Construct {
     athenaWgPolicy.addStatements(accessWorkgroupStatement);
   }
 
-  private createWorkgroupKMSKey(allRoleIds: string[]): MdaaKmsKey {
+  private createWorkgroupKMSKey(allRoles: MdaaResolvableRole[]): MdaaKmsKey {
     //This statement allows S3 to write inventory data to the encrypted data lake buckets
     const S3ServiceEncryptPolicy = new PolicyStatement({
       effect: Effect.ALLOW,
@@ -157,8 +156,8 @@ export class AthenaWorkgroupL3Construct extends MdaaL3Construct {
     const workgroupKmsKey = new MdaaKmsKey(this.scope, 'CaefWorkgroupKey', {
       alias: 'key',
       naming: this.props.naming,
-      keyAdminRoleIds: this.dataAdminRoleIds,
-      keyUserRoleIds: [...allRoleIds],
+      keyAdminRoles: this.dataAdminRoles,
+      keyUserRoles: [...allRoles],
     });
     workgroupKmsKey.addToResourcePolicy(S3ServiceEncryptPolicy);
     return workgroupKmsKey;
@@ -166,8 +165,8 @@ export class AthenaWorkgroupL3Construct extends MdaaL3Construct {
 
   private createWorkgroupBucket(
     workgroupKmsKey: IMdaaKmsKey,
-    dataAdminRoles: string[],
-    athenaUserRoles: string[],
+    dataAdminRoles: MdaaResolvableRole[],
+    athenaUserRoles: MdaaResolvableRole[],
   ): MdaaBucket {
     // Auto-prefix lifecycle rules: rules without a prefix target the results location
     const resolvedLifecycleRules = this.props.lifecycleConfiguration
@@ -190,7 +189,7 @@ export class AthenaWorkgroupL3Construct extends MdaaL3Construct {
     const rootPolicy = new RestrictObjectPrefixToRoles({
       s3Bucket: workgroupBucket,
       s3Prefix: '/',
-      readWriteSuperRoleIds: dataAdminRoles,
+      readWriteSuperRoles: dataAdminRoles,
     });
     rootPolicy.statements().forEach(statement => workgroupBucket.addToResourcePolicy(statement));
 
@@ -198,17 +197,17 @@ export class AthenaWorkgroupL3Construct extends MdaaL3Construct {
     const resultsPolicy = new RestrictObjectPrefixToRoles({
       s3Bucket: workgroupBucket,
       s3Prefix: '/athena-results',
-      readWriteRoleIds: athenaUserRoles,
+      readWriteRoles: athenaUserRoles,
     });
     resultsPolicy.statements().forEach(statement => workgroupBucket.addToResourcePolicy(statement));
     //Default Deny Policy
     //Any role not specified in config is explicitely denied access to the bucket
     const bucketRestrictPolicy = new RestrictBucketToRoles({
       s3Bucket: workgroupBucket,
-      roleExcludeIds: [...dataAdminRoles, ...athenaUserRoles],
+      roleExcludes: [...dataAdminRoles, ...athenaUserRoles],
     });
     workgroupBucket.addToResourcePolicy(bucketRestrictPolicy.denyStatement);
-    workgroupBucket.addToResourcePolicy(bucketRestrictPolicy.allowStatement);
+    bucketRestrictPolicy.allowStatements().forEach(statement => workgroupBucket.addToResourcePolicy(statement));
     return workgroupBucket;
   }
 

@@ -5,7 +5,7 @@
 
 import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
 import { SagemakerStudioDomainL3Construct, SagemakerStudioDomainL3ConstructProps } from '../lib';
 
 describe('Studio Domain Mandatory Props', () => {
@@ -158,6 +158,68 @@ describe('Studio Domain Mandatory Props', () => {
   test('SecurityGroup VPC ID Testing', () => {
     template.hasResourceProperties('AWS::EC2::SecurityGroup', {
       VpcId: 'test-vpc-id',
+    });
+  });
+
+  describe('Domain bucket default-deny policy', () => {
+    const dataAdminUserId = {
+      'Fn::Join': ['', [{ 'Fn::GetAtt': ['RoleResDataAdmin0', 'id'] }, ':*']],
+    };
+
+    test('every allow statement produced by RestrictBucketToRoles is attached to the bucket', () => {
+      // The domain bucket passes only roleExcludeIds, so RestrictBucketToRoles yields exactly one
+      // bucket-level allow statement. Counting the BucketAllow* sids pins that the construct
+      // attaches all of allowStatements() rather than a single hard-coded one, and that the
+      // cross-account companion statement is not emitted when no resolved role is cross-account.
+      const policies = template.findResources('AWS::S3::BucketPolicy');
+      const statements = Object.values(policies).flatMap(
+        policy => policy.Properties.PolicyDocument.Statement as { Sid?: string }[],
+      );
+      const bucketAllowSids = statements.map(statement => statement.Sid).filter(sid => sid?.startsWith('BucketAllow'));
+      expect(bucketAllowSids).toEqual(['BucketAllow']);
+    });
+
+    test('the allow statement grants bucket listing to the data admin by aws:userId', () => {
+      template.hasResourceProperties('AWS::S3::BucketPolicy', {
+        PolicyDocument: {
+          Statement: Match.arrayWith([
+            {
+              Sid: 'BucketAllow',
+              Effect: 'Allow',
+              Action: ['s3:List*', 's3:GetBucket*'],
+              Principal: { AWS: '*' },
+              Condition: { StringLike: { 'aws:userId': [dataAdminUserId] } },
+              Resource: Match.anyValue(),
+            },
+          ]),
+        },
+      });
+    });
+
+    test('the deny statement still excludes the data admin and the domain roles', () => {
+      // The allow statement is only half of the pair: without the deny, every role reaches the
+      // bucket, and without the data admin in its exclusion list the admin is denied its own bucket.
+      template.hasResourceProperties('AWS::S3::BucketPolicy', {
+        PolicyDocument: {
+          Statement: Match.arrayWith([
+            {
+              Sid: 'BucketDeny',
+              Effect: 'Deny',
+              Action: ['s3:PutObject*', 's3:GetObject*', 's3:DeleteObject*'],
+              Principal: { AWS: '*' },
+              Condition: {
+                'ForAnyValue:StringNotLike': {
+                  'aws:userId': [dataAdminUserId],
+                  'aws:PrincipalArn': Match.arrayWith([
+                    { 'Fn::GetAtt': ['domaindefaultexecutionrole3CFE4307', 'Arn'] },
+                  ]),
+                },
+              },
+              Resource: Match.anyValue(),
+            },
+          ]),
+        },
+      });
     });
   });
 });

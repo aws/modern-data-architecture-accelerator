@@ -4,7 +4,7 @@
  */
 
 import { MdaaManagedPolicy, MdaaRole } from '@aws-mdaa/iam-constructs';
-import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
+import { MdaaResolvableRole, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { DECRYPT_ACTIONS, ENCRYPT_ACTIONS, IMdaaKmsKey, MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaLambdaFunction, MdaaLambdaRole } from '@aws-mdaa/lambda-constructs';
@@ -332,10 +332,20 @@ export interface AccessPolicyProps {
 interface AccessPolicyResolved {
   readonly name: string;
   readonly s3Prefix: string;
-  readonly readRoleIds: string[];
-  readonly readWriteRoleIds: string[];
-  readonly readWriteSuperRoleIds: string[];
+  readonly readRoles: MdaaResolvableRole[];
+  readonly readWriteRoles: MdaaResolvableRole[];
+  readonly readWriteSuperRoles: MdaaResolvableRole[];
   readonly defaultDeny?: boolean;
+}
+
+/**
+ * A bucket definition paired with its access policies, resolved once up front so the roles they
+ * reference can feed both the data lake KMS key policy and the per-bucket policies without
+ * resolving (and re-resolving) the same role references twice.
+ */
+interface ResolvedBucketDefinition {
+  readonly bucketDefinition: BucketDefinition;
+  readonly resolvedPolicies: AccessPolicyResolved[];
 }
 
 export interface DataLakeL3ConstructProps extends MdaaL3ConstructProps {
@@ -543,23 +553,28 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
       description: 'Role for accessing the data lake via LakeFormation.',
     });
     this.props.buckets.sort((a, b) => a.bucketZone.localeCompare(b.bucketZone));
-    const allRoleIds = this.props.buckets.flatMap(bucketProps => {
+
+    // Resolve access policies once and reuse for both KMS key and bucket policies
+    const resolvedBuckets = this.props.buckets.map(bucketProps => {
       bucketProps.accessPolicies.sort((a, b) => a.s3Prefix.localeCompare(b.s3Prefix));
-      return bucketProps.accessPolicies
-        .flatMap(ap => this.resolveAccessPolicy(ap))
-        .flatMap(ap => [...ap.readRoleIds, ...ap.readWriteRoleIds, ...ap.readWriteSuperRoleIds]);
+      const resolvedPolicies = bucketProps.accessPolicies.map(ap => this.resolveAccessPolicy(ap));
+      return { bucketDefinition: bucketProps, resolvedPolicies };
     });
 
-    // Deduplicate role IDs to avoid duplicate entries in KMS key policy
-    const uniqueRoleIds = [...new Set([dataLakeFolderFunctionRole.roleId, lakeFormationRole.roleId, ...allRoleIds])];
+    const allRoles = resolvedBuckets.flatMap(b =>
+      b.resolvedPolicies.flatMap(ap => [...ap.readRoles, ...ap.readWriteRoles, ...ap.readWriteSuperRoles]),
+    );
 
-    this.kmsKey = this.createDataLakeKmsKey(uniqueRoleIds);
+    // Deduplicate roles by refId to avoid duplicate entries in KMS key policy
+    const uniqueRoles = [...new Map(allRoles.map(r => [r.refId(), r])).values()];
+
+    this.kmsKey = this.createDataLakeKmsKey(uniqueRoles, dataLakeFolderFunctionRole, lakeFormationRole);
 
     // Iterate over all the buckets we need to create
     this.buckets = Object.fromEntries(
-      this.props.buckets.map(bucketDefinition => {
-        const bucket = this.createBucket(
-          bucketDefinition,
+      resolvedBuckets.map(resolvedBucket => {
+        const bucket = this.createBucketFromResolved(
+          resolvedBucket,
           this.kmsKey,
           props.naming,
           glueUtilDatabase,
@@ -567,7 +582,7 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
           this.getDataLakeFolderCrProvider(dataLakeFolderFunctionRole),
           lakeFormationRole,
         );
-        return [bucketDefinition.bucketZone, bucket];
+        return [resolvedBucket.bucketDefinition.bucketZone, bucket];
       }),
     );
 
@@ -645,15 +660,18 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
     return {
       name: accessPolicy.name,
       s3Prefix: accessPolicy.s3Prefix,
-      readRoleIds: this.props.roleHelper
-        .resolveRoleRefsWithOrdinals(accessPolicy.readRoleRefs || [], `${accessPolicy.name}-r`)
-        .map(x => x.id()),
-      readWriteRoleIds: this.props.roleHelper
-        .resolveRoleRefsWithOrdinals(accessPolicy.readWriteRoleRefs || [], `${accessPolicy.name}-rw`)
-        .map(x => x.id()),
-      readWriteSuperRoleIds: this.props.roleHelper
-        .resolveRoleRefsWithOrdinals(accessPolicy.readWriteSuperRoleRefs || [], `${accessPolicy.name}-rws`)
-        .map(x => x.id()),
+      readRoles: this.props.roleHelper.resolveRoleRefsWithOrdinals(
+        accessPolicy.readRoleRefs || [],
+        `${accessPolicy.name}-r`,
+      ),
+      readWriteRoles: this.props.roleHelper.resolveRoleRefsWithOrdinals(
+        accessPolicy.readWriteRoleRefs || [],
+        `${accessPolicy.name}-rw`,
+      ),
+      readWriteSuperRoles: this.props.roleHelper.resolveRoleRefsWithOrdinals(
+        accessPolicy.readWriteSuperRoleRefs || [],
+        `${accessPolicy.name}-rws`,
+      ),
     };
   }
 
@@ -692,8 +710,8 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
     );
   }
 
-  private createBucket(
-    bucketDefinition: BucketDefinition,
+  private createBucketFromResolved(
+    resolvedBucket: ResolvedBucketDefinition,
     encryptionKey: IMdaaKmsKey,
     naming: IMdaaResourceNaming,
     glueUtilDatabase: Database,
@@ -701,6 +719,7 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
     dataLakeFolderProvider: Provider,
     lakeFormationRole: MdaaRole,
   ): IBucket {
+    const { bucketDefinition, resolvedPolicies } = resolvedBucket;
     const replication = bucketDefinition.replication;
     if (replication && !replication.outbound && !replication.inbound) {
       throw new Error(
@@ -724,8 +743,10 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
     this.createBucketInventories(bucketDefinition, bucket, glueUtilDatabase);
     this.createLakeFormationLocations(bucketDefinition, bucket, lakeFormationRole);
 
-    // Iterate over the accessPolicies and add to the bucket
-    const bucketAllowIds: string[] = [lakeFormationRole.roleId];
+    // Iterate over the pre-resolved accessPolicies and add to the bucket
+    const bucketAllowRoles: MdaaResolvableRole[] = [];
+    // Role IDs granted bucket access which are not backed by a resolvable role reference.
+    const bucketAllowIds: string[] = [];
 
     if (outbound && replicationRole) {
       this.grantOutboundReplication(bucketDefinition.bucketZone, bucket, outbound, replicationRole.role, encryptionKey);
@@ -744,35 +765,40 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
     }
 
     const folderCreatePrefixes: string[] = [];
-    bucketDefinition.accessPolicies
-      .map(ap => this.resolveAccessPolicy(ap))
-      .forEach(accessPolicy => {
-        const s3Prefix = accessPolicy.s3Prefix;
+    resolvedPolicies.forEach(accessPolicy => {
+      const s3Prefix = accessPolicy.s3Prefix;
 
-        //Apply bucket policy restrictions for Object prefixes
-        const prefixRestrictPolicies = new RestrictObjectPrefixToRoles({
-          s3Bucket: bucket,
-          s3Prefix: s3Prefix,
-          readRoleIds: accessPolicy.readRoleIds,
-          readWriteRoleIds: accessPolicy.readWriteRoleIds,
-          readWriteSuperRoleIds: accessPolicy.readWriteSuperRoleIds,
-        });
-        prefixRestrictPolicies.statements().forEach(statement => bucket.addToResourcePolicy(statement));
-
-        // Add the ARNs from this loop to bucketAllowArns
-        bucketAllowIds.push(
-          ...accessPolicy.readRoleIds,
-          ...accessPolicy.readWriteRoleIds,
-          ...accessPolicy.readWriteSuperRoleIds,
-        );
-        folderCreatePrefixes.push(
-          ...this.createFolderPrefix(s3Prefix, bucketDefinition, accessPolicy, dataLakeFolderProvider, bucket),
-        );
+      //Apply bucket policy restrictions for Object prefixes
+      const prefixRestrictPolicies = new RestrictObjectPrefixToRoles({
+        s3Bucket: bucket,
+        s3Prefix: s3Prefix,
+        readRoles: accessPolicy.readRoles,
+        readWriteRoles: accessPolicy.readWriteRoles,
+        readWriteSuperRoles: accessPolicy.readWriteSuperRoles,
       });
+      prefixRestrictPolicies.statements().forEach(statement => bucket.addToResourcePolicy(statement));
+
+      // Add the roles from this loop to bucketAllowRoles
+      bucketAllowRoles.push(
+        ...accessPolicy.readRoles,
+        ...accessPolicy.readWriteRoles,
+        ...accessPolicy.readWriteSuperRoles,
+      );
+      folderCreatePrefixes.push(
+        ...this.createFolderPrefix(s3Prefix, bucketDefinition, accessPolicy, dataLakeFolderProvider, bucket),
+      );
+    });
 
     this.createFolderPrefixes(folderCreatePrefixes, bucket, dataLakeFolderFunctionRole);
 
-    this.addBucketRestrictPolicy(bucketDefinition, bucket, bucketAllowIds, dataLakeFolderFunctionRole);
+    this.addBucketRestrictPolicy(
+      bucketDefinition,
+      bucket,
+      bucketAllowRoles,
+      bucketAllowIds,
+      lakeFormationRole,
+      dataLakeFolderFunctionRole,
+    );
 
     this.addBucketLifecyclePolicy(bucketDefinition, bucket);
 
@@ -1156,18 +1182,26 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
   private addBucketRestrictPolicy(
     bucketDefinition: BucketDefinition,
     bucket: MdaaBucket,
+    bucketAllowRoles: MdaaResolvableRole[],
     bucketAllowIds: string[],
+    lakeFormationRole: MdaaRole,
     dataLakeFolderFunctionRole: IRole,
   ) {
+    const allowRoles = [
+      MdaaResolvableRole.fromRole(this.scope, 'lf-role-bucket', lakeFormationRole),
+      ...bucketAllowRoles,
+    ];
     const bucketRestrictPolicy = new RestrictBucketToRoles({
       s3Bucket: bucket,
-      // De-duplicate our list of Arns.
+      // De-duplicate our list of role IDs. A role granted access by more than one access policy
+      // would otherwise be repeated in the aws:userId conditions.
       roleExcludeIds: [...new Set(bucketAllowIds)],
+      roleExcludes: [...new Map(allowRoles.map(role => [role.refId(), role])).values()],
       principalExcludes: [dataLakeFolderFunctionRole.roleArn],
       prefixExcludes: ['inventory/'],
     });
 
-    bucket.addToResourcePolicy(bucketRestrictPolicy.allowStatement);
+    bucketRestrictPolicy.allowStatements().forEach(statement => bucket.addToResourcePolicy(statement));
     if (!('defaultDeny' in bucketDefinition) || bucketDefinition.defaultDeny) {
       bucket.addToResourcePolicy(bucketRestrictPolicy.denyStatement);
     }
@@ -1440,7 +1474,11 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
     return datalakeFolderProvider;
   }
 
-  private createDataLakeKmsKey(keyUserRoles: string[]): MdaaKmsKey {
+  private createDataLakeKmsKey(
+    allRoles: MdaaResolvableRole[],
+    dataLakeFolderFunctionRole: MdaaLambdaRole,
+    lakeFormationRole: MdaaRole,
+  ): MdaaKmsKey {
     //This statement allows S3 to write inventory data to the encrypted data lake buckets
     const S3ServiceEncryptPolicy = new PolicyStatement({
       effect: Effect.ALLOW,
@@ -1452,7 +1490,11 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
 
     const kmsKey = new MdaaKmsKey(this.scope, 'cmk', {
       naming: this.props.naming,
-      keyUserRoleIds: keyUserRoles,
+      keyUserRoles: [
+        MdaaResolvableRole.fromRole(this.scope, 'folder-cr-kms', dataLakeFolderFunctionRole),
+        MdaaResolvableRole.fromRole(this.scope, 'lake-formation-kms', lakeFormationRole),
+        ...allRoles,
+      ],
       tier: this.parameterTier,
     });
     kmsKey.addToResourcePolicy(S3ServiceEncryptPolicy);

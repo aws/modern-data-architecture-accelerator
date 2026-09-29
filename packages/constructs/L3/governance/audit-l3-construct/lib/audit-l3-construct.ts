@@ -12,7 +12,7 @@ import { Database } from '@aws-cdk/aws-glue-alpha';
 import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
-import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
+import { MdaaRoleRef, MdaaResolvableRole } from '@aws-mdaa/iam-role-helper';
 
 /**
  * Identifies a single S3 bucket inventory to be queryable via the Glue/Athena inventory table.
@@ -60,16 +60,14 @@ export class AuditL3Construct extends MdaaL3Construct {
 
   private readonly auditSourceAccounts: string[];
   private readonly auditSourceRegions: string[];
-  private readonly readRoleIds: string[];
+  private readonly readRoles: MdaaResolvableRole[];
   constructor(scope: Construct, id: string, props: AuditL3ConstructProps) {
     super(scope, id, props);
     this.props = props;
 
     this.auditSourceAccounts = [this.account, ...this.props.sourceAccounts];
     this.auditSourceRegions = [this.region, ...this.props.sourceRegions];
-    this.readRoleIds = this.props.roleHelper
-      .resolveRoleRefsWithOrdinals(this.props.readRoleRefs, 'Read')
-      .map(x => x.id());
+    this.readRoles = this.props.roleHelper.resolveRoleRefsWithOrdinals(this.props.readRoleRefs, 'Read');
     const auditKmsKey = this.createAuditKmsKey();
     this.createAuditResources(auditKmsKey);
   }
@@ -89,7 +87,7 @@ export class AuditL3Construct extends MdaaL3Construct {
     //Create a KMS key specific to audit
     const auditKmsKey = new MdaaKmsKey(this, 'kms-cmk', {
       naming: this.props.naming,
-      keyUserRoleIds: this.readRoleIds,
+      keyUserRoles: this.readRoles,
     });
     auditKmsKey.addToResourcePolicy(serviceEncryptPolicy);
     return auditKmsKey;
@@ -114,9 +112,27 @@ export class AuditL3Construct extends MdaaL3Construct {
     const readRolePermissions = new RestrictObjectPrefixToRoles({
       s3Bucket: auditBucket,
       s3Prefix: '/',
-      readRoleIds: this.readRoleIds,
+      readRoles: this.readRoles,
     });
     readRolePermissions.statements().forEach(statement => auditBucket.addToResourcePolicy(statement));
+
+    // A same-account reader picks up s3:ListBucket and s3:GetBucketLocation from its own IAM policy,
+    // but a principal in another account is limited to what this bucket policy grants it. Without a
+    // bucket-level grant it can read individual objects and nothing else, so Athena, Glue and
+    // 'aws s3 ls' all fail against the audit bucket. This construct has no bucket-level default deny
+    // to exclude the role from, so the grant is added directly.
+    const crossAccountReadRoles = this.readRoles.filter(role => role.isCrossAccount());
+    if (crossAccountReadRoles.length > 0) {
+      auditBucket.addToResourcePolicy(
+        new PolicyStatement({
+          sid: 'BucketAllowCrossAccount',
+          effect: Effect.ALLOW,
+          resources: [auditBucket.bucketArn, auditBucket.bucketArn + '/*'],
+          actions: RestrictObjectPrefixToRoles.BUCKET_ALLOW_ACTIONS,
+          principals: crossAccountReadRoles.map(role => role.arnPrincipal()),
+        }),
+      );
+    }
 
     this.auditSourceAccounts.forEach(srcAccount => {
       const cloudTrailACLStatement = new PolicyStatement({

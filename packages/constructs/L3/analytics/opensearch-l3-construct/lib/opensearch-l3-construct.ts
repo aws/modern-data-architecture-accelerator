@@ -545,7 +545,7 @@ export class OpensearchL3Construct extends MdaaL3Construct {
     const kmsKey = new MdaaKmsKey(this.scope, 'opensearch-domain-key', {
       alias: 'opensearch-domain',
       naming: this.props.naming,
-      keyAdminRoleIds: [this.dataAdminRole.id()],
+      keyAdminRoles: [this.dataAdminRole],
     });
 
     const AllowOpensearchLogGroupEncryption = new PolicyStatement({

@@ -127,4 +127,76 @@ describe('Multiple Source Accounts Tests', () => {
       },
     });
   });
+
+  test('same-account read role is granted audit CMK usage via the aws:userId condition', () => {
+    // The read roles are the audit CMK's key users. Without this grant the trail objects are
+    // readable but not decryptable, so the audit data is unusable.
+    template.hasResourceProperties('AWS::KMS::Key', {
+      KeyPolicy: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Effect: 'Allow',
+            Principal: { AWS: '*' },
+            Action: Match.arrayWith(['kms:Decrypt', 'kms:Encrypt']),
+            Condition: {
+              StringLike: {
+                'aws:userId': ['test-read-role-id:*'],
+              },
+            },
+            Sid: Match.stringLikeRegexp('usage-stmt'),
+          }),
+        ]),
+      },
+    });
+  });
+});
+
+describe('Audit with cross-account read role', () => {
+  const testApp = new MdaaTestApp();
+  const stack = testApp.testStack;
+
+  const constructProps: AuditL3ConstructProps = {
+    roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+    naming: testApp.naming,
+    sourceAccounts: [],
+    sourceRegions: [],
+    readRoleRefs: [{ arn: 'arn:test-partition:iam::999999999999:role/CrossAccountAuditor' }],
+    inventoryPrefix: 'inventory',
+  };
+
+  new AuditL3Construct(stack, 'xacctstack', constructProps);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('no role resolution custom resource is created for the cross-account role', () => {
+    // Resolving a cross-account role ID would call IAM in the deploying account and fail the
+    // deployment with 'The role with name <name> cannot be found'.
+    expect(Object.keys(template.findResources('AWS::CloudFormation::CustomResource'))).toHaveLength(0);
+  });
+
+  test('cross-account read role is granted by ARN principal in the bucket policy', () => {
+    template.hasResourceProperties('AWS::S3::BucketPolicy', {
+      PolicyDocument: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Effect: 'Allow',
+            Principal: { AWS: 'arn:test-partition:iam::999999999999:role/CrossAccountAuditor' },
+          }),
+        ]),
+      },
+    });
+  });
+
+  test('cross-account read role is granted key usage by ARN principal', () => {
+    template.hasResourceProperties('AWS::KMS::Key', {
+      KeyPolicy: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Effect: 'Allow',
+            Principal: { AWS: 'arn:test-partition:iam::999999999999:role/CrossAccountAuditor' },
+            Action: Match.arrayWith(['kms:Decrypt', 'kms:Encrypt']),
+          }),
+        ]),
+      },
+    });
+  });
 });

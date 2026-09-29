@@ -35,6 +35,9 @@ roles:
   DataEngineer:
     # Role by ARN
     - arn: arn:{{partition}}:iam::{{account}}:role/DataEngineer
+    # Cross-account role by ARN: automatically uses ARN-based principal
+    # in resource policies since the role ID cannot be resolved cross-account
+    - arn: arn:{{partition}}:iam::{{context:account-2}}:role/CrossAccountEngineer
 
 # Named access policies defining role-based permissions per S3
 # prefix. Policies are referenced by name in bucket configurations.

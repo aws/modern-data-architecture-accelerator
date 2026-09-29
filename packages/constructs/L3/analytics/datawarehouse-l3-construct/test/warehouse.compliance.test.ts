@@ -272,6 +272,49 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
+
+    test('warehouse key grants the data admin role key admin actions via aws:userId', () => {
+      // createWarehouseKMSKey passes dataAdminRoles as keyAdminRoles, so the admin statement is the
+      // control that has to hold, not just the secret-access usage statement above.
+      template.hasResourceProperties('AWS::KMS::Key', {
+        KeyPolicy: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Action: Match.arrayWith(['kms:Create*', 'kms:Put*', 'kms:ScheduleKeyDeletion']),
+              Effect: 'Allow',
+              Principal: { AWS: '*' },
+              Condition: {
+                StringLike: {
+                  'aws:userId': ['testdataAdminRole:*'],
+                },
+              },
+            }),
+          ]),
+        },
+      });
+    });
+
+    test('warehouse key grants both the data admin and bucket user roles key usage via aws:userId', () => {
+      // keyUserRoles is the combined dataAdmin + warehouseBucketUser set, so both ids have to land
+      // in the same key-user condition.
+      template.hasResourceProperties('AWS::KMS::Key', {
+        KeyPolicy: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Action: Match.arrayWith(['kms:Decrypt', 'kms:Encrypt']),
+              Effect: 'Allow',
+              Principal: { AWS: '*' },
+              Condition: {
+                StringLike: {
+                  'aws:userId': Match.arrayWith(['testdataAdminRole:*', 'testwarehouseBucketUserRoleRefs:*']),
+                },
+              },
+            }),
+          ]),
+        },
+      });
+    });
+
     test('Cluster Event Notifications', () => {
       template.hasResourceProperties('AWS::Redshift::EventSubscription', {
         SubscriptionName: {
@@ -771,5 +814,167 @@ describe('Multiple Federations and Database Users Tests', () => {
 
   test('Multiple Database User Secrets', () => {
     template.resourceCountIs('AWS::SecretsManager::Secret', 3);
+  });
+});
+
+describe('Data Warehouse with cross-account bucket user role', () => {
+  const testApp = new MdaaTestApp();
+  const stack = testApp.testStack;
+  const crossAccountArn = 'arn:test-partition:iam::999999999999:role/CrossAccountWarehouseUser';
+
+  const constructProps: DataWarehouseL3ConstructProps = {
+    adminUsername: 'admin',
+    adminPasswordRotationDays: 10,
+    dataAdminRoleRefs: [{ arn: 'arn:test-partition:iam::test-account:role/TestAccess', id: 'testdataAdminRole' }],
+    vpcId: 'vpcId',
+    subnetIds: ['test1'],
+    securityGroupIngress: { ipv4: ['127.0.0.1/24'] },
+    nodeType: 'RA3_LARGE',
+    numberOfNodes: 4,
+    enableAuditLoggingToS3: false,
+    clusterPort: 5440,
+    preferredMaintenanceWindow: 'ddd:hh24:mi-ddd:hh24:mi',
+    roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+    naming: testApp.naming,
+    warehouseBucketUserRoleRefs: [{ arn: crossAccountArn }],
+    createWarehouseBucket: true,
+    parameterGroupParams: { key1: 'value1' },
+    workloadManagement: [{ key1: 'value1' }],
+  };
+  new DataWarehouseL3Construct(stack, 'xacctstack', constructProps);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('cross-account bucket user is granted object access by ARN principal', () => {
+    template.hasResourceProperties('AWS::S3::BucketPolicy', {
+      PolicyDocument: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Effect: 'Allow',
+            Principal: { AWS: crossAccountArn },
+            Action: Match.arrayWith(['s3:GetObject*', 's3:PutObject']),
+          }),
+        ]),
+      },
+    });
+  });
+
+  test('cross-account bucket user is granted bucket-level list access', () => {
+    template.hasResourceProperties('AWS::S3::BucketPolicy', {
+      PolicyDocument: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Sid: 'BucketAllowCrossAccount',
+            Effect: 'Allow',
+            Principal: { AWS: crossAccountArn },
+            Action: ['s3:List*', 's3:GetBucket*'],
+          }),
+        ]),
+      },
+    });
+  });
+
+  test('cross-account bucket user is granted key usage by ARN principal', () => {
+    template.hasResourceProperties('AWS::KMS::Key', {
+      KeyPolicy: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Effect: 'Allow',
+            Principal: { AWS: crossAccountArn },
+            Action: Match.arrayWith(['kms:Decrypt', 'kms:Encrypt']),
+          }),
+        ]),
+      },
+    });
+  });
+
+  test('only the same-account data admin reaches the aws:userId condition', () => {
+    // A cross-account role has no resolvable role id, so it must arrive as an ARN principal and
+    // leave the userId condition holding nothing but the same-account admin.
+    const keys = Object.values(template.findResources('AWS::KMS::Key'));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sameAccountUserIds = keys.flatMap((key: any) =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (key.Properties.KeyPolicy.Statement as any[]).flatMap(stmt => stmt.Condition?.StringLike?.['aws:userId'] ?? []),
+    );
+    expect([...new Set(sameAccountUserIds)]).toEqual(['testdataAdminRole:*']);
+  });
+
+  test('no role resolution custom resource is created for the cross-account role', () => {
+    const crs = template.findResources('AWS::CloudFormation::CustomResource');
+    expect(Object.keys(crs).filter(k => k.includes('BucketUsers'))).toHaveLength(0);
+  });
+});
+
+describe('Data Warehouse with a cross-account data admin role', () => {
+  const testApp = new MdaaTestApp();
+  const stack = testApp.testStack;
+  const crossAccountAdminArn = 'arn:test-partition:iam::999999999999:role/CrossAccountWarehouseAdmin';
+
+  const constructProps: DataWarehouseL3ConstructProps = {
+    adminUsername: 'admin',
+    adminPasswordRotationDays: 10,
+    dataAdminRoleRefs: [{ arn: crossAccountAdminArn }],
+    vpcId: 'vpcId',
+    subnetIds: ['test1'],
+    securityGroupIngress: { ipv4: ['127.0.0.1/24'] },
+    nodeType: 'RA3_LARGE',
+    numberOfNodes: 4,
+    enableAuditLoggingToS3: false,
+    clusterPort: 5440,
+    preferredMaintenanceWindow: 'ddd:hh24:mi-ddd:hh24:mi',
+    roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+    naming: testApp.naming,
+    createWarehouseBucket: true,
+    parameterGroupParams: { key1: 'value1' },
+    workloadManagement: [{ key1: 'value1' }],
+  };
+  new DataWarehouseL3Construct(stack, 'xacctadminstack', constructProps);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('cross-account data admin is granted the delegable key admin actions by ARN principal', () => {
+    template.hasResourceProperties('AWS::KMS::Key', {
+      KeyPolicy: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Effect: 'Allow',
+            Principal: { AWS: crossAccountAdminArn },
+            Action: Match.arrayWith(['kms:CreateGrant', 'kms:DescribeKey']),
+            Sid: Match.stringLikeRegexp('xacct-admin-stmt'),
+          }),
+        ]),
+      },
+    });
+  });
+
+  test('cross-account data admin is also granted key usage by ARN principal', () => {
+    template.hasResourceProperties('AWS::KMS::Key', {
+      KeyPolicy: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Effect: 'Allow',
+            Principal: { AWS: crossAccountAdminArn },
+            Action: Match.arrayWith(['kms:Decrypt', 'kms:Encrypt']),
+            Sid: Match.stringLikeRegexp('xacct-usage-stmt'),
+          }),
+        ]),
+      },
+    });
+  });
+
+  test('the bucket default deny still applies when every excluded role is cross-account', () => {
+    // Every configured role here is cross-account, so the userId list is empty. Emitting it anyway
+    // under ForAnyValue would make the whole condition unsatisfiable, and the deny would stop
+    // blocking same-account principals whose own IAM policy allows S3.
+    template.hasResourceProperties('AWS::S3::BucketPolicy', {
+      PolicyDocument: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Sid: 'BucketDeny',
+            Effect: 'Deny',
+            Condition: { StringNotLike: { 'aws:PrincipalArn': [crossAccountAdminArn] } },
+          }),
+        ]),
+      },
+    });
   });
 });

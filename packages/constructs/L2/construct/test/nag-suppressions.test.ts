@@ -5,7 +5,7 @@
 
 import { App, Fn, Stack } from 'aws-cdk-lib';
 import { CfnBucket } from 'aws-cdk-lib/aws-s3';
-import { MdaaNagSuppressions } from '../lib';
+import { MdaaNagSuppressions, suppressionSourceLocation } from '../lib';
 
 function createTestStack(context: Record<string, string> = {}) {
   const app = new App({ context });
@@ -15,6 +15,62 @@ function createTestStack(context: Record<string, string> = {}) {
 }
 
 describe('MdaaNagSuppressions', () => {
+  describe('suppressionSourceLocation', () => {
+    // Each case feeds a synthetic frame: the rewrite keys off the path of the package that called
+    // the suppression, and a test always runs from packages/constructs.
+
+    test('rewrites an in-repo app source to its published package name', () => {
+      // An app directory carries an -app suffix its published package name does not, and the reason
+      // must not embed the checkout directory or it differs between a developer machine and CI.
+      expect(
+        suppressionSourceLocation(
+          '    at DataLakeApp (/home/builder/checkout/mdaa/packages/apps/datalake/datalake-app/lib/app.ts:42:7)',
+        ),
+      ).toBe('@aws-mdaa/datalake/lib/app.ts');
+    });
+
+    test('rewrites an in-repo app source whose directory has no -app suffix', () => {
+      // The core app directories are already named after their published package, so stripping the
+      // suffix must not eat into a name that does not carry one.
+      expect(
+        suppressionSourceLocation(
+          '    at DevopsApp (/home/builder/checkout/mdaa/packages/apps/core/devops/lib/devops.ts:31:9)',
+        ),
+      ).toBe('@aws-mdaa/devops/lib/devops.ts');
+    });
+
+    test('rewrites an L2/L3 construct source to its published package name', () => {
+      expect(
+        suppressionSourceLocation(
+          '    at MdaaBucket (/home/builder/checkout/mdaa/packages/constructs/L2/s3-constructs/lib/index.ts:118:5)',
+        ),
+      ).toBe('@aws-mdaa/s3-constructs/lib/index.ts');
+    });
+
+    test('rewrites a node_modules source to its published package name', () => {
+      // How the same caller resolves once MDAA is consumed as a dependency rather than in-repo.
+      expect(
+        suppressionSourceLocation(
+          '    at MdaaBucket (/home/builder/app/node_modules/@aws-mdaa/s3-constructs/lib/index.js:96:5)',
+        ),
+      ).toBe('@aws-mdaa/s3-constructs/lib/index.js');
+    });
+
+    test('strips line and column so the reason is stable across edits', () => {
+      // A suppression reason carrying line:col churns on every unrelated edit above the call site,
+      // which would rewrite every committed baseline.
+      expect(
+        suppressionSourceLocation('    at f (/checkout/packages/apps/datalake/datalake-app/lib/app.ts:42:7)'),
+      ).not.toMatch(/:\d+:\d+$/);
+    });
+
+    test('leaves a frame outside any MDAA package as its bare path', () => {
+      expect(suppressionSourceLocation('    at Object.<anonymous> (/tmp/scratch/synth.ts:3:1)')).toBe(
+        '/tmp/scratch/synth.ts',
+      );
+    });
+  });
+
   describe('addCodeResourceSuppressions', () => {
     test('prefixes reason with [MDAA:...] source location', () => {
       const { bucket } = createTestStack();
@@ -24,7 +80,9 @@ describe('MdaaNagSuppressions', () => {
       const suppressions = metadata!['cdk_nag']?.rules_to_suppress;
       expect(suppressions).toBeDefined();
       expect(suppressions).toHaveLength(1);
-      expect(suppressions[0].reason).toMatch(/^\[MDAA:.*\] Test reason$/);
+      // The location is the test's own frame, which resolves under packages/constructs. Asserting the
+      // rewritten prefix rather than a `.*` wildcard pins that the checkout directory is stripped.
+      expect(suppressions[0].reason).toMatch(/^\[MDAA:@aws-mdaa\/[^\]]*\] Test reason$/);
     });
 
     test('renders an unresolved appliesTo the way cdk-nag renders its findings', () => {

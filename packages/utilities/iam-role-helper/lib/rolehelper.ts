@@ -101,7 +101,7 @@ export class MdaaRoleHelper {
   }
 
   private createAndReturnResolvableRole(roleRef: MdaaResolvableRoleRef) {
-    const resolvableRole = new MdaaResolvableRole(this.scope, this, roleRef);
+    const resolvableRole = new MdaaResolvableRole(this.scope, roleRef, this);
     this.resolveRefCache[roleRef.refId] = resolvableRole;
     if (roleRef.id) {
       this.resolveIdCache[roleRef.id] = resolvableRole;

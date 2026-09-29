@@ -7,7 +7,7 @@ import { FunctionProps, LayerProps } from '@aws-mdaa/dataops-lambda-l3-construct
 import { MdaaRoleHelper, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { MdaaResourceType } from '@aws-mdaa/naming';
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
 import { BedrockBuilderL3Construct, BedrockBuilderL3ConstructProps, LambdaFunctionProps } from '../lib';
 import { BedrockAgentProps, NamedAgentProps } from '@aws-mdaa/bedrock-agent-l3-construct';
 import {
@@ -3383,3 +3383,72 @@ function generateTemplateFromTestInput(
   }
   return Template.fromStack(testApp.testStack);
 }
+
+describe('Bedrock CMK key policy role grants', () => {
+  test('a same-account data admin is granted key admin actions via the aws:userId condition', () => {
+    const testApp = new MdaaTestApp();
+    // The ref carries an ARN and a name but no id, so the id arrives as a resolution-CR token.
+    // checkCdkNagCompliance is skipped here: it declares its own describe/test, which cannot be
+    // nested inside a test body. Nag coverage for this config is in the suites above.
+    const template = generateTemplateFromTestInput(
+      testApp,
+      { arn: 'arn:test-partition:iam::test-account:role/test-role', name: 'test-role' },
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      true,
+    );
+
+    template.hasResourceProperties('AWS::KMS::Key', {
+      KeyPolicy: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Action: Match.arrayWith(['kms:Create*', 'kms:Put*', 'kms:ScheduleKeyDeletion']),
+            Effect: 'Allow',
+            Principal: { AWS: '*' },
+            Condition: { StringLike: { 'aws:userId': Match.anyValue() } },
+          }),
+        ]),
+      },
+    });
+  });
+
+  test('a cross-account data admin is granted the delegable key admin actions by ARN principal', () => {
+    const testApp = new MdaaTestApp();
+    const crossAccountArn = 'arn:test-partition:iam::999999999999:role/CrossAccountBedrockAdmin';
+    // checkCdkNagCompliance is skipped here: it declares its own describe/test, which cannot be
+    // nested inside a test body.
+    const template = generateTemplateFromTestInput(
+      testApp,
+      { arn: crossAccountArn },
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      true,
+    );
+
+    // A same-account admin is scoped by aws:userId, which a principal in another account can never
+    // satisfy, so the cross-account admin has to arrive as a direct ARN principal instead.
+    template.hasResourceProperties('AWS::KMS::Key', {
+      KeyPolicy: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Effect: 'Allow',
+            Principal: { AWS: crossAccountArn },
+            Action: Match.arrayWith(['kms:CreateGrant', 'kms:DescribeKey']),
+            Sid: Match.stringLikeRegexp('xacct-admin-stmt'),
+          }),
+        ]),
+      },
+    });
+
+    // Resolving a cross-account role id calls IAM in the deploying account and fails the deploy.
+    expect(Object.keys(template.findResources('AWS::CloudFormation::CustomResource'))).toHaveLength(0);
+  });
+});

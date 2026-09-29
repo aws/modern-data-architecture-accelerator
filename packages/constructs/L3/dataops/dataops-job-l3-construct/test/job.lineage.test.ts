@@ -15,7 +15,7 @@ const jobCommand: JobCommand = {
 };
 
 const baseJobProps: JobConfig = {
-  executionRoleArn: 'arn:test-partition:iam:test-region:test-account:role/some-execution-role',
+  executionRoleArn: 'arn:test-partition:iam::test-account:role/some-execution-role',
   command: jobCommand,
   description: 'lineage test job',
 };
@@ -37,7 +37,7 @@ function createConstructorProps(stack: Stack, testApp: MdaaTestApp, jobConfig: J
     notificationTopicArn: 'arn:test-partition:sns:test-region:test-account:MyTopic',
     roleHelper: new MdaaRoleHelper(stack, testApp.naming),
     naming: testApp.naming,
-    deploymentRoleArn: 'arn:test-partition:iam:test-region:test-account:role/some-deployment-role',
+    deploymentRoleArn: 'arn:test-partition:iam::test-account:role/some-deployment-role',
     bucketName: 'some-project-bucket-name',
     jobConfigs: { testJob: jobConfig },
   };

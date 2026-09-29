@@ -5,38 +5,15 @@
 
 import { describe } from '@jest/globals';
 import { baselineDiffTestApp, Create } from '@aws-mdaa/testing';
-import { DataLakeCDKApp } from '../lib/datalake';
+import { MdaaDevopsCDKApp } from '../lib/devops';
 import * as path from 'path';
 
-describe('DataLake Baseline Diff Tests', () => {
+describe('DevOps Baseline Diff Tests', () => {
   baselineDiffTestApp(
-    'Datalake Comprehensive',
+    'DevOps Minimal',
     Create.appProvider(
       context => {
-        const moduleApp = new DataLakeCDKApp({
-          context: {
-            ...context,
-            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-comprehensive.yaml'),
-          },
-        });
-        moduleApp.generateStack();
-        return moduleApp;
-      },
-      {
-        module_name: 'test-datalake-main',
-        org: 'test-org',
-        env: 'test-env',
-        domain: 'test-domain',
-        'account-2': '999999999999',
-      },
-    ),
-  );
-
-  baselineDiffTestApp(
-    'Datalake Minimal',
-    Create.appProvider(
-      context => {
-        const moduleApp = new DataLakeCDKApp({
+        const moduleApp = new MdaaDevopsCDKApp({
           context: {
             ...context,
             module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-minimal.yaml'),
@@ -46,7 +23,29 @@ describe('DataLake Baseline Diff Tests', () => {
         return moduleApp;
       },
       {
-        module_name: 'test-datalake-minimal',
+        module_name: 'test-devops-minimal',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
+
+  baselineDiffTestApp(
+    'DevOps Comprehensive',
+    Create.appProvider(
+      context => {
+        const moduleApp = new MdaaDevopsCDKApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-comprehensive.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-devops-comprehensive',
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',

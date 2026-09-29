@@ -5,7 +5,7 @@
 
 import { FunctionProps, LambdaFunctionL3Construct, LayerProps } from '@aws-mdaa/dataops-lambda-l3-construct';
 
-import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
+import { MdaaResolvableRole, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { DECRYPT_ACTIONS, ENCRYPT_ACTIONS, MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaResourceType } from '@aws-mdaa/naming';
@@ -326,10 +326,7 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
     const dataAdminRoles = props.roleHelper.resolveRoleRefsWithOrdinals(props.dataAdminRoles, 'DataAdmin');
 
     // Get or create KMS key for Bedrock
-    const kmsKey = this.getOrCreateKmsKey(
-      props,
-      dataAdminRoles.map(x => x.id()),
-    );
+    const kmsKey = this.getOrCreateKmsKey(props, dataAdminRoles);
 
     this.generatedFunctions = this.createLambdaFunctions(props, kmsKey);
 
@@ -942,12 +939,12 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
   /**
    * Gets an existing KMS key or creates a new one for Bedrock resources.
    */
-  private getOrCreateKmsKey(props: BedrockBuilderL3ConstructProps, dataAdminRoleIds: string[]): IKey {
+  private getOrCreateKmsKey(props: BedrockBuilderL3ConstructProps, dataAdminRoles: MdaaResolvableRole[]): IKey {
     const kmsKey = props.kmsKeyArn
       ? kms.Key.fromKeyArn(this, `ImportedKmsKey`, props.kmsKeyArn)
       : new MdaaKmsKey(this.scope, 'bedrock-cmk', {
           naming: this.props.naming,
-          keyAdminRoleIds: dataAdminRoleIds,
+          keyAdminRoles: dataAdminRoles,
         });
 
     //Allow CloudWatch logs to us the key to encrypt/decrypt log data

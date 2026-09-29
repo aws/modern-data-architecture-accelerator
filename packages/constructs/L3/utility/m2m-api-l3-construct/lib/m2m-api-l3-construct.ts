@@ -244,8 +244,8 @@ export class M2MApiL3Construct extends MdaaL3Construct {
   private createKmsKey(): IKey {
     const kmsKey = new MdaaKmsKey(this, 'kms-key', {
       naming: this.props.naming,
-      keyAdminRoleIds: this.adminRoles.map(x => x.id()),
-      keyUserRoleIds: this.adminRoles.map(x => x.id()),
+      keyAdminRoles: this.adminRoles,
+      keyUserRoles: this.adminRoles,
     });
     const cloudwatchStatement = new PolicyStatement({
       sid: 'CloudWatchLogsEncryption',

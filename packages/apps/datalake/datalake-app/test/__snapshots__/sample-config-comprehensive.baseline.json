@@ -269,79 +269,6 @@
         }
       }
     },
-    "RoleResRootrws0": {
-      "Type": "AWS::CloudFormation::CustomResource",
-      "Properties": {
-        "ServiceToken": {
-          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
-        },
-        "roleRef": {
-          "refId": "Root-rws-0",
-          "arn": "arn:test-partition:iam::test-account:role/Admin"
-        }
-      },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
-    },
-    "RoleResRootrws1": {
-      "Type": "AWS::CloudFormation::CustomResource",
-      "Properties": {
-        "ServiceToken": {
-          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
-        },
-        "roleRef": {
-          "refId": "Root-rws-1",
-          "name": "Admin"
-        }
-      },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
-    },
-    "RoleResDatar1": {
-      "Type": "AWS::CloudFormation::CustomResource",
-      "Properties": {
-        "ServiceToken": {
-          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
-        },
-        "roleRef": {
-          "refId": "Data-r-1",
-          "arn": {
-            "Ref": "SsmParameterValuesampleorginstance1generatedroledatascientistarnC96584B6F00A464EAD1953AFF4B05118Parameter"
-          }
-        }
-      },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
-    },
-    "RoleResDatar4": {
-      "Type": "AWS::CloudFormation::CustomResource",
-      "Properties": {
-        "ServiceToken": {
-          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
-        },
-        "roleRef": {
-          "refId": "Data-r-4",
-          "name": "data_scientist",
-          "sso": true
-        }
-      },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
-    },
-    "RoleResDatarw0": {
-      "Type": "AWS::CloudFormation::CustomResource",
-      "Properties": {
-        "ServiceToken": {
-          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
-        },
-        "roleRef": {
-          "refId": "Data-rw-0",
-          "arn": "arn:test-partition:iam::test-account:role/DataEngineer"
-        }
-      },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
-    },
     "cmk01DE03DA": {
       "Type": "AWS::KMS::Key",
       "Properties": {
@@ -515,6 +442,25 @@
             },
             {
               "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext",
+                "kms:DescribeKey"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::999999999999:role/CrossAccountEngineer"
+              },
+              "Resource": "*",
+              "Sid": "test-org-test-env-test-domain-test-datalake-main-xacct-usage-stmt"
+            },
+            {
+              "Action": [
                 "kms:Encrypt",
                 "kms:ReEncryptFrom",
                 "kms:ReEncryptTo",
@@ -558,7 +504,7 @@
               },
               "Effect": "Allow",
               "Principal": {
-                "AWS": "arn:test-partition:iam::test-account-2:role/sample-datalake-replication"
+                "AWS": "arn:test-partition:iam::999999999999:role/sample-datalake-replication"
               },
               "Resource": "*",
               "Sid": "inbound-replication-curated"
@@ -592,7 +538,7 @@
               },
               "Effect": "Allow",
               "Principal": {
-                "AWS": "arn:test-partition:iam::test-account-2:role/sample-datalake-replication"
+                "AWS": "arn:test-partition:iam::999999999999:role/sample-datalake-replication"
               },
               "Resource": "*",
               "Sid": "inbound-replication-exchange"
@@ -676,6 +622,79 @@
           "Ref": "cmk01DE03DA"
         }
       }
+    },
+    "RoleResRootrws0": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "Root-rws-0",
+          "arn": "arn:test-partition:iam::test-account:role/Admin"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "RoleResRootrws1": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "Root-rws-1",
+          "name": "Admin"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "RoleResDatar1": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "Data-r-1",
+          "arn": {
+            "Ref": "SsmParameterValuesampleorginstance1generatedroledatascientistarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+          }
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "RoleResDatar4": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "Data-r-4",
+          "name": "data_scientist",
+          "sso": true
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "RoleResDatarw0": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "Data-rw-0",
+          "arn": "arn:test-partition:iam::test-account:role/DataEngineer"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
     },
     "foldercrfunction9FED88A4": {
       "Type": "AWS::Lambda::Function",
@@ -1366,7 +1385,7 @@
               ],
               "Effect": "Allow",
               "Principal": {
-                "AWS": "arn:test-partition:iam::test-account-2:role/sample-datalake-replication"
+                "AWS": "arn:test-partition:iam::999999999999:role/sample-datalake-replication"
               },
               "Resource": {
                 "Fn::Join": [
@@ -1398,7 +1417,7 @@
               },
               "Effect": "Allow",
               "Principal": {
-                "AWS": "arn:test-partition:iam::test-account-2:role/sample-datalake-replication"
+                "AWS": "arn:test-partition:iam::999999999999:role/sample-datalake-replication"
               },
               "Resource": {
                 "Fn::GetAtt": [
@@ -1608,6 +1627,33 @@
               "Sid": "/data_ReadWrite"
             },
             {
+              "Action": [
+                "s3:GetObject*",
+                "s3:PutObject",
+                "s3:PutObjectTagging",
+                "s3:DeleteObject"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::999999999999:role/CrossAccountEngineer"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "bucketcurated81D6F3A3",
+                        "Arn"
+                      ]
+                    },
+                    "/data/*"
+                  ]
+                ]
+              },
+              "Sid": "/data_ReadWrite"
+            },
+            {
               "Action": "s3:PutObject",
               "Effect": "Allow",
               "Principal": {
@@ -1792,6 +1838,39 @@
             },
             {
               "Action": [
+                "s3:List*",
+                "s3:GetBucket*"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::999999999999:role/CrossAccountEngineer"
+              },
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "bucketcurated81D6F3A3",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::GetAtt": [
+                    "bucketcurated81D6F3A3",
+                    "Arn"
+                  ]
+                }
+              ],
+              "Sid": "BucketAllowCrossAccount"
+            },
+            {
+              "Action": [
                 "s3:PutObject*",
                 "s3:GetObject*",
                 "s3:DeleteObject*"
@@ -1924,7 +2003,8 @@
                         "folderfunctionroleC7D41C6D",
                         "Arn"
                       ]
-                    }
+                    },
+                    "arn:test-partition:iam::999999999999:role/CrossAccountEngineer"
                   ]
                 }
               },
@@ -2237,10 +2317,10 @@
                 "Status": "Disabled"
               },
               "Destination": {
-                "Account": "test-account-2",
+                "Account": "999999999999",
                 "Bucket": "arn:test-partition:s3:::sample-dr-datalake-exchange",
                 "EncryptionConfiguration": {
-                  "ReplicaKmsKeyID": "arn:test-partition:kms:test-region:test-account-2:key/test-replication-key"
+                  "ReplicaKmsKeyID": "arn:test-partition:kms:test-region:999999999999:key/test-replication-key"
                 }
               },
               "Filter": {
@@ -2426,7 +2506,7 @@
               ],
               "Effect": "Allow",
               "Principal": {
-                "AWS": "arn:test-partition:iam::test-account-2:role/sample-datalake-replication"
+                "AWS": "arn:test-partition:iam::999999999999:role/sample-datalake-replication"
               },
               "Resource": {
                 "Fn::Join": [
@@ -2458,7 +2538,7 @@
               },
               "Effect": "Allow",
               "Principal": {
-                "AWS": "arn:test-partition:iam::test-account-2:role/sample-datalake-replication"
+                "AWS": "arn:test-partition:iam::999999999999:role/sample-datalake-replication"
               },
               "Resource": {
                 "Fn::GetAtt": [
@@ -2668,6 +2748,33 @@
               "Sid": "/data_ReadWrite"
             },
             {
+              "Action": [
+                "s3:GetObject*",
+                "s3:PutObject",
+                "s3:PutObjectTagging",
+                "s3:DeleteObject"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::999999999999:role/CrossAccountEngineer"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "bucketexchange21206A05",
+                        "Arn"
+                      ]
+                    },
+                    "/data/*"
+                  ]
+                ]
+              },
+              "Sid": "/data_ReadWrite"
+            },
+            {
               "Action": "s3:PutObject",
               "Effect": "Allow",
               "Principal": {
@@ -2707,7 +2814,7 @@
                         [
                           {
                             "Fn::GetAtt": [
-                              "lakeformationrole7FEE6C3C",
+                              "replicationroleexchange3A6535A1",
                               "RoleId"
                             ]
                           },
@@ -2721,7 +2828,7 @@
                         [
                           {
                             "Fn::GetAtt": [
-                              "replicationroleexchange3A6535A1",
+                              "lakeformationrole7FEE6C3C",
                               "RoleId"
                             ]
                           },
@@ -2866,6 +2973,39 @@
             },
             {
               "Action": [
+                "s3:List*",
+                "s3:GetBucket*"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::999999999999:role/CrossAccountEngineer"
+              },
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "bucketexchange21206A05",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::GetAtt": [
+                    "bucketexchange21206A05",
+                    "Arn"
+                  ]
+                }
+              ],
+              "Sid": "BucketAllowCrossAccount"
+            },
+            {
+              "Action": [
                 "s3:PutObject*",
                 "s3:GetObject*",
                 "s3:DeleteObject*"
@@ -2879,7 +3019,7 @@
                         [
                           {
                             "Fn::GetAtt": [
-                              "lakeformationrole7FEE6C3C",
+                              "replicationroleexchange3A6535A1",
                               "RoleId"
                             ]
                           },
@@ -2893,7 +3033,7 @@
                         [
                           {
                             "Fn::GetAtt": [
-                              "replicationroleexchange3A6535A1",
+                              "lakeformationrole7FEE6C3C",
                               "RoleId"
                             ]
                           },
@@ -3012,7 +3152,8 @@
                         "folderfunctionroleC7D41C6D",
                         "Arn"
                       ]
-                    }
+                    },
+                    "arn:test-partition:iam::999999999999:role/CrossAccountEngineer"
                   ]
                 }
               },
@@ -3204,7 +3345,7 @@
                 }
               },
               "Effect": "Allow",
-              "Resource": "arn:test-partition:kms:test-region:test-account-2:key/test-replication-key"
+              "Resource": "arn:test-partition:kms:test-region:999999999999:key/test-replication-key"
             }
           ],
           "Version": "2012-10-17"
@@ -3466,7 +3607,7 @@
           },
           {
             "Destination": {
-              "BucketAccountId": "test-account-2",
+              "BucketAccountId": "999999999999",
               "BucketArn": "arn:test-partition:s3:::central-inventory-bucket",
               "Format": "Parquet",
               "Prefix": "datalake/raw"
@@ -3624,10 +3765,10 @@
                 "Status": "Enabled"
               },
               "Destination": {
-                "Account": "test-account-2",
+                "Account": "999999999999",
                 "Bucket": "arn:test-partition:s3:::sample-dr-datalake-raw",
                 "EncryptionConfiguration": {
-                  "ReplicaKmsKeyID": "arn:test-partition:kms:test-region:test-account-2:key/test-replication-key"
+                  "ReplicaKmsKeyID": "arn:test-partition:kms:test-region:999999999999:key/test-replication-key"
                 }
               },
               "Filter": {
@@ -4041,6 +4182,33 @@
             },
             {
               "Action": [
+                "s3:GetObject*",
+                "s3:PutObject",
+                "s3:PutObjectTagging",
+                "s3:DeleteObject"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::999999999999:role/CrossAccountEngineer"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "bucketrawE1DB2AD1",
+                        "Arn"
+                      ]
+                    },
+                    "/data/*"
+                  ]
+                ]
+              },
+              "Sid": "/data_ReadWrite"
+            },
+            {
+              "Action": [
                 "s3:List*",
                 "s3:GetBucket*"
               ],
@@ -4053,7 +4221,7 @@
                         [
                           {
                             "Fn::GetAtt": [
-                              "lakeformationrole7FEE6C3C",
+                              "replicationroleraw7500FFE0",
                               "RoleId"
                             ]
                           },
@@ -4067,7 +4235,7 @@
                         [
                           {
                             "Fn::GetAtt": [
-                              "replicationroleraw7500FFE0",
+                              "lakeformationrole7FEE6C3C",
                               "RoleId"
                             ]
                           },
@@ -4209,6 +4377,39 @@
                 }
               ],
               "Sid": "BucketAllow"
+            },
+            {
+              "Action": [
+                "s3:List*",
+                "s3:GetBucket*"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::999999999999:role/CrossAccountEngineer"
+              },
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "bucketrawE1DB2AD1",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::GetAtt": [
+                    "bucketrawE1DB2AD1",
+                    "Arn"
+                  ]
+                }
+              ],
+              "Sid": "BucketAllowCrossAccount"
             }
           ],
           "Version": "2012-10-17"
@@ -4481,7 +4682,7 @@
                 }
               },
               "Effect": "Allow",
-              "Resource": "arn:test-partition:kms:test-region:test-account-2:key/test-replication-key"
+              "Resource": "arn:test-partition:kms:test-region:999999999999:key/test-replication-key"
             }
           ],
           "Version": "2012-10-17"
@@ -4657,10 +4858,10 @@
                 "Status": "Disabled"
               },
               "Destination": {
-                "Account": "test-account-2",
+                "Account": "999999999999",
                 "Bucket": "arn:test-partition:s3:::sample-dr-datalake-standardized",
                 "EncryptionConfiguration": {
-                  "ReplicaKmsKeyID": "arn:test-partition:kms:test-region:test-account-2:key/test-replication-key"
+                  "ReplicaKmsKeyID": "arn:test-partition:kms:test-region:999999999999:key/test-replication-key"
                 }
               },
               "Filter": {
@@ -5064,6 +5265,33 @@
               "Sid": "/data_ReadWrite"
             },
             {
+              "Action": [
+                "s3:GetObject*",
+                "s3:PutObject",
+                "s3:PutObjectTagging",
+                "s3:DeleteObject"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::999999999999:role/CrossAccountEngineer"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "bucketstandardized3524AAEC",
+                        "Arn"
+                      ]
+                    },
+                    "/data/*"
+                  ]
+                ]
+              },
+              "Sid": "/data_ReadWrite"
+            },
+            {
               "Action": "s3:PutObject",
               "Effect": "Allow",
               "Principal": {
@@ -5103,8 +5331,8 @@
                         [
                           {
                             "Fn::GetAtt": [
-                              "lakeformationrole7FEE6C3C",
-                              "RoleId"
+                              "RoleResreplicationstandardized",
+                              "id"
                             ]
                           },
                           ":*"
@@ -5117,8 +5345,8 @@
                         [
                           {
                             "Fn::GetAtt": [
-                              "RoleResreplicationstandardized",
-                              "id"
+                              "lakeformationrole7FEE6C3C",
+                              "RoleId"
                             ]
                           },
                           ":*"
@@ -5262,6 +5490,39 @@
             },
             {
               "Action": [
+                "s3:List*",
+                "s3:GetBucket*"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::999999999999:role/CrossAccountEngineer"
+              },
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "bucketstandardized3524AAEC",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::GetAtt": [
+                    "bucketstandardized3524AAEC",
+                    "Arn"
+                  ]
+                }
+              ],
+              "Sid": "BucketAllowCrossAccount"
+            },
+            {
+              "Action": [
                 "s3:PutObject*",
                 "s3:GetObject*",
                 "s3:DeleteObject*"
@@ -5275,8 +5536,8 @@
                         [
                           {
                             "Fn::GetAtt": [
-                              "lakeformationrole7FEE6C3C",
-                              "RoleId"
+                              "RoleResreplicationstandardized",
+                              "id"
                             ]
                           },
                           ":*"
@@ -5289,8 +5550,8 @@
                         [
                           {
                             "Fn::GetAtt": [
-                              "RoleResreplicationstandardized",
-                              "id"
+                              "lakeformationrole7FEE6C3C",
+                              "RoleId"
                             ]
                           },
                           ":*"
@@ -5408,7 +5669,8 @@
                         "folderfunctionroleC7D41C6D",
                         "Arn"
                       ]
-                    }
+                    },
+                    "arn:test-partition:iam::999999999999:role/CrossAccountEngineer"
                   ]
                 }
               },
@@ -5626,7 +5888,7 @@
                 }
               },
               "Effect": "Allow",
-              "Resource": "arn:test-partition:kms:test-region:test-account-2:key/test-replication-key"
+              "Resource": "arn:test-partition:kms:test-region:999999999999:key/test-replication-key"
             }
           ],
           "Version": "2012-10-17"
@@ -5828,7 +6090,7 @@
         "AllowExternalPrincipals": false,
         "Name": "test-org-test-env-test-domain-test-datalake-main-datalake-parameters",
         "Principals": [
-          "test-account-2"
+          "999999999999"
         ],
         "ResourceArns": [
           "arn:test-partition:ssm:test-region:test-account:parameter/test-org/test-domain/test-datalake-main/kms/arn",

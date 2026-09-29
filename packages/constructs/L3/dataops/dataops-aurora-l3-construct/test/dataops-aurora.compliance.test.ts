@@ -162,3 +162,106 @@ describe('DataOps Aurora Access Policy Tests', () => {
     });
   });
 });
+
+describe('DataOps Aurora KMS Key Admin Tests', () => {
+  const testApp = new MdaaTestApp();
+  const stack = testApp.testStack;
+
+  const constructProps: DataopsAuroraL3ConstructProps = {
+    postgresqlClusters: {
+      'admin-cluster': {
+        engineVersion: '16.13',
+        vpcId: 'vpc-12345',
+        subnets: [
+          { subnetId: 'subnet-1a2b3c4d', availabilityZone: 'test-regiona' },
+          { subnetId: 'subnet-5e6f7g8h', availabilityZone: 'test-regionb' },
+        ],
+        securityGroupIngress: { ipv4: ['10.0.0.0/16'] },
+        port: 15432,
+        // id is supplied so the same-account grant renders as a literal rather than a CR token.
+        dataAdminRoles: [{ arn: 'arn:test-partition:iam::test-account:role/admin-role', id: 'admin-role-id' }],
+      },
+    },
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+  };
+
+  new DataopsAuroraL3Construct(stack, 'admin-test', constructProps);
+  const template = Template.fromStack(stack);
+
+  test('the same-account data admin is granted key admin actions via the aws:userId condition', () => {
+    // resolveKmsKey passes dataAdminRoles as keyAdminRoles on the dedicated Aurora key. Without
+    // this assertion the admin grant could be dropped and only the log-encryption statement, which
+    // the suite above already covers, would keep passing.
+    template.hasResourceProperties('AWS::KMS::Key', {
+      KeyPolicy: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Action: Match.arrayWith(['kms:Create*', 'kms:Put*', 'kms:ScheduleKeyDeletion', 'kms:CancelKeyDeletion']),
+            Effect: 'Allow',
+            Principal: { AWS: '*' },
+            Condition: { StringLike: { 'aws:userId': ['admin-role-id:*'] } },
+          }),
+        ]),
+      },
+    });
+  });
+});
+
+describe('DataOps Aurora Cross-Account Key Admin Tests', () => {
+  const testApp = new MdaaTestApp();
+  const stack = testApp.testStack;
+  const crossAccountArn = 'arn:test-partition:iam::999999999999:role/CrossAccountAuroraAdmin';
+
+  const constructProps: DataopsAuroraL3ConstructProps = {
+    postgresqlClusters: {
+      'xacct-cluster': {
+        engineVersion: '16.13',
+        vpcId: 'vpc-12345',
+        subnets: [
+          { subnetId: 'subnet-1a2b3c4d', availabilityZone: 'test-regiona' },
+          { subnetId: 'subnet-5e6f7g8h', availabilityZone: 'test-regionb' },
+        ],
+        securityGroupIngress: { ipv4: ['10.0.0.0/16'] },
+        port: 15432,
+        dataAdminRoles: [{ arn: crossAccountArn }],
+      },
+    },
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+  };
+
+  new DataopsAuroraL3Construct(stack, 'xacct-test', constructProps);
+  const template = Template.fromStack(stack);
+
+  test('the cross-account data admin is granted the delegable key admin actions by ARN principal', () => {
+    // A same-account admin is scoped by aws:userId, which a principal in another account can never
+    // satisfy, so the cross-account admin has to arrive as a direct ARN principal instead.
+    template.hasResourceProperties('AWS::KMS::Key', {
+      KeyPolicy: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Effect: 'Allow',
+            Principal: { AWS: crossAccountArn },
+            Action: Match.arrayWith(['kms:CreateGrant', 'kms:DescribeKey']),
+            Sid: Match.stringLikeRegexp('xacct-admin-stmt'),
+          }),
+        ]),
+      },
+    });
+  });
+
+  test('no aws:userId conditioned admin statement is emitted for the cross-account role', () => {
+    const keyStatements = Object.values(template.findResources('AWS::KMS::Key'))[0].Properties.KeyPolicy.Statement;
+    const userIds = keyStatements.flatMap(
+      (stmt: { Condition?: { StringLike?: { 'aws:userId'?: string[] } } }) =>
+        stmt.Condition?.StringLike?.['aws:userId'] ?? [],
+    );
+    expect(userIds).toHaveLength(0);
+  });
+
+  test('no role resolution custom resource is created for the cross-account role', () => {
+    // Resolving a cross-account role id calls IAM in the deploying account and fails the deploy.
+    expect(Object.keys(template.findResources('AWS::CloudFormation::CustomResource'))).toHaveLength(0);
+  });
+});

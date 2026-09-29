@@ -20,6 +20,11 @@
 
 - Added the `@aws-mdaa/namingEnforceInlinePolicies` opt-in context flag, which applies the MDAA resource naming convention to inline IAM policy names that CDK creates internally (e.g. via `role.addToPolicy()`) and to policies embedded in a role's `Policies[]`. Defaults to `false`; existing deployments are unaffected unless the flag is set. When enabled, standalone `AWS::IAM::Policy` renames are replaced by CloudFormation on the next deploy, while embedded role-policy renames are applied in place.
 
+#### Role References
+
+- Role references whose `arn` names another account are now granted by ARN in KMS key policies and in the bucket policies of the Data Lake, Athena Workgroup, Data Warehouse and Audit modules, instead of failing the deploy-time role lookup. The role must exist before deploy. `Upgrade impact:` such an `arn` was previously looked up by name in the deploying account, so a same-named local role that received the grant loses it. See [CONFIGURATION.md](CONFIGURATION.md#cross-account-role-references).
+- Role references whose `arn` cannot name a role, meaning an ARN of a service other than IAM, a non-empty region segment, or an account which is not a twelve-digit ID (most commonly the empty region segment omitted, as in `arn:aws:iam:123456789012:role/name`), are now rejected at synth time with a message naming the reference. `Upgrade impact:` such an ARN could previously deploy, because the role was looked up by the name after the last `/`. Correct it before upgrading.
+
 ### Bug Fixes
 
 - Fixed `mdaa synth` failing when `account` and/or `region` are left as `default` and no AWS credentials are resolvable, which leaves them as unresolved CloudFormation pseudo-parameters that several code paths treated as literal strings: ECR container URI parsing, cross-account SSM lookup, resource name generation, and cdk-nag suppression matching.

@@ -38,6 +38,9 @@
       "path": "../construct"
     },
     {
+      "path": "../../../utilities/iam-role-helper"
+    },
+    {
       "path": "../../../utilities/mdaa-naming"
     },
     {

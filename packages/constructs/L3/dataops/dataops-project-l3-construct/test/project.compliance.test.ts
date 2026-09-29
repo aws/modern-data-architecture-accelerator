@@ -1140,3 +1140,92 @@ describe('ExecutionRole Grant Permission Levels', () => {
     });
   });
 });
+
+describe('Project KMS key admin grants', () => {
+  const buildTemplate = (dataAdminRoleRef: MdaaRoleRef): Template => {
+    const app = new MdaaTestApp();
+    const props: DataOpsProjectL3ConstructProps = {
+      naming: app.naming,
+      roleHelper: new MdaaRoleHelper(
+        app.testStack,
+        app.naming,
+        path.dirname(require.resolve('@aws-mdaa/iam-role-helper/package.json')),
+      ),
+      projectExecutionRoleRefs: [{ id: 'test-glue-role-id' }],
+      dataEngineerRoleRefs: [{ id: 'test-eng-super-role-id' }],
+      dataAdminRoleRefs: [dataAdminRoleRef],
+    };
+    new DataOpsProjectL3Construct(app.testStack, 'kms-admin-stack', props);
+    return Template.fromStack(app.testStack);
+  };
+
+  test('a same-account data admin is granted key admin actions via the aws:userId condition', () => {
+    // createkmsKey passes dataAdminRoles as keyAdminRoles. KMSUsageAccess above covers only the
+    // key-user statement, so the admin grant needs its own assertion to be regression-protected.
+    const template = buildTemplate({ id: 'test-admin-role-id' });
+    template.hasResourceProperties('AWS::KMS::Key', {
+      KeyPolicy: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Action: Match.arrayWith(['kms:Create*', 'kms:Put*', 'kms:ScheduleKeyDeletion', 'kms:CancelKeyDeletion']),
+            Effect: 'Allow',
+            Principal: { AWS: '*' },
+            Condition: { StringLike: { 'aws:userId': ['test-admin-role-id:*'] } },
+          }),
+        ]),
+      },
+    });
+  });
+
+  test('a cross-account data admin is granted the delegable key admin actions by ARN principal', () => {
+    // A same-account admin is scoped by aws:userId, which a principal in another account can never
+    // satisfy, so the cross-account admin has to arrive as a direct ARN principal instead.
+    const crossAccountArn = 'arn:test-partition:iam::999999999999:role/CrossAccountProjectAdmin';
+    const template = buildTemplate({ arn: crossAccountArn });
+    template.hasResourceProperties('AWS::KMS::Key', {
+      KeyPolicy: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Effect: 'Allow',
+            Principal: { AWS: crossAccountArn },
+            Action: Match.arrayWith(['kms:CreateGrant', 'kms:DescribeKey']),
+            Sid: Match.stringLikeRegexp('xacct-admin-stmt'),
+          }),
+        ]),
+      },
+    });
+  });
+
+  test('a cross-account data admin is also granted key usage by ARN principal', () => {
+    // getAllRoles feeds keyUserRoles as well, so the usage grant has to survive the routing too.
+    const crossAccountArn = 'arn:test-partition:iam::999999999999:role/CrossAccountProjectAdmin';
+    const template = buildTemplate({ arn: crossAccountArn });
+    template.hasResourceProperties('AWS::KMS::Key', {
+      KeyPolicy: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Effect: 'Allow',
+            Principal: { AWS: crossAccountArn },
+            Action: Match.arrayWith(['kms:Decrypt', 'kms:Encrypt']),
+            Sid: Match.stringLikeRegexp('xacct-usage-stmt'),
+          }),
+        ]),
+      },
+    });
+  });
+
+  test('no aws:userId condition on the key depends on a role resolution lookup', () => {
+    // A looked-up role id renders as an Fn::GetAtt on a Role-Res custom resource, and that lookup
+    // calls IAM in the deploying account, which cannot see a role in another account. So no part of
+    // the key policy may depend on one. Ids of roles created in this stack are still tokens, hence
+    // the check is on the referenced resource rather than on the value being a literal.
+    const template = buildTemplate({ arn: 'arn:test-partition:iam::999999999999:role/CrossAccountProjectAdmin' });
+    const keyStatements = Object.values(template.findResources('AWS::KMS::Key'))[0].Properties.KeyPolicy.Statement;
+    const userIds = keyStatements.flatMap(
+      (stmt: { Condition?: { StringLike?: { 'aws:userId'?: unknown[] } } }) =>
+        stmt.Condition?.StringLike?.['aws:userId'] ?? [],
+    );
+    expect(userIds.length).toBeGreaterThan(0);
+    expect(JSON.stringify(userIds)).not.toContain('RoleRes');
+  });
+});

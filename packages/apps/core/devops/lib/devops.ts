@@ -5,6 +5,7 @@
 
 import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents, MdaaCdkApp } from '@aws-mdaa/app';
 import { MdaaRole } from '@aws-mdaa/iam-constructs';
+import { MdaaResolvableRole } from '@aws-mdaa/iam-role-helper';
 import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { IMdaaResourceNaming } from '@aws-mdaa/naming';
@@ -250,7 +251,7 @@ export class MdaaDevopsL3Construct extends MdaaL3Construct {
 
     const kmsKey = new MdaaKmsKey(this, 'kms-key', {
       naming: this.props.naming,
-      keyUserRoleIds: [pipelineRole.roleId],
+      keyUserRoles: [MdaaResolvableRole.fromRole(this, 'pipeline-kms', pipelineRole)],
     });
 
     const devOpsBucket = new MdaaBucket(this, 'pipeline-bucket', {

@@ -7,6 +7,11 @@
 # one scoped admin role must be provided to keep it manageable.
 dataAdminRoles:
   - arn: arn:{{partition}}:iam::{{account}}:role/example-data-admin
+  # A role in another account is detected from its ARN and granted via an ARN-based principal.
+  # It receives key usage, but not key administration: KMS only honours grant and describe
+  # operations across accounts, so key management stays with the account owning the key. At least
+  # one same-account role is required here for that reason.
+  - arn: arn:{{partition}}:iam::{{context:account-2}}:role/example-cross-account-admin
 
 # Named map of HealthLake datastores. Each map key is the datastore name suffix.
 datastores:

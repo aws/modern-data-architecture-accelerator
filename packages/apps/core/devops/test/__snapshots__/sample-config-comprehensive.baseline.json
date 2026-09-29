@@ -1,0 +1,3098 @@
+{
+  "Description": "(SO0320-devops) Modern Data Architecture Accelerator. Version VERSION",
+  "Resources": {
+    "StackDescriptionParameterF77302F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-devops-comprehensive/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "devops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-devops-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "(SO0320-devops) Modern Data Architecture Accelerator. Version VERSION"
+      }
+    },
+    "devopspipelinerole300A0BAC": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "codepipeline.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "RoleName": "test-org-test-env-test-domain-test-devops-comprehensiv--21ef5b2b",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "devops"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-devops-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Permissions are scoped least privilege for deployment time.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "devopspipelinerolerolepipelinearnssm3C20014A": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-devops-comprehensive/role/pipeline/arn",
+        "Tags": {
+          "mdaa_cdk_app": "devops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-devops-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "devopspipelinerole300A0BAC",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Permissions are scoped least privilege for deployment time.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "devopspipelinerolerolepipelineidssmA26C05BB": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-devops-comprehensive/role/pipeline/id",
+        "Tags": {
+          "mdaa_cdk_app": "devops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-devops-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "devopspipelinerole300A0BAC",
+            "RoleId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Permissions are scoped least privilege for deployment time.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "devopspipelinerolerolepipelinenamessm8D71CA95": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-devops-comprehensive/role/pipeline/name",
+        "Tags": {
+          "mdaa_cdk_app": "devops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-devops-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "devopspipelinerole300A0BAC"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Permissions are scoped least privilege for deployment time.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "devopspipelineroleDefaultPolicy324D363C": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "devopscodebuildactionrole7DDCF478",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "devopspipelinebucketD7DF7137",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "devopspipelinebucketD7DF7137",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "devopskmskey0048A647",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "devopscodecommitactionroleE71F20D2",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "devopsmanualactionrole3D2464C0",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "devopspipelineroleDefaultPolicy324D363C",
+        "Roles": [
+          {
+            "Ref": "devopspipelinerole300A0BAC"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Permissions are scoped least privilege for deployment time.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "devopsmdaaimportrepotestorgtestenvtestdomaintestdevopscomprehensivedevopsmdaapipelinedomaintest1644A25A6mainEventRule94095232": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "EventPattern": {
+          "source": [
+            "aws.codecommit"
+          ],
+          "resources": [
+            "arn:test-partition:codecommit:test-region:test-account:test-mdaa-repo"
+          ],
+          "detail-type": [
+            "CodeCommit Repository State Change"
+          ],
+          "detail": {
+            "event": [
+              "referenceCreated",
+              "referenceUpdated"
+            ],
+            "referenceName": [
+              "main"
+            ]
+          }
+        },
+        "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "devops"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-devops-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:test-partition:codepipeline:test-region:test-account:",
+                  {
+                    "Ref": "devopsmdaapipelinedomaintest11FE864E3"
+                  }
+                ]
+              ]
+            },
+            "Id": "Target0",
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "devopscodecommiteventrole8726E5BB",
+                "Arn"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "devopsconfigsimportrepotestorgtestenvtestdomaintestdevopscomprehensivedevopsmdaapipelinedomaintest1644A25A6mainEventRule1C81F361": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "EventPattern": {
+          "source": [
+            "aws.codecommit"
+          ],
+          "resources": [
+            "arn:test-partition:codecommit:test-region:test-account:test-config-repo"
+          ],
+          "detail-type": [
+            "CodeCommit Repository State Change"
+          ],
+          "detail": {
+            "event": [
+              "referenceCreated",
+              "referenceUpdated"
+            ],
+            "referenceName": [
+              "main"
+            ]
+          }
+        },
+        "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "devops"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-devops-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:test-partition:codepipeline:test-region:test-account:",
+                  {
+                    "Ref": "devopsmdaapipelinedomaintest11FE864E3"
+                  }
+                ]
+              ]
+            },
+            "Id": "Target0",
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "devopscodecommiteventrole8726E5BB",
+                "Arn"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "devopskmskey0048A647": {
+      "Type": "AWS::KMS::Key",
+      "Properties": {
+        "EnableKeyRotation": true,
+        "Enabled": true,
+        "KeyPolicy": {
+          "Statement": [
+            {
+              "Action": "kms:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account:root"
+              },
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext"
+              ],
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "devopspipelinerole300A0BAC",
+                              "RoleId"
+                            ]
+                          },
+                          ":*"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "test-org-test-env-test-domain-test-devops-comprehensive-usage-stmt"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "devops"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-devops-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "devopskmskeyAliasD6809181": {
+      "Type": "AWS::KMS::Alias",
+      "Properties": {
+        "AliasName": "alias/test-org-test-env-test-domain-test-devops-comprehensive",
+        "TargetKeyId": {
+          "Fn::GetAtt": [
+            "devopskmskey0048A647",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "devopskmskeykmsarnssm53D5D220": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-devops-comprehensive/kms/arn",
+        "Tags": {
+          "mdaa_cdk_app": "devops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-devops-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "devopskmskey0048A647",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "devopskmskeykmsidssmEA759188": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-devops-comprehensive/kms/id",
+        "Tags": {
+          "mdaa_cdk_app": "devops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-devops-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "devopskmskey0048A647"
+        }
+      }
+    },
+    "devopspipelinebucketD7DF7137": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "BucketKeyEnabled": true,
+              "ServerSideEncryptionByDefault": {
+                "KMSMasterKeyID": {
+                  "Fn::GetAtt": [
+                    "devopskmskey0048A647",
+                    "Arn"
+                  ]
+                },
+                "SSEAlgorithm": "aws:kms"
+              }
+            }
+          ]
+        },
+        "BucketName": "test-org-test-env-test-domain-test-devops-comprehensive",
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "devops"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-devops-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "VersioningConfiguration": {
+          "Status": "Enabled"
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "AwsSolutions-S1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "NIST.800.53.R5-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "HIPAA.Security-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "PCI.DSS.321-S3BucketLoggingEnabled"
+            }
+          ]
+        }
+      }
+    },
+    "devopspipelinebucketPolicyC9E43C68": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "devopspipelinebucketD7DF7137"
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "devopspipelinebucketD7DF7137",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "devopspipelinebucketD7DF7137",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "s3:PutObject",
+              "Condition": {
+                "StringEquals": {
+                  "s3:x-amz-server-side-encryption": "AES256"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "devopspipelinebucketD7DF7137",
+                        "Arn"
+                      ]
+                    },
+                    "/*"
+                  ]
+                ]
+              },
+              "Sid": "DenyAES"
+            },
+            {
+              "Action": "s3:PutObject",
+              "Condition": {
+                "StringNotLikeIfExists": {
+                  "s3:x-amz-server-side-encryption-aws-kms-key-id": {
+                    "Fn::GetAtt": [
+                      "devopskmskey0048A647",
+                      "Arn"
+                    ]
+                  }
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "devopspipelinebucketD7DF7137",
+                        "Arn"
+                      ]
+                    },
+                    "/*"
+                  ]
+                ]
+              },
+              "Sid": "ForceKMS"
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "HIPAA.Security-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] MDAA does not use bucket replication.",
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "AwsSolutions-S1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "NIST.800.53.R5-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "HIPAA.Security-S3BucketLoggingEnabled"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
+              "id": "PCI.DSS.321-S3BucketLoggingEnabled"
+            }
+          ]
+        }
+      }
+    },
+    "devopspipelinebucketbucketnamessmBEDD3945": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-devops-comprehensive/bucket/name",
+        "Tags": {
+          "mdaa_cdk_app": "devops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-devops-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "devopspipelinebucketD7DF7137"
+        }
+      }
+    },
+    "devopspipelinebucketbucketarnssm016630EA": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-devops-comprehensive/bucket/arn",
+        "Tags": {
+          "mdaa_cdk_app": "devops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-devops-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "devopspipelinebucketD7DF7137",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "devopscodecommiteventrole8726E5BB": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "RoleName": "test-org-test-env-test-domain-test-devops-comprehensiv--21560bdc",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "devops"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-devops-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "devopscodecommiteventrolerolecodecommiteventarnssm4A99BC4D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-devops-comprehensive/role/codecommit-event/arn",
+        "Tags": {
+          "mdaa_cdk_app": "devops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-devops-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "devopscodecommiteventrole8726E5BB",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "devopscodecommiteventrolerolecodecommiteventidssm5C225E76": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-devops-comprehensive/role/codecommit-event/id",
+        "Tags": {
+          "mdaa_cdk_app": "devops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-devops-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "devopscodecommiteventrole8726E5BB",
+            "RoleId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "devopscodecommiteventrolerolecodecommiteventnamessm93EB14C9": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-devops-comprehensive/role/codecommit-event/name",
+        "Tags": {
+          "mdaa_cdk_app": "devops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-devops-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "devopscodecommiteventrole8726E5BB"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "devopscodecommiteventroleDefaultPolicyFDE807C8": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "codepipeline:StartPipelineExecution",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:test-partition:codepipeline:test-region:test-account:",
+                    {
+                      "Ref": "devopsmdaapipelinedomaintest11FE864E3"
+                    }
+                  ]
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "devopscodecommiteventroleDefaultPolicyFDE807C8",
+        "Roles": [
+          {
+            "Ref": "devopscodecommiteventrole8726E5BB"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "devopscodecommitactionroleE71F20D2": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account:root"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": [
+                    "codecommit:GetBranch",
+                    "codecommit:GetCommit",
+                    "codecommit:GetRepository",
+                    "codecommit:GitPull"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": [
+                    "arn:test-partition:codecommit:test-region:test-account:test-mdaa-repo",
+                    "arn:test-partition:codecommit:test-region:test-account:test-config-repo"
+                  ]
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "PolicyName": "codecommit_read"
+          }
+        ],
+        "RoleName": "test-org-test-env-test-domain-test-devops-comprehensiv--1143d214",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "devops"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-devops-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Permissions are scoped least privilege for deployment time.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "devopscodecommitactionrolerolecodecommitactionarnssm7BD4A92C": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-devops-comprehensive/role/codecommit-action/arn",
+        "Tags": {
+          "mdaa_cdk_app": "devops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-devops-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "devopscodecommitactionroleE71F20D2",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Permissions are scoped least privilege for deployment time.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "devopscodecommitactionrolerolecodecommitactionidssmDACC558D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-devops-comprehensive/role/codecommit-action/id",
+        "Tags": {
+          "mdaa_cdk_app": "devops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-devops-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "devopscodecommitactionroleE71F20D2",
+            "RoleId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Permissions are scoped least privilege for deployment time.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "devopscodecommitactionrolerolecodecommitactionnamessmF44D1D3B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-devops-comprehensive/role/codecommit-action/name",
+        "Tags": {
+          "mdaa_cdk_app": "devops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-devops-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "devopscodecommitactionroleE71F20D2"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Permissions are scoped least privilege for deployment time.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "devopscodecommitactionroleDefaultPolicy783B7610": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "devopspipelinebucketD7DF7137",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "devopspipelinebucketD7DF7137",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "devopskmskey0048A647",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
+                "codecommit:GetBranch",
+                "codecommit:GetCommit",
+                "codecommit:UploadArchive",
+                "codecommit:GetUploadArchiveStatus",
+                "codecommit:CancelUploadArchive",
+                "codecommit:GetRepository"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:codecommit:test-region:test-account:test-mdaa-repo"
+            },
+            {
+              "Action": [
+                "codecommit:GetBranch",
+                "codecommit:GetCommit",
+                "codecommit:UploadArchive",
+                "codecommit:GetUploadArchiveStatus",
+                "codecommit:CancelUploadArchive",
+                "codecommit:GetRepository"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:codecommit:test-region:test-account:test-config-repo"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "devopscodecommitactionroleDefaultPolicy783B7610",
+        "Roles": [
+          {
+            "Ref": "devopscodecommitactionroleE71F20D2"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Permissions are scoped least privilege for deployment time.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "devopscodebuildactionrole7DDCF478": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "codebuild.amazonaws.com"
+              }
+            },
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account:root"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/AWSCloudFormationReadOnlyAccess"
+              ]
+            ]
+          }
+        ],
+        "RoleName": "test-org-test-env-test-domain-test-devops-comprehensiv--6bb70beb",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "devops"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-devops-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] AWSCloudFormationReadOnlyAccess is Read Only Access",
+              "id": "AwsSolutions-IAM4"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Permissions are scoped least privilege for deployment time.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "devopscodebuildactionrolerolecodebuildactionarnssm61CCBF3B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-devops-comprehensive/role/codebuild-action/arn",
+        "Tags": {
+          "mdaa_cdk_app": "devops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-devops-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "devopscodebuildactionrole7DDCF478",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] AWSCloudFormationReadOnlyAccess is Read Only Access",
+              "id": "AwsSolutions-IAM4"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Permissions are scoped least privilege for deployment time.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "devopscodebuildactionrolerolecodebuildactionidssm58B866CD": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-devops-comprehensive/role/codebuild-action/id",
+        "Tags": {
+          "mdaa_cdk_app": "devops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-devops-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "devopscodebuildactionrole7DDCF478",
+            "RoleId"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] AWSCloudFormationReadOnlyAccess is Read Only Access",
+              "id": "AwsSolutions-IAM4"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Permissions are scoped least privilege for deployment time.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "devopscodebuildactionrolerolecodebuildactionnamessm1982085F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-devops-comprehensive/role/codebuild-action/name",
+        "Tags": {
+          "mdaa_cdk_app": "devops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-devops-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "devopscodebuildactionrole7DDCF478"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] AWSCloudFormationReadOnlyAccess is Read Only Access",
+              "id": "AwsSolutions-IAM4"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Permissions are scoped least privilege for deployment time.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "devopscodebuildactionroleDefaultPolicyB1B50DC1": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:test-partition:logs:test-region:test-account:log-group:/aws/codebuild/",
+                      {
+                        "Ref": "devopsmdaapipelinedomaintest1codebuildprojectSynthAndDiffDCBB006D"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:test-partition:logs:test-region:test-account:log-group:/aws/codebuild/",
+                      {
+                        "Ref": "devopsmdaapipelinedomaintest1codebuildprojectSynthAndDiffDCBB006D"
+                      },
+                      ":*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "codebuild:CreateReportGroup",
+                "codebuild:CreateReport",
+                "codebuild:UpdateReport",
+                "codebuild:BatchPutTestCases",
+                "codebuild:BatchPutCodeCoverages"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:test-partition:codebuild:test-region:test-account:report-group/",
+                    {
+                      "Ref": "devopsmdaapipelinedomaintest1codebuildprojectSynthAndDiffDCBB006D"
+                    },
+                    "-*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "devopskmskey0048A647",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
+                "codebuild:BatchGetBuilds",
+                "codebuild:StartBuild",
+                "codebuild:StopBuild"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "devopsmdaapipelinedomaintest1codebuildprojectSynthAndDiffDCBB006D",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "devopspipelinebucketD7DF7137",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "devopspipelinebucketD7DF7137",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "devopskmskey0048A647",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": "codecommit:GitPull",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:codecommit:test-region:test-account:test-config-repo"
+            },
+            {
+              "Action": "codecommit:GitPull",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:codecommit:test-region:test-account:test-mdaa-repo"
+            },
+            {
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:test-partition:logs:test-region:test-account:log-group:/aws/codebuild/",
+                      {
+                        "Ref": "devopsmdaapipelinedomaintest1codebuildprojectPreDeployValidateAB6090CF"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:test-partition:logs:test-region:test-account:log-group:/aws/codebuild/",
+                      {
+                        "Ref": "devopsmdaapipelinedomaintest1codebuildprojectPreDeployValidateAB6090CF"
+                      },
+                      ":*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "codebuild:CreateReportGroup",
+                "codebuild:CreateReport",
+                "codebuild:UpdateReport",
+                "codebuild:BatchPutTestCases",
+                "codebuild:BatchPutCodeCoverages"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:test-partition:codebuild:test-region:test-account:report-group/",
+                    {
+                      "Ref": "devopsmdaapipelinedomaintest1codebuildprojectPreDeployValidateAB6090CF"
+                    },
+                    "-*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": [
+                "codebuild:BatchGetBuilds",
+                "codebuild:StartBuild",
+                "codebuild:StopBuild"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "devopsmdaapipelinedomaintest1codebuildprojectPreDeployValidateAB6090CF",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "devopspipelinebucketD7DF7137",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "devopspipelinebucketD7DF7137",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "devopskmskey0048A647",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:test-partition:logs:test-region:test-account:log-group:/aws/codebuild/",
+                      {
+                        "Ref": "devopsmdaapipelinedomaintest1codebuildprojectDeploy47D08B21"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:test-partition:logs:test-region:test-account:log-group:/aws/codebuild/",
+                      {
+                        "Ref": "devopsmdaapipelinedomaintest1codebuildprojectDeploy47D08B21"
+                      },
+                      ":*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "codebuild:CreateReportGroup",
+                "codebuild:CreateReport",
+                "codebuild:UpdateReport",
+                "codebuild:BatchPutTestCases",
+                "codebuild:BatchPutCodeCoverages"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:test-partition:codebuild:test-region:test-account:report-group/",
+                    {
+                      "Ref": "devopsmdaapipelinedomaintest1codebuildprojectDeploy47D08B21"
+                    },
+                    "-*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": [
+                "codebuild:BatchGetBuilds",
+                "codebuild:StartBuild",
+                "codebuild:StopBuild"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "devopsmdaapipelinedomaintest1codebuildprojectDeploy47D08B21",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:test-partition:logs:test-region:test-account:log-group:/aws/codebuild/",
+                      {
+                        "Ref": "devopsmdaapipelinedomaintest1codebuildprojectPostDeployValidate00A64548"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:test-partition:logs:test-region:test-account:log-group:/aws/codebuild/",
+                      {
+                        "Ref": "devopsmdaapipelinedomaintest1codebuildprojectPostDeployValidate00A64548"
+                      },
+                      ":*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "codebuild:CreateReportGroup",
+                "codebuild:CreateReport",
+                "codebuild:UpdateReport",
+                "codebuild:BatchPutTestCases",
+                "codebuild:BatchPutCodeCoverages"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:test-partition:codebuild:test-region:test-account:report-group/",
+                    {
+                      "Ref": "devopsmdaapipelinedomaintest1codebuildprojectPostDeployValidate00A64548"
+                    },
+                    "-*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": [
+                "codebuild:BatchGetBuilds",
+                "codebuild:StartBuild",
+                "codebuild:StopBuild"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "devopsmdaapipelinedomaintest1codebuildprojectPostDeployValidate00A64548",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "devopscodebuildactionroleDefaultPolicyB1B50DC1",
+        "Roles": [
+          {
+            "Ref": "devopscodebuildactionrole7DDCF478"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] AWSCloudFormationReadOnlyAccess is Read Only Access",
+              "id": "AwsSolutions-IAM4"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Permissions are scoped least privilege for deployment time.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "devopscodebuildpolicyF66B0F8B": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Resource": [
+                "arn:test-partition:iam::test-account:role/cdk-my-cdk-qualifier-lookup-role-test-account-test-region",
+                "arn:test-partition:iam::test-account:role/cdk-my-cdk-qualifier-deploy-role-test-account-test-region",
+                "arn:test-partition:iam::test-account:role/cdk-my-cdk-qualifier-file-publishing-role-test-account-test-region",
+                "arn:test-partition:iam::test-account:role/cdk-my-cdk-qualifier-image-publishing-role-test-account-test-region",
+                "arn:test-partition:iam::test-account:role/cdk-my-cdk-qualifier-exec-role-test-account-test-region"
+              ],
+              "Sid": "ASSUMECDKROLES"
+            },
+            {
+              "Action": "s3:ListAllMyBuckets",
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "S3List"
+            },
+            {
+              "Action": [
+                "cloudformation:CreateChangeSet",
+                "cloudformation:DescribeChangeSet",
+                "cloudformation:DeleteChangeSet"
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "CloudFormationChangeSets"
+            },
+            {
+              "Action": [
+                "s3:Get*",
+                "s3:Put*",
+                "s3:List*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                "arn:test-partition:s3:::cdk-my-cdk-qualifier-assets-test-account-test-region",
+                "arn:test-partition:s3:::cdk-my-cdk-qualifier-assets-test-account-test-region/*"
+              ],
+              "Sid": "CDKS3"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "devopscodebuildpolicyF66B0F8B",
+        "Roles": [
+          {
+            "Ref": "devopscodebuildactionrole7DDCF478"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Permissions are scoped least privilege for deployment time.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "devopsmanualactionrole3D2464C0": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::test-account:root"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "RoleName": "test-org-test-env-test-domain-test-devops-comprehensive-2cf943ca",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "devops"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-devops-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "devopsmanualactionrolerolemanualactionarnssmE34D04E5": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-devops-comprehensive/role/manual-action/arn",
+        "Tags": {
+          "mdaa_cdk_app": "devops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-devops-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "devopsmanualactionrole3D2464C0",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "devopsmanualactionrolerolemanualactionidssm57AC597C": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-devops-comprehensive/role/manual-action/id",
+        "Tags": {
+          "mdaa_cdk_app": "devops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-devops-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "devopsmanualactionrole3D2464C0",
+            "RoleId"
+          ]
+        }
+      }
+    },
+    "devopsmanualactionrolerolemanualactionnamessm1A5B7A5B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-devops-comprehensive/role/manual-action/name",
+        "Tags": {
+          "mdaa_cdk_app": "devops",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-devops-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "devopsmanualactionrole3D2464C0"
+        }
+      }
+    },
+    "devopsmdaapipelinedomaintest11FE864E3": {
+      "Type": "AWS::CodePipeline::Pipeline",
+      "Properties": {
+        "ArtifactStore": {
+          "EncryptionKey": {
+            "Id": {
+              "Fn::GetAtt": [
+                "devopskmskey0048A647",
+                "Arn"
+              ]
+            },
+            "Type": "KMS"
+          },
+          "Location": {
+            "Ref": "devopspipelinebucketD7DF7137"
+          },
+          "Type": "S3"
+        },
+        "Name": "test-org-test-env-test-domain-test-devops-comprehensive-domain-test1",
+        "PipelineType": "V2",
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "devopspipelinerole300A0BAC",
+            "Arn"
+          ]
+        },
+        "Stages": [
+          {
+            "Actions": [
+              {
+                "ActionTypeId": {
+                  "Category": "Source",
+                  "Owner": "AWS",
+                  "Provider": "CodeCommit",
+                  "Version": "1"
+                },
+                "Configuration": {
+                  "RepositoryName": "test-mdaa-repo",
+                  "BranchName": "main",
+                  "PollForSourceChanges": false,
+                  "OutputArtifactFormat": "CODEBUILD_CLONE_REF"
+                },
+                "Name": "mdaa",
+                "OutputArtifacts": [
+                  {
+                    "Name": "MDAA"
+                  }
+                ],
+                "RoleArn": {
+                  "Fn::GetAtt": [
+                    "devopscodecommitactionroleE71F20D2",
+                    "Arn"
+                  ]
+                },
+                "RunOrder": 1
+              },
+              {
+                "ActionTypeId": {
+                  "Category": "Source",
+                  "Owner": "AWS",
+                  "Provider": "CodeCommit",
+                  "Version": "1"
+                },
+                "Configuration": {
+                  "RepositoryName": "test-config-repo",
+                  "BranchName": "main",
+                  "PollForSourceChanges": false,
+                  "OutputArtifactFormat": "CODEBUILD_CLONE_REF"
+                },
+                "Name": "configs",
+                "OutputArtifacts": [
+                  {
+                    "Name": "CONFIGS"
+                  }
+                ],
+                "RoleArn": {
+                  "Fn::GetAtt": [
+                    "devopscodecommitactionroleE71F20D2",
+                    "Arn"
+                  ]
+                },
+                "RunOrder": 1
+              }
+            ],
+            "Name": "Source"
+          },
+          {
+            "Actions": [
+              {
+                "ActionTypeId": {
+                  "Category": "Build",
+                  "Owner": "AWS",
+                  "Provider": "CodeBuild",
+                  "Version": "1"
+                },
+                "Configuration": {
+                  "ProjectName": {
+                    "Ref": "devopsmdaapipelinedomaintest1codebuildprojectSynthAndDiffDCBB006D"
+                  },
+                  "PrimarySource": "CONFIGS"
+                },
+                "InputArtifacts": [
+                  {
+                    "Name": "CONFIGS"
+                  },
+                  {
+                    "Name": "MDAA"
+                  }
+                ],
+                "Name": "Synth-And-Diff",
+                "OutputArtifacts": [
+                  {
+                    "Name": "PREDEPLOY_OUTPUT"
+                  }
+                ],
+                "RoleArn": {
+                  "Fn::GetAtt": [
+                    "devopscodebuildactionrole7DDCF478",
+                    "Arn"
+                  ]
+                },
+                "RunOrder": 1
+              }
+            ],
+            "Name": "Pre-Deploy"
+          },
+          {
+            "Actions": [
+              {
+                "ActionTypeId": {
+                  "Category": "Build",
+                  "Owner": "AWS",
+                  "Provider": "CodeBuild",
+                  "Version": "1"
+                },
+                "Configuration": {
+                  "ProjectName": {
+                    "Ref": "devopsmdaapipelinedomaintest1codebuildprojectPreDeployValidateAB6090CF"
+                  }
+                },
+                "InputArtifacts": [
+                  {
+                    "Name": "PREDEPLOY_OUTPUT"
+                  }
+                ],
+                "Name": "PreDeployValidate",
+                "RoleArn": {
+                  "Fn::GetAtt": [
+                    "devopscodebuildactionrole7DDCF478",
+                    "Arn"
+                  ]
+                },
+                "RunOrder": 1
+              },
+              {
+                "ActionTypeId": {
+                  "Category": "Approval",
+                  "Owner": "AWS",
+                  "Provider": "Manual",
+                  "Version": "1"
+                },
+                "Name": "Approve",
+                "RoleArn": {
+                  "Fn::GetAtt": [
+                    "devopsmanualactionrole3D2464C0",
+                    "Arn"
+                  ]
+                },
+                "RunOrder": 1
+              }
+            ],
+            "Name": "Pre-Deploy-Validate"
+          },
+          {
+            "Actions": [
+              {
+                "ActionTypeId": {
+                  "Category": "Build",
+                  "Owner": "AWS",
+                  "Provider": "CodeBuild",
+                  "Version": "1"
+                },
+                "Configuration": {
+                  "ProjectName": {
+                    "Ref": "devopsmdaapipelinedomaintest1codebuildprojectDeploy47D08B21"
+                  }
+                },
+                "InputArtifacts": [
+                  {
+                    "Name": "PREDEPLOY_OUTPUT"
+                  }
+                ],
+                "Name": "Deploy",
+                "RoleArn": {
+                  "Fn::GetAtt": [
+                    "devopscodebuildactionrole7DDCF478",
+                    "Arn"
+                  ]
+                },
+                "RunOrder": 1
+              }
+            ],
+            "Name": "Deploy"
+          },
+          {
+            "Actions": [
+              {
+                "ActionTypeId": {
+                  "Category": "Build",
+                  "Owner": "AWS",
+                  "Provider": "CodeBuild",
+                  "Version": "1"
+                },
+                "Configuration": {
+                  "ProjectName": {
+                    "Ref": "devopsmdaapipelinedomaintest1codebuildprojectPostDeployValidate00A64548"
+                  }
+                },
+                "InputArtifacts": [
+                  {
+                    "Name": "PREDEPLOY_OUTPUT"
+                  }
+                ],
+                "Name": "PostDeployValidate",
+                "RoleArn": {
+                  "Fn::GetAtt": [
+                    "devopscodebuildactionrole7DDCF478",
+                    "Arn"
+                  ]
+                },
+                "RunOrder": 1
+              }
+            ],
+            "Name": "Post-Deploy-Validate"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "devops"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-devops-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "DependsOn": [
+        "devopspipelineroleDefaultPolicy324D363C",
+        "devopspipelinerole300A0BAC",
+        "devopspipelinerolerolepipelinearnssm3C20014A",
+        "devopspipelinerolerolepipelineidssmA26C05BB",
+        "devopspipelinerolerolepipelinenamessm8D71CA95"
+      ]
+    },
+    "devopsmdaapipelinedomaintest1codebuildprojectSynthAndDiffDCBB006D": {
+      "Type": "AWS::CodeBuild::Project",
+      "Properties": {
+        "Artifacts": {
+          "Type": "CODEPIPELINE"
+        },
+        "Cache": {
+          "Type": "NO_CACHE"
+        },
+        "EncryptionKey": {
+          "Fn::GetAtt": [
+            "devopskmskey0048A647",
+            "Arn"
+          ]
+        },
+        "Environment": {
+          "ComputeType": "BUILD_GENERAL1_2XLARGE",
+          "Image": "aws/codebuild/amazonlinux2-x86_64-standard:5.0",
+          "ImagePullCredentialsType": "CODEBUILD",
+          "PrivilegedMode": false,
+          "Type": "LINUX_CONTAINER"
+        },
+        "Name": "test-org-test-env-test-domain-test-devops-comprehensive-domain-test1-synth-and-diff",
+        "ServiceRole": {
+          "Fn::GetAtt": [
+            "devopscodebuildactionrole7DDCF478",
+            "Arn"
+          ]
+        },
+        "Source": {
+          "BuildSpec": "{\n  \"version\": \"0.2\",\n  \"phases\": {\n    \"install\": {\n      \"commands\": [\n        \"n 18\",\n        \"ln -s $CODEBUILD_SRC_DIR_MDAA ./mdaa\",\n        \"echo testing\",\n        \"echo testing\",\n        \"echo testing\"\n      ]\n    },\n    \"pre_build\": {\n      \"commands\": [\n        \"echo testing\",\n        \"echo testing\",\n        \"echo testing\"\n      ]\n    },\n    \"build\": {\n      \"commands\": [\n        \"./mdaa/bin/mdaa diff -d testdomain1 -e testenv -m testmodule1\"\n      ]\n    },\n    \"post_build\": {\n      \"commands\": [\n        \"echo testing\",\n        \"echo testing\",\n        \"echo testing\"\n      ]\n    }\n  },\n  \"artifacts\": {\n    \"files\": [\n      \"**/*\"\n    ],\n    \"enable-symlinks\": \"yes\"\n  }\n}",
+          "Type": "CODEPIPELINE"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "devops"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-devops-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "DependsOn": [
+        "devopspipelineroleDefaultPolicy324D363C"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Pipeline source is CodeCommit.",
+              "id": "HIPAA.Security-CodeBuildProjectSourceRepoUrl"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Pipeline source is CodeCommit.",
+              "id": "PCI.DSS.321-CodeBuildProjectSourceRepoUrl"
+            }
+          ]
+        }
+      }
+    },
+    "devopsmdaapipelinedomaintest1codebuildprojectPreDeployValidateAB6090CF": {
+      "Type": "AWS::CodeBuild::Project",
+      "Properties": {
+        "Artifacts": {
+          "Type": "CODEPIPELINE"
+        },
+        "Cache": {
+          "Type": "NO_CACHE"
+        },
+        "EncryptionKey": {
+          "Fn::GetAtt": [
+            "devopskmskey0048A647",
+            "Arn"
+          ]
+        },
+        "Environment": {
+          "ComputeType": "BUILD_GENERAL1_2XLARGE",
+          "Image": "aws/codebuild/amazonlinux2-x86_64-standard:5.0",
+          "ImagePullCredentialsType": "CODEBUILD",
+          "PrivilegedMode": false,
+          "Type": "LINUX_CONTAINER"
+        },
+        "Name": "test-org-test-env-test-domain-test-devops-comprehensive-domain-test1-predeployvalidate",
+        "ServiceRole": {
+          "Fn::GetAtt": [
+            "devopscodebuildactionrole7DDCF478",
+            "Arn"
+          ]
+        },
+        "Source": {
+          "BuildSpec": "{\n  \"version\": \"0.2\",\n  \"phases\": {\n    \"install\": {\n      \"commands\": [\n        \"echo testing\",\n        \"echo testing\",\n        \"echo testing\"\n      ]\n    },\n    \"pre_build\": {},\n    \"build\": {\n      \"commands\": [\n        \"echo testing\"\n      ]\n    },\n    \"post_build\": {}\n  },\n  \"artifacts\": {\n    \"files\": [\n      \"**/*\"\n    ],\n    \"enable-symlinks\": \"yes\"\n  }\n}",
+          "Type": "CODEPIPELINE"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "devops"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-devops-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "DependsOn": [
+        "devopspipelineroleDefaultPolicy324D363C"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Pipeline source is CodeCommit.",
+              "id": "HIPAA.Security-CodeBuildProjectSourceRepoUrl"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Pipeline source is CodeCommit.",
+              "id": "PCI.DSS.321-CodeBuildProjectSourceRepoUrl"
+            }
+          ]
+        }
+      }
+    },
+    "devopsmdaapipelinedomaintest1codebuildprojectDeploy47D08B21": {
+      "Type": "AWS::CodeBuild::Project",
+      "Properties": {
+        "Artifacts": {
+          "Type": "CODEPIPELINE"
+        },
+        "Cache": {
+          "Type": "NO_CACHE"
+        },
+        "EncryptionKey": {
+          "Fn::GetAtt": [
+            "devopskmskey0048A647",
+            "Arn"
+          ]
+        },
+        "Environment": {
+          "ComputeType": "BUILD_GENERAL1_2XLARGE",
+          "Image": "aws/codebuild/amazonlinux2-x86_64-standard:5.0",
+          "ImagePullCredentialsType": "CODEBUILD",
+          "PrivilegedMode": false,
+          "Type": "LINUX_CONTAINER"
+        },
+        "Name": "test-org-test-env-test-domain-test-devops-comprehensive-domain-test1-deploy",
+        "ServiceRole": {
+          "Fn::GetAtt": [
+            "devopscodebuildactionrole7DDCF478",
+            "Arn"
+          ]
+        },
+        "Source": {
+          "BuildSpec": "{\n  \"version\": \"0.2\",\n  \"phases\": {\n    \"install\": {\n      \"commands\": [\n        \"n 18\",\n        \"echo testing\",\n        \"echo testing\",\n        \"echo testing\"\n      ]\n    },\n    \"pre_build\": {\n      \"commands\": [\n        \"echo testing\",\n        \"echo testing\",\n        \"echo testing\"\n      ]\n    },\n    \"build\": {\n      \"commands\": [\n        \"./mdaa/bin/mdaa deploy -d testdomain1 -e testenv -m testmodule1\"\n      ]\n    },\n    \"post_build\": {\n      \"commands\": [\n        \"echo testing\",\n        \"echo testing\",\n        \"echo testing\"\n      ]\n    }\n  },\n  \"artifacts\": {\n    \"files\": [\n      \"**/*\"\n    ],\n    \"enable-symlinks\": \"yes\"\n  }\n}",
+          "Type": "CODEPIPELINE"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "devops"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-devops-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "DependsOn": [
+        "devopspipelineroleDefaultPolicy324D363C"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Pipeline source is CodeCommit.",
+              "id": "HIPAA.Security-CodeBuildProjectSourceRepoUrl"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Pipeline source is CodeCommit.",
+              "id": "PCI.DSS.321-CodeBuildProjectSourceRepoUrl"
+            }
+          ]
+        }
+      }
+    },
+    "devopsmdaapipelinedomaintest1codebuildprojectPostDeployValidate00A64548": {
+      "Type": "AWS::CodeBuild::Project",
+      "Properties": {
+        "Artifacts": {
+          "Type": "CODEPIPELINE"
+        },
+        "Cache": {
+          "Type": "NO_CACHE"
+        },
+        "EncryptionKey": {
+          "Fn::GetAtt": [
+            "devopskmskey0048A647",
+            "Arn"
+          ]
+        },
+        "Environment": {
+          "ComputeType": "BUILD_GENERAL1_2XLARGE",
+          "Image": "aws/codebuild/amazonlinux2-x86_64-standard:5.0",
+          "ImagePullCredentialsType": "CODEBUILD",
+          "PrivilegedMode": false,
+          "Type": "LINUX_CONTAINER"
+        },
+        "Name": "test-org-test-env-test-domain-test-devops-comprehensive-domain-test1-postdeployvalidate",
+        "ServiceRole": {
+          "Fn::GetAtt": [
+            "devopscodebuildactionrole7DDCF478",
+            "Arn"
+          ]
+        },
+        "Source": {
+          "BuildSpec": "{\n  \"version\": \"0.2\",\n  \"phases\": {\n    \"install\": {\n      \"commands\": [\n        \"echo testing\",\n        \"echo testing\",\n        \"echo testing\"\n      ]\n    },\n    \"pre_build\": {},\n    \"build\": {\n      \"commands\": [\n        \"echo testing\"\n      ]\n    },\n    \"post_build\": {}\n  },\n  \"artifacts\": {\n    \"files\": [\n      \"**/*\"\n    ],\n    \"enable-symlinks\": \"yes\"\n  }\n}",
+          "Type": "CODEPIPELINE"
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "devops"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-devops-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "DependsOn": [
+        "devopspipelineroleDefaultPolicy324D363C"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Pipeline source is CodeCommit.",
+              "id": "HIPAA.Security-CodeBuildProjectSourceRepoUrl"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Pipeline source is CodeCommit.",
+              "id": "PCI.DSS.321-CodeBuildProjectSourceRepoUrl"
+            }
+          ]
+        }
+      }
+    },
+    "devopsmdaapipelinedomaintest1codebuildactionpolicy8A737D3A": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "codebuild:StartBuild",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "devopsmdaapipelinedomaintest1codebuildprojectSynthAndDiffDCBB006D",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::GetAtt": [
+                    "devopsmdaapipelinedomaintest1codebuildprojectPreDeployValidateAB6090CF",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::GetAtt": [
+                    "devopsmdaapipelinedomaintest1codebuildprojectDeploy47D08B21",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::GetAtt": [
+                    "devopsmdaapipelinedomaintest1codebuildprojectPostDeployValidate00A64548",
+                    "Arn"
+                  ]
+                }
+              ]
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "devopsmdaapipelinedomaintest1codebuildactionpolicy8A737D3A",
+        "Roles": [
+          {
+            "Ref": "devopscodebuildactionrole7DDCF478"
+          }
+        ]
+      },
+      "DependsOn": [
+        "devopspipelineroleDefaultPolicy324D363C"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/devops/lib/devops.ts] Inline policy appropriate.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "devopspipelinerolerolepipelinearnoutFA877610": {
+      "Value": {
+        "Fn::GetAtt": [
+          "devopspipelinerole300A0BAC",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-devops-comprehensive:role:pipeline:arn"
+      }
+    },
+    "devopspipelinerolerolepipelineidout3C039D21": {
+      "Value": {
+        "Fn::GetAtt": [
+          "devopspipelinerole300A0BAC",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-devops-comprehensive:role:pipeline:id"
+      }
+    },
+    "devopspipelinerolerolepipelinenameoutD687C84E": {
+      "Value": {
+        "Ref": "devopspipelinerole300A0BAC"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-devops-comprehensive:role:pipeline:name"
+      }
+    },
+    "devopskmskeykmsarnout22E29C1D": {
+      "Value": {
+        "Fn::GetAtt": [
+          "devopskmskey0048A647",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-devops-comprehensive:kms:arn"
+      }
+    },
+    "devopskmskeykmsidoutAA199928": {
+      "Value": {
+        "Ref": "devopskmskey0048A647"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-devops-comprehensive:kms:id"
+      }
+    },
+    "devopspipelinebucketbucketnameout08AF4640": {
+      "Value": {
+        "Ref": "devopspipelinebucketD7DF7137"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-devops-comprehensive:bucket:name"
+      }
+    },
+    "devopspipelinebucketbucketarnout973ECB86": {
+      "Value": {
+        "Fn::GetAtt": [
+          "devopspipelinebucketD7DF7137",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-devops-comprehensive:bucket:arn"
+      }
+    },
+    "devopscodecommiteventrolerolecodecommiteventarnout3F30ED76": {
+      "Value": {
+        "Fn::GetAtt": [
+          "devopscodecommiteventrole8726E5BB",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-devops-comprehensive:role:codecommitevent:arn"
+      }
+    },
+    "devopscodecommiteventrolerolecodecommiteventidoutC74C8A96": {
+      "Value": {
+        "Fn::GetAtt": [
+          "devopscodecommiteventrole8726E5BB",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-devops-comprehensive:role:codecommitevent:id"
+      }
+    },
+    "devopscodecommiteventrolerolecodecommiteventnameout65F12140": {
+      "Value": {
+        "Ref": "devopscodecommiteventrole8726E5BB"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-devops-comprehensive:role:codecommitevent:name"
+      }
+    },
+    "devopscodecommitactionrolerolecodecommitactionarnoutDB3ADD28": {
+      "Value": {
+        "Fn::GetAtt": [
+          "devopscodecommitactionroleE71F20D2",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-devops-comprehensive:role:codecommitaction:arn"
+      }
+    },
+    "devopscodecommitactionrolerolecodecommitactionidoutFA78A4D1": {
+      "Value": {
+        "Fn::GetAtt": [
+          "devopscodecommitactionroleE71F20D2",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-devops-comprehensive:role:codecommitaction:id"
+      }
+    },
+    "devopscodecommitactionrolerolecodecommitactionnameout90F132C2": {
+      "Value": {
+        "Ref": "devopscodecommitactionroleE71F20D2"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-devops-comprehensive:role:codecommitaction:name"
+      }
+    },
+    "devopscodebuildactionrolerolecodebuildactionarnoutF04C7F7B": {
+      "Value": {
+        "Fn::GetAtt": [
+          "devopscodebuildactionrole7DDCF478",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-devops-comprehensive:role:codebuildaction:arn"
+      }
+    },
+    "devopscodebuildactionrolerolecodebuildactionidoutEB73CAF3": {
+      "Value": {
+        "Fn::GetAtt": [
+          "devopscodebuildactionrole7DDCF478",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-devops-comprehensive:role:codebuildaction:id"
+      }
+    },
+    "devopscodebuildactionrolerolecodebuildactionnameoutDA06787C": {
+      "Value": {
+        "Ref": "devopscodebuildactionrole7DDCF478"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-devops-comprehensive:role:codebuildaction:name"
+      }
+    },
+    "devopsmanualactionrolerolemanualactionarnoutDF19D0F8": {
+      "Value": {
+        "Fn::GetAtt": [
+          "devopsmanualactionrole3D2464C0",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-devops-comprehensive:role:manualaction:arn"
+      }
+    },
+    "devopsmanualactionrolerolemanualactionidout2089DE9D": {
+      "Value": {
+        "Fn::GetAtt": [
+          "devopsmanualactionrole3D2464C0",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-devops-comprehensive:role:manualaction:id"
+      }
+    },
+    "devopsmanualactionrolerolemanualactionnameout39601FCF": {
+      "Value": {
+        "Ref": "devopsmanualactionrole3D2464C0"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-devops-comprehensive:role:manualaction:name"
+      }
+    }
+  },
+  "Parameters": {
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

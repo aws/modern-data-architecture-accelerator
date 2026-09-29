@@ -229,7 +229,7 @@ describe('HealthLake L3 Construct Compliance Tests', () => {
           roleHelper,
           datastores: singleDatastore,
         }),
-    ).toThrow(/dataAdminRoles must contain at least one role when a KMS key is auto-created/);
+    ).toThrow(/dataAdminRoles must contain at least one same-account role when a KMS key is auto-created/);
   });
 
   test('Omitting dataAdminRoles is allowed when kmsKeyArn is provided', () => {
@@ -283,6 +283,114 @@ describe('HealthLake L3 Construct Compliance Tests', () => {
           },
         },
       });
+    });
+
+    test('The data admin roles are granted both key admin and key usage on the PHI key', () => {
+      const testApp = new MdaaTestApp();
+      const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+
+      new HealthLakeL3Construct(testApp.testStack, 'TestHealthLake', {
+        naming: testApp.naming,
+        roleHelper,
+        dataAdminRoles,
+        datastores: singleDatastore,
+      });
+      const template = Template.fromStack(testApp.testStack);
+
+      // The auto-created key encrypts PHI, so who administers and who can decrypt it are both
+      // controls worth pinning rather than inferring from EnableKeyRotation alone. The role ref
+      // carries only an ARN, so its id arrives as a resolution-CR token.
+      const resolvedAdminUserId = {
+        'Fn::Join': ['', [{ 'Fn::GetAtt': ['RoleResDataAdmin0', 'id'] }, ':*']],
+      };
+
+      template.hasResourceProperties('AWS::KMS::Key', {
+        KeyPolicy: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Action: Match.arrayWith(['kms:Create*', 'kms:Put*', 'kms:ScheduleKeyDeletion']),
+              Effect: 'Allow',
+              Principal: { AWS: '*' },
+              Condition: { StringLike: { 'aws:userId': [resolvedAdminUserId] } },
+            }),
+          ]),
+        },
+      });
+
+      template.hasResourceProperties('AWS::KMS::Key', {
+        KeyPolicy: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Action: Match.arrayWith(['kms:Decrypt', 'kms:Encrypt']),
+              Effect: 'Allow',
+              Principal: { AWS: '*' },
+              Condition: { StringLike: { 'aws:userId': [resolvedAdminUserId] } },
+            }),
+          ]),
+        },
+      });
+    });
+
+    test('An admin list of only cross-account roles is rejected', () => {
+      // KMS never honours key management across accounts, so such a list leaves the retained PHI
+      // key administrable by nothing but the account root, which is what the guard exists to stop.
+      const testApp = new MdaaTestApp();
+      const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+
+      expect(
+        () =>
+          new HealthLakeL3Construct(testApp.testStack, 'TestHealthLake', {
+            naming: testApp.naming,
+            roleHelper,
+            dataAdminRoles: [{ arn: 'arn:test-partition:iam::999999999999:role/CrossAccountPhiAdmin' }],
+            datastores: singleDatastore,
+          }),
+      ).toThrow(/at least one same-account role/);
+    });
+
+    test('A cross-account data admin is granted access by ARN principal instead', () => {
+      const testApp = new MdaaTestApp();
+      const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+      const crossAccountArn = 'arn:test-partition:iam::999999999999:role/CrossAccountPhiAdmin';
+
+      new HealthLakeL3Construct(testApp.testStack, 'TestHealthLake', {
+        naming: testApp.naming,
+        roleHelper,
+        // A same-account admin has to be present for the key to stay manageable.
+        dataAdminRoles: [...dataAdminRoles, { arn: crossAccountArn }],
+        datastores: singleDatastore,
+      });
+      const template = Template.fromStack(testApp.testStack);
+
+      template.hasResourceProperties('AWS::KMS::Key', {
+        KeyPolicy: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Effect: 'Allow',
+              Principal: { AWS: crossAccountArn },
+              Action: Match.arrayWith(['kms:CreateGrant', 'kms:DescribeKey']),
+              Sid: Match.stringLikeRegexp('xacct-admin-stmt'),
+            }),
+          ]),
+        },
+      });
+
+      template.hasResourceProperties('AWS::KMS::Key', {
+        KeyPolicy: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Effect: 'Allow',
+              Principal: { AWS: crossAccountArn },
+              Action: Match.arrayWith(['kms:Decrypt', 'kms:Encrypt']),
+              Sid: Match.stringLikeRegexp('xacct-usage-stmt'),
+            }),
+          ]),
+        },
+      });
+
+      // Resolving a cross-account role id would call IAM in the deploying account and fail, so only
+      // the same-account admin gets a lookup.
+      expect(Object.keys(template.findResources('AWS::CloudFormation::CustomResource'))).toEqual(['RoleResDataAdmin0']);
     });
 
     const nagTestApp = new MdaaTestApp();

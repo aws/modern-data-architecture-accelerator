@@ -2058,8 +2058,8 @@ export class Ec2L3Construct extends MdaaL3Construct {
       ? this.kmsKey
       : new MdaaKmsKey(this, 'kms-key', {
           naming: this.props.naming,
-          keyAdminRoleIds: this.adminRoles.map(x => x.id()),
-          keyUserRoleIds: this.adminRoles.map(x => x.id()),
+          keyAdminRoles: this.adminRoles,
+          keyUserRoles: this.adminRoles,
         });
     this.kmsKey = kmsKey;
     return kmsKey;

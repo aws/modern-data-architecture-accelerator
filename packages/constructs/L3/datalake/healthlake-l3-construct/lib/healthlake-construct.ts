@@ -204,25 +204,26 @@ export class HealthLakeL3Construct extends MdaaL3Construct {
       return MdaaKmsKey.fromKeyArn(this, 'imported-kms-key', props.kmsKeyArn);
     }
 
-    const dataAdminRoleIds = props.roleHelper
-      .resolveRoleRefsWithOrdinals(props.dataAdminRoles ?? [], 'DataAdmin')
-      .map(role => role.id());
-    // Fail fast when auto-creating the key with no admin roles: an empty dataAdminRoles
-    // would create and retain a PHI-encrypting CMK whose key policy scopes administration
-    // to nothing but the account root, leaving no dedicated role to manage it after teardown.
-    if (dataAdminRoleIds.length === 0) {
+    const dataAdminRoles = props.roleHelper.resolveRoleRefsWithOrdinals(props.dataAdminRoles ?? [], 'DataAdmin');
+    // Fail fast when auto-creating the key with no same-account admin role: the key policy would
+    // create and retain a PHI-encrypting CMK whose administration is scoped to nothing but the
+    // account root, leaving no dedicated role to manage it after teardown. A cross-account role
+    // does not satisfy this, because KMS honours a cross-account grant only for cryptographic
+    // operations and a handful of grant and describe operations, never for key management.
+    if (!dataAdminRoles.some(role => !role.isCrossAccount())) {
       throw new Error(
-        'dataAdminRoles must contain at least one role when a KMS key is auto-created ' +
+        'dataAdminRoles must contain at least one same-account role when a KMS key is auto-created ' +
           '(kmsKeyArn is not provided). The auto-created HealthLake CMK is retained on ' +
-          'stack deletion and needs at least one scoped role able to administer it. ' +
+          'stack deletion and needs at least one scoped role able to administer it, which KMS ' +
+          'cannot delegate to a role in another account. ' +
           'Provide dataAdminRoles, or supply kmsKeyArn to use an externally-managed key.',
       );
     }
     return new MdaaKmsKey(this, 'kms-key', {
       naming: props.naming,
       alias: 'healthlake',
-      keyAdminRoleIds: dataAdminRoleIds,
-      keyUserRoleIds: dataAdminRoleIds,
+      keyAdminRoles: dataAdminRoles,
+      keyUserRoles: dataAdminRoles,
     });
   }
 }

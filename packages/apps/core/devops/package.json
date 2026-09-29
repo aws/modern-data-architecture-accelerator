@@ -14,6 +14,7 @@
     "build": "../../../../scripts/build/build_package.sh DevOpsConfigContents",
     "watch": "tsc -w",
     "test": "jest --passWithNoTests --coverage",
+    "test:update-baselines": "UPDATE_BASELINES=true jest --passWithNoTests --testPathPattern='.*\\.diff\\.test\\.ts'",
     "cdk": "cdk",
     "lint": "eslint --max-warnings 0 -c ../../../../eslint.config.mjs",
     "test:package-docs": "../../../../scripts/generate_docs/test_package_docs.sh"
@@ -21,6 +22,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "devDependencies": {
+    "@aws-mdaa/testing": "1.8.1",
     "@types/jest": "29.5.14",
     "@types/node": "22.9.0",
     "@types/prettier": "2.6.0",
@@ -33,6 +35,7 @@
   "dependencies": {
     "@aws-mdaa/app": "1.8.1",
     "@aws-mdaa/iam-constructs": "1.8.1",
+    "@aws-mdaa/iam-role-helper": "1.8.1",
     "@aws-mdaa/kms-constructs": "1.8.1",
     "@aws-mdaa/l3-construct": "1.8.1",
     "@aws-mdaa/s3-constructs": "1.8.1",

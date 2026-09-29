@@ -2,4 +2,3 @@
 # These core packages do not follow the standard app pattern.
 packages/apps/core/app
 packages/apps/core/bootstrap
-packages/apps/core/devops

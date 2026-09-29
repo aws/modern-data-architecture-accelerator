@@ -65,6 +65,29 @@ function alignAppliesToWithNag(scope: IConstruct, suppression: NagPackSuppressio
   };
 }
 
+/**
+ * Reduces a V8 stack frame to the MDAA package path which called `addCodeResourceSuppressions`, so
+ * the suppression reason names the source rather than the checkout directory it was synthesised
+ * from. Exported for testing: the transformation is driven by whichever package the caller lives in,
+ * and the in-repo app branch is unreachable from a test running inside `packages/constructs`.
+ *
+ * @param frame A single line of `Error.stack`, e.g. `    at fn (/checkout/packages/apps/datalake/datalake-app/lib/x.ts:12:3)`
+ */
+export function suppressionSourceLocation(frame: string): string {
+  return (
+    frame
+      .replace(/.*\(/, '') //NOSONAR
+      .replace(/\).*/, '')
+      .replace(/.*\/constructs\/L./, '@aws-mdaa') //NOSONAR
+      // In-repo app sources resolve to packages/apps/<group>/<module>/...; map the app directory to
+      // its published package name, which is the directory less its trailing -app, so the reason
+      // doesn't embed the checkout directory.
+      .replace(/.*\/packages\/apps\/[^/]+\/([^/]+?)(?:-app)?\//, '@aws-mdaa/$1/') //NOSONAR
+      .replace(/.*@aws-mdaa/, '@aws-mdaa') //NOSONAR
+      .replace(/:\d+:\d+$/, '')
+  ); // Strip line:col for stable nag suppression reasons
+}
+
 export interface NagSuppressionConfig {
   /** CDK Nag rule identifier for specific security rule suppression targeting */
   readonly id: string;
@@ -86,14 +109,10 @@ export class MdaaNagSuppressions {
   ): void {
     const oldLimit = Error.stackTraceLimit;
     Error.stackTraceLimit = 2;
-    const location = new Error().stack
-      ?.split('\n')[2]
-      .replace(/.*\(/, '') //NOSONAR
-      .replace(/\).*/, '')
-      .replace(/.*\/constructs\/L./, '@aws-mdaa') //NOSONAR
-      .replace(/.*@aws-mdaa/, '@aws-mdaa') //NOSONAR
-      .replace(/:\d+:\d+$/, ''); // Strip line:col for stable nag suppression reasons
-    Error.stackTraceLimit = oldLimit;
+    // Error is constructed solely to capture the caller's stack frame and is never thrown, so it
+    // carries no message; //NOSONAR silences the "pass a message to the Error constructor" finding.
+    const frame = new Error().stack?.split('\n')[2]; //NOSONAR
+    const location = frame ? suppressionSourceLocation(frame) : 'unknown';
     Error.stackTraceLimit = oldLimit;
     const suppressionsWithSource = suppressions.map(x => {
       return alignAppliesToWithNag(construct, {

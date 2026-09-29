@@ -111,18 +111,20 @@ Every compliance-related feature must be tested:
 L2 tests use the CDK Assertions library (`Template.fromStack()`) to inspect synthesized CloudFormation templates. Tests instantiate the construct with `MdaaTestApp`, then assert on resource properties, resource counts, and CDK Nag compliance.
 
 ```typescript
+import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import { MdaaKmsKey } from '../lib';
 
 describe('MDAA Compliance Tests', () => {
   const testApp = new MdaaTestApp();
+  const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
 
   new MdaaKmsKey(testApp.testStack, 'test-key', {
     naming: testApp.naming,
     alias: 'test-key',
-    keyUserRoleIds: ['test-user-id'],
-    keyAdminRoleIds: ['test-admin-id'],
+    keyUserRoles: [roleHelper.resolveRoleRef({ refId: 'test-user', id: 'test-user-id' })],
+    keyAdminRoles: [roleHelper.resolveRoleRef({ refId: 'test-admin', id: 'test-admin-id' })],
   });
 
   testApp.checkCdkNagCompliance(testApp.testStack);

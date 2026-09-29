@@ -759,7 +759,7 @@ export class SagemakerStudioDomainL3Construct extends MdaaL3Construct {
       principalExcludes: [defaultExecutionRole.roleArn, assetDeploymentRole.roleArn],
     });
     domainBucket.addToResourcePolicy(bucketRestrictPolicy.denyStatement);
-    domainBucket.addToResourcePolicy(bucketRestrictPolicy.allowStatement);
+    bucketRestrictPolicy.allowStatements().forEach(statement => domainBucket.addToResourcePolicy(statement));
 
     const allowBucketListingStatement = new PolicyStatement({
       effect: Effect.ALLOW,

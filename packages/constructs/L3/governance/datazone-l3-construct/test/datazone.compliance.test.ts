@@ -5,7 +5,7 @@
 
 import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
 import { DataZoneL3Construct, DataZoneL3ConstructProps } from '../lib';
 import { Stack } from 'aws-cdk-lib';
 
@@ -614,5 +614,80 @@ describe('MDAA Compliance Stack Tests', () => {
       const kmsKeys = template.findResources('AWS::KMS::Key');
       expect(Object.keys(kmsKeys).length).toBeGreaterThanOrEqual(2);
     });
+  });
+});
+
+describe('DataZone domain CMK admin grants', () => {
+  const buildTemplate = (dataAdminRole: { name?: string; id?: string; arn?: string }): Template => {
+    const testApp = new MdaaTestApp();
+    const stack = testApp.testStack;
+    const props: DataZoneL3ConstructProps = {
+      glueCatalogKmsKeyArn: 'test-key-arn',
+      lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::test-account:role/test-role' },
+      crossAccountStacks: {},
+      roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+      naming: testApp.naming,
+      dataZoneDomains: {
+        'test-domain': {
+          description: 'Test Domain',
+          singleSignOnType: 'DISABLED',
+          userAssignment: 'MANUAL',
+          dataAdminRole,
+          users: { validUser: { ssoId: 'test-sso' } },
+        },
+      },
+    };
+    new DataZoneL3Construct(stack, 'cmk-admin-test', props);
+    return Template.fromStack(stack);
+  };
+
+  test('a same-account data admin is granted key admin actions via the aws:userId condition', () => {
+    // createDomainKmsKey passes the data admin as keyAdminRoles. Asserting only KmsKeyIdentifier
+    // would leave the admin grant on the domain CMK unpinned.
+    const template = buildTemplate({ id: 'test-admin-role-id' });
+    template.hasResourceProperties('AWS::KMS::Key', {
+      KeyPolicy: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Action: Match.arrayWith(['kms:Create*', 'kms:Put*', 'kms:ScheduleKeyDeletion']),
+            Effect: 'Allow',
+            Principal: { AWS: '*' },
+            Condition: { StringLike: { 'aws:userId': ['test-admin-role-id:*'] } },
+          }),
+        ]),
+      },
+    });
+  });
+
+  test('a cross-account data admin is granted the delegable key admin actions by ARN principal', () => {
+    // A same-account admin is scoped by aws:userId, which a principal in another account can never
+    // satisfy, so the cross-account admin has to arrive as a direct ARN principal instead.
+    const crossAccountArn = 'arn:test-partition:iam::999999999999:role/CrossAccountDzAdmin';
+    const template = buildTemplate({ arn: crossAccountArn });
+    template.hasResourceProperties('AWS::KMS::Key', {
+      KeyPolicy: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Effect: 'Allow',
+            Principal: { AWS: crossAccountArn },
+            Action: Match.arrayWith(['kms:CreateGrant', 'kms:DescribeKey']),
+            Sid: Match.stringLikeRegexp('xacct-admin-stmt'),
+          }),
+        ]),
+      },
+    });
+  });
+
+  test('the cross-account admin yields no aws:userId conditioned admin statement', () => {
+    const crossAccountArn = 'arn:test-partition:iam::999999999999:role/CrossAccountDzAdmin';
+    const template = buildTemplate({ arn: crossAccountArn });
+    const cmk = Object.entries(template.findResources('AWS::KMS::Key')).find(([id]) => id.includes('cmk'));
+    expect(cmk).toBeDefined();
+    const userIds = (
+      cmk![1] as {
+        Properties: { KeyPolicy: { Statement: { Condition?: { StringLike?: Record<string, string[]> } }[] } };
+      }
+    ).Properties.KeyPolicy.Statement.flatMap(stmt => stmt.Condition?.StringLike?.['aws:userId'] ?? []);
+    expect(userIds).toHaveLength(0);
   });
 });

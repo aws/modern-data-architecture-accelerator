@@ -71,6 +71,7 @@ describe('HealthLake Baseline Diff Tests', () => {
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',
+        'account-2': '999999999999',
       },
     ),
   );

@@ -316,3 +316,107 @@ describe('S3TablesL3Construct with an undefined access policy reference', () => 
     expect(tableDoc.Statement[0].Sid).toBe('DenyNonTLS');
   });
 });
+
+describe('S3TablesL3Construct with a cross-account role', () => {
+  const testApp = new MdaaTestApp();
+  const crossAccountArn = 'arn:test-partition:iam::999999999999:role/CrossAccountReader';
+
+  const props: S3TablesL3ConstructProps = {
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+    accessPolicies: {
+      xacct: {
+        name: 'xacct',
+        readerRoleRefs: [{ arn: crossAccountArn }],
+        writerRoleRefs: [],
+        adminRoleRefs: [],
+      },
+    },
+    tableBuckets: {
+      analytics: {
+        accessPolicies: ['xacct'],
+        namespaces: {},
+      },
+    },
+  };
+
+  new S3TablesL3Construct(testApp.testStack, 's3-tables', props);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('the cross-account role is granted key usage by ARN principal, not by aws:userId', () => {
+    // resolveKmsKey passes the collected roles straight to MdaaKmsKey, which routes a cross-account
+    // role to an ArnPrincipal. An aws:userId condition can never be satisfied by a principal in
+    // another account, so getting this wrong silently denies the role.
+    template.hasResourceProperties('AWS::KMS::Key', {
+      KeyPolicy: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Effect: 'Allow',
+            Principal: { AWS: crossAccountArn },
+            Action: Match.arrayWith(['kms:Decrypt', 'kms:Encrypt', 'kms:DescribeKey']),
+            Sid: Match.stringLikeRegexp('xacct-usage-stmt'),
+          }),
+        ]),
+      },
+    });
+  });
+
+  test('no role resolution custom resource is created for the cross-account role', () => {
+    // Resolving a cross-account role id calls IAM in the deploying account and fails the deploy.
+    expect(Object.keys(template.findResources('AWS::CloudFormation::CustomResource'))).toHaveLength(0);
+  });
+});
+
+describe('S3TablesL3Construct role de-duplication across access policies', () => {
+  const testApp = new MdaaTestApp();
+  const sharedRole = roleRef('shared');
+
+  const props: S3TablesL3ConstructProps = {
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+    accessPolicies: {
+      // The same role reached through two policies, one at bucket level and one at table level.
+      bucketLevel: {
+        name: 'bucketLevel',
+        readerRoleRefs: [sharedRole],
+        writerRoleRefs: [],
+        adminRoleRefs: [],
+      },
+      tableLevel: {
+        name: 'tableLevel',
+        readerRoleRefs: [],
+        writerRoleRefs: [sharedRole],
+        adminRoleRefs: [],
+      },
+    },
+    tableBuckets: {
+      analytics: {
+        accessPolicies: ['bucketLevel'],
+        namespaces: {
+          events: {
+            tables: {
+              t1: {
+                schema: { columns: [{ name: 'event_id', columnType: 'string', required: true }] },
+                accessPolicies: ['tableLevel'],
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+
+  new S3TablesL3Construct(testApp.testStack, 's3-tables', props);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('a role referenced by two access policies appears once in the key-user allowlist', () => {
+    // collectRoles de-duplicates on refId. Without it the same id is repeated in the aws:userId
+    // array, which still works but grows the key policy toward its size limit.
+    const keyStatements = Object.values(template.findResources('AWS::KMS::Key'))[0].Properties.KeyPolicy.Statement;
+    const userIds = keyStatements.flatMap(
+      (stmt: { Condition?: { StringLike?: { 'aws:userId'?: string[] } } }) =>
+        stmt.Condition?.StringLike?.['aws:userId'] ?? [],
+    );
+    expect(userIds.filter((id: string) => id === 'shared-id:*')).toHaveLength(1);
+  });
+});

@@ -820,3 +820,68 @@ describe('Network Interface Warning Absence Tests', () => {
     expect(warnings).toHaveLength(0);
   });
 });
+
+describe('Cross-Account Admin Role Tests', () => {
+  const testApp = new MdaaTestApp();
+  const stack = testApp.testStack;
+  const crossAccountArn = 'arn:test-partition:iam::999999999999:role/CrossAccountEc2Admin';
+
+  const constructProps: Ec2L3ConstructProps = {
+    adminRoles: [{ arn: crossAccountArn }],
+    keyPairs: {
+      'xacct-key-pair': {},
+    },
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+  };
+
+  new Ec2L3Construct(stack, 'xacctstack', constructProps);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('cross-account admin is granted key usage by ARN principal', () => {
+    // getKmsKey passes adminRoles as both keyAdminRoles and keyUserRoles. The same-account path
+    // scopes by aws:userId, which a principal in another account can never satisfy, so the
+    // cross-account role has to be routed to a direct ARN principal instead.
+    template.hasResourceProperties('AWS::KMS::Key', {
+      KeyPolicy: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Effect: 'Allow',
+            Principal: { AWS: crossAccountArn },
+            Action: Match.arrayWith(['kms:Decrypt', 'kms:Encrypt', 'kms:DescribeKey']),
+            Sid: Match.stringLikeRegexp('xacct-usage-stmt'),
+          }),
+        ]),
+      },
+    });
+  });
+
+  test('cross-account admin is granted the delegable key admin actions by ARN principal', () => {
+    template.hasResourceProperties('AWS::KMS::Key', {
+      KeyPolicy: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Effect: 'Allow',
+            Principal: { AWS: crossAccountArn },
+            Action: Match.arrayWith(['kms:CreateGrant', 'kms:DescribeKey']),
+            Sid: Match.stringLikeRegexp('xacct-admin-stmt'),
+          }),
+        ]),
+      },
+    });
+  });
+
+  test('no aws:userId conditioned statement is emitted for the cross-account role', () => {
+    const keyStatements = Object.values(template.findResources('AWS::KMS::Key'))[0].Properties.KeyPolicy.Statement;
+    const userIds = keyStatements.flatMap(
+      (stmt: { Condition?: { StringLike?: { 'aws:userId'?: string[] } } }) =>
+        stmt.Condition?.StringLike?.['aws:userId'] ?? [],
+    );
+    expect(userIds).toHaveLength(0);
+  });
+
+  test('no role resolution custom resource is created for the cross-account role', () => {
+    // Resolving a cross-account role id calls IAM in the deploying account and fails the deploy.
+    expect(Object.keys(template.findResources('AWS::CloudFormation::CustomResource'))).toHaveLength(0);
+  });
+});

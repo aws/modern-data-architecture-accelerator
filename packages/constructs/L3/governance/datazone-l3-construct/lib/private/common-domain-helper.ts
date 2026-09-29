@@ -171,7 +171,7 @@ export class CommonDomainHelper {
     const kmsKey = new MdaaKmsKey(scope, `${domainName}-cmk`, {
       naming: this.props.naming,
       alias: domainName,
-      keyAdminRoleIds: [dataAdminRole.id()],
+      keyAdminRoles: [dataAdminRole],
     });
 
     // Grant key access to all associated accounts via DataZone service

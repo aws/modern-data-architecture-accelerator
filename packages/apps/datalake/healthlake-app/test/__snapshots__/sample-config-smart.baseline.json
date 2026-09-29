@@ -83,6 +83,25 @@
             },
             {
               "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext",
+                "kms:DescribeKey"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::999999999999:role/example-cross-account-admin"
+              },
+              "Resource": "*",
+              "Sid": "test-org-test-env-test-domain-test-healthlake-smart-xacct-usage-stmt"
+            },
+            {
+              "Action": [
                 "kms:Create*",
                 "kms:Describe*",
                 "kms:Enable*",
@@ -124,6 +143,23 @@
               },
               "Resource": "*",
               "Sid": "test-org-test-env-test-domain-test-healthlake-smart-usage-stmt"
+            },
+            {
+              "Action": [
+                "kms:CreateGrant",
+                "kms:DescribeKey",
+                "kms:GetKeyRotationStatus",
+                "kms:GetPublicKey",
+                "kms:ListGrants",
+                "kms:RetireGrant",
+                "kms:RevokeGrant"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:test-partition:iam::999999999999:role/example-cross-account-admin"
+              },
+              "Resource": "*",
+              "Sid": "test-org-test-env-test-domain-test-healthlake-smart-xacct-admin-stmt"
             }
           ],
           "Version": "2012-10-17"
