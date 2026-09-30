@@ -18,7 +18,7 @@ MDAA development follows a working-backwards process, starting from the user exp
 
 - **Apps / Modules**: Configuration-driven CDK apps that translate user-provided YAML configuration into L3 construct props, applying schema validation and deploying compliant infrastructure as CloudFormation stacks. Start here when exposing a new configuration surface to end users or adding a new deployable module.
 
-- **L2 Constructs**: Wrap CDK L1/L2 constructs with compliance controls, standardized props typing, and MDAA naming conventions. Available in TypeScript, Python, Java, and .NET via JSII. This is where encryption defaults, access policies, and CDK Nag suppressions live. Start here when adding a new AWS resource type or fixing a compliance gap.
+- **L2 Constructs**: Wrap CDK L1/L2 constructs with compliance controls, standardized props typing, and MDAA naming conventions. Compiled with JSII and published to npm as TypeScript packages. This is where encryption defaults, access policies, and CDK Nag suppressions live. Start here when adding a new AWS resource type or fixing a compliance gap.
 
 - **L3 Constructs**: Implement architectural patterns and multi-resource integrations. Compose L2 constructs into higher-level abstractions. TypeScript-only. Start here when building a new module pattern that orchestrates multiple resources (e.g., a data lake with buckets, encryption, Lake Formation permissions).
 

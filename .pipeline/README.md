@@ -14,7 +14,7 @@ The base image is built from `public.ecr.aws/docker/library/node:22` and include
 | npm | 10.x | Package manager |
 | AWS CDK | 2.x | Infrastructure as Code |
 | Nx | 22.x (repo dependency, installed by `npm ci`) | Monorepo task orchestration and caching |
-| JSII / jsii-pacmak | latest | Multi-language CDK construct publishing |
+| JSII / jsii-pacmak | latest | CDK construct compilation and packaging |
 | Python 3 | system | Python runtime and testing |
 | UV / UVX | latest | Fast Python package management |
 | AWS CLI v2 | latest | AWS service interactions |
@@ -23,7 +23,6 @@ The base image is built from `public.ecr.aws/docker/library/node:22` and include
 | SonarQube Scanner | 8.0.1 | Code quality analysis |
 | git-secrets | latest | Prevents committing secrets |
 | MkDocs + plugins | latest | Documentation generation |
-| Twine | latest | Python package publishing |
 
 ## How It's Used in CI
 

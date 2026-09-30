@@ -310,7 +310,7 @@ packages/constructs/L3/{category}/{module}-l3-construct/
 
 ### Key Differences from Apps
 
-- Built with JSII (`jsii --project-references`) for multi-language support
+- Built with JSII (`jsii --project-references`) to emit type declarations and the `.jsii` assembly
 - Props interface extends `MdaaL3ConstructProps`
 - No sample configs, no diff baselines — tested with CDK Assertions
 - `package.json` has `jsii` configuration section and `peerDependencies`

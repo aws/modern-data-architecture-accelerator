@@ -1106,7 +1106,6 @@ feature_package:
       - package.json
       - package-lock.json
       - target
-      - packages/**/jsii-dist
     exclude:
       - '**/node_modules/**'
   dependencies:
@@ -1180,31 +1179,6 @@ feature_test_published_npm:
     - SNAPSHOT_VERSION=$(jq -r .version < package.json)
     - echo 'Testing published artifacts for version:' $SNAPSHOT_VERSION
     - ./scripts/publish/test_published_artifacts.sh $SNAPSHOT_VERSION $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $CI_COMMIT_REF_SLUG
-
-# Publish Python packages to prerelease CodeArtifact repo
-feature_publish_pip:
-  extends:
-    - .feature_branch_template
-    - .size_medium
-  tags:
-    - arch:amd64
-  stage: prerelease_publish
-  cache:
-    key: feature-build-$CI_COMMIT_SHA
-    paths:
-      - node_modules/
-      - packages/**/node_modules/
-    policy: pull
-  dependencies:
-    - feature_package
-  needs:
-    - feature_package
-  allow_failure: false
-  variables:
-    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
-    AWS_DEFAULT_REGION: us-east-1
-  script:
-    - ./scripts/publish/publish_pip.sh $MDAA_CODEARTIFACT_PRERELEASE_PIP_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT
 
 # =============================================================================
 # Pipeline 3: Prerelease Pipeline (main branch)
@@ -1465,90 +1439,12 @@ prerelease_publish_npm:
     - ./scripts/publish/delete_codeartifact_version.sh $PRERELEASE_VERSION $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $MDAA_CODEARTIFACT_PRERELEASE_REGION $MDAA_CODEARTIFACT_PRERELEASE_NAMESPACE || true
     - ./scripts/publish/publish_npm.sh $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT prerelease
 
-# Publish Python packages to prerelease CodeArtifact repo
-prerelease_publish_pip:
-  extends: .size_medium
-  interruptible: false
-  tags:
-    - arch:amd64
-  environment: prerelease_pip
-  only:
-    refs:
-      - main
-  except:
-    refs:
-      - tags
-  stage: prerelease_publish
-  cache:
-    key: prerelease-$CI_COMMIT_SHA
-    paths:
-      - node_modules/
-      - packages/**/node_modules/
-      - .nx/
-    policy: pull
-  needs:
-    - prerelease_analyze
-    - prerelease_package
-  dependencies:
-    - prerelease_package
-  allow_failure: false
-  variables:
-    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
-    AWS_DEFAULT_REGION: us-east-1
-  script:
-    - ./scripts/publish/publish_pip.sh $MDAA_CODEARTIFACT_PRERELEASE_PIP_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT
-
-# Publish packaged artifacts to S3
-prerelease_publish_s3:
-  extends: .size_medium
-  interruptible: false
-  tags:
-    - arch:amd64
-  environment: prerelease_s3
-  except:
-    variables:
-      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
-    refs:
-      - tags
-  only:
-    refs:
-      - main
-  stage: prerelease_publish
-  cache:
-    key: prerelease-$CI_COMMIT_SHA
-    paths:
-      - node_modules/
-      - packages/**/node_modules/
-      - .nx/
-    policy: pull
-  artifacts:
-    untracked: false
-    paths:
-      - package.json
-      - package-lock.json
-      - packages
-      - schemas
-      - target
-    exclude:
-      - '**/node_modules/**'
-  needs:
-    - prerelease_analyze
-    - prerelease_package
-  dependencies:
-    - prerelease_package
-  allow_failure: false
-  variables:
-    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
-    AWS_DEFAULT_REGION: us-east-1
-  script:
-    - ./scripts/publish/publish_s3.sh $MDAA_PRERELEASE_PACKAGE_BUCKET
-
 # =============================================================================
 # Pipeline 4: Release Pipeline (main branch, manual trigger)
 # =============================================================================
 # Started by a single manual trigger on main (release_version_package). Versions, builds,
 # tests and packages the release, validates the resulting commit from a pristine checkout,
-# then publishes to production CodeArtifact repos and S3.
+# then publishes to production CodeArtifact repos.
 #
 # Two operator actions on the happy path: release_version_package starts the release,
 # confirm_push_to_git authorizes the irreversible push. cornerstone_build_distributions and
@@ -1577,7 +1473,7 @@ release_version_package:
   interruptible: false
   when: manual
   # No variable interpolation: GitLab does not expand CI/CD variables in manual_confirmation.
-  manual_confirmation: 'This will create a new version at the VERSION_BUMP_LEVEL and RELEASE_TYPE set on this pipeline (confirm those pipeline variables before continuing) and, once validate_release_commit passes, publish it to CodeArtifact and S3. Pushing to git stays a separate confirmation. Continue?'
+  manual_confirmation: 'This will create a new version at the VERSION_BUMP_LEVEL and RELEASE_TYPE set on this pipeline (confirm those pipeline variables before continuing) and, once validate_release_commit passes, publish it to CodeArtifact. Pushing to git stays a separate confirmation. Continue?'
   environment: release
   tags:
     - arch:amd64
@@ -1652,7 +1548,7 @@ release_version_package:
 #
 # It is the sole automatic gate between the manual trigger and everything downstream, so it
 # gates all of it: the publishes, the git pushes, and the Cornerstone upload. Gating the
-# publishes matters because rollback_release needs all four publish jobs to succeed, leaving it
+# publishes matters because rollback_release needs both publish jobs to succeed, leaving it
 # unplayable in exactly the partial-publish case where recovery is needed.
 validate_release_commit:
   extends: .size_3xlarge
@@ -1832,98 +1728,6 @@ release_publish_npm:
     - ./scripts/publish/delete_codeartifact_version.sh $RELEASE_VERSION $MDAA_CODEARTIFACT_RELEASE_NPM_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT $MDAA_CODEARTIFACT_RELEASE_REGION $MDAA_CODEARTIFACT_RELEASE_NAMESPACE || true
     - ./scripts/publish/publish_npm.sh $MDAA_CODEARTIFACT_RELEASE_NPM_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT latest
 
-# Publish Python packages to production CodeArtifact repo
-release_publish_pip:
-  extends: .size_medium
-  interruptible: false
-  tags:
-    - arch:amd64
-  environment: release_pip
-  except:
-    variables:
-      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
-    refs:
-      - tags
-  only:
-    refs:
-      - main
-  stage: release_publish
-  cache:
-    key: release-$CI_COMMIT_SHA
-    paths:
-      - node_modules/
-      - packages/**/node_modules/
-    policy: pull
-  artifacts:
-    untracked: false
-    paths:
-      - package.json
-      - package-lock.json
-      - packages
-      - schemas
-      - target
-      - solution-manifest.yaml
-    exclude:
-      - '**/node_modules/**'
-  dependencies:
-    - release_version_package
-  needs:
-    - validate_release_commit
-    - release_version_package
-    - prerelease_analyze
-  allow_failure: false
-  variables:
-    AWS_CREDS_TARGET_ROLE: '${DELIVERY_ROLE_ARN}'
-    AWS_DEFAULT_REGION: us-east-1
-  script:
-    - ./scripts/publish/publish_pip.sh $MDAA_CODEARTIFACT_RELEASE_PIP_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT
-
-# Publish packaged artifacts to production S3 bucket
-release_publish_s3:
-  extends: .size_medium
-  interruptible: false
-  tags:
-    - arch:amd64
-  environment: release_s3
-  except:
-    variables:
-      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
-    refs:
-      - tags
-  only:
-    refs:
-      - main
-  stage: release_publish
-  cache:
-    key: release-$CI_COMMIT_SHA
-    paths:
-      - node_modules/
-      - packages/**/node_modules/
-    policy: pull
-  artifacts:
-    untracked: false
-    paths:
-      - package.json
-      - package-lock.json
-      - packages
-      - schemas
-      - target
-      - solution-manifest.yaml
-    exclude:
-      - '**/node_modules/**'
-  dependencies:
-    - release_version_package
-  needs:
-    - validate_release_commit
-    - release_version_package
-    - prerelease_analyze
-  allow_failure: false
-  variables:
-    AWS_CREDS_TARGET_ROLE: '${DELIVERY_ROLE_ARN}'
-    AWS_DEFAULT_REGION: us-east-1
-  script:
-    - ./scripts/publish/publish_s3.sh $MDAA_RELEASE_PACKAGE_BUCKET
-
 # --- post_release stage ---
 
 # Manual confirmation gate to push version changes to git
@@ -1948,8 +1752,6 @@ confirm_push_to_git:
   needs:
     - release_version_package
     - validate_release_commit
-    - release_publish_s3
-    - release_publish_pip
     - release_publish_npm
     - release_publish_npm_prerelease
   allow_failure: false
@@ -2077,8 +1879,6 @@ rollback_release:
   dependencies: []
   needs:
     - release_version_package
-    - release_publish_s3
-    - release_publish_pip
     - release_publish_npm
     - release_publish_npm_prerelease
   allow_failure: false

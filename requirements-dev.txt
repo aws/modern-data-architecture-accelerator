@@ -14,8 +14,5 @@ mkdocs-include-dir-to-nav==1.2.0
 mkdocs-awesome-pages-plugin==2.10.1
 pymdown-extensions==10.21.3
 
-# Package publishing
-twine==6.2.0
-
 # CodeCommit access
 git-remote-codecommit==1.17

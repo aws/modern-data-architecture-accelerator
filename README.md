@@ -223,7 +223,7 @@ Deploy compliant, end-to-end data and AI environments using YAML config files an
 
 ### Code-Driven Custom Environments
 
-Build custom data and AI environments using MDAA's reusable CDK constructs. Multi-language support (TypeScript, Python, Java, .NET) for L2 constructs; L3 constructs are currently TypeScript-only.
+Build custom data and AI environments using MDAA's reusable CDK constructs. L2 and L3 constructs are published as TypeScript npm packages under the `@aws-mdaa` scope.
 
 ### Workload Integration
 
