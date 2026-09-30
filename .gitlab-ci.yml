@@ -27,8 +27,6 @@ stages:
   - post_release
 
 variables:
-  VERSION_BUMP_LEVEL: minor
-  RELEASE_TYPE: release
   GIT_SUBMODULE_STRATEGY: recursive
   BASE_IMAGE_TAG: '${CI_REGISTRY_IMAGE}:base-${CI_COMMIT_SHORT_SHA}'
   # Set to 'true' to run the non-merge feature pipeline (build/test/package/publish on feature branches).
@@ -1472,8 +1470,26 @@ release_version_package:
   extends: .size_3xlarge
   interruptible: false
   when: manual
-  # No variable interpolation: GitLab does not expand CI/CD variables in manual_confirmation.
-  manual_confirmation: 'This will create a new version at the VERSION_BUMP_LEVEL and RELEASE_TYPE set on this pipeline (confirm those pipeline variables before continuing) and, once validate_release_commit passes, publish it to CodeArtifact. Pushing to git stays a separate confirmation. Continue?'
+  # GitLab expands neither variables nor inputs in manual_confirmation; keep its defaults in sync with inputs.
+  manual_confirmation: 'This will create a new version from the version_bump_level and release_type inputs and, once validate_release_commit passes, publish it to CodeArtifact. The Run button uses the defaults (minor, release); to choose other values, cancel and select the job name. Pushing to git stays a separate confirmation. Continue?'
+  inputs:
+    version_bump_level:
+      default: minor
+      options: [major, minor, patch]
+      description: |
+        Part of the current version to increment:
+
+        - `major`: breaking changes, e.g. `1.2.3` -> `2.0.0`
+        - `minor`: new features, e.g. `1.2.3` -> `1.3.0`
+        - `patch`: fixes only, e.g. `1.2.3` -> `1.2.4`
+    release_type:
+      default: release
+      options: [release, rc, beta, alpha]
+      description: |
+        - `release`: a final version. To finalize a prerelease, set `version_bump_level` to `patch`: `1.3.0-rc.0` -> `1.3.0`.
+        - `rc`, `beta`, `alpha`: the first prerelease of the bumped version, e.g. `1.3.0-rc.0`. Choosing one again from a prerelease bumps the version rather than producing `rc.1`, e.g. `1.3.0-rc.0` -> `1.4.0-rc.0` with `minor`.
+
+        Prereleases are published and pushed to git exactly like a release, including the `latest` npm dist-tag.
   environment: release
   tags:
     - arch:amd64
@@ -1528,9 +1544,11 @@ release_version_package:
     # a bigger pod would raise the parallelism, not fix it. 8 matches feature_merge_build_test.
     BUILD_CONCURRENCY: '8'
   script:
+    # version_release.sh takes these from the inputs below, so a pipeline variable would be silently ignored.
+    - 'if [ -n "${VERSION_BUMP_LEVEL:-}${RELEASE_TYPE:-}" ]; then echo "ERROR: choose the version with the version_bump_level and release_type job inputs; unset the VERSION_BUMP_LEVEL and RELEASE_TYPE variables." >&2; exit 1; fi'
     - ./scripts/quality/git_secrets.sh
     - ./scripts/build/npm_install_repo.sh
-    - ./scripts/publish/version_release.sh
+    - VERSION_BUMP_LEVEL='${{ job.inputs.version_bump_level }}' RELEASE_TYPE='${{ job.inputs.release_type }}' ./scripts/publish/version_release.sh
     - npm run build
     - ./scripts/ci/check_schema_drift.sh
     # Heap cap is scoped to the tests, not job-wide: package_repo.sh's jsii-pacmak runs
