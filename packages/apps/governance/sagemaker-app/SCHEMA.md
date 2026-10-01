@@ -686,14 +686,15 @@ Validation: Optional; Record of AuthorizationPolicy objects
 | **Additional properties** | Not allowed                       |
 | **Defined in**            | #/definitions/AuthorizationPolicy |
 
-| Property                                                                                                                       | Pattern | Type             | Deprecated | Definition                                    | Title/Description |
-| ------------------------------------------------------------------------------------------------------------------------------ | ------- | ---------------- | ---------- | --------------------------------------------- | ----------------- |
-| - [blueprintConfig](#domains_additionalProperties_authorizationPolicies_additionalProperties_blueprintConfig )                 | No      | object           | No         | In #/definitions/BlueprintAuthorizationConfig | -                 |
-| - [description](#domains_additionalProperties_authorizationPolicies_additionalProperties_description )                         | No      | string           | No         | -                                             | -                 |
-| - [domainUnitId](#domains_additionalProperties_authorizationPolicies_additionalProperties_domainUnitId )                       | No      | string           | No         | -                                             | -                 |
-| - [includeChildDomainUnits](#domains_additionalProperties_authorizationPolicies_additionalProperties_includeChildDomainUnits ) | No      | boolean          | No         | -                                             | -                 |
-| + [policyType](#domains_additionalProperties_authorizationPolicies_additionalProperties_policyType )                           | No      | enum (of string) | No         | In #/definitions/PolicyType                   | -                 |
-| + [principals](#domains_additionalProperties_authorizationPolicies_additionalProperties_principals )                           | No      | array            | No         | -                                             | -                 |
+| Property                                                                                                                       | Pattern | Type             | Deprecated | Definition                                    | Title/Description                                                                                                                                                                                                                                                                                                                                   |
+| ------------------------------------------------------------------------------------------------------------------------------ | ------- | ---------------- | ---------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [blueprintConfig](#domains_additionalProperties_authorizationPolicies_additionalProperties_blueprintConfig )                 | No      | object           | No         | In #/definitions/BlueprintAuthorizationConfig | -                                                                                                                                                                                                                                                                                                                                                   |
+| - [description](#domains_additionalProperties_authorizationPolicies_additionalProperties_description )                         | No      | string           | No         | -                                             | -                                                                                                                                                                                                                                                                                                                                                   |
+| - [domainUnitId](#domains_additionalProperties_authorizationPolicies_additionalProperties_domainUnitId )                       | No      | string           | No         | -                                             | -                                                                                                                                                                                                                                                                                                                                                   |
+| - [includeChildDomainUnits](#domains_additionalProperties_authorizationPolicies_additionalProperties_includeChildDomainUnits ) | No      | boolean          | No         | -                                             | -                                                                                                                                                                                                                                                                                                                                                   |
+| + [policyType](#domains_additionalProperties_authorizationPolicies_additionalProperties_policyType )                           | No      | enum (of string) | No         | In #/definitions/PolicyType                   | -                                                                                                                                                                                                                                                                                                                                                   |
+| + [principals](#domains_additionalProperties_authorizationPolicies_additionalProperties_principals )                           | No      | array            | No         | -                                             | -                                                                                                                                                                                                                                                                                                                                                   |
+| - [projectConfig](#domains_additionalProperties_authorizationPolicies_additionalProperties_projectConfig )                     | No      | object           | No         | In #/definitions/ProjectAuthorizationConfig   | When set, the grant uses a project grant filter principal (project members with the<br />given designation) rather than a user/group principal. Used for domain-unit policies<br />such as CREATE_FORM_TYPE that DataZone requires be granted to a project designation.<br />\`principals\` is required by the schema but ignored when this is set. |
 
 ###### <a name="domains_additionalProperties_authorizationPolicies_additionalProperties_blueprintConfig"></a>1.1.2.1.1. Property `root > domains > additionalProperties > authorizationPolicies > additionalProperties > blueprintConfig`
 
@@ -872,6 +873,62 @@ Must be one of:
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
+
+###### <a name="domains_additionalProperties_authorizationPolicies_additionalProperties_projectConfig"></a>1.1.2.1.7. Property `root > domains > additionalProperties > authorizationPolicies > additionalProperties > projectConfig`
+
+|                           |                                                                 |
+| ------------------------- | --------------------------------------------------------------- |
+| **Type**                  | `object`                                                        |
+| **Required**              | No                                                              |
+| **Additional properties** | Not allowed                                                     |
+| **Default**               | `"- not a project-principal grant; principals is used instead"` |
+| **Defined in**            | #/definitions/ProjectAuthorizationConfig                        |
+
+**Description:** When set, the grant uses a project grant filter principal (project members with the
+given designation) rather than a user/group principal. Used for domain-unit policies
+such as CREATE_FORM_TYPE that DataZone requires be granted to a project designation.
+`principals` is required by the schema but ignored when this is set.
+
+| Property                                                                                                                                     | Pattern | Type             | Deprecated | Definition | Title/Description                                                                                                                                         |
+| -------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [domainUnitId](#domains_additionalProperties_authorizationPolicies_additionalProperties_projectConfig_domainUnitId )                       | No      | string           | No         | -          | The ID of the domain unit whose projects receive the grant, or '/root' for the<br />domain's root domain unit. Other domain unit paths are not supported. |
+| - [includeChildDomainUnits](#domains_additionalProperties_authorizationPolicies_additionalProperties_projectConfig_includeChildDomainUnits ) | No      | boolean          | No         | -          | Whether projects in domain units below the specified domain unit also receive the grant.                                                                  |
+| - [projectDesignation](#domains_additionalProperties_authorizationPolicies_additionalProperties_projectConfig_projectDesignation )           | No      | enum (of string) | No         | -          | The project designation (OWNER or CONTRIBUTOR) whose members receive the grant.                                                                           |
+
+###### <a name="domains_additionalProperties_authorizationPolicies_additionalProperties_projectConfig_domainUnitId"></a>1.1.2.1.7.1. Property `root > domains > additionalProperties > authorizationPolicies > additionalProperties > projectConfig > domainUnitId`
+
+|              |             |
+| ------------ | ----------- |
+| **Type**     | `string`    |
+| **Required** | No          |
+| **Default**  | `"'/root'"` |
+
+**Description:** The ID of the domain unit whose projects receive the grant, or '/root' for the
+domain's root domain unit. Other domain unit paths are not supported.
+
+###### <a name="domains_additionalProperties_authorizationPolicies_additionalProperties_projectConfig_includeChildDomainUnits"></a>1.1.2.1.7.2. Property `root > domains > additionalProperties > authorizationPolicies > additionalProperties > projectConfig > includeChildDomainUnits`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `false`   |
+
+**Description:** Whether projects in domain units below the specified domain unit also receive the grant.
+
+###### <a name="domains_additionalProperties_authorizationPolicies_additionalProperties_projectConfig_projectDesignation"></a>1.1.2.1.7.3. Property `root > domains > additionalProperties > authorizationPolicies > additionalProperties > projectConfig > projectDesignation`
+
+|              |                              |
+| ------------ | ---------------------------- |
+| **Type**     | `enum (of string)`           |
+| **Required** | No                           |
+| **Default**  | `"ProjectDesignation.OWNER"` |
+
+**Description:** The project designation (OWNER or CONTRIBUTOR) whose members receive the grant.
+
+Must be one of:
+* "CONTRIBUTOR"
+* "OWNER"
 
 #### <a name="domains_additionalProperties_authorizations"></a>1.1.3. Property `root > domains > additionalProperties > authorizations`
 

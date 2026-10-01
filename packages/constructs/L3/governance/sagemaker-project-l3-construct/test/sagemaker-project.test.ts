@@ -316,4 +316,55 @@ describe('SagemakerProjectL3Construct', () => {
       Name: expectedDataSourceName,
     });
   });
+
+  it('creates project-owned FormTypes when project has metadataForms', () => {
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-forms', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        'form-profile': {
+          environments: {
+            DefaultDataLake: {},
+          },
+        },
+      },
+      projects: {
+        'form-project': {
+          profileName: 'form-profile',
+          metadataForms: {
+            CustomerForm: {
+              description: 'Customer metadata',
+              fields: {
+                customerName: { type: 'String', required: true, searchable: ['TECHNICAL'] },
+                tier: { type: 'String', glossaryId: 'gloss-1' },
+              },
+            },
+            SimpleForm: {
+              status: 'DISABLED',
+              fields: {
+                note: { type: 'String' },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    // Form types are created via a custom resource running under the project-owner
+    // custom-resource role (the CloudFormation execution role cannot call CreateFormType).
+    template.resourceCountIs('Custom::DataZoneFormType', 2);
+    // Form name is used verbatim (no MDAA naming prefix) so it matches the Smithy structure.
+    // description is passed through to the custom resource.
+    template.hasResourceProperties('Custom::DataZoneFormType', {
+      formName: 'CustomerForm',
+      status: 'ENABLED',
+      description: 'Customer metadata',
+    });
+    template.hasResourceProperties('Custom::DataZoneFormType', {
+      formName: 'SimpleForm',
+      status: 'DISABLED',
+    });
+  });
 });

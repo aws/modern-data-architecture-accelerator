@@ -114,6 +114,45 @@ projects:
     # (Optional) Contributor groups with PROJECT_CONTRIBUTOR designation
     groups:
       grp1: test-contributor-group
+    # (Optional) Metadata form types owned by this project. MDAA assembles the
+    # Smithy model; the form name is used verbatim as the structure name.
+    metadataForms:
+      # Form exercising all field options
+      CustomerMetadataForm:
+        # (Optional) Description of the form type
+        description: Customer governance metadata
+        # (Optional) Status enum: ENABLED | DISABLED
+        status: ENABLED
+        # (Required) Field name → FormFieldProps
+        fields:
+          # Required, technical-identifier searchable string
+          customerName:
+            # (Required) Smithy prelude type
+            type: String
+            # (Optional) Annotates @required
+            required: true
+            # (Optional) @amazon.datazone#searchable modes
+            searchable:
+              - TECHNICAL
+          # Lexical searchable string tied to a glossary
+          tier:
+            type: String
+            searchable:
+              - LEXICAL
+            # (Optional) @amazon.datazone#glossaryterm(<id>)
+            glossaryId: test-glossary-id
+          # Non-string field types
+          activeFlag:
+            type: Boolean
+          recordCount:
+            type: Integer
+          createdAt:
+            type: Timestamp
+      # Minimal form with a single field, defaulted ENABLED status
+      SimpleForm:
+        fields:
+          note:
+            type: String
 
   # Minimal project with only required profileName
   test-project-minimal:

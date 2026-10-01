@@ -29,11 +29,15 @@ environment_blueprint_src_path = os.path.join(
 monitor_env_deployment_src_path = os.path.join(
     os.path.dirname(__file__), '..', 'src', 'lambda', 'monitor_env_deployment'
 )
+create_form_type_src_path = os.path.join(
+    os.path.dirname(__file__), '..', 'src', 'lambda', 'create_form_type'
+)
 sys.path.insert(0, check_user_profiles_src_path)
 sys.path.insert(0, create_project_membership_src_path)
 sys.path.insert(0, domain_config_src_path)
 sys.path.insert(0, environment_blueprint_src_path)
 sys.path.insert(0, monitor_env_deployment_src_path)
+sys.path.insert(0, create_form_type_src_path)
 
 
 @pytest.fixture

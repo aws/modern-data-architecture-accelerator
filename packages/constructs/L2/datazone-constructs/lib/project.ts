@@ -57,13 +57,17 @@ export class MdaaDatazoneProject extends Construct {
   public readonly project: CfnProject;
   protected props: MdaaDatazoneProjectProps;
   public generatedProjectName: string;
-  protected customResourceRole: IRole;
+  private readonly _customResourceRole: IRole;
+  /** The domain custom-resource role (a project owner), used for privileged DataZone API calls. */
+  public get customResourceRole(): IRole {
+    return this._customResourceRole;
+  }
   constructor(scope: Construct, id: string, props: MdaaDatazoneProjectProps) {
     super(scope, id);
     this.props = props;
     this.domainConfig = props.domainConfig;
 
-    this.customResourceRole = Role.fromRoleName(this, 'cr-role', this.domainConfig.customResourceRoleName);
+    this._customResourceRole = Role.fromRoleName(this, 'cr-role', this.domainConfig.customResourceRoleName);
     this.domainKmsUsagePolicy = ManagedPolicy.fromManagedPolicyName(
       this,
       'domain-kms-policy',
@@ -223,20 +227,43 @@ export class MdaaSageMakerProject extends MdaaDatazoneProject {
   public readonly toolingEnvId: string;
   public readonly glueConnectionId: string;
   public readonly envUserArn: string;
+  /**
+   * Makes the domain custom-resource role a PROJECT_OWNER. Resources created through that
+   * role's DataZone API calls (e.g. form types) must depend on this.
+   */
+  public readonly crRoleProjectMembership: CfnProjectMembership;
 
   constructor(scope: Construct, id: string, props: MdaaDatazoneProjectProps) {
     super(scope, id, props);
 
+    this.crRoleProjectMembership = this.createCrRoleProjectMembership();
     const envDeploymentMonitor = this.getSagemakerEnvironmentDeploymentMonitor(
       this,
       'env-deployment-monitor',
       'Tooling',
       'LAKEHOUSE',
     );
+    envDeploymentMonitor.node.addDependency(this.crRoleProjectMembership);
 
     this.toolingEnvId = envDeploymentMonitor.getAttString('environmentId');
     this.glueConnectionId = envDeploymentMonitor.getAttString('connectionId');
     this.envUserArn = envDeploymentMonitor.getAttString('userRoleArn');
+  }
+
+  private createCrRoleProjectMembership(): CfnProjectMembership {
+    const handlerRoleProfileChecker = this.createUserProfileChecker(
+      'monitor-handler-role',
+      this.customResourceRole.roleArn,
+    );
+    const membershipProps: CfnProjectMembershipProps = {
+      designation: 'PROJECT_OWNER',
+      domainIdentifier: this.project.domainIdentifier,
+      member: {
+        userIdentifier: handlerRoleProfileChecker.getAttString('id'),
+      },
+      projectIdentifier: this.project.attrId,
+    };
+    return new CfnProjectMembership(this, `monitor-cr-project-membership`, membershipProps);
   }
 
   private getSagemakerEnvironmentDeploymentMonitor(
@@ -266,22 +293,6 @@ export class MdaaSageMakerProject extends MdaaDatazoneProject {
       },
     };
 
-    const monitorCr = new MdaaCustomResource(scope, id, crProps);
-    const handlerRoleProfileChecker = this.createUserProfileChecker(
-      'monitor-handler-role',
-      this.customResourceRole.roleArn,
-    );
-    const membershipProps: CfnProjectMembershipProps = {
-      designation: 'PROJECT_OWNER',
-      domainIdentifier: this.project.domainIdentifier,
-      member: {
-        userIdentifier: handlerRoleProfileChecker.getAttString('id'),
-      },
-      projectIdentifier: this.project.attrId,
-    };
-    const membership = new CfnProjectMembership(this, `monitor-cr-project-membership`, membershipProps);
-    monitorCr.node.addDependency(membership);
-
-    return monitorCr;
+    return new MdaaCustomResource(scope, id, crProps);
   }
 }

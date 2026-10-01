@@ -9,6 +9,7 @@ import {
   EntityType,
   PolicyPrincipal,
   PrincipalResolver,
+  ProjectDesignation,
 } from '../lib/authorization';
 import { MdaaTestApp } from '@aws-mdaa/testing';
 import { Template } from 'aws-cdk-lib/assertions';
@@ -172,6 +173,134 @@ describe('DataZoneAuthorizationConstruct', () => {
 
     const grants = construct.policyGrantsList();
     expect(grants).toHaveLength(1);
+  });
+
+  it('should create a project-principal grant via createProjectAuthorizationPolicy', () => {
+    const policies: Record<string, AuthorizationPolicy> = {
+      'create-form-type': DataZoneAuthorizationConstruct.createProjectAuthorizationPolicy(
+        'CREATE_FORM_TYPE',
+        'test-root-domain-unit',
+        ProjectDesignation.OWNER,
+        true,
+      ),
+    };
+
+    const construct = new DataZoneAuthorizationConstruct(testApp.testStack, 'test-auth-project', {
+      naming: testApp.naming,
+      domainId: 'test-domain-id',
+      entityId: 'test-root-domain-unit',
+      entityType: EntityType.DOMAIN_UNIT,
+      policies,
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    // A single grant with a project grant filter principal (no user/group identifiers needed).
+    template.resourceCountIs('AWS::DataZone::PolicyGrant', 1);
+    template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
+      PolicyType: 'CREATE_FORM_TYPE',
+      EntityType: 'DOMAIN_UNIT',
+      Principal: {
+        Project: {
+          ProjectDesignation: 'OWNER',
+          ProjectGrantFilter: {
+            DomainUnitFilter: {
+              DomainUnit: 'test-root-domain-unit',
+              IncludeChildDomainUnits: true,
+            },
+          },
+        },
+      },
+      Detail: {
+        CreateFormType: { IncludeChildDomainUnits: true },
+      },
+    });
+    expect(construct.policyGrantsList()).toHaveLength(1);
+  });
+
+  it('should resolve an empty projectConfig to the narrowest grant (OWNER, no child units)', () => {
+    // projectConfig is reachable from user config with no required fields, so
+    // `projectConfig: {}` must resolve to the same narrow grant as an unspecified
+    // argument to createProjectAuthorizationPolicy, not to the widest principal shape
+    // (CONTRIBUTOR + child units) the blueprintConfig defaults use.
+    const policies: Record<string, AuthorizationPolicy> = {
+      'create-form-type': {
+        policyType: 'CREATE_FORM_TYPE',
+        principals: [],
+        projectConfig: {},
+      },
+    };
+
+    const construct = new DataZoneAuthorizationConstruct(testApp.testStack, 'test-auth-empty-project-config', {
+      naming: testApp.naming,
+      domainId: 'test-domain-id',
+      entityId: 'test-root-domain-unit',
+      entityType: EntityType.DOMAIN_UNIT,
+      policies,
+      rootDomainUnitId: 'test-root-domain-unit-id',
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
+      PolicyType: 'CREATE_FORM_TYPE',
+      Principal: {
+        Project: {
+          ProjectDesignation: 'OWNER',
+          ProjectGrantFilter: {
+            DomainUnitFilter: {
+              DomainUnit: 'test-root-domain-unit-id',
+              IncludeChildDomainUnits: false,
+            },
+          },
+        },
+      },
+      Detail: {
+        CreateFormType: { IncludeChildDomainUnits: false },
+      },
+    });
+    expect(construct.policyGrantsList()).toHaveLength(1);
+  });
+
+  describe('projectConfig domainUnitId resolution', () => {
+    const projectPolicy = (domainUnitId?: string): Record<string, AuthorizationPolicy> => ({
+      'create-form-type': { policyType: 'CREATE_FORM_TYPE', principals: [], projectConfig: { domainUnitId } },
+    });
+    const create = (policies: Record<string, AuthorizationPolicy>, rootDomainUnitId?: string) =>
+      new DataZoneAuthorizationConstruct(testApp.testStack, 'test-auth-domain-unit', {
+        naming: testApp.naming,
+        domainId: 'test-domain-id',
+        entityId: 'test-entity-id',
+        entityType: EntityType.DOMAIN_UNIT,
+        policies,
+        rootDomainUnitId,
+      });
+
+    it('maps an explicit /root to the root domain unit ID, never the literal path', () => {
+      const construct = create(projectPolicy('/root'), 'root-unit-id');
+
+      Template.fromStack(testApp.testStack).hasResourceProperties('AWS::DataZone::PolicyGrant', {
+        Principal: { Project: { ProjectGrantFilter: { DomainUnitFilter: { DomainUnit: 'root-unit-id' } } } },
+      });
+      expect(construct.policyGrantsList()).toHaveLength(1);
+    });
+
+    it('passes a domain unit ID through unchanged', () => {
+      const construct = create(projectPolicy('child-unit-id'), 'root-unit-id');
+
+      Template.fromStack(testApp.testStack).hasResourceProperties('AWS::DataZone::PolicyGrant', {
+        Principal: { Project: { ProjectGrantFilter: { DomainUnitFilter: { DomainUnit: 'child-unit-id' } } } },
+      });
+      expect(construct.policyGrantsList()).toHaveLength(1);
+    });
+
+    it('throws when /root is used without a rootDomainUnitId', () => {
+      expect(() => create(projectPolicy('/root'))).toThrow(/requires rootDomainUnitId/);
+    });
+
+    it('throws for domain unit paths other than /root', () => {
+      expect(() => create(projectPolicy('/root/team1'), 'root-unit-id')).toThrow(
+        /other domain unit paths are not supported/,
+      );
+    });
   });
 
   it('should create multiple policy grants for multiple principals', () => {

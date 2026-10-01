@@ -116,6 +116,11 @@
                         "$ref": "#/definitions/PolicyPrincipal"
                     },
                     "type": "array"
+                },
+                "projectConfig": {
+                    "$ref": "#/definitions/ProjectAuthorizationConfig",
+                    "default": "- not a project-principal grant; principals is used instead",
+                    "description": "When set, the grant uses a project grant filter principal (project members with the\ngiven designation) rather than a user/group principal. Used for domain-unit policies\nsuch as CREATE_FORM_TYPE that DataZone requires be granted to a project designation.\n`principals` is required by the schema but ignored when this is set."
                 }
             },
             "required": [
@@ -2686,6 +2691,32 @@
                 "conditions",
                 "principalJson"
             ],
+            "type": "object"
+        },
+        "ProjectAuthorizationConfig": {
+            "additionalProperties": false,
+            "description": "Configuration for granting an authorization policy to project members via a\nproject grant filter, instead of to named users or groups. Required by DataZone\nfor policies such as CREATE_FORM_TYPE that are gated on project membership rather\nthan a specific principal.",
+            "properties": {
+                "domainUnitId": {
+                    "default": "'/root'",
+                    "description": "The ID of the domain unit whose projects receive the grant, or '/root' for the\ndomain's root domain unit. Other domain unit paths are not supported.",
+                    "type": "string"
+                },
+                "includeChildDomainUnits": {
+                    "default": false,
+                    "description": "Whether projects in domain units below the specified domain unit also receive the grant.",
+                    "type": "boolean"
+                },
+                "projectDesignation": {
+                    "default": "ProjectDesignation.OWNER",
+                    "description": "The project designation (OWNER or CONTRIBUTOR) whose members receive the grant.",
+                    "enum": [
+                        "CONTRIBUTOR",
+                        "OWNER"
+                    ],
+                    "type": "string"
+                }
+            },
             "type": "object"
         },
         "QueueReference": {

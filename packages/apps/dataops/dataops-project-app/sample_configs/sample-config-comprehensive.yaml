@@ -283,6 +283,21 @@ sagemaker:
       test-source:
         # Glue database name to use as the data source
         databaseName: non-project-database
+    # (Optional) Metadata form types owned by this project. MDAA assembles the
+    # Smithy model; the form name is used verbatim as the structure name.
+    metadataForms:
+      DataOpsGovernanceForm:
+        # (Optional) Description of the form type
+        description: Project governance metadata
+        # (Required) Field name -> FormFieldProps
+        fields:
+          owner:
+            # (Required) Smithy prelude type
+            type: String
+            # (Optional) Annotates @required
+            required: true
+          reviewedOn:
+            type: Timestamp
 
 # Glue database definitions for centralized metadata management.
 databases:

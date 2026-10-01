@@ -8831,16 +8831,17 @@ Validation: Optional; valid KMS key ARN
 
 **Description:** SageMaker project configuration for DataOps integration.
 
-| Property                                                       | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| -------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [dataSources](#sagemaker_project_dataSources )               | No      | object | No         | -          | Glue data sources to import into the project. Each data source references<br />a Glue database and creates Lake Formation read permissions for the project's<br />environment user.<br /><br />Use cases: Importing existing Glue databases into SageMaker projects; Data asset discovery<br /><br />AWS: DataZone data sources with Glue run configuration<br /><br />Validation: Optional; map of data source name to DataSourceProps                                                                  |
-| - [domainUnit](#sagemaker_project_domainUnit )                 | No      | string | No         | -          | Domain unit path where the project will be created (e.g., /some/domain/unit).<br /><br />Use cases: Project organizational placement; Governance scope targeting<br /><br />AWS: DataZone domain unit for project placement<br /><br />Validation: Optional; slash-delimited domain unit path                                                                                                                                                                                                            |
-| - [environmentConfigs](#sagemaker_project_environmentConfigs ) | No      | object | No         | -          | Per-environment configuration overrides for this project's environments.<br /><br />Use cases: Project-specific environment customization<br /><br />AWS: DataZone project environment configurations<br /><br />Validation: Optional; map of environment name to ProjectEnvironmentConfiguration                                                                                                                                                                                                        |
-| - [groups](#sagemaker_project_groups )                         | No      | object | No         | -          | MDAA group configuration names that receive PROJECT_CONTRIBUTOR designation<br />with contributor-level access to the project.<br /><br />Use cases: Team-based project contribution; Group standard access<br /><br />AWS: DataZone project membership with PROJECT_CONTRIBUTOR role<br /><br />Validation: Optional; map of ID to group config name; names must exist in module groups config                                                                                                          |
-| - [ownerGroups](#sagemaker_project_ownerGroups )               | No      | object | No         | -          | MDAA group configuration names (from the SageMaker module groups section) that<br />receive PROJECT_OWNER designation with full administrative access to the project.<br />These are not DataZone group names or Identity Center group identifiers.<br /><br />Use cases: Team-based project ownership; Group admin access<br /><br />AWS: DataZone project membership with PROJECT_OWNER role<br /><br />Validation: Optional; map of ID to group config name; names must exist in module groups config |
-| - [ownerUsers](#sagemaker_project_ownerUsers )                 | No      | object | No         | -          | MDAA user configuration names (from the SageMaker module users section) that<br />receive PROJECT_OWNER designation with full administrative access to the project.<br />These are not DataZone usernames or Identity Center identifiers.<br /><br />Use cases: User-based project ownership; Full project admin access<br /><br />AWS: DataZone project membership with PROJECT_OWNER role<br /><br />Validation: Optional; map of ID to user config name; names must exist in module users config      |
-| + [profileName](#sagemaker_project_profileName )               | No      | string | No         | -          | Name of the project profile to use for this project. The profile must<br />target the same account as the project.<br /><br />Use cases: Profile-based project creation; Environment template selection<br /><br />AWS: DataZone project profile reference<br /><br />Validation: Required; string; must match a key in projectProfiles config                                                                                                                                                           |
-| - [users](#sagemaker_project_users )                           | No      | object | No         | -          | MDAA user configuration names that receive PROJECT_CONTRIBUTOR designation<br />with contributor-level access to the project.<br /><br />Use cases: User-based project contribution; Standard project access<br /><br />AWS: DataZone project membership with PROJECT_CONTRIBUTOR role<br /><br />Validation: Optional; map of ID to user config name; names must exist in module users config                                                                                                           |
+| Property                                                       | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| -------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [dataSources](#sagemaker_project_dataSources )               | No      | object | No         | -          | Glue data sources to import into the project. Each data source references<br />a Glue database and creates Lake Formation read permissions for the project's<br />environment user.<br /><br />Use cases: Importing existing Glue databases into SageMaker projects; Data asset discovery<br /><br />AWS: DataZone data sources with Glue run configuration<br /><br />Validation: Optional; map of data source name to DataSourceProps                                                                                                                                                                                                                                                                                                                                     |
+| - [domainUnit](#sagemaker_project_domainUnit )                 | No      | string | No         | -          | Domain unit path where the project will be created (e.g., /some/domain/unit).<br /><br />Use cases: Project organizational placement; Governance scope targeting<br /><br />AWS: DataZone domain unit for project placement<br /><br />Validation: Optional; slash-delimited domain unit path                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| - [environmentConfigs](#sagemaker_project_environmentConfigs ) | No      | object | No         | -          | Per-environment configuration overrides for this project's environments.<br /><br />Use cases: Project-specific environment customization<br /><br />AWS: DataZone project environment configurations<br /><br />Validation: Optional; map of environment name to ProjectEnvironmentConfiguration                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| - [groups](#sagemaker_project_groups )                         | No      | object | No         | -          | MDAA group configuration names that receive PROJECT_CONTRIBUTOR designation<br />with contributor-level access to the project.<br /><br />Use cases: Team-based project contribution; Group standard access<br /><br />AWS: DataZone project membership with PROJECT_CONTRIBUTOR role<br /><br />Validation: Optional; map of ID to group config name; names must exist in module groups config                                                                                                                                                                                                                                                                                                                                                                             |
+| - [metadataForms](#sagemaker_project_metadataForms )           | No      | object | No         | -          | Metadata form types to create, owned by this project. Each form is defined by<br />a set of fields; MDAA assembles the Smithy model (setting the namespace to the<br />domain ID and the structure name to the form name). Forms are usable across the<br />domain to attach standardized metadata to assets. The map key is used as the form's<br />stable identifier; renaming a key replaces that form type (delete-then-create).<br /><br />Use cases: Data governance metadata standards; Asset metadata enforcement; Searchable custom attributes<br /><br />AWS: DataZone metadata form types (AWS::DataZone::FormType) owned by the project<br /><br />Validation: Optional; map of form name to MetadataFormProps; form name must be a valid Smithy structure name |
+| - [ownerGroups](#sagemaker_project_ownerGroups )               | No      | object | No         | -          | MDAA group configuration names (from the SageMaker module groups section) that<br />receive PROJECT_OWNER designation with full administrative access to the project.<br />These are not DataZone group names or Identity Center group identifiers.<br /><br />Use cases: Team-based project ownership; Group admin access<br /><br />AWS: DataZone project membership with PROJECT_OWNER role<br /><br />Validation: Optional; map of ID to group config name; names must exist in module groups config                                                                                                                                                                                                                                                                    |
+| - [ownerUsers](#sagemaker_project_ownerUsers )                 | No      | object | No         | -          | MDAA user configuration names (from the SageMaker module users section) that<br />receive PROJECT_OWNER designation with full administrative access to the project.<br />These are not DataZone usernames or Identity Center identifiers.<br /><br />Use cases: User-based project ownership; Full project admin access<br /><br />AWS: DataZone project membership with PROJECT_OWNER role<br /><br />Validation: Optional; map of ID to user config name; names must exist in module users config                                                                                                                                                                                                                                                                         |
+| + [profileName](#sagemaker_project_profileName )               | No      | string | No         | -          | Name of the project profile to use for this project. The profile must<br />target the same account as the project.<br /><br />Use cases: Profile-based project creation; Environment template selection<br /><br />AWS: DataZone project profile reference<br /><br />Validation: Required; string; must match a key in projectProfiles config                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| - [users](#sagemaker_project_users )                           | No      | object | No         | -          | MDAA user configuration names that receive PROJECT_CONTRIBUTOR designation<br />with contributor-level access to the project.<br /><br />Use cases: User-based project contribution; Standard project access<br /><br />AWS: DataZone project membership with PROJECT_CONTRIBUTOR role<br /><br />Validation: Optional; map of ID to user config name; names must exist in module users config                                                                                                                                                                                                                                                                                                                                                                              |
 
 #### <a name="sagemaker_project_dataSources"></a>14.4.1. Property `root > sagemaker > project > dataSources`
 
@@ -8988,7 +8989,200 @@ Validation: Optional; map of ID to group config name; names must exist in module
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="sagemaker_project_ownerGroups"></a>14.4.5. Property `root > sagemaker > project > ownerGroups`
+#### <a name="sagemaker_project_metadataForms"></a>14.4.5. Property `root > sagemaker > project > metadataForms`
+
+|                           |                                                                                                              |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| **Type**                  | `object`                                                                                                     |
+| **Required**              | No                                                                                                           |
+| **Additional properties** | [Each additional property must conform to the schema](#sagemaker_project_metadataForms_additionalProperties) |
+
+**Description:** Metadata form types to create, owned by this project. Each form is defined by
+a set of fields; MDAA assembles the Smithy model (setting the namespace to the
+domain ID and the structure name to the form name). Forms are usable across the
+domain to attach standardized metadata to assets. The map key is used as the form's
+stable identifier; renaming a key replaces that form type (delete-then-create).
+
+Use cases: Data governance metadata standards; Asset metadata enforcement; Searchable custom attributes
+
+AWS: DataZone metadata form types (AWS::DataZone::FormType) owned by the project
+
+Validation: Optional; map of form name to MetadataFormProps; form name must be a valid Smithy structure name
+
+| Property                                                     | Pattern | Type   | Deprecated | Definition                         | Title/Description |
+| ------------------------------------------------------------ | ------- | ------ | ---------- | ---------------------------------- | ----------------- |
+| - [](#sagemaker_project_metadataForms_additionalProperties ) | No      | object | No         | In #/definitions/MetadataFormProps | -                 |
+
+##### <a name="sagemaker_project_metadataForms_additionalProperties"></a>14.4.5.1. Property `root > sagemaker > project > metadataForms > MetadataFormProps`
+
+|                           |                                 |
+| ------------------------- | ------------------------------- |
+| **Type**                  | `object`                        |
+| **Required**              | No                              |
+| **Additional properties** | Not allowed                     |
+| **Defined in**            | #/definitions/MetadataFormProps |
+
+| Property                                                                            | Pattern | Type             | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                             |
+| ----------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [description](#sagemaker_project_metadataForms_additionalProperties_description ) | No      | string           | No         | -          | Human-readable description of the form type.<br /><br />Use cases: Form documentation; Governance context<br /><br />AWS: DataZone form type description<br /><br />Validation: Optional; string                                                                                                                                                                                              |
+| + [fields](#sagemaker_project_metadataForms_additionalProperties_fields )           | No      | object           | No         | -          | Field definitions for the form. Each entry becomes a member of the generated<br />Smithy structure; declaration order is preserved.<br /><br />Use cases: Custom metadata attributes; Required governance fields; Searchable attributes<br /><br />AWS: Smithy structure members in a DataZone form type model<br /><br />Validation: Required; non-empty map of field name to FormFieldProps |
+| - [status](#sagemaker_project_metadataForms_additionalProperties_status )           | No      | enum (of string) | No         | -          | Form type status. DISABLED form types are retained but not attachable.<br /><br />Use cases: Staged form rollout; Temporarily retiring a form<br /><br />AWS: DataZone form type status<br /><br />Validation: Optional; 'ENABLED' \| 'DISABLED'                                                                                                                                              |
+
+###### <a name="sagemaker_project_metadataForms_additionalProperties_description"></a>14.4.5.1.1. Property `root > sagemaker > project > metadataForms > additionalProperties > description`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Human-readable description of the form type.
+
+Use cases: Form documentation; Governance context
+
+AWS: DataZone form type description
+
+Validation: Optional; string
+
+###### <a name="sagemaker_project_metadataForms_additionalProperties_fields"></a>14.4.5.1.2. Property `root > sagemaker > project > metadataForms > additionalProperties > fields`
+
+|                           |                                                                                                                                          |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                 |
+| **Required**              | Yes                                                                                                                                      |
+| **Additional properties** | [Each additional property must conform to the schema](#sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties) |
+
+**Description:** Field definitions for the form. Each entry becomes a member of the generated
+Smithy structure; declaration order is preserved.
+
+Use cases: Custom metadata attributes; Required governance fields; Searchable attributes
+
+AWS: Smithy structure members in a DataZone form type model
+
+Validation: Required; non-empty map of field name to FormFieldProps
+
+| Property                                                                                 | Pattern | Type   | Deprecated | Definition                      | Title/Description |
+| ---------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------- | ----------------- |
+| - [](#sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties ) | No      | object | No         | In #/definitions/FormFieldProps | -                 |
+
+###### <a name="sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties"></a>14.4.5.1.2.1. Property `root > sagemaker > project > metadataForms > additionalProperties > fields > FormFieldProps`
+
+|                           |                              |
+| ------------------------- | ---------------------------- |
+| **Type**                  | `object`                     |
+| **Required**              | No                           |
+| **Additional properties** | Not allowed                  |
+| **Defined in**            | #/definitions/FormFieldProps |
+
+| Property                                                                                                      | Pattern | Type                      | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                      |
+| ------------------------------------------------------------------------------------------------------------- | ------- | ------------------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [glossaryId](#sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_glossaryId ) | No      | string                    | No         | -          | Glossary ID whose terms this field stores, annotated via<br />\`@amazon.datazone#glossaryterm("<id>")\`. Makes the field filterable via the<br />Search/SearchListings APIs.<br /><br />Validation: Optional; valid DataZone glossary ID                                                                               |
+| - [required](#sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_required )     | No      | boolean                   | No         | -          | When true, the field is annotated \`@required\` and must be populated when the<br />form is attached to an asset.<br /><br />Validation: Optional; boolean                                                                                                                                                             |
+| - [searchable](#sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_searchable ) | No      | array of enum (of string) | No         | -          | Search indexing modes for the field, annotated via \`@amazon.datazone#searchable\`.<br />LEXICAL enables stemmed/partial matches (disables semantic search); TECHNICAL<br />indexes for technical identifier search. Omit for no explicit indexing.<br /><br />Validation: Optional; array of 'LEXICAL' \| 'TECHNICAL' |
+| + [type](#sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_type )             | No      | enum (of string)          | No         | -          | Smithy prelude type for the field (e.g. String, Boolean, Integer).<br /><br />Validation: Required; one of String \| Boolean \| Integer \| Long \| Float \| Double \| Timestamp                                                                                                                                        |
+
+###### <a name="sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_glossaryId"></a>14.4.5.1.2.1.1. Property `root > sagemaker > project > metadataForms > additionalProperties > fields > additionalProperties > glossaryId`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Glossary ID whose terms this field stores, annotated via
+`@amazon.datazone#glossaryterm("<id>")`. Makes the field filterable via the
+Search/SearchListings APIs.
+
+Validation: Optional; valid DataZone glossary ID
+
+###### <a name="sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_required"></a>14.4.5.1.2.1.2. Property `root > sagemaker > project > metadataForms > additionalProperties > fields > additionalProperties > required`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `false`   |
+
+**Description:** When true, the field is annotated `@required` and must be populated when the
+form is attached to an asset.
+
+Validation: Optional; boolean
+
+###### <a name="sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_searchable"></a>14.4.5.1.2.1.3. Property `root > sagemaker > project > metadataForms > additionalProperties > fields > additionalProperties > searchable`
+
+|              |                             |
+| ------------ | --------------------------- |
+| **Type**     | `array of enum (of string)` |
+| **Required** | No                          |
+
+**Description:** Search indexing modes for the field, annotated via `@amazon.datazone#searchable`.
+LEXICAL enables stemmed/partial matches (disables semantic search); TECHNICAL
+indexes for technical identifier search. Omit for no explicit indexing.
+
+Validation: Optional; array of 'LEXICAL' | 'TECHNICAL'
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                                        | Description |
+| ---------------------------------------------------------------------------------------------------------------------- | ----------- |
+| [searchable items](#sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_searchable_items) | -           |
+
+###### <a name="sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_searchable_items"></a>14.4.5.1.2.1.3.1. root > sagemaker > project > metadataForms > additionalProperties > fields > additionalProperties > searchable > searchable items
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "LEXICAL"
+* "TECHNICAL"
+
+###### <a name="sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_type"></a>14.4.5.1.2.1.4. Property `root > sagemaker > project > metadataForms > additionalProperties > fields > additionalProperties > type`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | Yes                |
+
+**Description:** Smithy prelude type for the field (e.g. String, Boolean, Integer).
+
+Validation: Required; one of String | Boolean | Integer | Long | Float | Double | Timestamp
+
+Must be one of:
+* "Boolean"
+* "Double"
+* "Float"
+* "Integer"
+* "Long"
+* "String"
+* "Timestamp"
+
+###### <a name="sagemaker_project_metadataForms_additionalProperties_status"></a>14.4.5.1.3. Property `root > sagemaker > project > metadataForms > additionalProperties > status`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+| **Default**  | `"ENABLED"`        |
+
+**Description:** Form type status. DISABLED form types are retained but not attachable.
+
+Use cases: Staged form rollout; Temporarily retiring a form
+
+AWS: DataZone form type status
+
+Validation: Optional; 'ENABLED' | 'DISABLED'
+
+Must be one of:
+* "DISABLED"
+* "ENABLED"
+
+#### <a name="sagemaker_project_ownerGroups"></a>14.4.6. Property `root > sagemaker > project > ownerGroups`
 
 |                           |                                                                                                            |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------- |
@@ -9010,14 +9204,14 @@ Validation: Optional; map of ID to group config name; names must exist in module
 | ---------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#sagemaker_project_ownerGroups_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="sagemaker_project_ownerGroups_additionalProperties"></a>14.4.5.1. Property `root > sagemaker > project > ownerGroups > additionalProperties`
+##### <a name="sagemaker_project_ownerGroups_additionalProperties"></a>14.4.6.1. Property `root > sagemaker > project > ownerGroups > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="sagemaker_project_ownerUsers"></a>14.4.6. Property `root > sagemaker > project > ownerUsers`
+#### <a name="sagemaker_project_ownerUsers"></a>14.4.7. Property `root > sagemaker > project > ownerUsers`
 
 |                           |                                                                                                           |
 | ------------------------- | --------------------------------------------------------------------------------------------------------- |
@@ -9039,14 +9233,14 @@ Validation: Optional; map of ID to user config name; names must exist in module 
 | --------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#sagemaker_project_ownerUsers_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="sagemaker_project_ownerUsers_additionalProperties"></a>14.4.6.1. Property `root > sagemaker > project > ownerUsers > additionalProperties`
+##### <a name="sagemaker_project_ownerUsers_additionalProperties"></a>14.4.7.1. Property `root > sagemaker > project > ownerUsers > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="sagemaker_project_profileName"></a>14.4.7. Property `root > sagemaker > project > profileName`
+#### <a name="sagemaker_project_profileName"></a>14.4.8. Property `root > sagemaker > project > profileName`
 
 |              |          |
 | ------------ | -------- |
@@ -9062,7 +9256,7 @@ AWS: DataZone project profile reference
 
 Validation: Required; string; must match a key in projectProfiles config
 
-#### <a name="sagemaker_project_users"></a>14.4.8. Property `root > sagemaker > project > users`
+#### <a name="sagemaker_project_users"></a>14.4.9. Property `root > sagemaker > project > users`
 
 |                           |                                                                                                      |
 | ------------------------- | ---------------------------------------------------------------------------------------------------- |
@@ -9083,7 +9277,7 @@ Validation: Optional; map of ID to user config name; names must exist in module 
 | ---------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#sagemaker_project_users_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="sagemaker_project_users_additionalProperties"></a>14.4.8.1. Property `root > sagemaker > project > users > additionalProperties`
+##### <a name="sagemaker_project_users_additionalProperties"></a>14.4.9.1. Property `root > sagemaker > project > users > additionalProperties`
 
 |              |          |
 | ------------ | -------- |

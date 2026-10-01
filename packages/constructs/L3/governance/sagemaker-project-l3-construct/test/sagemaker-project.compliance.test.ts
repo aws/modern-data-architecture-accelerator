@@ -17,6 +17,27 @@ describe('MDAA Compliance Stack Tests', () => {
       roleHelper: new MdaaRoleHelper(stack, testApp.naming),
       naming: testApp.naming,
       domainConfigSSMParam: '/test-param',
+      projectProfiles: {
+        'compliance-profile': {
+          environments: {
+            DefaultDataLake: {},
+          },
+        },
+      },
+      // Exercise the createMetadataForm / MdaaDatazoneFormType code path under CDK Nag.
+      projects: {
+        'compliance-project': {
+          profileName: 'compliance-profile',
+          metadataForms: {
+            CustomerForm: {
+              description: 'Customer metadata',
+              fields: {
+                customerName: { type: 'String', required: true, searchable: ['TECHNICAL'] },
+              },
+            },
+          },
+        },
+      },
     };
 
     new SagemakerProjectL3Construct(stack, 'teststack', constructProps);

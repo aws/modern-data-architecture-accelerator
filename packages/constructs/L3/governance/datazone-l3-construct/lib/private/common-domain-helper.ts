@@ -16,6 +16,7 @@ import {
   NamedAuthorizationPolicies,
   PolicyPrincipal,
   ProfileManagementConstruct,
+  ProjectDesignation,
 } from '@aws-mdaa/datazone-constructs';
 import { GlueCatalogL3Construct } from '@aws-mdaa/glue-catalog-l3-construct';
 import { MdaaManagedPolicy, MdaaManagedPolicyProps, MdaaRole } from '@aws-mdaa/iam-constructs';
@@ -56,6 +57,15 @@ type DomainPropsWithAssociatedAccounts = DataZoneDomainProps | SageMakerDomainPr
 export interface CreatedDomainUnit {
   readonly construct: DataZoneDomainUnitConstruct;
   readonly domainUnits?: { [name: string]: CreatedDomainUnit };
+}
+// Domain-level context passed through createDomainUnitsAuthorizationPolicies' recursion
+// unchanged; grouped into one object so adding a new domain-wide value (e.g.
+// rootDomainUnitId) doesn't grow that method's parameter count.
+interface DomainAuthorizationContext {
+  readonly domainId: string;
+  readonly domainVersion: 'V1' | 'V2';
+  readonly domainProps?: DataZoneDomainProps;
+  readonly rootDomainUnitId?: string;
 }
 export interface CommonDomainHelperProps {
   readonly naming: IMdaaResourceNaming;
@@ -425,6 +435,7 @@ export class CommonDomainHelper {
         domain.attrRootDomainUnitId,
         rootAuthPolicies,
         domainProps,
+        domain.attrRootDomainUnitId,
       );
     }
 
@@ -660,6 +671,12 @@ export class CommonDomainHelper {
           'datazone:GetUserProfile',
         ],
       }),
+      // Form type management. These actions don't support resource-level permissions
+      // (see the AwsSolutions-IAM5 suppression below), so a scoped Resource would never match.
+      new PolicyStatement({
+        resources: ['*'],
+        actions: ['datazone:CreateFormType', 'datazone:DeleteFormType', 'datazone:GetFormType'],
+      }),
       // iam:GetRole needed by DataZone API calls (aws:ViaAWSService used instead of
       // aws:CalledVia as IAM global endpoint calls don't reliably propagate CalledVia)
       new PolicyStatement({
@@ -702,6 +719,11 @@ export class CommonDomainHelper {
         reason:
           'datazone:Get*/List* do not support resource-level permissions ' +
           '(https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html). ' +
+          'The form type management actions (CreateFormType, DeleteFormType, GetFormType) also do not ' +
+          'support resource-level permissions ' +
+          '(https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html; ' +
+          'none carries a Resources entry in the machine-readable Service Reference for DataZone: ' +
+          'https://servicereference.us-east-1.amazonaws.com/v1/datazone/datazone.json). ' +
           'iam:GetRole does not support resource-level permissions ' +
           '(https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html) ' +
           'and is further scoped via aws:ViaAWSService condition.',
@@ -894,17 +916,16 @@ export class CommonDomainHelper {
   // Recursively creates authorization policies for domain units
   public createDomainUnitsAuthorizationPolicies(
     scope: Construct,
-    domainId: string,
+    domainContext: DomainAuthorizationContext,
     userProfiles: {
       domainUsers: { [name: string]: CfnUserProfile };
       domainGroups: { [name: string]: CfnGroupProfile };
       associatedAccountCdkUserProfiles: { [name: string]: CfnUserProfile };
     },
-    domainVersion: 'V1' | 'V2',
     domainUnits?: NamedDomainUnits,
     createdDomainUnits?: { [name: string]: CreatedDomainUnit },
-    domainProps?: DataZoneDomainProps,
   ): void {
+    const { domainId, domainVersion, domainProps, rootDomainUnitId } = domainContext;
     Object.entries(domainUnits ?? {}).forEach(([domainUnitName, domainUnitProps]) => {
       const domainUnit = createdDomainUnits?.[domainUnitName];
       if (!domainUnit) {
@@ -1016,6 +1037,7 @@ export class CommonDomainHelper {
           domainUnit.construct.domainUnitId,
           authPolicies,
           domainProps,
+          rootDomainUnitId,
         );
       }
 
@@ -1023,12 +1045,10 @@ export class CommonDomainHelper {
       if (domainUnitProps.domainUnits && createdDomainUnits?.[domainUnitName]?.domainUnits) {
         this.createDomainUnitsAuthorizationPolicies(
           scope,
-          domainId,
+          domainContext,
           userProfiles,
-          domainVersion,
           domainUnitProps.domainUnits,
           createdDomainUnits[domainUnitName].domainUnits,
-          domainProps,
         );
       }
     });
@@ -1042,6 +1062,7 @@ export class CommonDomainHelper {
     entityId: string,
     policies: Record<string, AuthorizationPolicy>,
     domainProps?: DataZoneDomainProps,
+    rootDomainUnitId?: string,
   ): DataZoneAuthorizationConstruct {
     try {
       const authorizationConstruct = this.createDataZoneAuthorizationConstruct(
@@ -1051,6 +1072,7 @@ export class CommonDomainHelper {
         entityId,
         policies,
         domainProps,
+        rootDomainUnitId,
       );
 
       return authorizationConstruct;
@@ -1071,6 +1093,7 @@ export class CommonDomainHelper {
     entityId: string,
     policies: Record<string, AuthorizationPolicy>,
     domainProps?: DataZoneDomainProps,
+    rootDomainUnitId?: string,
   ): DataZoneAuthorizationConstruct {
     // Resolve user identifiers from IAM roles or SSO IDs
     const userIdentifiers: { [name: string]: string } = Object.fromEntries(
@@ -1109,6 +1132,7 @@ export class CommonDomainHelper {
         userIdentifiers: userIdentifiers,
         groupIdentifiers: groupIdentifiers,
         accountIdentifiers: accountIdentifiers,
+        rootDomainUnitId: rootDomainUnitId,
       });
     } catch (error) {
       throw new Error(
@@ -1279,16 +1303,19 @@ export class CommonDomainHelper {
     // Apply authorization policies if any are defined
     this.createDomainUnitsAuthorizationPolicies(
       domain,
-      domain.attrId,
+      {
+        domainId: domain.attrId,
+        domainVersion,
+        domainProps,
+        rootDomainUnitId: domain.attrRootDomainUnitId,
+      },
       {
         domainUsers: profileManagement.userProfiles,
         domainGroups: profileManagement.groupProfiles,
         associatedAccountCdkUserProfiles: associatedAccountCdkUserProfiles || {},
       },
-      domainVersion,
       domainProps.domainUnits,
       createdDomainUnits,
-      domainProps,
     );
 
     return { profileManagement, createdDomainUnits };
@@ -1537,6 +1564,25 @@ export class CommonDomainHelper {
       domain.attrId,
       domain.attrRootDomainUnitId,
       { 'custom-resource-role-auth': authorizonPolicy },
+      domainProps,
+    );
+
+    // CreateFormType is gated on a CREATE_FORM_TYPE grant to a project grant filter. Grant it to
+    // project owners (this role is made one per project), including child domain units since
+    // SMUS places projects there, via the L2 authorization construct.
+    this.createAuthorizationPolicies(
+      'custom-resource-role-create-form-type',
+      scope,
+      domain.attrId,
+      domain.attrRootDomainUnitId,
+      {
+        'custom-resource-role-create-form-type': DataZoneAuthorizationConstruct.createProjectAuthorizationPolicy(
+          'CREATE_FORM_TYPE',
+          domain.attrRootDomainUnitId,
+          ProjectDesignation.OWNER,
+          true,
+        ),
+      },
       domainProps,
     );
 

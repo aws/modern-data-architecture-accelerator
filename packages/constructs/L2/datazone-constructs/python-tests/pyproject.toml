@@ -22,7 +22,7 @@ addopts = [
 ]
 
 [tool.coverage.run]
-source = ["../src/lambda/check_user_profiles", "../src/lambda/create_project_membership", "../src/lambda/domain_config", "../src/lambda/environment_blueprint", "../src/lambda/monitor_env_deployment"]
+source = ["../src/lambda"]
 omit = [
     "*/tests/*",
     "*/test_*",

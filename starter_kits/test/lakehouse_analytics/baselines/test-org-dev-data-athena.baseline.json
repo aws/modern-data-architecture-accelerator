@@ -60,24 +60,6 @@
         "aws:cdk:path": "test-org-dev-data-athena/Role-Res-AthenaUser-0/Default"
       }
     },
-    "RoleResAthenaUser1": {
-      "Type": "AWS::CloudFormation::CustomResource",
-      "Properties": {
-        "ServiceToken": {
-          "Ref": "SsmParameterValuetestorgdatacaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
-        },
-        "roleRef": {
-          "refId": "AthenaUser-1",
-          "arn": "arn:test-partition:iam::111111111111:role/service-role/aws-quicksight-service-role-v0",
-          "immutable": true
-        }
-      },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
-      "Metadata": {
-        "aws:cdk:path": "test-org-dev-data-athena/Role-Res-AthenaUser-1/Default"
-      }
-    },
     "CaefWorkgroupKeyB5F3DF98": {
       "Type": "AWS::KMS::Key",
       "Properties": {
@@ -310,6 +292,24 @@
       },
       "Metadata": {
         "aws:cdk:path": "test-org-dev-data-athena/CaefWorkgroupKey/kms-key-id/ssm/Resource"
+      }
+    },
+    "RoleResAthenaUser1": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgdatacaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "AthenaUser-1",
+          "arn": "arn:test-partition:iam::111111111111:role/service-role/aws-quicksight-service-role-v0",
+          "immutable": true
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-data-athena/Role-Res-AthenaUser-1/Default"
       }
     },
     "Bucketworkgroup1C478AC6": {

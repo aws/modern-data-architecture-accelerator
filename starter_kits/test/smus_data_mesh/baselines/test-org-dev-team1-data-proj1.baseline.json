@@ -213,47 +213,6 @@
         "aws:cdk:path": "test-org-dev-team1-data-proj1/construct/sagemaker/project-dataops/project-dataops-dataops/ssm/Resource"
       }
     },
-    "constructsagemakerprojectdataopsenvdeploymentmonitor3D944211": {
-      "Type": "Custom::EnvDeploymentMonitor",
-      "Properties": {
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "customEnvDeploymentMonitorproviderframeworkonEvent32E39E2B",
-            "Arn"
-          ]
-        },
-        "domainId": {
-          "Ref": "constructsagemakerdomainconfigparserdomainconfigparserssmdomainidParameter6F93BD9C"
-        },
-        "projectId": {
-          "Fn::GetAtt": [
-            "constructsagemakerprojectdataopsproject7423C7DC",
-            "Id"
-          ]
-        },
-        "envName": "Tooling",
-        "connectionName": "LAKEHOUSE",
-        "kmsPolicyArn": {
-          "Fn::Join": [
-            "",
-            [
-              "arn:test-partition:iam::222222222222:policy/",
-              {
-                "Ref": "constructsagemakerdomainconfigparserdomainconfigparserssmdomainkmsusagepolicynameParameter2A4AD1E3"
-              }
-            ]
-          ]
-        }
-      },
-      "DependsOn": [
-        "constructsagemakerprojectdataopsmonitorcrprojectmembership399EEAD8"
-      ],
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
-      "Metadata": {
-        "aws:cdk:path": "test-org-dev-team1-data-proj1/construct/sagemaker/project-dataops/env-deployment-monitor/Default"
-      }
-    },
     "constructsagemakerprojectdataopsuserprofilemanagermonitorhandlerroleD53AA513": {
       "Type": "Custom::UserProfileManager",
       "Properties": {
@@ -308,6 +267,47 @@
       },
       "Metadata": {
         "aws:cdk:path": "test-org-dev-team1-data-proj1/construct/sagemaker/project-dataops/monitor-cr-project-membership"
+      }
+    },
+    "constructsagemakerprojectdataopsenvdeploymentmonitor3D944211": {
+      "Type": "Custom::EnvDeploymentMonitor",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customEnvDeploymentMonitorproviderframeworkonEvent32E39E2B",
+            "Arn"
+          ]
+        },
+        "domainId": {
+          "Ref": "constructsagemakerdomainconfigparserdomainconfigparserssmdomainidParameter6F93BD9C"
+        },
+        "projectId": {
+          "Fn::GetAtt": [
+            "constructsagemakerprojectdataopsproject7423C7DC",
+            "Id"
+          ]
+        },
+        "envName": "Tooling",
+        "connectionName": "LAKEHOUSE",
+        "kmsPolicyArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:test-partition:iam::222222222222:policy/",
+              {
+                "Ref": "constructsagemakerdomainconfigparserdomainconfigparserssmdomainkmsusagepolicynameParameter2A4AD1E3"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": [
+        "constructsagemakerprojectdataopsmonitorcrprojectmembership399EEAD8"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-team1-data-proj1/construct/sagemaker/project-dataops/env-deployment-monitor/Default"
       }
     },
     "constructathenaworkgroupE449636D": {

@@ -4,6 +4,7 @@
  */
 
 export * from './project';
+export * from './form-type';
 export * from './environment';
 export * from './domain_config';
 export * from './authorization';

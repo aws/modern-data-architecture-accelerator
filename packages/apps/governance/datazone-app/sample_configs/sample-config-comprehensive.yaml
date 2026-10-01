@@ -269,6 +269,21 @@ domains:
                 users:
                   - sso-user-name
 
+            # (Optional) Fine-grained authorization policies. CREATE_FORM_TYPE is granted to
+            # project members by designation (projectConfig) rather than to named users or
+            # groups. The module already grants CREATE_FORM_TYPE to project owners on the root
+            # domain unit, and DataZone rejects a second grant on the same unit, so configure it
+            # on a child domain unit.
+            authorizationPolicies:
+              create-form-type-project-policy:
+                policyType: 'CREATE_FORM_TYPE'
+                # Required by the schema, but ignored when projectConfig is set.
+                principals: []
+                projectConfig:
+                  domainUnitId: '/root'
+                  projectDesignation: OWNER
+                  includeChildDomainUnits: false
+
     # (Optional) Cross-account associations
     associatedAccounts:
       associated-account-name1:

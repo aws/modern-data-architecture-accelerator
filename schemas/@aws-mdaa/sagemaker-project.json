@@ -725,6 +725,48 @@
             ],
             "type": "object"
         },
+        "FormFieldProps": {
+            "additionalProperties": false,
+            "properties": {
+                "glossaryId": {
+                    "description": "Glossary ID whose terms this field stores, annotated via\n`@amazon.datazone#glossaryterm(\"<id>\")`. Makes the field filterable via the\nSearch/SearchListings APIs.\n\nValidation: Optional; valid DataZone glossary ID",
+                    "type": "string"
+                },
+                "required": {
+                    "default": false,
+                    "description": "When true, the field is annotated `@required` and must be populated when the\nform is attached to an asset.\n\nValidation: Optional; boolean",
+                    "type": "boolean"
+                },
+                "searchable": {
+                    "description": "Search indexing modes for the field, annotated via `@amazon.datazone#searchable`.\nLEXICAL enables stemmed/partial matches (disables semantic search); TECHNICAL\nindexes for technical identifier search. Omit for no explicit indexing.\n\nValidation: Optional; array of 'LEXICAL' | 'TECHNICAL'",
+                    "items": {
+                        "enum": [
+                            "LEXICAL",
+                            "TECHNICAL"
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "type": {
+                    "description": "Smithy prelude type for the field (e.g. String, Boolean, Integer).\n\nValidation: Required; one of String | Boolean | Integer | Long | Float | Double | Timestamp",
+                    "enum": [
+                        "Boolean",
+                        "Double",
+                        "Float",
+                        "Integer",
+                        "Long",
+                        "String",
+                        "Timestamp"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "type": "object"
+        },
         "FunctionReference": {
             "additionalProperties": false,
             "description": "A reference to a Function resource.",
@@ -2210,6 +2252,35 @@
             ],
             "type": "object"
         },
+        "MetadataFormProps": {
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "description": "Human-readable description of the form type.\n\nUse cases: Form documentation; Governance context\n\nAWS: DataZone form type description\n\nValidation: Optional; string",
+                    "type": "string"
+                },
+                "fields": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/FormFieldProps"
+                    },
+                    "description": "Field definitions for the form. Each entry becomes a member of the generated\nSmithy structure; declaration order is preserved.\n\nUse cases: Custom metadata attributes; Required governance fields; Searchable attributes\n\nAWS: Smithy structure members in a DataZone form type model\n\nValidation: Required; non-empty map of field name to FormFieldProps",
+                    "type": "object"
+                },
+                "status": {
+                    "default": "ENABLED",
+                    "description": "Form type status. DISABLED form types are retained but not attachable.\n\nUse cases: Staged form rollout; Temporarily retiring a form\n\nAWS: DataZone form type status\n\nValidation: Optional; 'ENABLED' | 'DISABLED'",
+                    "enum": [
+                        "DISABLED",
+                        "ENABLED"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "fields"
+            ],
+            "type": "object"
+        },
         "NamedProfileEnvironmentConfigs": {
             "additionalProperties": {
                 "$ref": "#/definitions/ProfileEnvironmentConfig"
@@ -2592,6 +2663,13 @@
                         "type": "string"
                     },
                     "description": "MDAA group configuration names that receive PROJECT_CONTRIBUTOR designation\nwith contributor-level access to the project.\n\nUse cases: Team-based project contribution; Group standard access\n\nAWS: DataZone project membership with PROJECT_CONTRIBUTOR role\n\nValidation: Optional; map of ID to group config name; names must exist in module groups config",
+                    "type": "object"
+                },
+                "metadataForms": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MetadataFormProps"
+                    },
+                    "description": "Metadata form types to create, owned by this project. Each form is defined by\na set of fields; MDAA assembles the Smithy model (setting the namespace to the\ndomain ID and the structure name to the form name). Forms are usable across the\ndomain to attach standardized metadata to assets. The map key is used as the form's\nstable identifier; renaming a key replaces that form type (delete-then-create).\n\nUse cases: Data governance metadata standards; Asset metadata enforcement; Searchable custom attributes\n\nAWS: DataZone metadata form types (AWS::DataZone::FormType) owned by the project\n\nValidation: Optional; map of form name to MetadataFormProps; form name must be a valid Smithy structure name",
                     "type": "object"
                 },
                 "ownerGroups": {

@@ -5,6 +5,8 @@
 
 import {
   DomainConfig,
+  FormFieldProps,
+  MdaaDatazoneFormType,
   MdaaDatazoneProjectProps,
   MdaaSageMakerProject,
   ProjectEnvironmentConfiguration,
@@ -122,6 +124,56 @@ export interface SageMakerProjectProps {
    * Validation: Optional; map of data source name to DataSourceProps
    */
   readonly dataSources?: { [name: string]: DataSourceProps };
+
+  /**
+   * Metadata form types to create, owned by this project. Each form is defined by
+   * a set of fields; MDAA assembles the Smithy model (setting the namespace to the
+   * domain ID and the structure name to the form name). Forms are usable across the
+   * domain to attach standardized metadata to assets. The map key is used as the form's
+   * stable identifier; renaming a key replaces that form type (delete-then-create).
+   *
+   * Use cases: Data governance metadata standards; Asset metadata enforcement; Searchable custom attributes
+   *
+   * AWS: DataZone metadata form types (AWS::DataZone::FormType) owned by the project
+   *
+   * Validation: Optional; map of form name to MetadataFormProps; form name must be a valid Smithy structure name
+   */
+  readonly metadataForms?: { [formName: string]: MetadataFormProps };
+}
+
+export interface MetadataFormProps {
+  /**
+   * Field definitions for the form. Each entry becomes a member of the generated
+   * Smithy structure; declaration order is preserved.
+   *
+   * Use cases: Custom metadata attributes; Required governance fields; Searchable attributes
+   *
+   * AWS: Smithy structure members in a DataZone form type model
+   *
+   * Validation: Required; non-empty map of field name to FormFieldProps
+   */
+  readonly fields: { [fieldName: string]: FormFieldProps };
+  /**
+   * Human-readable description of the form type.
+   *
+   * Use cases: Form documentation; Governance context
+   *
+   * AWS: DataZone form type description
+   *
+   * Validation: Optional; string
+   */
+  readonly description?: string;
+  /**
+   * Form type status. DISABLED form types are retained but not attachable.
+   *
+   * Use cases: Staged form rollout; Temporarily retiring a form
+   *
+   * AWS: DataZone form type status
+   *
+   * Validation: Optional; 'ENABLED' | 'DISABLED'
+   * @default ENABLED
+   */
+  readonly status?: 'ENABLED' | 'DISABLED';
 }
 
 export interface DataSourceProps {
@@ -445,7 +497,32 @@ export class SagemakerProjectL3Construct extends MdaaL3Construct {
     );
     console.debug(`Created ${createdDataSources.length} datasources`);
 
+    Object.entries(projectProps.metadataForms || {}).forEach(([formName, formProps]) => {
+      this.createMetadataForm(project, formName, formProps);
+    });
+
     return project;
+  }
+
+  private createMetadataForm(
+    project: MdaaSageMakerProject,
+    formName: string,
+    formProps: MetadataFormProps,
+  ): MdaaDatazoneFormType {
+    // Created via the domain custom-resource role, so wait for its PROJECT_OWNER membership. The map
+    // key is the construct ID, so renaming a form key replaces the form type.
+    const form = new MdaaDatazoneFormType(project, `form-${formName}`, {
+      naming: this.props.naming,
+      domainIdentifier: project.project.attrDomainId,
+      owningProjectIdentifier: project.project.attrId,
+      formName: formName,
+      fields: formProps.fields,
+      description: formProps.description,
+      status: formProps.status,
+      handlerRole: project.customResourceRole,
+    });
+    form.node.addDependency(project.crRoleProjectMembership);
+    return form;
   }
 
   private createDataSource(

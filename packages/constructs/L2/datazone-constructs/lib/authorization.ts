@@ -30,6 +30,9 @@ export enum EntityType {
   ASSET_TYPE = 'ASSET_TYPE',
 }
 
+// Path alias for the domain's root domain unit; DataZone itself only accepts domain unit IDs.
+const ROOT_DOMAIN_UNIT_PATH = '/root';
+
 export enum ProjectDesignation {
   OWNER = 'OWNER',
   CONTRIBUTOR = 'CONTRIBUTOR',
@@ -37,6 +40,34 @@ export enum ProjectDesignation {
 
 export interface BlueprintAuthorizationConfig {
   readonly projectDesignation?: ProjectDesignation;
+  readonly includeChildDomainUnits?: boolean;
+}
+
+/**
+ * Configuration for granting an authorization policy to project members via a
+ * project grant filter, instead of to named users or groups. Required by DataZone
+ * for policies such as CREATE_FORM_TYPE that are gated on project membership rather
+ * than a specific principal.
+ */
+export interface ProjectAuthorizationConfig {
+  /**
+   * The project designation (OWNER or CONTRIBUTOR) whose members receive the grant.
+   *
+   * @default ProjectDesignation.OWNER
+   */
+  readonly projectDesignation?: ProjectDesignation;
+  /**
+   * The ID of the domain unit whose projects receive the grant, or '/root' for the
+   * domain's root domain unit. Other domain unit paths are not supported.
+   *
+   * @default '/root'
+   */
+  readonly domainUnitId?: string;
+  /**
+   * Whether projects in domain units below the specified domain unit also receive the grant.
+   *
+   * @default false
+   */
   readonly includeChildDomainUnits?: boolean;
 }
 
@@ -69,6 +100,15 @@ export interface AuthorizationPolicy {
   readonly includeChildDomainUnits?: boolean;
   readonly domainUnitId?: string; // Used for blueprint principal configuration, not detail
   readonly blueprintConfig?: BlueprintAuthorizationConfig;
+  /**
+   * When set, the grant uses a project grant filter principal (project members with the
+   * given designation) rather than a user/group principal. Used for domain-unit policies
+   * such as CREATE_FORM_TYPE that DataZone requires be granted to a project designation.
+   * `principals` is required by the schema but ignored when this is set.
+   *
+   * @default - not a project-principal grant; principals is used instead
+   */
+  readonly projectConfig?: ProjectAuthorizationConfig;
 }
 
 export interface ResolvedUserPrincipalIdentifier {
@@ -105,6 +145,11 @@ export interface DataZoneAuthorizationConstructProps extends MdaaConstructProps 
   readonly userIdentifiers?: NamedUserIdentifiers;
   readonly groupIdentifiers?: NamedGroupIdentifiers;
   readonly accountIdentifiers?: NamedUserIdentifiers;
+  /**
+   * ID of the domain's root domain unit. Required to resolve a projectConfig domainUnitId of
+   * '/root' (the default), which is a path alias rather than a value DataZone accepts.
+   */
+  readonly rootDomainUnitId?: string;
 }
 
 export class PrincipalResolver {
@@ -167,8 +212,14 @@ export class DataZoneAuthorizationConstruct extends Construct {
   // Constants for blueprint authorization
   private static readonly BLUEPRINT_ENTITY_TYPE = EntityType.ENVIRONMENT_BLUEPRINT_CONFIGURATION;
   private static readonly BLUEPRINT_POLICY_TYPE: PolicyType = 'CREATE_ENVIRONMENT_FROM_BLUEPRINT';
+  // Defaults for the blueprintConfig principal path.
   private static readonly DEFAULT_PROJECT_DESIGNATION = ProjectDesignation.CONTRIBUTOR;
   private static readonly DEFAULT_INCLUDE_CHILD_UNITS = true;
+  // Defaults for the projectConfig principal path. Deliberately the narrowest grant, so an
+  // empty projectConfig can never widen access; shared with createProjectAuthorizationPolicy.
+  private static readonly DEFAULT_PROJECT_CONFIG_DESIGNATION = ProjectDesignation.OWNER;
+  private static readonly DEFAULT_PROJECT_CONFIG_INCLUDE_CHILD_UNITS = false;
+  private static readonly DEFAULT_PROJECT_CONFIG_DOMAIN_UNIT_ID = ROOT_DOMAIN_UNIT_PATH;
 
   constructor(scope: Construct, id: string, props: DataZoneAuthorizationConstructProps) {
     super(scope, id);
@@ -186,8 +237,23 @@ export class DataZoneAuthorizationConstruct extends Construct {
     const grants: CfnPolicyGrant[] = [];
 
     Object.entries(props.policies).forEach(([policyName, policy]) => {
+      // For project-principal policies, create a single grant (principals array is ignored).
+      // The principal is a project grant filter (project members with a designation) rather
+      // than a specific user/group, as required by DataZone for policies like CREATE_FORM_TYPE.
+      if (policy.projectConfig) {
+        const grant = new CfnPolicyGrant(this, `policy-grant-${policyName}`, {
+          domainIdentifier: props.domainId,
+          entityIdentifier: props.entityId,
+          entityType: props.entityType,
+          policyType: policy.policyType,
+          principal: this.createProjectAuthorizationPrincipal(policy, props.rootDomainUnitId),
+          detail: this.createProjectAuthorizationDetail(policy),
+        });
+        this.configureGrant(grant, policy, policyName, 'project');
+        grants.push(grant);
+      }
       // For blueprint policies, create a single grant (principals array is ignored)
-      if (this.isBlueprintPolicy(props.entityType, policy.policyType)) {
+      else if (this.isBlueprintPolicy(props.entityType, policy.policyType)) {
         const detail = this.createPolicyGrantDetail(props, policy);
         const grantId = `policy-grant-${policyName}`;
 
@@ -291,6 +357,57 @@ export class DataZoneAuthorizationConstruct extends Construct {
     return { [propertyName]: {} };
   }
 
+  private createProjectAuthorizationPrincipal(
+    policy: AuthorizationPolicy,
+    rootDomainUnitId?: string,
+  ): ResolvedBlueprintPrincipal {
+    const config = policy.projectConfig ?? {};
+    const domainUnitId = DataZoneAuthorizationConstruct.resolveProjectDomainUnitId(
+      config.domainUnitId || DataZoneAuthorizationConstruct.DEFAULT_PROJECT_CONFIG_DOMAIN_UNIT_ID,
+      rootDomainUnitId,
+    );
+    const projectDesignation =
+      config.projectDesignation || DataZoneAuthorizationConstruct.DEFAULT_PROJECT_CONFIG_DESIGNATION;
+    const includeChildUnits =
+      config.includeChildDomainUnits ?? DataZoneAuthorizationConstruct.DEFAULT_PROJECT_CONFIG_INCLUDE_CHILD_UNITS;
+
+    return {
+      project: {
+        projectGrantFilter: {
+          domainUnitFilter: {
+            domainUnit: domainUnitId,
+            includeChildDomainUnits: includeChildUnits,
+          },
+        },
+        projectDesignation: projectDesignation,
+      },
+    };
+  }
+
+  /** Maps the '/root' alias to the real root domain unit ID; other values must already be IDs. */
+  private static resolveProjectDomainUnitId(domainUnitId: string, rootDomainUnitId?: string): string {
+    if (domainUnitId === ROOT_DOMAIN_UNIT_PATH) {
+      if (!rootDomainUnitId) {
+        throw new Error(`projectConfig.domainUnitId '${ROOT_DOMAIN_UNIT_PATH}' requires rootDomainUnitId to be set`);
+      }
+      return rootDomainUnitId;
+    }
+    if (domainUnitId.startsWith('/')) {
+      throw new Error(
+        `projectConfig.domainUnitId '${domainUnitId}' must be '${ROOT_DOMAIN_UNIT_PATH}' or a domain unit ID; other domain unit paths are not supported`,
+      );
+    }
+    return domainUnitId;
+  }
+
+  private createProjectAuthorizationDetail(policy: AuthorizationPolicy): CfnPolicyGrant.PolicyGrantDetailProperty {
+    const propertyName = this.getPolicyDetailPropertyName(policy.policyType);
+    const includeChildUnits =
+      policy.projectConfig?.includeChildDomainUnits ??
+      DataZoneAuthorizationConstruct.DEFAULT_PROJECT_CONFIG_INCLUDE_CHILD_UNITS;
+    return { [propertyName]: { includeChildDomainUnits: includeChildUnits } };
+  }
+
   /**
    * Factory method to create blueprint authorization policies with proper configuration
    */
@@ -327,6 +444,33 @@ export class DataZoneAuthorizationConstruct extends Construct {
       principals: principals,
       description,
       includeChildDomainUnits,
+    };
+  }
+
+  /**
+   * Factory method to create a domain-unit authorization policy whose principal is a
+   * project grant filter (project members with a designation) rather than a user/group.
+   * Required for policies such as CREATE_FORM_TYPE that DataZone gates on a project
+   * designation instead of a specific principal.
+   */
+  public static createProjectAuthorizationPolicy(
+    policyType: Exclude<PolicyType, 'CREATE_ENVIRONMENT_FROM_BLUEPRINT'>,
+    domainUnitId: string,
+    projectDesignation?: ProjectDesignation,
+    includeChildDomainUnits?: boolean,
+    description?: string,
+  ): AuthorizationPolicy {
+    return {
+      policyType,
+      principals: [],
+      description,
+      projectConfig: {
+        domainUnitId,
+        // Narrowest scope by default; callers opt into breadth.
+        projectDesignation: projectDesignation ?? DataZoneAuthorizationConstruct.DEFAULT_PROJECT_CONFIG_DESIGNATION,
+        includeChildDomainUnits:
+          includeChildDomainUnits ?? DataZoneAuthorizationConstruct.DEFAULT_PROJECT_CONFIG_INCLUDE_CHILD_UNITS,
+      },
     };
   }
 

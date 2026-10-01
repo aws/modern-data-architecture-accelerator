@@ -5310,6 +5310,95 @@
         }
       }
     },
+    "datazonetestdomaindomaindomainunittestunit1domainunitdomainunittestunit2authorizationpoliciespolicygrantcreateformtypeprojectpolicy94AB5013": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateFormType": {
+            "IncludeChildDomainUnits": false
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomain4A18F0C4",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomaindomainunittestunit1domainunitdomainunittestunit2domainunitDD25ED09",
+            "Id"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_FORM_TYPE",
+        "Principal": {
+          "Project": {
+            "ProjectDesignation": "OWNER",
+            "ProjectGrantFilter": {
+              "DomainUnitFilter": {
+                "DomainUnit": {
+                  "Fn::GetAtt": [
+                    "datazonetestdomaindomain4A18F0C4",
+                    "RootDomainUnitId"
+                  ]
+                },
+                "IncludeChildDomainUnits": false
+              }
+            }
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_FORM_TYPE",
+        "PolicyName": "create-form-type-project-policy",
+        "PrincipalName": "project",
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            }
+          ]
+        }
+      }
+    },
     "datazonetestdomaindomaindomainunittestunit1authorizationpoliciespolicygrantowneruserssousernameprojectmembershipssousernameB42E676C": {
       "Type": "AWS::DataZone::PolicyGrant",
       "Properties": {
@@ -8659,6 +8748,15 @@
               "Resource": "*"
             },
             {
+              "Action": [
+                "datazone:CreateFormType",
+                "datazone:DeleteFormType",
+                "datazone:GetFormType"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
               "Action": "iam:GetRole",
               "Condition": {
                 "Bool": {
@@ -8695,7 +8793,7 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] datazone:Get*/List* do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html). iam:GetRole does not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html) and is further scoped via aws:ViaAWSService condition.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] datazone:Get*/List* do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html). The form type management actions (CreateFormType, DeleteFormType, GetFormType) also do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html; none carries a Resources entry in the machine-readable Service Reference for DataZone: https://servicereference.us-east-1.amazonaws.com/v1/datazone/datazone.json). iam:GetRole does not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html) and is further scoped via aws:ViaAWSService condition.",
               "id": "AwsSolutions-IAM5"
             }
           ]
@@ -8812,6 +8910,51 @@
         "PolicyType": "ADD_TO_PROJECT_MEMBER_POOL",
         "PolicyName": "custom-resource-role-auth",
         "PrincipalName": "custom-resource-user"
+      }
+    },
+    "datazonetestdomaindomaincustomresourcerolecreateformtypepolicygrantcustomresourcerolecreateformtype01F85798": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateFormType": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomain4A18F0C4",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomain4A18F0C4",
+            "RootDomainUnitId"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_FORM_TYPE",
+        "Principal": {
+          "Project": {
+            "ProjectDesignation": "OWNER",
+            "ProjectGrantFilter": {
+              "DomainUnitFilter": {
+                "DomainUnit": {
+                  "Fn::GetAtt": [
+                    "datazonetestdomaindomain4A18F0C4",
+                    "RootDomainUnitId"
+                  ]
+                },
+                "IncludeChildDomainUnits": true
+              }
+            }
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_FORM_TYPE",
+        "PolicyName": "custom-resource-role-create-form-type",
+        "PrincipalName": "project"
       }
     },
     "datazonetestdomaindomainenvblueprintconfigtestdomainLakehouseCatalogconfigDABBF7BC": {

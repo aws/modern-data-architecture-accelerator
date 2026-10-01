@@ -16,9 +16,22 @@
 
 - Added `additionalBucketKmsKeyArns` and per-bucket `additionalKmsKeyArns` to let buckets accept objects encrypted with keys the module did not create, so Glue jobs can write into a data lake split across several Data Lake modules. Both are optional; existing configs are unchanged. See the [module README](packages/apps/datalake/datalake-app/README.md#trusting-additional-kms-keys).
 
+#### DataOps Project and SageMaker Project Modules
+
+- Added **metadata form types** via a new `metadataForms` property on each SageMaker project (`sagemaker.project` in the DataOps Project module). Forms are defined declaratively by their fields (type, `required`, `searchable` modes, `glossaryId`), letting projects attach standardized, searchable metadata to assets across the domain. Form types are created only when the property is set, but redeploy the DataZone/SageMaker domain module first (see DataZone/SMUS Modules below), or the domain won't yet have granted form-type creation to the custom-resource role. See the [SageMaker Project module README](packages/apps/governance/sagemaker-project-app/README.md) for the config surface.
+
+#### DataZone/SMUS Modules
+
+- Added an optional `projectConfig` to authorization policies, which grants a policy to project members holding a given designation (rather than to a user or group) via a project grant filter. Optional; existing configs are unchanged.
+- The domain custom-resource role now carries `datazone:CreateFormType`, `DeleteFormType` and `GetFormType`, and the domain gains a `CREATE_FORM_TYPE` policy grant, so projects can create form types. These are added unconditionally - existing domain deployments will see an IAM policy and policy-grant diff on the next deploy even when no project sets `metadataForms`.
+
 #### Naming
 
 - Added the `@aws-mdaa/namingEnforceInlinePolicies` opt-in context flag, which applies the MDAA resource naming convention to inline IAM policy names that CDK creates internally (e.g. via `role.addToPolicy()`) and to policies embedded in a role's `Policies[]`. Defaults to `false`; existing deployments are unaffected unless the flag is set. When enabled, standalone `AWS::IAM::Policy` renames are replaced by CloudFormation on the next deploy, while embedded role-policy renames are applied in place.
+
+#### SageMaker Project Module
+
+- Added **metadata form types** via a new `metadataForms` property on each project. Forms are defined declaratively by their fields (type, `required`, `searchable` modes, `glossaryId`), letting projects attach standardized, searchable metadata to assets across the domain. Form types are created only when the property is set, but redeploy the DataZone/SageMaker domain module first - see the DataZone/SMUS Modules entry above - or the domain won't yet have granted form-type creation to the custom-resource role. See the [module README](packages/apps/governance/sagemaker-project-app/README.md) for the config surface.
 
 #### Role References
 

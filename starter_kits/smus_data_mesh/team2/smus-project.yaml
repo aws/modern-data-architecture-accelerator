@@ -31,3 +31,29 @@ projects:
           # isolated encryption keys. The domain key is managed centrally.
           # Format: ssm: prefix indicates SSM parameter reference with full ARN
           kmsKey: ssm-org:/ent-data/smus-dom/kms/domain1-tooling/arn
+
+    # Metadata form types owned by this project. Form type names are domain-scoped and used
+    # verbatim as the Smithy structure name. Usable across the domain to standardize asset metadata.
+    metadataForms:
+      Team2CustomerForm:
+        description: Customer governance metadata
+        fields:
+          customerName:
+            type: String
+            required: true
+            searchable:
+              - TECHNICAL
+          tier:
+            type: String
+            searchable:
+              - LEXICAL
+          activeFlag:
+            type: Boolean
+          recordCount:
+            type: Integer
+      Team2RetiredForm:
+        description: Form retained but not attachable
+        status: DISABLED
+        fields:
+          note:
+            type: String
