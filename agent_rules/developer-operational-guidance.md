@@ -45,11 +45,11 @@ When creating MRs/PRs:
 
 ## GitLab access
 
-`code.aws.dev` is a GitLab site. To read or act on anything there (MRs, issues, discussions, files, pipelines), use ONLY the GitLab MCP tools (`mcp__gitlab__*`).
+This repository's `origin` is a GitLab site — run `git remote get-url origin` for the host. To read or act on anything there (MRs, issues, discussions, files, pipelines), use ONLY the GitLab MCP tools (`mcp__gitlab__*`).
 
 There is no fallback. You MUST NOT substitute any other mechanism, including:
 
-- Web-fetch tools — the builder-mcp `ReadInternalWebsites` tool, `WebFetch`, or any similar tool, on a `code.aws.dev` URL
+- Web-fetch tools — `WebFetch`, any authenticated-browsing tool your harness offers, or anything similar, on a GitLab URL
 - CLI tools — `glab` in particular, and any other GitLab client
 - Direct API calls — `curl`/`git` against the REST or GraphQL endpoints, with any token source
 

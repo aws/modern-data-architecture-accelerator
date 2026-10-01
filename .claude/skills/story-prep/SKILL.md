@@ -20,16 +20,20 @@ The user may not have switched off a previous story's branch, so the checked-out
 If the user already gave an ID or URL in their request, use it and don't re-ask. Accept either form:
 
 - Bare number: `1345`
-- URL: `https://code.aws.dev/proserve/mdaa/modern-data-architecture-accelerator/-/work_items/1345` (or `/-/issues/1345`) — the trailing path segment is the `issue_iid`
+- A work-item URL ending `/-/work_items/1345` (or `/-/issues/1345`) — the trailing path segment is the `issue_iid`
 
-Fetch it with the GitLab MCP tools, never a web-fetch tool (see `agent_rules/developer-operational-guidance.md` § GitLab access):
+Fetch it with the GitLab MCP tools, never a web-fetch tool (see `agent_rules/developer-operational-guidance.md` § GitLab access). Derive `project_id` from the remote rather than hardcoding it, so the skill follows whatever `origin` points at:
+
+```bash
+git remote get-url origin | sed -E 's#^(git@[^:]+:|ssh://[^/]+/|https?://[^/]+/)##; s#\.git$##; s#/#%2F#g'
+```
 
 ```
-mcp__gitlab__get_issue         project_id: "18688"  issue_iid: "1345"
-mcp__gitlab__list_issue_discussions   project_id: "18688"  issue_iid: "1345"
+mcp__gitlab__get_issue                project_id: "<that value>"  issue_iid: "1345"
+mcp__gitlab__list_issue_discussions   project_id: "<that value>"  issue_iid: "1345"
 ```
 
-`project_id` gotcha: the numeric ID `18688` works, and the URL-**encoded** path works (`proserve%2Fmdaa%2Fmodern-data-architecture-accelerator`). The raw slash-separated path returns `404 Project Not Found`. Prefer the numeric ID.
+The `%2F` substitution is deliberate: the GitLab REST API specifies `project_id` as a numeric ID or a URL-**encoded** path. Not every MCP tool passes it through the same way, so if one returns `404 Project Not Found` for the encoded path, retry that call with the raw slash-separated path, or with the numeric `project_id` that any successful response carries.
 
 Read the discussions too, not just the description. They reveal status transitions and — importantly — whether **work already exists**: a linked MR, a "mentioned in commit" note, or an existing branch. If any exist, stop and tell the user before creating anything; the right move is usually to check out that branch or review that MR rather than start fresh.
 
@@ -73,12 +77,7 @@ The goal is not to summarize the story — it's to find the things that would wa
 
 **Verify AWS service-capability claims against current AWS documentation.** A repo-only review cannot catch these. A synth proves the template renders; it says nothing about whether the service still accepts a property, whether a capability was deprecated, or whether an API the story names exists at all. Stories citing service behaviour — quotas, TTLs, condition keys, API names, defaults, regional availability — are asserting things that move independently of this repo, and your training data is not a source for them.
 
-Use the MCP tools, not a web-fetch tool. `docs.aws.amazon.com` renders client-side, so `WebFetch` returns an empty page and looks like a missing doc:
-
-```
-mcp__builder-mcp__InternalSearch        query: "<service> <capability>"  domain: AWS_DOCS
-mcp__builder-mcp__ReadInternalWebsites  inputs: ["https://docs.aws.amazon.com/<path>"]
-```
+Use an AWS-documentation MCP server, not a plain web fetch. `docs.aws.amazon.com` renders client-side, so `WebFetch` returns an empty page and looks like a missing doc. Whichever server your harness provides, it will expose a search tool and a read tool — use both.
 
 Search first — guessing doc URLs wastes turns, and the API Reference pages (`/latest/APIReference/API_<Op>.html`) carry the request shape and error list the dev guide often omits.
 
