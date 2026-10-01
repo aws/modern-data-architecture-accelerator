@@ -131,6 +131,39 @@ done < <(jq -r '
   | .key
 ' package-lock.json)
 
+# 4b. An entry without `resolved`+`integrity` installs by bare name@version with no tamper check.
+#     Compared against the pre-bump commit, not an absolute floor: most entries are unpinned today.
+echo "--- Checking lockfile pinning did not regress ---"
+# jq exits 0 on empty input, so the count must be validated as numeric before any comparison.
+count_pinned() {
+  local count
+  count=$(jq '[.packages // {} | .[] | select(.resolved != null and .integrity != null)] | length')
+  case "$count" in
+    '' | *[!0-9]*) return 1 ;;
+  esac
+  printf '%s' "$count"
+}
+for lock in package-lock.json installer/package-lock.json; do
+  [ -f "$lock" ] || continue
+  if ! pinned_now=$(count_pinned < "$lock"); then
+    echo "ERROR: could not count pinned entries in $lock; it is not readable JSON." >&2
+    exit 1
+  fi
+  if ! git cat-file -e "HEAD:$lock" 2>/dev/null; then
+    echo "WARNING: $lock is absent from HEAD; skipping the pinning comparison." >&2
+    continue
+  fi
+  if ! pinned_before=$(git show "HEAD:$lock" | count_pinned); then
+    echo "ERROR: could not count pinned entries in HEAD:$lock." >&2
+    exit 1
+  fi
+  if [ "$pinned_now" -lt "$pinned_before" ]; then
+    note_problem "$lock has $pinned_now entries with resolved+integrity, down from $pinned_before; the version bump must not regenerate the lockfile from scratch"
+  else
+    echo "$lock: $pinned_now pinned entries (was $pinned_before)."
+  fi
+done
+
 # 5. version_release.sh stamps these by substitution and cannot report what it produced.
 echo "--- Checking version-stamped files ---"
 if [ -f solution-manifest.yaml ] && ! grep -q "^version: v${EXPECTED_VERSION}$" solution-manifest.yaml; then

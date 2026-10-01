@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-rm package-lock.json
 echo "Running release versioning script."
 
 # package.json is the single version source of truth, kept in sync across all
@@ -121,18 +120,24 @@ fi
 # (see CHANGELOG.md heading) so the release pipeline can stamp the section without manual edits.
 if [ -f "CHANGELOG.md" ]; then
   RELEASE_DATE=$(date -u +%Y-%m-%d)
-  if grep -q "NEXT_RELEASE_VERSION" CHANGELOG.md; then
-    echo "Stamping CHANGELOG.md release heading with version $NEW_VERSION and date $RELEASE_DATE"
-    sed -i "s/^## \[NEXT_RELEASE_VERSION\] - NEXT_RELEASE_DATE$/## [${NEW_VERSION}] - ${RELEASE_DATE}/" CHANGELOG.md
-    if grep -q "NEXT_RELEASE_VERSION\|NEXT_RELEASE_DATE" CHANGELOG.md; then
-      echo "ERROR: CHANGELOG.md still contains release placeholders after substitution." >&2
-      exit 1
-    fi
-  else
-    echo "WARNING: CHANGELOG.md has no NEXT_RELEASE_VERSION placeholder; skipping release-heading substitution." >&2
+  # Matched byte-exactly, like the anchored `sed` below, so a trailing space or CRLF fails here
+  # rather than letting the substitution silently no-op. Fatal because the substitution is the
+  # only thing that gives the release a heading.
+  if ! grep -q "^## \[NEXT_RELEASE_VERSION\] - NEXT_RELEASE_DATE$" CHANGELOG.md; then
+    echo "ERROR: CHANGELOG.md has no '## [NEXT_RELEASE_VERSION] - NEXT_RELEASE_DATE' heading to stamp." >&2
+    echo "Add it above the newest release section on main, then re-run the release." >&2
+    exit 1
+  fi
+  echo "Stamping CHANGELOG.md release heading with version $NEW_VERSION and date $RELEASE_DATE"
+  sed -i "s/^## \[NEXT_RELEASE_VERSION\] - NEXT_RELEASE_DATE$/## [${NEW_VERSION}] - ${RELEASE_DATE}/" CHANGELOG.md
+  if grep -q "NEXT_RELEASE_VERSION\|NEXT_RELEASE_DATE" CHANGELOG.md; then
+    echo "ERROR: CHANGELOG.md still contains release placeholders after substitution." >&2
+    exit 1
   fi
 fi
 
+# Reinstall over the committed lockfile. With no lockfile present and node_modules populated, npm
+# re-emits each entry from the installed package.json, dropping every resolved/integrity pair.
 npm install
 
 # Assert the propagation above reached every package. The `sed` cascade is keyed on
@@ -141,8 +146,8 @@ npm install
 #
 # Scoped to npm workspaces plus the standalone installer: sample_customizations/*,
 # deployment/cdk-solution-helper, and the custom_aspect test fixture carry
-# deliberately independent versions. Runs after `npm install` because the lockfile
-# `npm query --package-lock-only` needs was removed at the top of this script.
+# deliberately independent versions. Runs after `npm install` so the lockfile that
+# `npm query --package-lock-only` reads already reflects the bump.
 # Materialized rather than expanded inline in the `for` list: a failing command substitution
 # there does not trip `set -e`, and npm writes its JSON error object to stdout where jq renders
 # it as "null" and exits 0. The floor catches an empty or truncated enumeration.
