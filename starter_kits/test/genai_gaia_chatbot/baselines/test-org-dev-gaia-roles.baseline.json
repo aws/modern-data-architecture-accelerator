@@ -1615,7 +1615,7 @@
             {
               "Action": "bedrock:GetInferenceProfile",
               "Effect": "Allow",
-              "Resource": "arn:test-partition:bedrock:*:test-account:inference-profile/us.*"
+              "Resource": "arn:aws:bedrock:*:test-account:inference-profile/us.*"
             },
             {
               "Action": [
@@ -1625,7 +1625,7 @@
               "Effect": "Allow",
               "Resource": [
                 "arn:aws:bedrock:us-east-1:111111111111:inference-profile/us.anthropic.claude-sonnet-4-5-20250929-v1:0",
-                "arn:test-partition:bedrock:*:test-account:inference-profile/us.anthropic.*"
+                "arn:aws:bedrock:*:test-account:inference-profile/us.anthropic.*"
               ]
             },
             {
@@ -1635,9 +1635,9 @@
               ],
               "Effect": "Allow",
               "Resource": [
-                "arn:test-partition:bedrock:us-east-1::foundation-model/anthropic.*",
-                "arn:test-partition:bedrock:us-east-2::foundation-model/anthropic.*",
-                "arn:test-partition:bedrock:us-west-2::foundation-model/anthropic.*"
+                "arn:aws:bedrock:us-east-1::foundation-model/anthropic.*",
+                "arn:aws:bedrock:us-east-2::foundation-model/anthropic.*",
+                "arn:aws:bedrock:us-west-2::foundation-model/anthropic.*"
               ]
             },
             {
@@ -2144,7 +2144,7 @@
           "Version": "2012-10-17"
         },
         "ManagedPolicyArns": [
-          "arn:test-partition:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+          "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
         ],
         "RoleName": "test-org-dev-gaia-roles-bedrock-rag-datasource",
         "Tags": [
@@ -2345,7 +2345,7 @@
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
               "Principal": {
-                "AWS": "arn:test-partition:iam::test-account:root"
+                "AWS": "arn:aws:iam::test-account:root"
               }
             }
           ],
@@ -2518,7 +2518,7 @@
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
               "Principal": {
-                "AWS": "arn:test-partition:iam::test-account:root"
+                "AWS": "arn:aws:iam::test-account:root"
               }
             }
           ],

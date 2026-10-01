@@ -684,7 +684,7 @@
               "Action": "secretsmanager:DeleteSecret",
               "Effect": "Deny",
               "Principal": {
-                "AWS": "arn:test-partition:iam::test-account:root"
+                "AWS": "arn:aws:iam::test-account:root"
               },
               "Resource": "*"
             }
@@ -1220,7 +1220,7 @@
             "Fn::Join": [
               "",
               [
-                "https://secretsmanager.test-region.",
+                "https://secretsmanager.us-east-1.",
                 {
                   "Ref": "AWS::URLSuffix"
                 }
@@ -1463,7 +1463,7 @@
           "Fn::Join": [
             "",
             [
-              "arn:test-partition:rds:test-region:test-account:cluster:",
+              "arn:aws:rds:us-east-1:test-account:cluster:",
               {
                 "Ref": "bedrockbuilderbedrockkbbedrockknowledgebasepgvectorknowledgebasevectorstore16F7260D"
               }
@@ -1496,7 +1496,7 @@
           "Fn::Join": [
             "",
             [
-              "arn:test-partition:rds:test-region:test-account:cluster:",
+              "arn:aws:rds:us-east-1:test-account:cluster:",
               {
                 "Ref": "bedrockbuilderbedrockkbbedrockknowledgebasepgvectorknowledgebasevectorstore16F7260D"
               }
@@ -1530,7 +1530,7 @@
         "KnowledgeBaseConfiguration": {
           "Type": "VECTOR",
           "VectorKnowledgeBaseConfiguration": {
-            "EmbeddingModelArn": "arn:test-partition:bedrock:test-region::foundation-model/amazon.titan-embed-text-v2:0"
+            "EmbeddingModelArn": "arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v2:0"
           }
         },
         "Name": "test-org-dev-gaia-bedrock-builder-bedrock-knowledge-base",
@@ -1557,7 +1557,7 @@
               "Fn::Join": [
                 "",
                 [
-                  "arn:test-partition:rds:test-region:test-account:cluster:",
+                  "arn:aws:rds:us-east-1:test-account:cluster:",
                   {
                     "Ref": "bedrockbuilderbedrockkbbedrockknowledgebasepgvectorknowledgebasevectorstore16F7260D"
                   }
@@ -1823,7 +1823,7 @@
               "Fn::Join": [
                 "",
                 [
-                  "arn:test-partition:s3:::",
+                  "arn:aws:s3:::",
                   {
                     "Ref": "SsmParameterValuetestorggaiadatalakebucketknowledgebasenameC96584B6F00A464EAD1953AFF4B05118Parameter"
                   }
@@ -1952,7 +1952,7 @@
                 "Fn::Join": [
                   "",
                   [
-                    "arn:test-partition:rds:test-region:test-account:cluster:",
+                    "arn:aws:rds:us-east-1:test-account:cluster:",
                     {
                       "Ref": "bedrockbuilderbedrockkbbedrockknowledgebasepgvectorknowledgebasevectorstore16F7260D"
                     }
@@ -2095,7 +2095,7 @@
                 "bedrock:InvokeModelWithResponseStream"
               ],
               "Effect": "Allow",
-              "Resource": "arn:test-partition:bedrock:test-region::foundation-model/amazon.titan-embed-text-v2:0",
+              "Resource": "arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v2:0",
               "Sid": "InvokeFoundationModelsbedrockknowledgebase0"
             },
             {
@@ -2239,7 +2239,7 @@
                 "Fn::Join": [
                   "",
                   [
-                    "arn:test-partition:bedrock:test-region:test-account:knowledge-base/",
+                    "arn:aws:bedrock:us-east-1:test-account:knowledge-base/",
                     {
                       "Fn::GetAtt": [
                         "bedrockbuilderbedrockkbbedrockknowledgebasebedrockknowledgebaseKnowledgeBase38C506ED",
@@ -2620,7 +2620,7 @@
               "Action": "kms:*",
               "Effect": "Allow",
               "Principal": {
-                "AWS": "arn:test-partition:iam::test-account:root"
+                "AWS": "arn:aws:iam::test-account:root"
               },
               "Resource": "*"
             },
@@ -2678,12 +2678,12 @@
               ],
               "Condition": {
                 "ArnEquals": {
-                  "kms:EncryptionContext:aws:logs:arn": "arn:test-partition:logs:test-region:test-account:log-group:*"
+                  "kms:EncryptionContext:aws:logs:arn": "arn:aws:logs:us-east-1:test-account:log-group:*"
                 }
               },
               "Effect": "Allow",
               "Principal": {
-                "Service": "logs.test-region.amazonaws.com"
+                "Service": "logs.us-east-1.amazonaws.com"
               },
               "Resource": "*",
               "Sid": "CloudWatchLogsEncryption"
@@ -2713,7 +2713,7 @@
                 },
                 "StringEquals": {
                   "aws:SourceAccount": "test-account",
-                  "kms:ViaService": "bedrock.test-region.amazonaws.com"
+                  "kms:ViaService": "bedrock.us-east-1.amazonaws.com"
                 }
               },
               "Effect": "Allow",
@@ -2731,7 +2731,7 @@
               ],
               "Condition": {
                 "StringLike": {
-                  "kms:ViaService": "bedrock.test-region.amazonaws.com"
+                  "kms:ViaService": "bedrock.us-east-1.amazonaws.com"
                 }
               },
               "Effect": "Allow",
@@ -2753,7 +2753,7 @@
               ],
               "Condition": {
                 "StringLike": {
-                  "kms:ViaService": "bedrock.test-region.amazonaws.com"
+                  "kms:ViaService": "bedrock.us-east-1.amazonaws.com"
                 },
                 "StringEquals": {
                   "kms:GrantOperations": [
@@ -2785,12 +2785,12 @@
               ],
               "Condition": {
                 "StringEquals": {
-                  "kms:ViaService": "secretsmanager.test-region.amazonaws.com"
+                  "kms:ViaService": "secretsmanager.us-east-1.amazonaws.com"
                 }
               },
               "Effect": "Allow",
               "Principal": {
-                "AWS": "arn:test-partition:iam::test-account:root"
+                "AWS": "arn:aws:iam::test-account:root"
               },
               "Resource": "*"
             },
@@ -2801,12 +2801,12 @@
               ],
               "Condition": {
                 "StringEquals": {
-                  "kms:ViaService": "secretsmanager.test-region.amazonaws.com"
+                  "kms:ViaService": "secretsmanager.us-east-1.amazonaws.com"
                 }
               },
               "Effect": "Allow",
               "Principal": {
-                "AWS": "arn:test-partition:iam::test-account:root"
+                "AWS": "arn:aws:iam::test-account:root"
               },
               "Resource": "*"
             }
@@ -3013,12 +3013,12 @@
                 "logs:CreateLogStream"
               ],
               "Effect": "Allow",
-              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-bedrock-builder-rds-data-handler*"
+              "Resource": "arn:aws:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-bedrock-builder-rds-data-handler*"
             },
             {
               "Action": "logs:CreateLogGroup",
               "Effect": "Allow",
-              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-bedrock-builder-rds-data-handler*"
+              "Resource": "arn:aws:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-bedrock-builder-rds-data-handler*"
             }
           ],
           "Version": "2012-10-17"
@@ -3066,7 +3066,7 @@
                 "Fn::Join": [
                   "",
                   [
-                    "arn:test-partition:rds:test-region:test-account:cluster:",
+                    "arn:aws:rds:us-east-1:test-account:cluster:",
                     {
                       "Ref": "bedrockbuilderbedrockkbbedrockknowledgebasepgvectorknowledgebasevectorstore16F7260D"
                     }
@@ -3524,12 +3524,12 @@
                 "logs:CreateLogStream"
               ],
               "Effect": "Allow",
-              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-bedrock-builder-rds-data-provider*"
+              "Resource": "arn:aws:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-bedrock-builder-rds-data-provider*"
             },
             {
               "Action": "logs:CreateLogGroup",
               "Effect": "Allow",
-              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-bedrock-builder-rds-data-provider*"
+              "Resource": "arn:aws:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-bedrock-builder-rds-data-provider*"
             },
             {
               "Action": "lambda:InvokeFunction",

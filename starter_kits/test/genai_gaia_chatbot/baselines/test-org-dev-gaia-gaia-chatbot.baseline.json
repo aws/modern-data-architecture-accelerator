@@ -64,7 +64,7 @@
               "Action": "kms:*",
               "Effect": "Allow",
               "Principal": {
-                "AWS": "arn:test-partition:iam::test-account:root"
+                "AWS": "arn:aws:iam::test-account:root"
               },
               "Resource": "*"
             },
@@ -81,12 +81,12 @@
               ],
               "Condition": {
                 "ArnEquals": {
-                  "kms:EncryptionContext:aws:logs:arn": "arn:test-partition:logs:test-region:test-account:log-group:*"
+                  "kms:EncryptionContext:aws:logs:arn": "arn:aws:logs:us-east-1:test-account:log-group:*"
                 }
               },
               "Effect": "Allow",
               "Principal": {
-                "Service": "logs.test-region.amazonaws.com"
+                "Service": "logs.us-east-1.amazonaws.com"
               },
               "Resource": "*",
               "Sid": "CloudWatchLogsEncryption"
@@ -100,12 +100,12 @@
               ],
               "Condition": {
                 "StringEquals": {
-                  "kms:ViaService": "secretsmanager.test-region.amazonaws.com"
+                  "kms:ViaService": "secretsmanager.us-east-1.amazonaws.com"
                 }
               },
               "Effect": "Allow",
               "Principal": {
-                "AWS": "arn:test-partition:iam::test-account:root"
+                "AWS": "arn:aws:iam::test-account:root"
               },
               "Resource": "*"
             },
@@ -116,12 +116,12 @@
               ],
               "Condition": {
                 "StringEquals": {
-                  "kms:ViaService": "secretsmanager.test-region.amazonaws.com"
+                  "kms:ViaService": "secretsmanager.us-east-1.amazonaws.com"
                 }
               },
               "Effect": "Allow",
               "Principal": {
-                "AWS": "arn:test-partition:iam::test-account:root"
+                "AWS": "arn:aws:iam::test-account:root"
               },
               "Resource": "*"
             },
@@ -164,7 +164,7 @@
               "Action": "kms:Decrypt",
               "Condition": {
                 "StringEquals": {
-                  "kms:ViaService": "secretsmanager.test-region.amazonaws.com"
+                  "kms:ViaService": "secretsmanager.us-east-1.amazonaws.com"
                 }
               },
               "Effect": "Allow",
@@ -586,6 +586,245 @@
       },
       "Metadata": {
         "aws:cdk:path": "test-org-dev-gaia-gaia-chatbot/gaia/regional-default-waf-logging-config"
+      }
+    },
+    "gaiaglobalipv4allowset32567D96": {
+      "Type": "AWS::WAFv2::IPSet",
+      "Properties": {
+        "Addresses": [
+          "test-waf-cidr-1",
+          "test-waf-cidr-2",
+          "test-waf-cidr-3"
+        ],
+        "IPAddressVersion": "IPV4",
+        "Name": "test-org-dev-gaia-gaia-chatbot-global-ipv4-allow-set",
+        "Scope": "CLOUDFRONT",
+        "Tags": [
+          {
+            "Key": "costcentre",
+            "Value": "123456"
+          },
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "gaia-v2"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "gaia"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "dev"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "gaia-chatbot"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "project",
+            "Value": "genai_gaia_chatbot"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-gaia-gaia-chatbot/gaia/globalipv4-allow-set"
+      }
+    },
+    "gaiaglobaldefaultwaf742E206C": {
+      "Type": "AWS::WAFv2::WebACL",
+      "Properties": {
+        "DefaultAction": {
+          "Block": {}
+        },
+        "Name": "test-org-dev-gaia-gaia-chatbot-global-default-waf",
+        "Rules": [
+          {
+            "Action": {
+              "Block": {}
+            },
+            "Name": "RateLimitRule",
+            "Priority": 0,
+            "Statement": {
+              "RateBasedStatement": {
+                "AggregateKeyType": "IP",
+                "EvaluationWindowSec": 300,
+                "Limit": 2000
+              }
+            },
+            "VisibilityConfig": {
+              "CloudWatchMetricsEnabled": true,
+              "MetricName": "global-rate-limit",
+              "SampledRequestsEnabled": true
+            }
+          },
+          {
+            "Action": {
+              "Allow": {}
+            },
+            "Name": "ipAllow",
+            "Priority": 2,
+            "Statement": {
+              "IPSetReferenceStatement": {
+                "Arn": {
+                  "Fn::GetAtt": [
+                    "gaiaglobalipv4allowset32567D96",
+                    "Arn"
+                  ]
+                }
+              }
+            },
+            "VisibilityConfig": {
+              "CloudWatchMetricsEnabled": false,
+              "MetricName": "test-org-dev-gaia-gaia-chatbot-global-ip-allow",
+              "SampledRequestsEnabled": false
+            }
+          }
+        ],
+        "Scope": "CLOUDFRONT",
+        "Tags": [
+          {
+            "Key": "costcentre",
+            "Value": "123456"
+          },
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "gaia-v2"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "gaia"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "dev"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "gaia-chatbot"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "project",
+            "Value": "genai_gaia_chatbot"
+          }
+        ],
+        "VisibilityConfig": {
+          "CloudWatchMetricsEnabled": true,
+          "MetricName": "test-org-dev-gaia-gaia-chatbot-global-default-waf",
+          "SampledRequestsEnabled": true
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-gaia-gaia-chatbot/gaia/global-default-waf"
+      }
+    },
+    "gaiaglobaldefaultwafloggroup27FEFEF6": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "KmsKeyId": {
+          "Fn::GetAtt": [
+            "gaiaStackEncryptionKey9D8ED7C8",
+            "Arn"
+          ]
+        },
+        "LogGroupName": "aws-waf-logs-/test-org-dev-gaia-gaia-chatbot-global-default-waf",
+        "Tags": [
+          {
+            "Key": "costcentre",
+            "Value": "123456"
+          },
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "gaia-v2"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "gaia"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "dev"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "gaia-chatbot"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "project",
+            "Value": "genai_gaia_chatbot"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-gaia-gaia-chatbot/gaia/global-default-waf-log-group/Resource",
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "HIPAA.Security-CloudWatchLogGroupRetentionPeriod"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "PCI.DSS.321-CloudWatchLogGroupRetentionPeriod"
+            }
+          ]
+        }
+      }
+    },
+    "gaiaglobaldefaultwafloggingconfigACE861F5": {
+      "Type": "AWS::WAFv2::LoggingConfiguration",
+      "Properties": {
+        "LogDestinationConfigs": [
+          {
+            "Fn::GetAtt": [
+              "gaiaglobaldefaultwafloggroup27FEFEF6",
+              "Arn"
+            ]
+          }
+        ],
+        "RedactedFields": [
+          {
+            "SingleHeader": {
+              "Name": "authorization"
+            }
+          },
+          {
+            "SingleHeader": {
+              "Name": "x-origin-verify"
+            }
+          },
+          {
+            "SingleHeader": {
+              "Name": "cookie"
+            }
+          }
+        ],
+        "ResourceArn": {
+          "Fn::GetAtt": [
+            "gaiaglobaldefaultwaf742E206C",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-gaia-gaia-chatbot/gaia/global-default-waf-logging-config"
       }
     },
     "gaiaAuthenticationUserPoolsmsRole1B1D53A3": {
@@ -1868,7 +2107,7 @@
                 "Fn::Join": [
                   "",
                   [
-                    "arn:test-partition:logs:test-region:test-account:log-group:/aws/appsync/apis/",
+                    "arn:aws:logs:us-east-1:test-account:log-group:/aws/appsync/apis/",
                     {
                       "Fn::GetAtt": [
                         "gaiaChatBotApiWebSocketApiChatbotSocketApi6E47A8B3",
@@ -1923,7 +2162,7 @@
             {
               "AuthType": "AMAZON_COGNITO_USER_POOLS",
               "CognitoConfig": {
-                "AwsRegion": "test-region",
+                "AwsRegion": "us-east-1",
                 "UserPoolId": {
                   "Ref": "gaiaAuthenticationUserPoolAC417772"
                 }
@@ -2186,7 +2425,7 @@
             "ApiId"
           ]
         },
-        "CodeS3Location": "s3://cdk-hnb659fds-assets-test-account-test-region/6a9eb8cdc13ba53b5d0909dbb938a422c20082c5c70dc517018ea20b48756a87.js",
+        "CodeS3Location": "s3://cdk-hnb659fds-assets-test-account-us-east-1/6a9eb8cdc13ba53b5d0909dbb938a422c20082c5c70dc517018ea20b48756a87.js",
         "HandlerConfigs": {
           "OnPublish": {
             "Behavior": "DIRECT",
@@ -2246,7 +2485,7 @@
             "ApiId"
           ]
         },
-        "CodeS3Location": "s3://cdk-hnb659fds-assets-test-account-test-region/73279b736c05a8ac19ff70918250fe6d67fd2197908cfd9704f042fe255c241a.js",
+        "CodeS3Location": "s3://cdk-hnb659fds-assets-test-account-us-east-1/73279b736c05a8ac19ff70918250fe6d67fd2197908cfd9704f042fe255c241a.js",
         "HandlerConfigs": {},
         "Name": "out",
         "Tags": [
@@ -2617,7 +2856,7 @@
               ],
               "Condition": {
                 "StringEquals": {
-                  "ec2:Vpc": "arn:test-partition:ec2:test-region:test-vpc-owner-account-id:vpc/test-vpc-id"
+                  "ec2:Vpc": "arn:aws:ec2:us-east-1:test-vpc-owner-account-id:vpc/test-vpc-id"
                 }
               },
               "Effect": "Allow",
@@ -2697,7 +2936,7 @@
                 "logs:CreateLogGroup"
               ],
               "Effect": "Allow",
-              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:/aws/lambda/test-org-dev-gaia-gaia-chatbot-bedrock-rag-handler*"
+              "Resource": "arn:aws:logs:us-east-1:test-account:log-group:/aws/lambda/test-org-dev-gaia-gaia-chatbot-bedrock-rag-handler*"
             }
           ],
           "Version": "2012-10-17"
@@ -2768,7 +3007,7 @@
                 "Fn::Join": [
                   "",
                   [
-                    "arn:test-partition:bedrock:test-region:test-account:guardrail/",
+                    "arn:aws:bedrock:us-east-1:test-account:guardrail/",
                     {
                       "Ref": "SsmParameterValuetestorggaiabedrockbuilderguardrailchatbotguardrailidC96584B6F00A464EAD1953AFF4B05118Parameter"
                     }
@@ -2855,7 +3094,7 @@
                 "Fn::Join": [
                   "",
                   [
-                    "arn:test-partition:bedrock:test-region:test-account:knowledge-base/",
+                    "arn:aws:bedrock:us-east-1:test-account:knowledge-base/",
                     {
                       "Ref": "SsmParameterValuetestorggaiabedrockbuilderknowledgebasebedrockknowledgebaseidC96584B6F00A464EAD1953AFF4B05118Parameter"
                     }
@@ -3749,12 +3988,12 @@
                 "logs:CreateLogStream"
               ],
               "Effect": "Allow",
-              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-gaia-chatbot-rest-api-handler*"
+              "Resource": "arn:aws:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-gaia-chatbot-rest-api-handler*"
             },
             {
               "Action": "logs:CreateLogGroup",
               "Effect": "Allow",
-              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-gaia-chatbot-rest-api-handler*"
+              "Resource": "arn:aws:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-gaia-chatbot-rest-api-handler*"
             },
             {
               "Action": [
@@ -3763,7 +4002,7 @@
               ],
               "Condition": {
                 "StringEqualsIfExists": {
-                  "ec2:Vpc": "arn:test-partition:ec2:test-region:test-vpc-owner-account-id:vpc/test-vpc-id"
+                  "ec2:Vpc": "arn:aws:ec2:us-east-1:test-vpc-owner-account-id:vpc/test-vpc-id"
                 }
               },
               "Effect": "Allow",
@@ -4562,7 +4801,7 @@
         }
       }
     },
-    "gaiaChatBotApiRestApiChatBotApiDeploymentF6C05B750c78bdeeba7237dc08d1637f59ae2821": {
+    "gaiaChatBotApiRestApiChatBotApiDeploymentF6C05B755ba66edf7db955f9ae40be36ce1a9c5d": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "Description": "Automatically created by the RestApi construct",
@@ -4631,7 +4870,7 @@
           "Format": "{\"extendedRequestId\":\"$context.extendedRequestId\",\"ip\":\"$context.identity.sourceIp\",\"user\":\"$context.identity.user\",\"caller\":\"$context.identity.caller\",\"requestTime\":\"$context.requestTime\",\"httpMethod\":\"$context.httpMethod\",\"resourcePath\":\"$context.resourcePath\",\"status\":\"$context.status\",\"protocol\":\"$context.protocol\",\"responseLength\":\"$context.responseLength\",\"tlsVersion\":\"$context.identity.tlsVersion\",\"cipherSuite\":\"$context.identity.cipherSuite\"}"
         },
         "DeploymentId": {
-          "Ref": "gaiaChatBotApiRestApiChatBotApiDeploymentF6C05B750c78bdeeba7237dc08d1637f59ae2821"
+          "Ref": "gaiaChatBotApiRestApiChatBotApiDeploymentF6C05B755ba66edf7db955f9ae40be36ce1a9c5d"
         },
         "MethodSettings": [
           {
@@ -4856,7 +5095,7 @@
           "Fn::Join": [
             "",
             [
-              "arn:test-partition:execute-api:test-region:test-account:",
+              "arn:aws:execute-api:us-east-1:test-account:",
               {
                 "Ref": "gaiaChatBotApiRestApiChatBotApiDD29B052"
               },
@@ -4927,7 +5166,7 @@
           "Fn::Join": [
             "",
             [
-              "arn:test-partition:execute-api:test-region:test-account:",
+              "arn:aws:execute-api:us-east-1:test-account:",
               {
                 "Ref": "gaiaChatBotApiRestApiChatBotApiDD29B052"
               },
@@ -4994,7 +5233,7 @@
             "Fn::Join": [
               "",
               [
-                "arn:test-partition:apigateway:test-region:lambda:path/2015-03-31/functions/",
+                "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
                 {
                   "Fn::GetAtt": [
                     "gaiaChatBotApiRestApiApiHandler1ABC3322",
@@ -5127,7 +5366,7 @@
           "Version": "2012-10-17"
         },
         "ManagedPolicyArns": [
-          "arn:test-partition:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+          "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
         ],
         "RoleName": "test-org-dev-gaia-gaia-chatbot-genai-admin-backend-res--7d2d7780",
         "Tags": [
@@ -6145,7 +6384,7 @@
           "Fn::Join": [
             "",
             [
-              "arn:test-partition:apigateway:test-region::/restapis/",
+              "arn:aws:apigateway:us-east-1::/restapis/",
               {
                 "Ref": "gaiaChatBotApiRestApiChatBotApiDD29B052"
               },
@@ -6672,10 +6911,10 @@
         "AutoPublish": true,
         "FunctionCode": "async function handler(event) {\n  const request = event.request;\n  const uri = request.uri;\n\n  // Redirect to index.html for directory paths or extensionless routes\n  if (uri.endsWith('/') || !uri.includes('.')) {\n    request.uri = '/index.html';\n  }\n\n  return request;\n}\n",
         "FunctionConfig": {
-          "Comment": "test-regiontest-org-dev-gaiexHtmlCfFunction3A652188",
+          "Comment": "us-east-1test-org-dev-gaiexHtmlCfFunction3A652188",
           "Runtime": "cloudfront-js-2.0"
         },
-        "Name": "test-regiontest-org-dev-gaiexHtmlCfFunction3A652188",
+        "Name": "us-east-1test-org-dev-gaiexHtmlCfFunction3A652188",
         "Tags": [
           {
             "Key": "costcentre",
@@ -6889,8 +7128,8 @@
           "PriceClass": "PriceClass_100",
           "WebACLId": {
             "Fn::GetAtt": [
-              "ExportsReader8B249524",
-              "/cdk/exports/test-org-dev-gaia-gaia-chatbot/testorgdevgaiagaiachatbotuseast1FnGetAttglobaldefaultwafArn8B7860ED"
+              "gaiaglobaldefaultwaf742E206C",
+              "Arn"
             ]
           }
         },
@@ -6960,7 +7199,7 @@
           ]
         },
         "SourceBucketNames": [
-          "cdk-hnb659fds-assets-test-account-test-region"
+          "cdk-hnb659fds-assets-test-account-us-east-1"
         ],
         "SourceObjectKeys": [
           "9a314bb50796346e22ce88e85a20ab49b72e26ea9ec9314bb877daf26b205c31.zip"
@@ -7590,10 +7829,10 @@
         "AutoPublish": true,
         "FunctionCode": "async function handler(event) {\n  const request = event.request;\n  const uri = request.uri;\n\n  // Redirect to index.html for directory paths or extensionless routes\n  if (uri.endsWith('/') || !uri.includes('.')) {\n    request.uri = '/index.html';\n  }\n\n  return request;\n}\n",
         "FunctionConfig": {
-          "Comment": "test-regiontest-org-dev-gaiexHtmlCfFunction66D72F84",
+          "Comment": "us-east-1test-org-dev-gaiexHtmlCfFunction66D72F84",
           "Runtime": "cloudfront-js-2.0"
         },
-        "Name": "test-regiontest-org-dev-gaiexHtmlCfFunction66D72F84",
+        "Name": "us-east-1test-org-dev-gaiexHtmlCfFunction66D72F84",
         "Tags": [
           {
             "Key": "costcentre",
@@ -7807,8 +8046,8 @@
           "PriceClass": "PriceClass_100",
           "WebACLId": {
             "Fn::GetAtt": [
-              "ExportsReader8B249524",
-              "/cdk/exports/test-org-dev-gaia-gaia-chatbot/testorgdevgaiagaiachatbotuseast1FnGetAttglobaldefaultwafArn8B7860ED"
+              "gaiaglobaldefaultwaf742E206C",
+              "Arn"
             ]
           }
         },
@@ -7878,7 +8117,7 @@
           ]
         },
         "SourceBucketNames": [
-          "cdk-hnb659fds-assets-test-account-test-region"
+          "cdk-hnb659fds-assets-test-account-us-east-1"
         ],
         "SourceObjectKeys": [
           "44d55e6dc8f22f5d284940270273e24811a883c30d2a009cb17b4042ffde7567.zip"
@@ -8292,7 +8531,7 @@
         "Runtime": "nodejs24.x",
         "Timeout": 900,
         "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-test-account-test-region",
+          "S3Bucket": "cdk-hnb659fds-assets-test-account-us-east-1",
           "S3Key": "2819175352ad1ce0dae768e83fc328fb70fb5f10b4a8ff0ccbcb791f02b0716d.zip"
         },
         "Role": {
@@ -8577,8 +8816,8 @@
               ],
               "Effect": "Allow",
               "Resource": [
-                "arn:test-partition:s3:::cdk-hnb659fds-assets-test-account-test-region",
-                "arn:test-partition:s3:::cdk-hnb659fds-assets-test-account-test-region/*"
+                "arn:aws:s3:::cdk-hnb659fds-assets-test-account-us-east-1",
+                "arn:aws:s3:::cdk-hnb659fds-assets-test-account-us-east-1/*"
               ]
             },
             {
@@ -8952,12 +9191,12 @@
                 "logs:CreateLogStream"
               ],
               "Effect": "Allow",
-              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-gaia-chatbot-updateuserpoolclient-handler*"
+              "Resource": "arn:aws:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-gaia-chatbot-updateuserpoolclient-handler*"
             },
             {
               "Action": "logs:CreateLogGroup",
               "Effect": "Allow",
-              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-gaia-chatbot-updateuserpoolclient-handler*"
+              "Resource": "arn:aws:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-gaia-chatbot-updateuserpoolclient-handler*"
             }
           ],
           "Version": "2012-10-17"
@@ -9445,12 +9684,12 @@
                 "logs:CreateLogStream"
               ],
               "Effect": "Allow",
-              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-gaia-chatbot-updateuserpoolclient-provider*"
+              "Resource": "arn:aws:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-gaia-chatbot-updateuserpoolclient-provider*"
             },
             {
               "Action": "logs:CreateLogGroup",
               "Effect": "Allow",
-              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-gaia-chatbot-updateuserpoolclient-provider*"
+              "Resource": "arn:aws:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-gaia-chatbot-updateuserpoolclient-provider*"
             },
             {
               "Action": "lambda:InvokeFunction",
@@ -9648,100 +9887,6 @@
           ]
         }
       }
-    },
-    "ExportsReader8B249524": {
-      "Type": "Custom::CrossRegionExportReader",
-      "Properties": {
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "CustomCrossRegionExportReaderCustomResourceProviderHandler46647B68",
-            "Arn"
-          ]
-        },
-        "ReaderProps": {
-          "region": "test-region",
-          "prefix": "test-org-dev-gaia-gaia-chatbot",
-          "imports": {
-            "/cdk/exports/test-org-dev-gaia-gaia-chatbot/testorgdevgaiagaiachatbotuseast1FnGetAttglobaldefaultwafArn8B7860ED": "{{resolve:ssm:/cdk/exports/test-org-dev-gaia-gaia-chatbot/testorgdevgaiagaiachatbotuseast1FnGetAttglobaldefaultwafArn8B7860ED}}"
-          }
-        }
-      },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
-      "Metadata": {
-        "aws:cdk:path": "test-org-dev-gaia-gaia-chatbot/ExportsReader/Resource/Default"
-      }
-    },
-    "CustomCrossRegionExportReaderCustomResourceProviderRole10531BBD": {
-      "Type": "AWS::IAM::Role",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com"
-              }
-            }
-          ]
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Sub": "arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-          }
-        ],
-        "Policies": [
-          {
-            "PolicyName": "Inline",
-            "PolicyDocument": {
-              "Version": "2012-10-17",
-              "Statement": [
-                {
-                  "Effect": "Allow",
-                  "Resource": "arn:test-partition:ssm:test-region:test-account:parameter/cdk/exports/test-org-dev-gaia-gaia-chatbot/*",
-                  "Action": [
-                    "ssm:AddTagsToResource",
-                    "ssm:RemoveTagsFromResource",
-                    "ssm:GetParameters"
-                  ]
-                }
-              ]
-            }
-          }
-        ]
-      },
-      "Metadata": {
-        "aws:cdk:path": "test-org-dev-gaia-gaia-chatbot/Custom::CrossRegionExportReaderCustomResourceProvider/Role"
-      }
-    },
-    "CustomCrossRegionExportReaderCustomResourceProviderHandler46647B68": {
-      "Type": "AWS::Lambda::Function",
-      "Properties": {
-        "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-test-account-test-region",
-          "S3Key": "f8b7112ff78fd0b6fab4c6b048fc1da9945198135db9a1e6b1d5cb4599d5a3d2.zip"
-        },
-        "Timeout": 900,
-        "MemorySize": 128,
-        "Handler": "__entrypoint__.handler",
-        "Role": {
-          "Fn::GetAtt": [
-            "CustomCrossRegionExportReaderCustomResourceProviderRole10531BBD",
-            "Arn"
-          ]
-        },
-        "Runtime": "nodejs24.x"
-      },
-      "DependsOn": [
-        "CustomCrossRegionExportReaderCustomResourceProviderRole10531BBD"
-      ],
-      "Metadata": {
-        "aws:cdk:path": "test-org-dev-gaia-gaia-chatbot/Custom::CrossRegionExportReaderCustomResourceProvider/Handler",
-        "aws:asset:path": "asset.f8b7112ff78fd0b6fab4c6b048fc1da9945198135db9a1e6b1d5cb4599d5a3d2",
-        "aws:asset:property": "Code"
-      }
     }
   },
   "Outputs": {
@@ -9760,11 +9905,11 @@
         "Fn::Join": [
           "",
           [
-            "https://test-region.console.aws.amazon.com/cognito/v2/idp/user-pools/",
+            "https://us-east-1.console.aws.amazon.com/cognito/v2/idp/user-pools/",
             {
               "Ref": "gaiaAuthenticationUserPoolAC417772"
             },
-            "/users?region=test-region"
+            "/users?region=us-east-1"
           ]
         ]
       }
@@ -9891,7 +10036,7 @@
             {
               "Ref": "gaiaChatBotApiRestApiChatBotApiDD29B052"
             },
-            ".execute-api.test-region.",
+            ".execute-api.us-east-1.",
             {
               "Ref": "AWS::URLSuffix"
             },

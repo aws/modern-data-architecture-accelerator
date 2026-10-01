@@ -602,6 +602,30 @@ describe('discoverModuleCdkDir', () => {
     fs.mkdirSync(kitWorkDir, { recursive: true });
     expect(discoverModuleCdkDir(kitWorkDir, path.join(tmp, 'work'), 'test-account', '')).toBeUndefined();
   });
+
+  test('runs the CLI with the placeholder CDK_DEPLOY_REGION over an exported one', () => {
+    // The fake CLI reports the CDK_DEPLOY_REGION it received as the module directory name.
+    const script = path.join(tmp, 'region-cli.js');
+    fs.writeFileSync(
+      script,
+      `process.stdout.write("Testing Mode:\\n cd '" + ${JSON.stringify(tmp)} + "/" + process.env.CDK_DEPLOY_REGION + "' && npx cdk synth --all\\n");`,
+    );
+    process.env.MDAA_CLI_ENTRYPOINT_OVERRIDE = script;
+    const prevRegion = process.env.CDK_DEPLOY_REGION;
+    process.env.CDK_DEPLOY_REGION = 'eu-west-2';
+
+    try {
+      const kitWorkDir = path.join(tmp, 'kit');
+      fs.mkdirSync(kitWorkDir, { recursive: true });
+      expect(discoverModuleCdkDir(kitWorkDir, path.join(tmp, 'work'), 'test-account', '')).toBe(`${tmp}/test-region`);
+    } finally {
+      if (prevRegion === undefined) {
+        delete process.env.CDK_DEPLOY_REGION;
+      } else {
+        process.env.CDK_DEPLOY_REGION = prevRegion;
+      }
+    }
+  });
 });
 
 describe('seedCdkContext', () => {

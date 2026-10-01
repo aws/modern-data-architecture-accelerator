@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { describe, it, expect, afterAll } from '@jest/globals';
+import { describe, it, expect, afterAll, beforeAll } from '@jest/globals';
 import * as cdk from 'aws-cdk-lib';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -253,6 +253,69 @@ describe('baselineDiffTestApp', () => {
       });
       new cdk.Stack(app, 'TestStack');
       return app;
+    });
+  });
+
+  // The synth sees the placeholder CDK_DEFAULT_* and no CDK_DEPLOY_*, whatever the caller
+  // exports, and the caller's values (or their absence) are back once the test finishes.
+  const callerEnvs: [string, Record<string, string | undefined>][] = [
+    [
+      'exported',
+      {
+        CDK_DEFAULT_ACCOUNT: '111111111111',
+        CDK_DEFAULT_REGION: 'ap-southeast-2',
+        CDK_DEPLOY_ACCOUNT: '999999999999',
+        CDK_DEPLOY_REGION: 'eu-west-2',
+      },
+    ],
+    [
+      'unset',
+      {
+        CDK_DEFAULT_ACCOUNT: undefined,
+        CDK_DEFAULT_REGION: undefined,
+        CDK_DEPLOY_ACCOUNT: undefined,
+        CDK_DEPLOY_REGION: undefined,
+      },
+    ],
+  ];
+  describe.each(callerEnvs)('synth environment isolation with the CDK_* variables %s', (_label, callerEnv) => {
+    const names = Object.keys(callerEnv);
+    const snapshot = () => Object.fromEntries(names.map(name => [name, process.env[name]]));
+    const setEnv = (values: Record<string, string | undefined>) =>
+      Object.entries(values).forEach(([name, value]) => {
+        if (value === undefined) {
+          delete process.env[name];
+        } else {
+          process.env[name] = value;
+        }
+      });
+    let saved: Record<string, string | undefined> = {};
+    let seenDuringSynth: Record<string, string | undefined> = {};
+
+    beforeAll(() => {
+      saved = snapshot();
+      setEnv(callerEnv);
+    });
+    afterAll(() => setEnv(saved));
+
+    baselineDiffTestApp('Env Isolation', () => {
+      seenDuringSynth = snapshot();
+      const app = new cdk.App();
+      new cdk.Stack(app, 'TestStack');
+      return app;
+    });
+
+    it('pins CDK_DEFAULT_* and clears CDK_DEPLOY_* for the synth', () => {
+      expect(seenDuringSynth).toEqual({
+        CDK_DEFAULT_ACCOUNT: 'test-account',
+        CDK_DEFAULT_REGION: 'test-region',
+        CDK_DEPLOY_ACCOUNT: undefined,
+        CDK_DEPLOY_REGION: undefined,
+      });
+    });
+
+    it('restores the caller environment afterwards', () => {
+      expect(snapshot()).toEqual(callerEnv);
     });
   });
 });

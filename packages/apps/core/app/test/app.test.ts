@@ -145,6 +145,52 @@ describe('MdaaCdkApp', () => {
     ).toThrow('One of account or region must be specified in additional_stacks');
   });
 
+  describe('deploy region resolution', () => {
+    const regionEnvVars = ['CI_SUPPLIED_TARGET_REGION', 'CDK_DEPLOY_REGION', 'CDK_DEFAULT_REGION'];
+    const savedEnv: { [key: string]: string | undefined } = {};
+
+    beforeEach(() => {
+      regionEnvVars.forEach(name => {
+        savedEnv[name] = process.env[name];
+        delete process.env[name];
+      });
+    });
+
+    afterEach(() => {
+      regionEnvVars.forEach(name => {
+        if (savedEnv[name] === undefined) {
+          delete process.env[name];
+        } else {
+          process.env[name] = savedEnv[name];
+        }
+      });
+    });
+
+    test.each([
+      ['uses CDK_DEPLOY_REGION exported by the MDAA CLI', { CDK_DEPLOY_REGION: 'eu-west-2' }, 'eu-west-2'],
+      [
+        'CDK_DEPLOY_REGION takes precedence over CDK_DEFAULT_REGION',
+        { CDK_DEPLOY_REGION: 'eu-west-2', CDK_DEFAULT_REGION: 'us-east-1' },
+        'eu-west-2',
+      ],
+      [
+        'CI_SUPPLIED_TARGET_REGION takes precedence over CDK_DEPLOY_REGION',
+        { CI_SUPPLIED_TARGET_REGION: 'us-west-2', CDK_DEPLOY_REGION: 'eu-west-2' },
+        'us-west-2',
+      ],
+      [
+        'an empty CI_SUPPLIED_TARGET_REGION falls through to CDK_DEPLOY_REGION',
+        { CI_SUPPLIED_TARGET_REGION: '', CDK_DEPLOY_REGION: 'eu-west-2' },
+        'eu-west-2',
+      ],
+      ['falls back to CDK_DEFAULT_REGION', { CDK_DEFAULT_REGION: 'ap-southeast-2' }, 'ap-southeast-2'],
+    ])('%s', (_name, env: { [key: string]: string }, expectedRegion) => {
+      Object.assign(process.env, env);
+      const app = new TestApp({ context: baseContext });
+      expect(app.generateStack().region).toBe(expectedRegion);
+    });
+  });
+
   describe('InlinePolicyNamingAspect application', () => {
     const hasInlineAspect = (app: MdaaCdkApp): boolean =>
       Aspects.of(app).all.some(a => a instanceof InlinePolicyNamingAspect);

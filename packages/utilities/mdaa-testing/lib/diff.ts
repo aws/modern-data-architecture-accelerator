@@ -14,6 +14,29 @@ import { TestRegionFact } from './test-app';
 
 const UPDATE_BASELINES = process.env.UPDATE_BASELINES === 'true';
 
+/**
+ * Deterministic AWS environment for stable synth output. MdaaCdkApp prefers the
+ * CDK_DEPLOY_* variables over CDK_DEFAULT_*, so they are cleared (undefined) rather
+ * than inherited from a developer shell that exports them.
+ */
+const SYNTH_ENV: Record<string, string | undefined> = {
+  CDK_DEFAULT_ACCOUNT: 'test-account',
+  CDK_DEFAULT_REGION: 'test-region',
+  CDK_DEPLOY_ACCOUNT: undefined,
+  CDK_DEPLOY_REGION: undefined,
+};
+
+/** Assigning undefined to process.env stores the string "undefined", so unset values are deleted. */
+function applyEnv(values: Record<string, string | undefined>): void {
+  Object.entries(values).forEach(([name, value]) => {
+    if (value === undefined) {
+      delete process.env[name];
+    } else {
+      process.env[name] = value;
+    }
+  });
+}
+
 // Matches MDAA version strings like "1.5.0", "1.5.20260401145352" in known contexts.
 // The version suffix uses non-overlapping groups to avoid super-linear backtracking (S5852).
 const VERSION_PATTERNS = [
@@ -237,11 +260,8 @@ export function baselineDiffTestApp(
   test(`${testNamePrefix} Baseline Diff Test`, async () => {
     const spies = mockCodeFactoryMethods();
 
-    // Set deterministic AWS environment for stable synth output
-    const prevAccount = process.env.CDK_DEFAULT_ACCOUNT;
-    const prevRegion = process.env.CDK_DEFAULT_REGION;
-    process.env.CDK_DEFAULT_ACCOUNT = 'test-account';
-    process.env.CDK_DEFAULT_REGION = 'test-region';
+    const prevEnv = Object.fromEntries(Object.keys(SYNTH_ENV).map(name => [name, process.env[name]]));
+    applyEnv(SYNTH_ENV);
     Fact.register(new TestRegionFact(), true);
 
     try {
@@ -331,8 +351,7 @@ export function baselineDiffTestApp(
       }
     } finally {
       spies.forEach((spy: { mockRestore: () => void }) => spy.mockRestore());
-      process.env.CDK_DEFAULT_ACCOUNT = prevAccount;
-      process.env.CDK_DEFAULT_REGION = prevRegion;
+      applyEnv(prevEnv);
     }
   }, 120000);
 }

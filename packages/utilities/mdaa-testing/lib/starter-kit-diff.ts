@@ -246,7 +246,14 @@ function getSynthSetupPath(): string {
   return path.join(__dirname, 'starter-kit-synth-setup.js');
 }
 
+/**
+ * Placeholder region for kits whose `region` is `default`. A kit that pins a concrete
+ * `region` still synthesizes in it, because the CLI's own CDK_DEPLOY_REGION export
+ * overrides this one inside the synth shell, so its baselines carry real region and
+ * partition values.
+ */
 const SYNTH_ENV = {
+  CDK_DEPLOY_REGION: 'test-region',
   CDK_DEFAULT_REGION: 'test-region',
   AWS_REGION: 'test-region',
   AWS_DEFAULT_REGION: 'test-region',

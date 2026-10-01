@@ -100,4 +100,12 @@ describe('GAIAL3Construct Constructor Exception Scenarios', () => {
       new GAIAL3Construct(testApp.testStack, 'teststack', props);
     }).toThrow(/appSubnets must contain at least one subnet/i);
   });
+
+  test('throws when the global WAF is created outside us-east-1 without a us-east-1 stack', () => {
+    // MdaaCdkApp passes an empty map when the module declares no additional_stacks.
+    const props = { ...buildProps(testApp, { waf: {} }), crossAccountStacks: {} };
+    expect(() => {
+      new GAIAL3Construct(testApp.testStack, 'teststack', props);
+    }).toThrow(/CloudFront WAF requires a cross-region stack/i);
+  });
 });

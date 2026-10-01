@@ -140,12 +140,12 @@
                 "logs:CreateLogStream"
               ],
               "Effect": "Allow",
-              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-datalake-folder-cr*"
+              "Resource": "arn:aws:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-datalake-folder-cr*"
             },
             {
               "Action": "logs:CreateLogGroup",
               "Effect": "Allow",
-              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-datalake-folder-cr*"
+              "Resource": "arn:aws:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-datalake-folder-cr*"
             }
           ],
           "Version": "2012-10-17"
@@ -316,7 +316,7 @@
               "Action": "kms:*",
               "Effect": "Allow",
               "Principal": {
-                "AWS": "arn:test-partition:iam::test-account:root"
+                "AWS": "arn:aws:iam::test-account:root"
               },
               "Resource": "*"
             },
@@ -720,12 +720,12 @@
                 "logs:CreateLogStream"
               ],
               "Effect": "Allow",
-              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-datalake-folder-cr-prov*"
+              "Resource": "arn:aws:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-datalake-folder-cr-prov*"
             },
             {
               "Action": "logs:CreateLogGroup",
               "Effect": "Allow",
-              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-datalake-folder-cr-prov*"
+              "Resource": "arn:aws:logs:*:*:log-group:/aws/lambda/test-org-dev-gaia-datalake-folder-cr-prov*"
             },
             {
               "Action": "lambda:InvokeFunction",

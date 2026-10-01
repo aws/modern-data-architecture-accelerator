@@ -87,6 +87,7 @@ const BASELINES_DIR = path.join(__dirname, '__snapshots__');
  */
 const SYNTH_ENV: Record<string, string> = {
   CDK_DEFAULT_ACCOUNT: 'test-account',
+  CDK_DEPLOY_REGION: 'test-region',
   CDK_DEFAULT_REGION: 'test-region',
   AWS_REGION: 'test-region',
   AWS_DEFAULT_REGION: 'test-region',

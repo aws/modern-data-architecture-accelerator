@@ -217,7 +217,7 @@ outside the JSON. The file must contain ONLY valid JSON.
 ### Risk Classification for CI Agent
 
 - **HIGH:** Missing compliance test assertions for new security-related code (encryption, IAM policies, access controls, security groups, logging). Missing `checkCdkNagCompliance()` call in a construct test. Missing `baselineDiffTestApp` for a sample config in an app module. A CLI command-assembly or config-resolution change with no CLI command baseline movement. A hand-edited baseline.
-- **MEDIUM:** Missing functional test assertions for new non-security code (resource composition, constructor validation, cross-account logic). Test file naming violations. Hardcoded test values (`us-east-1` instead of `test-region`). Coverage threshold misconfiguration. A CLI change altering command format without regenerated starter kit baselines. A CLI baseline case duplicating what unit tests already assert.
+- **MEDIUM:** Missing functional test assertions for new non-security code (resource composition, constructor validation, cross-account logic). Test file naming violations. Hardcoded test values (`us-east-1` instead of `test-region`), except in the baselines of a starter kit whose `mdaa.yaml` pins that region. Coverage threshold misconfiguration. A CLI change altering command format without regenerated starter kit baselines. A CLI baseline case duplicating what unit tests already assert.
 - **LOW:** Missing test assertions for non-functional changes (tags, descriptions, metadata). Missing `test:update-baselines` script. Minor style issues.
 
 ### Rules for CI Agent Findings

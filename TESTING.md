@@ -10,7 +10,7 @@ MDAA employs a layered testing strategy that mirrors the construct architecture.
 - CDK Nag rulesets (AwsSolutions, NIST 800-53 R5, HIPAA Security, PCI DSS 3.2.1) are validated in construct tests via `MdaaTestApp.checkCdkNagCompliance()`
 - Tests run with `jest --passWithNoTests --coverage` as a single unified command
 - Diff baselines are committed to the repository and reviewed as part of code changes
-- Non-deterministic test values use `test-account`, `test-region`, `test-partition` for stable, reproducible output
+- Non-deterministic test values use `test-account`, `test-region`, `test-partition` for stable, reproducible output. The exception is a starter kit whose `mdaa.yaml` pins a concrete `region`: its baselines carry that region and its partition.
 - The CLI is covered by command baselines — golden shell command strings — because its output is a command, not a template
 
 ## Quick Reference
