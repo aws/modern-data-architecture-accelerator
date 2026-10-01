@@ -12,7 +12,7 @@ urllib3==2.7.0
 openai==0.28.1
 beautifulsoup4==4.12.3
 requests==2.33.0
-pyjwt==2.13.0
+pyjwt==2.15.0
 cryptography==50.0.0
 attrs==23.1.0
 defusedxml==0.7.1
