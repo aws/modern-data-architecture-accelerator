@@ -1624,13 +1624,8 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
           },
         },
       }),
-      // Bedrock AgentCore Workload Identity Token access
-      // Note: the workload-identity resource is scoped with a '/*' wildcard rather than a specific
-      // identity name because AgentCore creates the workload identity at runtime and derives its name
-      // from the runtime's AgentRuntimeName (itself generated from MDAA naming, e.g.
-      // <project>_<domain>_<module>_<runtime>_*). That name is not known at synth time, so it cannot be
-      // pinned in the policy. The statement remains constrained to this account, region, and the
-      // 'default' directory — it is not a bare Resource '*'.
+      // AgentCore names this runtime's identity <AgentRuntimeName>-<suffix>, generating the suffix at create time, so '-*' is the narrowest match.
+      // AgentCore fetches the runtime's tokens with its service-linked role, so this grant only governs agent code.
       new PolicyStatement({
         sid: 'GetAgentAccessToken',
         effect: Effect.ALLOW,
@@ -1641,7 +1636,7 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
         ],
         resources: [
           `arn:${stack.partition}:bedrock-agentcore:${region}:${accountId}:workload-identity-directory/default`,
-          `arn:${stack.partition}:bedrock-agentcore:${region}:${accountId}:workload-identity-directory/default/workload-identity/*`,
+          `arn:${stack.partition}:bedrock-agentcore:${region}:${accountId}:workload-identity-directory/default/workload-identity/${this.sanitizedRuntimeName}-*`,
         ],
       }),
       // Bedrock Model Invocation

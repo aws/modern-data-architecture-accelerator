@@ -697,7 +697,7 @@ describe('BedrockAgentcoreRuntimeL3Construct Unit Tests', () => {
       template.resourceCountIs('AWS::IAM::Role', 2);
     });
 
-    test('should scope GetAgentAccessToken to the default workload-identity directory', () => {
+    test("should scope GetAgentAccessToken to this runtime's own workload identity", () => {
       const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
         agentRuntimeName: 'workload-identity-runtime',
         agentRuntimeArtifact: {
@@ -715,6 +715,8 @@ describe('BedrockAgentcoreRuntimeL3Construct Unit Tests', () => {
 
       new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'workload-identity-runtime-construct', constructProps);
       const template = Template.fromStack(testApp.testStack);
+      const [runtime] = Object.values(template.findResources('AWS::BedrockAgentCore::Runtime'));
+      const runtimeName: string = runtime.Properties.AgentRuntimeName;
 
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
@@ -729,7 +731,7 @@ describe('BedrockAgentcoreRuntimeL3Construct Unit Tests', () => {
               ],
               Resource: [
                 'arn:test-partition:bedrock-agentcore:test-region:test-account:workload-identity-directory/default',
-                'arn:test-partition:bedrock-agentcore:test-region:test-account:workload-identity-directory/default/workload-identity/*',
+                `arn:test-partition:bedrock-agentcore:test-region:test-account:workload-identity-directory/default/workload-identity/${runtimeName}-*`,
               ],
             }),
           ]),
