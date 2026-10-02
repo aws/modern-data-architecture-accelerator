@@ -1,2 +1,2 @@
-asteval==1.0.6
+asteval==1.0.9
 checkov==3.2.495
