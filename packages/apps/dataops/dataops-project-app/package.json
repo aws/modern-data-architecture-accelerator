@@ -8,7 +8,7 @@
   "bin": {
     "dataops-project-cdk": "bin/dataops-project.js"
   },
-  "version": "1.8.1",
+  "version": "1.9.0",
   "license": "Apache-2.0",
   "scripts": {
     "build": "../../../../scripts/build/build_package.sh DataOpsProjectConfigContents",
@@ -22,7 +22,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "devDependencies": {
-    "@aws-mdaa/testing": "1.8.1",
+    "@aws-mdaa/testing": "1.9.0",
     "@types/jest": "29.5.14",
     "@types/node": "22.9.0",
     "@types/prettier": "2.6.0",
@@ -31,21 +31,21 @@
     "ts-node": "10.9.2",
     "typescript": "5.9.3",
     "typescript-json-schema": "0.68.0",
-    "@aws-mdaa/s3-helpers": "1.8.1"
+    "@aws-mdaa/s3-helpers": "1.9.0"
   },
   "dependencies": {
-    "@aws-mdaa/app": "1.8.1",
-    "@aws-mdaa/dataops-project-l3-construct": "1.8.1",
-    "@aws-mdaa/iam-role-helper": "1.8.1",
-    "@aws-mdaa/l3-construct": "1.8.1",
-    "@aws-mdaa/s3-constructs": "1.8.1",
+    "@aws-mdaa/app": "1.9.0",
+    "@aws-mdaa/dataops-project-l3-construct": "1.9.0",
+    "@aws-mdaa/iam-role-helper": "1.9.0",
+    "@aws-mdaa/l3-construct": "1.9.0",
+    "@aws-mdaa/s3-constructs": "1.9.0",
     "ajv": "8.18.0",
     "aws-cdk-lib": "2.261.0",
     "cdk-nag": "2.37.55",
     "constructs": "10.6.0",
     "source-map-support": "0.5.21",
     "yaml": "1.10.3",
-    "@aws-mdaa/s3-helpers": "1.8.1"
+    "@aws-mdaa/s3-helpers": "1.9.0"
   },
   "gitHead": "ade1ce5962dee1fa47a3668c8e35d130c686ad35",
   "repository": {

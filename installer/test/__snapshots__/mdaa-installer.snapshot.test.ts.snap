@@ -316,7 +316,7 @@ exports[`MdaaInstallerStack Snapshots Full CloudFormation template snapshot: ful
     "RepositoryBranchName": {
       "AllowedPattern": ".+",
       "ConstraintDescription": "Repository Branch Name is required",
-      "Default": "release/v1.8.1",
+      "Default": "release/v1.9.0",
       "Description": "The name of the branch (e.g., "main")",
       "Type": "String",
     },
@@ -1001,7 +1001,7 @@ exports[`MdaaInstallerStack Snapshots Parameters section snapshot: parameters.js
   "RepositoryBranchName": {
     "AllowedPattern": ".+",
     "ConstraintDescription": "Repository Branch Name is required",
-    "Default": "release/v1.8.1",
+    "Default": "release/v1.9.0",
     "Description": "The name of the branch (e.g., "main")",
     "Type": "String",
   },
