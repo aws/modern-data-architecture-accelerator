@@ -78,16 +78,23 @@ def _build_kiro_command(prompt_path: str) -> list[str]:
     ]
 
 
-def run_kiro_assessment(prompt: str, validate_json: bool = False) -> str:
+def run_kiro_assessment(
+    prompt: str,
+    validate_json: bool = False,
+    required_keys: tuple[str, ...] = ("findings",),
+) -> str:
     """Pipe a prompt through Kiro headless and return the assessment.
 
     Kiro writes the assessment to a temp file to avoid terminal UI noise in stdout.
     The prompt must include an {output_file} placeholder that will be replaced with
     the path to the temp file.
 
-    If validate_json is True, the output is parsed as JSON after each attempt.
-    If parsing fails, the attempt is retried (up to max_retries). This avoids
-    regex fallback parsing and ensures structured output.
+    If validate_json is True, the output is parsed as JSON after each attempt
+    and must be an object containing every key in required_keys. If it isn't,
+    the attempt is retried (up to max_retries). This avoids regex fallback
+    parsing and ensures structured output. The default required_keys matches
+    the risk reviewers' output shape; callers with a different shape pass
+    their own.
 
     Environment:
         KIRO_API_KEY    - Required API key for authentication
@@ -176,7 +183,7 @@ def run_kiro_assessment(prompt: str, validate_json: bool = False) -> str:
 
             # Validate JSON if requested
             if validate_json:
-                parsed = _parse_risk_json(output)
+                parsed = _parse_risk_json(output, required_keys)
                 if parsed is None:
                     if attempt < max_retries - 1:
                         print(f"  Output is not valid JSON, retrying (attempt {attempt + 1}/{max_retries})...")
@@ -220,17 +227,18 @@ def strip_markdown_fences(text: str) -> str:
     return text
 
 
-def _parse_risk_json(raw: str) -> dict | None:
+def _parse_risk_json(raw: str, required_keys: tuple[str, ...] = ("findings",)) -> dict | None:
     """Try to parse Kiro's risk assessment output as JSON.
 
     Handles cases where Kiro wraps JSON in markdown fences.
-    Returns the parsed dict or None if parsing fails.
+    Returns the parsed dict, or None if parsing fails or the dict is missing
+    any of required_keys.
     """
     text = strip_markdown_fences(raw)
 
     try:
         data = json.loads(text)
-        if isinstance(data, dict) and "findings" in data:
+        if isinstance(data, dict) and all(key in data for key in required_keys):
             return data
     except (json.JSONDecodeError, ValueError):
         pass

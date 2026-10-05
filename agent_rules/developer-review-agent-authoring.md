@@ -193,7 +193,7 @@ Key implementation points:
 - Call `changed-only.py` as subprocess with `--extensions .ts` for package detection
 - Filter packages by path for agent scope (L2/L3 for compliance, apps for module quality, etc.)
 - Parallel Kiro invocations via `ThreadPoolExecutor` with `KIRO_MAX_THREADS`
-- Use `run_kiro_assessment(prompt, validate_json=True)` for structured output
+- Use `run_kiro_assessment(prompt, validate_json=True)` for structured output. Validation requires a `findings` key by default; agents with a different output shape pass `required_keys=(...)`
 - Generate the Code Quality JSON via `to_codequality_json()` from `review/lib/report.py`
 - Exit non-zero only for BLOCKING findings (compliance agent) or infrastructure failures
 

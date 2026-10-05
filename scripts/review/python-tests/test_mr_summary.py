@@ -309,6 +309,29 @@ class TestFormatSummaryMarkdown:
 class TestGenerateNarrative:
     """Test narrative generation with mocked Kiro responses."""
 
+    def test_valid_summary_accepted_on_first_kiro_run(self, fake_kiro, capsys):
+        """A valid summary passes run_kiro_assessment's validation without retries."""
+        change_summary = (
+            "**Why:** Reviewers lack context.\n\n"
+            "**What:** Adds a narrative summary.\n\n"
+            "**Impact:** CI only; no modules affected."
+        )
+        fake_kiro.answers = [json.dumps({
+            "change_summary": change_summary,
+            "code_changes": [],
+            "file_changes": [{"category": "Documentation", "description": "Updated README.", "files": "README.md"}],
+            "config_changes": "",
+            "commit_log": "- docs: update README",
+        })]
+        result = generate_narrative("1 file", "| t |", "docs: update README", "diff", "", [])
+
+        assert len(fake_kiro.calls) == 1
+        assert "not valid JSON" not in capsys.readouterr().out
+        assert "**Why:** Reviewers lack context." in result
+        assert "**What:** Adds a narrative summary." in result
+        assert "**Impact:** CI only; no modules affected." in result
+        assert "<details><summary><b>File Changes</b>" in result
+
     @patch("review.mr_summary.mr_summary.run_kiro_assessment")
     def test_valid_json_response(self, mock_kiro):
         mock_kiro.return_value = json.dumps({

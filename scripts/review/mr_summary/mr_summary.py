@@ -50,6 +50,10 @@ from review.lib.gitlab_threads import gitlab_api
 
 SUMMARY_MARKER = "<!-- mr-summary-auto -->"
 
+# Keys a Kiro answer must contain to count as a valid summary. Answers without
+# them are retried by run_kiro_assessment.
+SUMMARY_REQUIRED_KEYS = ("change_summary",)
+
 # Maximum characters of diff content to send to Kiro for narrative generation.
 # Large diffs are sampled by priority (code > config > docs > tests).
 # Override via KIRO_DIFF_BUDGET env var in CI.
@@ -418,7 +422,7 @@ def generate_narrative(
         output_file="{output_file}",
     )
 
-    raw = run_kiro_assessment(prompt, validate_json=True)
+    raw = run_kiro_assessment(prompt, validate_json=True, required_keys=SUMMARY_REQUIRED_KEYS)
 
     text = strip_markdown_fences(raw)
 

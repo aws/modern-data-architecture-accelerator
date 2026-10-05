@@ -70,6 +70,95 @@ class TestParseRiskJson:
         result = _parse_risk_json(raw)
         assert result is None  # requires "findings" key
 
+    def test_summary_shape_accepted_with_required_keys(self):
+        from review.lib.kiro_integration import _parse_risk_json
+
+        raw = json.dumps({"change_summary": "**Why:** x", "code_changes": []})
+        result = _parse_risk_json(raw, required_keys=("change_summary",))
+        assert result is not None
+        assert result["change_summary"] == "**Why:** x"
+
+    def test_summary_shape_rejected_by_default(self):
+        from review.lib.kiro_integration import _parse_risk_json
+
+        raw = json.dumps({"change_summary": "**Why:** x", "code_changes": []})
+        assert _parse_risk_json(raw) is None
+
+    def test_required_keys_all_must_be_present(self):
+        from review.lib.kiro_integration import _parse_risk_json
+
+        raw = json.dumps({"change_summary": "x"})
+        assert _parse_risk_json(raw, required_keys=("change_summary", "commit_log")) is None
+
+    def test_required_keys_with_markdown_fences(self):
+        from review.lib.kiro_integration import _parse_risk_json
+
+        raw = '```json\n{"change_summary": "x"}\n```'
+        result = _parse_risk_json(raw, required_keys=("change_summary",))
+        assert result == {"change_summary": "x"}
+
+    def test_non_object_json_rejected(self):
+        from review.lib.kiro_integration import _parse_risk_json
+
+        assert _parse_risk_json('["change_summary"]', required_keys=("change_summary",)) is None
+
+
+class TestRunKiroAssessmentValidation:
+    """Tests for validate_json retries in run_kiro_assessment (kiro-cli stubbed)."""
+
+    SUMMARY_ANSWER = json.dumps({"change_summary": "**Why:** x", "code_changes": []})
+    RISK_ANSWER = json.dumps({"overall_risk": "LOW", "findings": []})
+
+    def test_summary_accepted_first_attempt_with_required_keys(self, fake_kiro, capsys):
+        from review.lib.kiro_integration import run_kiro_assessment
+
+        fake_kiro.answers = [self.SUMMARY_ANSWER]
+        result = run_kiro_assessment("{output_file}", validate_json=True, required_keys=("change_summary",))
+
+        assert result == self.SUMMARY_ANSWER
+        assert len(fake_kiro.calls) == 1
+        assert "not valid JSON" not in capsys.readouterr().out
+
+    def test_summary_retried_with_default_required_keys(self, fake_kiro, capsys):
+        from review.lib.kiro_integration import run_kiro_assessment
+
+        fake_kiro.answers = [self.SUMMARY_ANSWER]
+        result = run_kiro_assessment("{output_file}", validate_json=True)
+
+        # Falls back to the raw last answer after exhausting retries
+        assert result == self.SUMMARY_ANSWER
+        assert len(fake_kiro.calls) == 3
+        assert "not valid JSON after 3 attempts" in capsys.readouterr().out
+
+    def test_findings_accepted_first_attempt_by_default(self, fake_kiro, capsys):
+        from review.lib.kiro_integration import run_kiro_assessment
+
+        fake_kiro.answers = [self.RISK_ANSWER]
+        result = run_kiro_assessment("{output_file}", validate_json=True)
+
+        assert result == self.RISK_ANSWER
+        assert len(fake_kiro.calls) == 1
+        assert "not valid JSON" not in capsys.readouterr().out
+
+    def test_invalid_answer_retries_then_falls_back(self, fake_kiro, capsys):
+        from review.lib.kiro_integration import run_kiro_assessment
+
+        fake_kiro.answers = ["not json at all"]
+        result = run_kiro_assessment("{output_file}", validate_json=True, required_keys=("change_summary",))
+
+        assert result == "not json at all"
+        assert len(fake_kiro.calls) == 3
+        assert "not valid JSON after 3 attempts" in capsys.readouterr().out
+
+    def test_retry_stops_once_answer_is_valid(self, fake_kiro):
+        from review.lib.kiro_integration import run_kiro_assessment
+
+        fake_kiro.answers = [json.dumps({"code_changes": []}), self.SUMMARY_ANSWER]
+        result = run_kiro_assessment("{output_file}", validate_json=True, required_keys=("change_summary",))
+
+        assert result == self.SUMMARY_ANSWER
+        assert len(fake_kiro.calls) == 2
+
 
 class TestParseRiskLevel:
     """Tests for _parse_risk_level."""
