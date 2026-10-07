@@ -6,7 +6,7 @@
 import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaResourceType } from '@aws-mdaa/naming';
 import { MdaaCustomResource, MdaaCustomResourceProps } from '@aws-mdaa/custom-constructs';
-import { Duration } from 'aws-cdk-lib';
+import { Duration, Token } from 'aws-cdk-lib';
 import { CfnProject, CfnProjectMembership, CfnProjectMembershipProps, CfnProjectProps } from 'aws-cdk-lib/aws-datazone';
 import { IManagedPolicy, IRole, ManagedPolicy, Role } from 'aws-cdk-lib/aws-iam';
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
@@ -20,6 +20,18 @@ export interface ProjectEnvironmentConfiguration {
 export interface MdaaDatazoneProjectProps extends MdaaConstructProps {
   /** Project name for DataZone project identification overriding automatic naming conventions */
   readonly name?: string;
+  /**
+   * Exact DataZone project name, used verbatim and bypassing MDAA naming conventions.
+   * Intended for the user-facing SMUS project title, which is a free-form label chosen
+   * by the business and is not derivable from org/env/domain/module metadata. All other
+   * resources created by the module keep MDAA naming.
+   *
+   * AWS: AWS::DataZone::Project Name
+   *
+   * Validation: Optional; 1-64 chars matching `^[\w -]+$` (spaces and mixed case
+   * allowed); must be unique within the DataZone domain.
+   */
+  readonly nameOverride?: string;
   /** Domain unit specification for project organization within DataZone domains enabling */
   readonly domainUnit?: string;
   /**
@@ -62,6 +74,32 @@ export class MdaaDatazoneProject extends Construct {
   public get customResourceRole(): IRole {
     return this._customResourceRole;
   }
+  private static readonly NAME_OVERRIDE_PATTERN = /^[\w -]+$/;
+  /**
+   * Returns the verbatim DataZone project name for a `nameOverride`, after checking it
+   * against the constraints of `AWS::DataZone::Project` `Name` (Pattern `^[\w -]+$`,
+   * Minimum 1, Maximum 64). Unlike MDAA naming, spaces and mixed case are permitted and
+   * the value is not routed through `validateResourceName` (which rejects spaces). Throws
+   * with an explicit message rather than silently truncating or hashing.
+   *
+   * An unresolved token, such as an `ssm:` config reference, has no value at synth, and
+   * its marker punctuation would fail the pattern. It is returned unchanged, and DataZone
+   * enforces the constraints at deploy.
+   */
+  public static resourceNameFromNameOverride(nameOverride: string): string {
+    if (Token.isUnresolved(nameOverride)) {
+      return nameOverride;
+    }
+    const pattern = MdaaDatazoneProject.NAME_OVERRIDE_PATTERN;
+    if (nameOverride.length < 1 || nameOverride.length > 64 || !pattern.test(nameOverride)) {
+      throw new Error(
+        `Invalid nameOverride "${nameOverride}": must be 1-64 characters matching /${pattern.source}/ ` +
+          `(letters, digits, underscore, space and hyphen), per AWS::DataZone::Project Name.`,
+      );
+    }
+    return nameOverride;
+  }
+
   constructor(scope: Construct, id: string, props: MdaaDatazoneProjectProps) {
     super(scope, id);
     this.props = props;
@@ -73,9 +111,10 @@ export class MdaaDatazoneProject extends Construct {
       'domain-kms-policy',
       this.domainConfig.domainKmsUsagePolicyName,
     );
-    this.generatedProjectName = props.naming
-      .withResourceType(MdaaResourceType.DATAZONE_PROJECT)
-      .resourceName(props.name, 64);
+    this.generatedProjectName =
+      props.nameOverride === undefined
+        ? props.naming.withResourceType(MdaaResourceType.DATAZONE_PROJECT).resourceName(props.name, 64)
+        : MdaaDatazoneProject.resourceNameFromNameOverride(props.nameOverride);
     const projectProps: CfnProjectProps = {
       domainIdentifier: this.domainConfig.domainId,
       name: this.generatedProjectName,

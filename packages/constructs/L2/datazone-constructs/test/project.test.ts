@@ -5,7 +5,8 @@
 
 import { MdaaTestApp } from '@aws-mdaa/testing';
 import { MdaaResourceType } from '@aws-mdaa/naming';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
+import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { DomainConfig, MdaaDatazoneProject, MdaaDatazoneProjectProps, MdaaSageMakerProject } from '../lib';
 
 describe('MdaaDatazoneProject', () => {
@@ -217,6 +218,89 @@ describe('MdaaDatazoneProject', () => {
 
     const template = Template.fromStack(testApp.testStack);
     template.resourceCountIs('AWS::DataZone::ProjectMembership', 4);
+  });
+
+  describe('nameOverride', () => {
+    it('uses the value verbatim, bypassing the naming class (spaces and mixed case preserved)', () => {
+      new MdaaDatazoneProject(testApp.testStack, 'test-project', {
+        naming: testApp.naming,
+        name: 'test-project',
+        domainConfig: testDomainConfig,
+        nameOverride: 'Customer 360 Analytics',
+      });
+
+      const template = Template.fromStack(testApp.testStack);
+      template.hasResourceProperties('AWS::DataZone::Project', {
+        Name: 'Customer 360 Analytics',
+      });
+    });
+
+    it('wins over the derived name (no org-env-domain-module prefix, no lowercasing)', () => {
+      const construct = new MdaaDatazoneProject(testApp.testStack, 'test-project', {
+        naming: testApp.naming,
+        name: 'test-project',
+        domainConfig: testDomainConfig,
+        nameOverride: 'Fraud Analytics Sandbox',
+      });
+
+      const derived = testApp.naming
+        .withResourceType(MdaaResourceType.DATAZONE_PROJECT)
+        .resourceName('test-project', 64);
+      expect(construct.generatedProjectName).toEqual('Fraud Analytics Sandbox');
+      expect(construct.generatedProjectName).not.toEqual(derived);
+    });
+
+    it('throws on a value longer than 64 characters', () => {
+      expect(() => {
+        new MdaaDatazoneProject(testApp.testStack, 'test-project', {
+          naming: testApp.naming,
+          name: 'test-project',
+          domainConfig: testDomainConfig,
+          nameOverride: 'a'.repeat(65),
+        });
+      }).toThrow(/Invalid nameOverride/);
+    });
+
+    it('throws on an empty string instead of falling back to the derived name', () => {
+      expect(() => {
+        new MdaaDatazoneProject(testApp.testStack, 'test-project', {
+          naming: testApp.naming,
+          name: 'test-project',
+          domainConfig: testDomainConfig,
+          nameOverride: '',
+        });
+      }).toThrow(/Invalid nameOverride/);
+    });
+
+    it('throws on characters outside ^[\\w -]+$', () => {
+      expect(() => {
+        new MdaaDatazoneProject(testApp.testStack, 'test-project', {
+          naming: testApp.naming,
+          name: 'test-project',
+          domainConfig: testDomainConfig,
+          nameOverride: 'Bad@Name!',
+        });
+      }).toThrow(/Invalid nameOverride/);
+    });
+
+    it('accepts underscores, hyphens, digits and single characters', () => {
+      expect(MdaaDatazoneProject.resourceNameFromNameOverride('a')).toEqual('a');
+      expect(MdaaDatazoneProject.resourceNameFromNameOverride('Team_A-42 Workspace')).toEqual('Team_A-42 Workspace');
+    });
+
+    it('passes an unresolved SSM token through to the project Name instead of throwing', () => {
+      new MdaaDatazoneProject(testApp.testStack, 'test-project', {
+        naming: testApp.naming,
+        name: 'test-project',
+        domainConfig: testDomainConfig,
+        nameOverride: StringParameter.valueForStringParameter(testApp.testStack, '/test/project-name'),
+      });
+
+      const template = Template.fromStack(testApp.testStack);
+      template.hasResourceProperties('AWS::DataZone::Project', {
+        Name: { Ref: Match.stringLikeRegexp('^SsmParameterValuetestprojectname') },
+      });
+    });
   });
 });
 

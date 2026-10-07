@@ -87,6 +87,10 @@ projects:
   test-project-full:
     # (Required) Name of the project profile to use
     profileName: test-profile-full
+    # (Optional) Exact DataZone project name used verbatim, bypassing MDAA naming.
+    # Free-form business label for the SMUS project title; 1-64 chars matching
+    # ^[\w -]+$ (spaces and mixed case allowed). All other resources keep MDAA naming.
+    nameOverride: Customer 360 Analytics
     # (Optional) Domain unit path where the project will be created
     domainUnit: /some/domain/unit
     # (Optional) Per-environment configuration overrides

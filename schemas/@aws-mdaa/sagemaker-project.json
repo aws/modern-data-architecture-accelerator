@@ -2672,6 +2672,10 @@
                     "description": "Metadata form types to create, owned by this project. Each form is defined by\na set of fields; MDAA assembles the Smithy model (setting the namespace to the\ndomain ID and the structure name to the form name). Forms are usable across the\ndomain to attach standardized metadata to assets. The map key is used as the form's\nstable identifier; renaming a key replaces that form type (delete-then-create).\n\nUse cases: Data governance metadata standards; Asset metadata enforcement; Searchable custom attributes\n\nAWS: DataZone metadata form types (AWS::DataZone::FormType) owned by the project\n\nValidation: Optional; map of form name to MetadataFormProps; form name must be a valid Smithy structure name",
                     "type": "object"
                 },
+                "nameOverride": {
+                    "description": "Exact DataZone project name, used verbatim and bypassing MDAA naming conventions.\nIntended for the user-facing SMUS project title, which is a free-form label chosen\nby the business and is not derivable from org/env/domain/module metadata. All other\nresources created by the module keep MDAA naming.\n\nAWS: AWS::DataZone::Project Name\n\nValidation: Optional; 1-64 chars matching `^[\\w -]+$` (spaces and mixed case\nallowed); must be unique within the DataZone domain.",
+                    "type": "string"
+                },
                 "ownerGroups": {
                     "additionalProperties": {
                         "type": "string"

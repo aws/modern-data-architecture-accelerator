@@ -6771,6 +6771,7 @@ Validation: Optional; valid NamedSageMakerProjects
 | - [environmentConfigs](#projects_additionalProperties_environmentConfigs ) | No      | object | No         | -          | Per-environment configuration overrides for this project's environments.<br /><br />Use cases: Project-specific environment customization<br /><br />AWS: DataZone project environment configurations<br /><br />Validation: Optional; map of environment name to ProjectEnvironmentConfiguration                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | - [groups](#projects_additionalProperties_groups )                         | No      | object | No         | -          | MDAA group configuration names that receive PROJECT_CONTRIBUTOR designation<br />with contributor-level access to the project.<br /><br />Use cases: Team-based project contribution; Group standard access<br /><br />AWS: DataZone project membership with PROJECT_CONTRIBUTOR role<br /><br />Validation: Optional; map of ID to group config name; names must exist in module groups config                                                                                                                                                                                                                                                                                                                                                                             |
 | - [metadataForms](#projects_additionalProperties_metadataForms )           | No      | object | No         | -          | Metadata form types to create, owned by this project. Each form is defined by<br />a set of fields; MDAA assembles the Smithy model (setting the namespace to the<br />domain ID and the structure name to the form name). Forms are usable across the<br />domain to attach standardized metadata to assets. The map key is used as the form's<br />stable identifier; renaming a key replaces that form type (delete-then-create).<br /><br />Use cases: Data governance metadata standards; Asset metadata enforcement; Searchable custom attributes<br /><br />AWS: DataZone metadata form types (AWS::DataZone::FormType) owned by the project<br /><br />Validation: Optional; map of form name to MetadataFormProps; form name must be a valid Smithy structure name |
+| - [nameOverride](#projects_additionalProperties_nameOverride )             | No      | string | No         | -          | Exact DataZone project name, used verbatim and bypassing MDAA naming conventions.<br />Intended for the user-facing SMUS project title, which is a free-form label chosen<br />by the business and is not derivable from org/env/domain/module metadata. All other<br />resources created by the module keep MDAA naming.<br /><br />AWS: AWS::DataZone::Project Name<br /><br />Validation: Optional; 1-64 chars matching \`^[\w -]+$\` (spaces and mixed case<br />allowed); must be unique within the DataZone domain.                                                                                                                                                                                                                                                   |
 | - [ownerGroups](#projects_additionalProperties_ownerGroups )               | No      | object | No         | -          | MDAA group configuration names (from the SageMaker module groups section) that<br />receive PROJECT_OWNER designation with full administrative access to the project.<br />These are not DataZone group names or Identity Center group identifiers.<br /><br />Use cases: Team-based project ownership; Group admin access<br /><br />AWS: DataZone project membership with PROJECT_OWNER role<br /><br />Validation: Optional; map of ID to group config name; names must exist in module groups config                                                                                                                                                                                                                                                                    |
 | - [ownerUsers](#projects_additionalProperties_ownerUsers )                 | No      | object | No         | -          | MDAA user configuration names (from the SageMaker module users section) that<br />receive PROJECT_OWNER designation with full administrative access to the project.<br />These are not DataZone usernames or Identity Center identifiers.<br /><br />Use cases: User-based project ownership; Full project admin access<br /><br />AWS: DataZone project membership with PROJECT_OWNER role<br /><br />Validation: Optional; map of ID to user config name; names must exist in module users config                                                                                                                                                                                                                                                                         |
 | + [profileName](#projects_additionalProperties_profileName )               | No      | string | No         | -          | Name of the project profile to use for this project. The profile must<br />target the same account as the project.<br /><br />Use cases: Profile-based project creation; Environment template selection<br /><br />AWS: DataZone project profile reference<br /><br />Validation: Required; string; must match a key in projectProfiles config                                                                                                                                                                                                                                                                                                                                                                                                                              |
@@ -7115,7 +7116,24 @@ Must be one of:
 * "DISABLED"
 * "ENABLED"
 
-#### <a name="projects_additionalProperties_ownerGroups"></a>6.1.6. Property `root > projects > additionalProperties > ownerGroups`
+#### <a name="projects_additionalProperties_nameOverride"></a>6.1.6. Property `root > projects > additionalProperties > nameOverride`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Exact DataZone project name, used verbatim and bypassing MDAA naming conventions.
+Intended for the user-facing SMUS project title, which is a free-form label chosen
+by the business and is not derivable from org/env/domain/module metadata. All other
+resources created by the module keep MDAA naming.
+
+AWS: AWS::DataZone::Project Name
+
+Validation: Optional; 1-64 chars matching `^[\w -]+$` (spaces and mixed case
+allowed); must be unique within the DataZone domain.
+
+#### <a name="projects_additionalProperties_ownerGroups"></a>6.1.7. Property `root > projects > additionalProperties > ownerGroups`
 
 |                           |                                                                                                                        |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
@@ -7137,14 +7155,14 @@ Validation: Optional; map of ID to group config name; names must exist in module
 | ---------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#projects_additionalProperties_ownerGroups_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="projects_additionalProperties_ownerGroups_additionalProperties"></a>6.1.6.1. Property `root > projects > additionalProperties > ownerGroups > additionalProperties`
+##### <a name="projects_additionalProperties_ownerGroups_additionalProperties"></a>6.1.7.1. Property `root > projects > additionalProperties > ownerGroups > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="projects_additionalProperties_ownerUsers"></a>6.1.7. Property `root > projects > additionalProperties > ownerUsers`
+#### <a name="projects_additionalProperties_ownerUsers"></a>6.1.8. Property `root > projects > additionalProperties > ownerUsers`
 
 |                           |                                                                                                                       |
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------- |
@@ -7166,14 +7184,14 @@ Validation: Optional; map of ID to user config name; names must exist in module 
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#projects_additionalProperties_ownerUsers_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="projects_additionalProperties_ownerUsers_additionalProperties"></a>6.1.7.1. Property `root > projects > additionalProperties > ownerUsers > additionalProperties`
+##### <a name="projects_additionalProperties_ownerUsers_additionalProperties"></a>6.1.8.1. Property `root > projects > additionalProperties > ownerUsers > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="projects_additionalProperties_profileName"></a>6.1.8. Property `root > projects > additionalProperties > profileName`
+#### <a name="projects_additionalProperties_profileName"></a>6.1.9. Property `root > projects > additionalProperties > profileName`
 
 |              |          |
 | ------------ | -------- |
@@ -7189,7 +7207,7 @@ AWS: DataZone project profile reference
 
 Validation: Required; string; must match a key in projectProfiles config
 
-#### <a name="projects_additionalProperties_users"></a>6.1.9. Property `root > projects > additionalProperties > users`
+#### <a name="projects_additionalProperties_users"></a>6.1.10. Property `root > projects > additionalProperties > users`
 
 |                           |                                                                                                                  |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------- |
@@ -7210,7 +7228,7 @@ Validation: Optional; map of ID to user config name; names must exist in module 
 | ---------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#projects_additionalProperties_users_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="projects_additionalProperties_users_additionalProperties"></a>6.1.9.1. Property `root > projects > additionalProperties > users > additionalProperties`
+##### <a name="projects_additionalProperties_users_additionalProperties"></a>6.1.10.1. Property `root > projects > additionalProperties > users > additionalProperties`
 
 |              |          |
 | ------------ | -------- |

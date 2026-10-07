@@ -34,6 +34,19 @@ export interface NamedSageMakerProjects {
 
 export interface SageMakerProjectProps {
   /**
+   * Exact DataZone project name, used verbatim and bypassing MDAA naming conventions.
+   * Intended for the user-facing SMUS project title, which is a free-form label chosen
+   * by the business and is not derivable from org/env/domain/module metadata. All other
+   * resources created by the module keep MDAA naming.
+   *
+   * AWS: AWS::DataZone::Project Name
+   *
+   * Validation: Optional; 1-64 chars matching `^[\w -]+$` (spaces and mixed case
+   * allowed); must be unique within the DataZone domain.
+   */
+  readonly nameOverride?: string;
+
+  /**
    * Name of the project profile to use for this project. The profile must
    * target the same account as the project.
    *
@@ -478,6 +491,7 @@ export class SagemakerProjectL3Construct extends MdaaL3Construct {
 
     const constructProps: MdaaDatazoneProjectProps = {
       name: projectName,
+      nameOverride: projectProps.nameOverride,
       naming: this.props.naming,
       domainConfig: domainConfig,
       projectProfileId: projectProfileId,

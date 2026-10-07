@@ -21,6 +21,10 @@ datazone:
   domainConfigSSMParam: /test-org/test-domain/test-datazone/domain/test-domain/config
   # DataZone project configuration
   project:
+    # (Optional) Exact DataZone project name used verbatim, bypassing MDAA naming.
+    # Free-form business label for the project title; 1-64 chars matching
+    # ^[\w -]+$ (spaces and mixed case allowed). All other resources keep MDAA naming.
+    nameOverride: Fraud Analytics Sandbox
     # Domain unit identifier for organizational hierarchy
     domainUnit: test-domain-unit
     # DataZone environment configuration for Lake Formation integration

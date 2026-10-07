@@ -344,7 +344,7 @@
             "domain_unit_id/root/some/domain/unit"
           ]
         },
-        "Name": "test-org-test-env-test-domain-test-dataops-project-compr-fba27e0",
+        "Name": "Fraud Analytics Sandbox",
         "ProjectProfileId": {
           "Ref": "constructsagemakerprojectprofilesconfigssmtestprofileprojectprofileidParameter0A43F1FB"
         },
@@ -485,7 +485,7 @@
           "mdaa_org": "test-org"
         },
         "Type": "String",
-        "Value": "test-org-test-env-test-domain-test-dataops-project-compr-fba27e0"
+        "Value": "Fraud Analytics Sandbox"
       }
     },
     "constructsagemakerprojectdataopsenvdeploymentmonitor3D944211": {
@@ -7848,7 +7848,7 @@
       }
     },
     "constructsagemakerprojectdataopsprojectdataopsdataopsoutE3E5FA10": {
-      "Value": "test-org-test-env-test-domain-test-dataops-project-compr-fba27e0",
+      "Value": "Fraud Analytics Sandbox",
       "Export": {
         "Name": "test-org:test-domain:test-dataops-project-comprehensive:project:dataops:dataops"
       }

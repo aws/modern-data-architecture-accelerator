@@ -459,6 +459,18 @@ export interface DataOpsDatazoneProps {
 }
 
 export interface DataZoneProjectProps {
+  /**
+   * Exact DataZone project name, used verbatim and bypassing MDAA naming conventions.
+   * Intended for the user-facing SMUS project title, which is a free-form label chosen
+   * by the business and is not derivable from org/env/domain/module metadata. All other
+   * resources created by the module keep MDAA naming.
+   *
+   * AWS: AWS::DataZone::Project Name
+   *
+   * Validation: Optional; 1-64 chars matching `^[\w -]+$` (spaces and mixed case
+   * allowed); must be unique within the DataZone domain.
+   */
+  readonly nameOverride?: string;
   /** SSM parameter name containing domain configuration. */
   readonly domainConfigSSMParam?: string;
   /** Direct domain configuration object. */

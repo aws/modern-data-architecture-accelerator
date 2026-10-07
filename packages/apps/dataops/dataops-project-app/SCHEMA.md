@@ -8016,16 +8016,17 @@ This value will resolve to one of the following:
 
 **Description:** DataZone project configuration for DataOps integration.
 
-| Property                                                          | Pattern | Type   | Deprecated | Definition                                      | Title/Description                                                                       |
-| ----------------------------------------------------------------- | ------- | ------ | ---------- | ----------------------------------------------- | --------------------------------------------------------------------------------------- |
-| - [domainConfig](#datazone_project_domainConfig )                 | No      | object | No         | Same as [domainConfig](#datazone_domainConfig ) | Direct domain configuration object.                                                     |
-| - [domainConfigSSMParam](#datazone_project_domainConfigSSMParam ) | No      | string | No         | -                                               | SSM parameter name containing domain configuration.                                     |
-| - [domainUnit](#datazone_project_domainUnit )                     | No      | string | No         | -                                               | Domain unit identifier for organizational hierarchy.                                    |
-| - [environment](#datazone_project_environment )                   | No      | object | No         | In #/definitions/DataZoneEnvironmentProps       | DataZone environment configuration for VPC connectivity and Lake Formation integration. |
-| - [groups](#datazone_project_groups )                             | No      | object | No         | -                                               | MDAA module group config names with PROJECT_CONTRIBUTOR designation.                    |
-| - [ownerGroups](#datazone_project_ownerGroups )                   | No      | object | No         | -                                               | MDAA module group config names with PROJECT_OWNER designation.                          |
-| - [ownerUsers](#datazone_project_ownerUsers )                     | No      | object | No         | -                                               | MDAA module user config names with PROJECT_OWNER designation.                           |
-| - [users](#datazone_project_users )                               | No      | object | No         | -                                               | MDAA module user config names with PROJECT_CONTRIBUTOR designation.                     |
+| Property                                                          | Pattern | Type   | Deprecated | Definition                                      | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| ----------------------------------------------------------------- | ------- | ------ | ---------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [domainConfig](#datazone_project_domainConfig )                 | No      | object | No         | Same as [domainConfig](#datazone_domainConfig ) | Direct domain configuration object.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| - [domainConfigSSMParam](#datazone_project_domainConfigSSMParam ) | No      | string | No         | -                                               | SSM parameter name containing domain configuration.                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| - [domainUnit](#datazone_project_domainUnit )                     | No      | string | No         | -                                               | Domain unit identifier for organizational hierarchy.                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [environment](#datazone_project_environment )                   | No      | object | No         | In #/definitions/DataZoneEnvironmentProps       | DataZone environment configuration for VPC connectivity and Lake Formation integration.                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| - [groups](#datazone_project_groups )                             | No      | object | No         | -                                               | MDAA module group config names with PROJECT_CONTRIBUTOR designation.                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [nameOverride](#datazone_project_nameOverride )                 | No      | string | No         | -                                               | Exact DataZone project name, used verbatim and bypassing MDAA naming conventions.<br />Intended for the user-facing SMUS project title, which is a free-form label chosen<br />by the business and is not derivable from org/env/domain/module metadata. All other<br />resources created by the module keep MDAA naming.<br /><br />AWS: AWS::DataZone::Project Name<br /><br />Validation: Optional; 1-64 chars matching \`^[\w -]+$\` (spaces and mixed case<br />allowed); must be unique within the DataZone domain. |
+| - [ownerGroups](#datazone_project_ownerGroups )                   | No      | object | No         | -                                               | MDAA module group config names with PROJECT_OWNER designation.                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [ownerUsers](#datazone_project_ownerUsers )                     | No      | object | No         | -                                               | MDAA module user config names with PROJECT_OWNER designation.                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [users](#datazone_project_users )                               | No      | object | No         | -                                               | MDAA module user config names with PROJECT_CONTRIBUTOR designation.                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 
 #### <a name="datazone_project_domainConfig"></a>6.3.1. Property `root > datazone > project > domainConfig`
 
@@ -8103,7 +8104,24 @@ This value will resolve to one of the following:
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="datazone_project_ownerGroups"></a>6.3.6. Property `root > datazone > project > ownerGroups`
+#### <a name="datazone_project_nameOverride"></a>6.3.6. Property `root > datazone > project > nameOverride`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Exact DataZone project name, used verbatim and bypassing MDAA naming conventions.
+Intended for the user-facing SMUS project title, which is a free-form label chosen
+by the business and is not derivable from org/env/domain/module metadata. All other
+resources created by the module keep MDAA naming.
+
+AWS: AWS::DataZone::Project Name
+
+Validation: Optional; 1-64 chars matching `^[\w -]+$` (spaces and mixed case
+allowed); must be unique within the DataZone domain.
+
+#### <a name="datazone_project_ownerGroups"></a>6.3.7. Property `root > datazone > project > ownerGroups`
 
 |                           |                                                                                                           |
 | ------------------------- | --------------------------------------------------------------------------------------------------------- |
@@ -8117,14 +8135,14 @@ This value will resolve to one of the following:
 | --------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#datazone_project_ownerGroups_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="datazone_project_ownerGroups_additionalProperties"></a>6.3.6.1. Property `root > datazone > project > ownerGroups > additionalProperties`
+##### <a name="datazone_project_ownerGroups_additionalProperties"></a>6.3.7.1. Property `root > datazone > project > ownerGroups > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="datazone_project_ownerUsers"></a>6.3.7. Property `root > datazone > project > ownerUsers`
+#### <a name="datazone_project_ownerUsers"></a>6.3.8. Property `root > datazone > project > ownerUsers`
 
 |                           |                                                                                                          |
 | ------------------------- | -------------------------------------------------------------------------------------------------------- |
@@ -8138,14 +8156,14 @@ This value will resolve to one of the following:
 | -------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#datazone_project_ownerUsers_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="datazone_project_ownerUsers_additionalProperties"></a>6.3.7.1. Property `root > datazone > project > ownerUsers > additionalProperties`
+##### <a name="datazone_project_ownerUsers_additionalProperties"></a>6.3.8.1. Property `root > datazone > project > ownerUsers > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="datazone_project_users"></a>6.3.8. Property `root > datazone > project > users`
+#### <a name="datazone_project_users"></a>6.3.9. Property `root > datazone > project > users`
 
 |                           |                                                                                                     |
 | ------------------------- | --------------------------------------------------------------------------------------------------- |
@@ -8159,7 +8177,7 @@ This value will resolve to one of the following:
 | --------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#datazone_project_users_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="datazone_project_users_additionalProperties"></a>6.3.8.1. Property `root > datazone > project > users > additionalProperties`
+##### <a name="datazone_project_users_additionalProperties"></a>6.3.9.1. Property `root > datazone > project > users > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
@@ -8838,6 +8856,7 @@ Validation: Optional; valid KMS key ARN
 | - [environmentConfigs](#sagemaker_project_environmentConfigs ) | No      | object | No         | -          | Per-environment configuration overrides for this project's environments.<br /><br />Use cases: Project-specific environment customization<br /><br />AWS: DataZone project environment configurations<br /><br />Validation: Optional; map of environment name to ProjectEnvironmentConfiguration                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | - [groups](#sagemaker_project_groups )                         | No      | object | No         | -          | MDAA group configuration names that receive PROJECT_CONTRIBUTOR designation<br />with contributor-level access to the project.<br /><br />Use cases: Team-based project contribution; Group standard access<br /><br />AWS: DataZone project membership with PROJECT_CONTRIBUTOR role<br /><br />Validation: Optional; map of ID to group config name; names must exist in module groups config                                                                                                                                                                                                                                                                                                                                                                             |
 | - [metadataForms](#sagemaker_project_metadataForms )           | No      | object | No         | -          | Metadata form types to create, owned by this project. Each form is defined by<br />a set of fields; MDAA assembles the Smithy model (setting the namespace to the<br />domain ID and the structure name to the form name). Forms are usable across the<br />domain to attach standardized metadata to assets. The map key is used as the form's<br />stable identifier; renaming a key replaces that form type (delete-then-create).<br /><br />Use cases: Data governance metadata standards; Asset metadata enforcement; Searchable custom attributes<br /><br />AWS: DataZone metadata form types (AWS::DataZone::FormType) owned by the project<br /><br />Validation: Optional; map of form name to MetadataFormProps; form name must be a valid Smithy structure name |
+| - [nameOverride](#sagemaker_project_nameOverride )             | No      | string | No         | -          | Exact DataZone project name, used verbatim and bypassing MDAA naming conventions.<br />Intended for the user-facing SMUS project title, which is a free-form label chosen<br />by the business and is not derivable from org/env/domain/module metadata. All other<br />resources created by the module keep MDAA naming.<br /><br />AWS: AWS::DataZone::Project Name<br /><br />Validation: Optional; 1-64 chars matching \`^[\w -]+$\` (spaces and mixed case<br />allowed); must be unique within the DataZone domain.                                                                                                                                                                                                                                                   |
 | - [ownerGroups](#sagemaker_project_ownerGroups )               | No      | object | No         | -          | MDAA group configuration names (from the SageMaker module groups section) that<br />receive PROJECT_OWNER designation with full administrative access to the project.<br />These are not DataZone group names or Identity Center group identifiers.<br /><br />Use cases: Team-based project ownership; Group admin access<br /><br />AWS: DataZone project membership with PROJECT_OWNER role<br /><br />Validation: Optional; map of ID to group config name; names must exist in module groups config                                                                                                                                                                                                                                                                    |
 | - [ownerUsers](#sagemaker_project_ownerUsers )                 | No      | object | No         | -          | MDAA user configuration names (from the SageMaker module users section) that<br />receive PROJECT_OWNER designation with full administrative access to the project.<br />These are not DataZone usernames or Identity Center identifiers.<br /><br />Use cases: User-based project ownership; Full project admin access<br /><br />AWS: DataZone project membership with PROJECT_OWNER role<br /><br />Validation: Optional; map of ID to user config name; names must exist in module users config                                                                                                                                                                                                                                                                         |
 | + [profileName](#sagemaker_project_profileName )               | No      | string | No         | -          | Name of the project profile to use for this project. The profile must<br />target the same account as the project.<br /><br />Use cases: Profile-based project creation; Environment template selection<br /><br />AWS: DataZone project profile reference<br /><br />Validation: Required; string; must match a key in projectProfiles config                                                                                                                                                                                                                                                                                                                                                                                                                              |
@@ -9182,7 +9201,24 @@ Must be one of:
 * "DISABLED"
 * "ENABLED"
 
-#### <a name="sagemaker_project_ownerGroups"></a>14.4.6. Property `root > sagemaker > project > ownerGroups`
+#### <a name="sagemaker_project_nameOverride"></a>14.4.6. Property `root > sagemaker > project > nameOverride`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Exact DataZone project name, used verbatim and bypassing MDAA naming conventions.
+Intended for the user-facing SMUS project title, which is a free-form label chosen
+by the business and is not derivable from org/env/domain/module metadata. All other
+resources created by the module keep MDAA naming.
+
+AWS: AWS::DataZone::Project Name
+
+Validation: Optional; 1-64 chars matching `^[\w -]+$` (spaces and mixed case
+allowed); must be unique within the DataZone domain.
+
+#### <a name="sagemaker_project_ownerGroups"></a>14.4.7. Property `root > sagemaker > project > ownerGroups`
 
 |                           |                                                                                                            |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------- |
@@ -9204,14 +9240,14 @@ Validation: Optional; map of ID to group config name; names must exist in module
 | ---------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#sagemaker_project_ownerGroups_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="sagemaker_project_ownerGroups_additionalProperties"></a>14.4.6.1. Property `root > sagemaker > project > ownerGroups > additionalProperties`
+##### <a name="sagemaker_project_ownerGroups_additionalProperties"></a>14.4.7.1. Property `root > sagemaker > project > ownerGroups > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="sagemaker_project_ownerUsers"></a>14.4.7. Property `root > sagemaker > project > ownerUsers`
+#### <a name="sagemaker_project_ownerUsers"></a>14.4.8. Property `root > sagemaker > project > ownerUsers`
 
 |                           |                                                                                                           |
 | ------------------------- | --------------------------------------------------------------------------------------------------------- |
@@ -9233,14 +9269,14 @@ Validation: Optional; map of ID to user config name; names must exist in module 
 | --------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#sagemaker_project_ownerUsers_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="sagemaker_project_ownerUsers_additionalProperties"></a>14.4.7.1. Property `root > sagemaker > project > ownerUsers > additionalProperties`
+##### <a name="sagemaker_project_ownerUsers_additionalProperties"></a>14.4.8.1. Property `root > sagemaker > project > ownerUsers > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="sagemaker_project_profileName"></a>14.4.8. Property `root > sagemaker > project > profileName`
+#### <a name="sagemaker_project_profileName"></a>14.4.9. Property `root > sagemaker > project > profileName`
 
 |              |          |
 | ------------ | -------- |
@@ -9256,7 +9292,7 @@ AWS: DataZone project profile reference
 
 Validation: Required; string; must match a key in projectProfiles config
 
-#### <a name="sagemaker_project_users"></a>14.4.9. Property `root > sagemaker > project > users`
+#### <a name="sagemaker_project_users"></a>14.4.10. Property `root > sagemaker > project > users`
 
 |                           |                                                                                                      |
 | ------------------------- | ---------------------------------------------------------------------------------------------------- |
@@ -9277,7 +9313,7 @@ Validation: Optional; map of ID to user config name; names must exist in module 
 | ---------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#sagemaker_project_users_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="sagemaker_project_users_additionalProperties"></a>14.4.9.1. Property `root > sagemaker > project > users > additionalProperties`
+##### <a name="sagemaker_project_users_additionalProperties"></a>14.4.10.1. Property `root > sagemaker > project > users > additionalProperties`
 
 |              |          |
 | ------------ | -------- |

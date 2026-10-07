@@ -4,6 +4,7 @@
  */
 
 import { MdaaRoleHelper, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
+import { MdaaResourceType } from '@aws-mdaa/naming';
 import { MdaaTestApp } from '@aws-mdaa/testing';
 import { Stack } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
@@ -338,6 +339,67 @@ describe('DataOps Project Edge Cases', () => {
 
     const construct = new DataOpsProjectL3Construct(stack, 'test-construct', props);
     expect(construct).toBeDefined();
+  });
+
+  test('forwards datazone project nameOverride verbatim to the DataZone project', () => {
+    const app = new MdaaTestApp();
+    const stack = new Stack(app, 'test-datazone-name-override-stack');
+    const roleHelper = new MdaaRoleHelper(
+      stack,
+      app.naming,
+      path.dirname(require.resolve('@aws-mdaa/iam-role-helper/package.json')),
+    );
+
+    const props: DataOpsProjectL3ConstructProps = {
+      naming: app.naming,
+      roleHelper,
+      projectExecutionRoleRefs: [testGlueRoleRef],
+      dataEngineerRoleRefs: [],
+      dataAdminRoleRefs: [],
+      datazone: {
+        project: {
+          domainConfigSSMParam: '/test/datazone/config',
+          domainUnit: '/test-unit',
+          nameOverride: 'Fraud Analytics Sandbox',
+        },
+      },
+    };
+
+    new DataOpsProjectL3Construct(stack, 'test-construct', props);
+    const template = Template.fromStack(stack);
+    template.hasResourceProperties('AWS::DataZone::Project', {
+      Name: 'Fraud Analytics Sandbox',
+    });
+  });
+
+  test('keeps the MDAA-derived DataZone project name when nameOverride is omitted', () => {
+    const app = new MdaaTestApp();
+    const stack = new Stack(app, 'test-datazone-derived-name-stack');
+    const roleHelper = new MdaaRoleHelper(
+      stack,
+      app.naming,
+      path.dirname(require.resolve('@aws-mdaa/iam-role-helper/package.json')),
+    );
+
+    const props: DataOpsProjectL3ConstructProps = {
+      naming: app.naming,
+      roleHelper,
+      projectExecutionRoleRefs: [testGlueRoleRef],
+      dataEngineerRoleRefs: [],
+      dataAdminRoleRefs: [],
+      datazone: {
+        project: {
+          domainConfigSSMParam: '/test/datazone/config',
+          domainUnit: '/test-unit',
+        },
+      },
+    };
+
+    new DataOpsProjectL3Construct(stack, 'test-construct', props);
+    const template = Template.fromStack(stack);
+    template.hasResourceProperties('AWS::DataZone::Project', {
+      Name: app.naming.withResourceType(MdaaResourceType.DATAZONE_PROJECT).resourceName(undefined, 64),
+    });
   });
 
   test('should tag Athena workgroup with DataZone tags when datazoneResources is defined', () => {

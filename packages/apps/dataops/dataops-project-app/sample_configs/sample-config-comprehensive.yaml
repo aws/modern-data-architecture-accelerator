@@ -259,6 +259,10 @@ sagemaker:
   project:
     # Name of the project profile to use
     profileName: test-profile
+    # (Optional) Exact DataZone project name used verbatim, bypassing MDAA naming.
+    # Free-form business label for the SMUS project title; 1-64 chars matching
+    # ^[\w -]+$ (spaces and mixed case allowed). All other resources keep MDAA naming.
+    nameOverride: Fraud Analytics Sandbox
     # Domain unit path for project placement
     domainUnit: /some/domain/unit
     # MDAA group config names with PROJECT_CONTRIBUTOR designation

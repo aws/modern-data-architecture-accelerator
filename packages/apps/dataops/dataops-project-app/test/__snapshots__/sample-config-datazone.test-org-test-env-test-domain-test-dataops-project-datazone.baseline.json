@@ -96,7 +96,7 @@
             "domain_unit_id/root/test-domain-unit"
           ]
         },
-        "Name": "test-org-test-env-test-domain-test-dataops-project-datazone"
+        "Name": "Fraud Analytics Sandbox"
       }
     },
     "constructdatazoneprojectowneruserowneruserF13743A1": {
@@ -223,7 +223,7 @@
           "mdaa_org": "test-org"
         },
         "Type": "String",
-        "Value": "test-org-test-env-test-domain-test-dataops-project-datazone"
+        "Value": "Fraud Analytics Sandbox"
       }
     },
     "constructdatalakeenv400D630C": {
@@ -4549,7 +4549,7 @@
   },
   "Outputs": {
     "constructdatazoneprojectprojectnameout9F171CCC": {
-      "Value": "test-org-test-env-test-domain-test-dataops-project-datazone",
+      "Value": "Fraud Analytics Sandbox",
       "Export": {
         "Name": "test-org:test-domain:test-dataops-project-datazone:project:name"
       }

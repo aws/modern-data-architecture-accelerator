@@ -95,6 +95,29 @@ describe('SagemakerProjectL3Construct', () => {
     template.resourceCountIs('AWS::DataZone::Project', 1);
   });
 
+  it('forwards project nameOverride verbatim to the DataZone project', () => {
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-sm-name-override', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        'test-profile': {
+          environments: {
+            DefaultDataLake: {},
+          },
+        },
+      },
+      projects: {
+        'test-project': { profileName: 'test-profile', nameOverride: 'Customer 360 Analytics' },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    template.hasResourceProperties('AWS::DataZone::Project', {
+      Name: 'Customer 360 Analytics',
+    });
+  });
+
   it('should create SageMaker project with config profile reference', () => {
     new SagemakerProjectL3Construct(testApp.testStack, 'test-sm-construct6', {
       naming: testApp.naming,

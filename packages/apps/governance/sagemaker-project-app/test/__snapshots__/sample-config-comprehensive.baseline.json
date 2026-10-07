@@ -399,7 +399,7 @@
             "domain_unit_id/root/some/domain/unit"
           ]
         },
-        "Name": "test-org-test-env-test-domain-test-sagemaker-project-ma-7845c0c9",
+        "Name": "Customer 360 Analytics",
         "ProjectProfileId": {
           "Fn::GetAtt": [
             "sagemakerprojecttestprofilefull55318B36",
@@ -543,7 +543,7 @@
           "mdaa_org": "test-org"
         },
         "Type": "String",
-        "Value": "test-org-test-env-test-domain-test-sagemaker-project-ma-7845c0c9"
+        "Value": "Customer 360 Analytics"
       }
     },
     "sagemakerprojectprojecttestprojectfullenvdeploymentmonitor46B25A8C": {
@@ -3499,7 +3499,7 @@
   },
   "Outputs": {
     "sagemakerprojectprojecttestprojectfullprojecttestprojectfulltestprojectfulloutEB533425": {
-      "Value": "test-org-test-env-test-domain-test-sagemaker-project-ma-7845c0c9",
+      "Value": "Customer 360 Analytics",
       "Export": {
         "Name": "test-org:test-domain:test-sagemaker-project-main:project:testprojectfull:test-project-full"
       }
