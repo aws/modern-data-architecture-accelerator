@@ -1,5 +1,17 @@
 # Change Log
 
+## [NEXT_RELEASE_VERSION] - NEXT_RELEASE_DATE
+
+### New Features
+
+#### DataOps Project and SageMaker Project Modules
+
+- Added an opt-in `nameOverride` attribute to SMUS / DataZone projects (`projects.<key>` in `@aws-mdaa/sagemaker-project`; `sagemaker.project` / `datazone.project` in `@aws-mdaa/dataops-project`), used verbatim as the project name so the title can be a free-form label like `Customer 360 Analytics`. Optional and additive; other resources keep MDAA naming. See the [SageMaker Project](packages/apps/governance/sagemaker-project-app/SCHEMA.md#projects_additionalProperties_nameOverride) and [DataOps Project](packages/apps/dataops/dataops-project-app/SCHEMA.md#sagemaker_project_nameOverride) schema docs for accepted values.
+
+### General Changes
+
+- Updated dependencies to address CVEs (`js-yaml`, `axios`, `smol-toml`, `nx`, `@xmldom/xmldom`, `browserslist`, `baseline-browser-mapping`, `markdown-it`, `linkify-it`, `brace-expansion`, `stream-json`, `@babel/core`)
+
 ## [1.9.0] - 2026-10-01
 
 ### New Features
@@ -19,8 +31,6 @@
 #### DataOps Project and SageMaker Project Modules
 
 - Added **metadata form types** via a new `metadataForms` property on each SageMaker project (`sagemaker.project` in the DataOps Project module). Forms are defined declaratively by their fields (type, `required`, `searchable` modes, `glossaryId`), letting projects attach standardized, searchable metadata to assets across the domain. Form types are created only when the property is set, but redeploy the DataZone/SageMaker domain module first (see DataZone/SMUS Modules below), or the domain won't yet have granted form-type creation to the custom-resource role. See the [SageMaker Project module README](packages/apps/governance/sagemaker-project-app/README.md) for the config surface.
-
-- Added an opt-in `nameOverride` attribute to SMUS / DataZone projects (`projects.<key>` in `@aws-mdaa/sagemaker-project`; `sagemaker.project` / `datazone.project` in `@aws-mdaa/dataops-project`), used verbatim as the project name so the title can be a free-form label like `Customer 360 Analytics`. Optional and additive; other resources keep MDAA naming. See the [SageMaker Project](packages/apps/governance/sagemaker-project-app/SCHEMA.md#projects_additionalProperties_nameOverride) and [DataOps Project](packages/apps/dataops/dataops-project-app/SCHEMA.md#sagemaker_project_nameOverride) schema docs for accepted values.
 
 #### DataZone/SMUS Modules
 

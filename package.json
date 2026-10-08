@@ -43,10 +43,11 @@
     "eslint-plugin-prettier": "5.5.4",
     "husky": "8.0.3",
     "jest": "29.7.0",
-    "js-yaml": "4.3.1",
+    "js-yaml": "4.3.2",
     "jsii": "5.9.44",
     "jsii-config": "1.132.0",
     "jsii-pacmak": "1.132.0",
+    "jsii-rosetta": "5.9.69",
     "lint-staged": "16.2.7",
     "prettier": "3.7.4",
     "semver": "7.7.4",
@@ -54,21 +55,25 @@
     "typedoc": "0.28.17"
   },
   "optionalDependencies": {
-    "@nx/nx-darwin-arm64": "22.7.8",
-    "@nx/nx-darwin-x64": "22.7.8",
-    "@nx/nx-freebsd-x64": "22.7.8",
-    "@nx/nx-linux-arm-gnueabihf": "22.7.8",
-    "@nx/nx-linux-arm64-gnu": "22.7.8",
-    "@nx/nx-linux-arm64-musl": "22.7.8",
-    "@nx/nx-linux-x64-gnu": "22.7.8",
-    "@nx/nx-linux-x64-musl": "22.7.8",
-    "@nx/nx-win32-arm64-msvc": "22.7.8",
-    "@nx/nx-win32-x64-msvc": "22.7.8"
+    "@nx/nx-darwin-arm64": "22.7.10",
+    "@nx/nx-darwin-x64": "22.7.10",
+    "@nx/nx-freebsd-x64": "22.7.10",
+    "@nx/nx-linux-arm-gnueabihf": "22.7.10",
+    "@nx/nx-linux-arm64-gnu": "22.7.10",
+    "@nx/nx-linux-arm64-musl": "22.7.10",
+    "@nx/nx-linux-x64-gnu": "22.7.10",
+    "@nx/nx-linux-x64-musl": "22.7.10",
+    "@nx/nx-win32-arm64-msvc": "22.7.10",
+    "@nx/nx-win32-x64-msvc": "22.7.10"
   },
   "dependencies": {
-    "aws-cdk": "^2.1126.0",
-    "nx": "22.7.8",
+    "aws-cdk": "2.1127.0",
+    "nx": "22.7.10",
     "typescript": "5.9.3"
+  },
+  "overrides": {
+    "axios": "1.20.0",
+    "smol-toml": "1.9.0"
   },
   "workspaces": [
     "packages/cli",

@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@aws-cdk/cloudformation-diff": "2.187.1",
-    "@aws-cdk/toolkit-lib": "^1.19.3",
+    "@aws-cdk/toolkit-lib": "1.25.1",
     "@aws-mdaa/naming": "1.9.0",
     "aws-cdk-lib": "2.261.0",
     "cdk-nag": "2.37.55",

@@ -35,7 +35,7 @@
     "aws-cdk-lib": "2.261.0",
     "cdk-nag": "2.37.55",
     "constructs": "10.6.0",
-    "fast-check": "^4.6.0",
+    "fast-check": "4.7.0",
     "jest": "29.7.0",
     "ts-jest": "29.4.9",
     "ts-node": "10.9.2",
