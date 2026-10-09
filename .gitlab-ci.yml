@@ -1276,6 +1276,9 @@ prerelease_build_test:
   needs:
     - prerelease_version
   allow_failure: false
+  variables:
+    BUILD_CONCURRENCY: '8'
+    NODE_OPTIONS: '--max-old-space-size=3072'
   script:
     - npm run build
     - ./scripts/ci/check_schema_drift.sh
