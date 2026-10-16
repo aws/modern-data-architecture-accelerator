@@ -27,9 +27,18 @@ export interface MdaaDatazoneEnvironmentProps extends MdaaConstructProps {
   readonly envBucket: IBucket;
   readonly account: string;
   readonly region: string;
+  /**
+   * Role ARNs authorized on the subscription target after the environment user role, so DataZone
+   * grants them the subscriptions it fulfills to the target. At most MAX_AUTHORIZED_PRINCIPALS - 1
+   * entries; more throws.
+   */
+  readonly additionalAuthorizedPrincipalArns?: string[];
 }
 
 export class MdaaDatazoneEnvironment extends Construct {
+  /** CloudFormation's limit on AWS::DataZone::SubscriptionTarget AuthorizedPrincipals. */
+  public static readonly MAX_AUTHORIZED_PRINCIPALS = 10;
+
   readonly props: MdaaDatazoneEnvironmentProps;
   public readonly env: CfnEnvironment;
   public readonly subDatabase: CfnDatabase;
@@ -152,9 +161,17 @@ export class MdaaDatazoneEnvironment extends Construct {
     lakeformationManagedAccessRole: IRole,
     subDatabaseName: string,
   ): CfnSubscriptionTarget {
+    const authorizedPrincipals = [envRole.roleArn, ...(this.props.additionalAuthorizedPrincipalArns ?? [])];
+    if (authorizedPrincipals.length > MdaaDatazoneEnvironment.MAX_AUTHORIZED_PRINCIPALS) {
+      throw new Error(
+        `A DataZone subscription target accepts at most ${MdaaDatazoneEnvironment.MAX_AUTHORIZED_PRINCIPALS} ` +
+          `authorized principals, but ${authorizedPrincipals.length} were given ` +
+          `(the environment user role plus ${authorizedPrincipals.length - 1} additional roles).`,
+      );
+    }
     const subTargetProps: CfnSubscriptionTargetProps = {
       applicableAssetTypes: ['GlueTableAssetType'],
-      authorizedPrincipals: [envRole.roleArn], //User role
+      authorizedPrincipals: authorizedPrincipals,
       domainIdentifier: mdaaProject.project.domainIdentifier,
       environmentIdentifier: env.attrId,
       manageAccessRole: lakeformationManagedAccessRole.roleArn, //manage role

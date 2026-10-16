@@ -7,6 +7,7 @@
 #### DataOps Project and SageMaker Project Modules
 
 - Added an opt-in `nameOverride` attribute to SMUS / DataZone projects (`projects.<key>` in `@aws-mdaa/sagemaker-project`; `sagemaker.project` / `datazone.project` in `@aws-mdaa/dataops-project`), used verbatim as the project name so the title can be a free-form label like `Customer 360 Analytics`. Optional and additive; other resources keep MDAA naming. See the [SageMaker Project](packages/apps/governance/sagemaker-project-app/SCHEMA.md#projects_additionalProperties_nameOverride) and [DataOps Project](packages/apps/dataops/dataops-project-app/SCHEMA.md#sagemaker_project_nameOverride) schema docs for accepted values.
+- Added opt-in `subscriptionAuthorizedRoleGroups` to `sagemaker` and `datazone` in `@aws-mdaa/dataops-project`, so the listed `projectExecutionRoles`, `dataEngineerRoles`, or `dataAdminRoles` can read the tables the project subscribes to. See [Subscribed Asset Access for Project Roles](packages/apps/dataops/dataops-project-app/README.md#subscribed-asset-access-for-project-roles).
 
 ### General Changes
 

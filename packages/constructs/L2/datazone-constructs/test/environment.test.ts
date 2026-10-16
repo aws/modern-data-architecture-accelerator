@@ -4,7 +4,7 @@
  */
 
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
 import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { DomainConfig, MdaaDatazoneProject, MdaaDatazoneEnvironment } from '../lib';
@@ -103,6 +103,96 @@ describe('MdaaDatazoneEnvironment', () => {
       Type: 'GlueSubscriptionTargetType',
       ApplicableAssetTypes: ['GlueTableAssetType'],
     });
+  });
+
+  it('authorizes only the environment user role by default', () => {
+    new MdaaDatazoneEnvironment(testApp.testStack, 'test-env', {
+      naming: testApp.naming,
+      project,
+      envUserRole,
+      lakeformationManageAccessRole: lakeformationRole,
+      envBucket,
+      account: 'test-account',
+      region: 'test-region',
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    template.hasResourceProperties('AWS::DataZone::SubscriptionTarget', {
+      AuthorizedPrincipals: [{ 'Fn::GetAtt': [Match.stringLikeRegexp('^EnvUserRole'), 'Arn'] }],
+    });
+  });
+
+  it('authorizes additional principals after the environment user role', () => {
+    new MdaaDatazoneEnvironment(testApp.testStack, 'test-env', {
+      naming: testApp.naming,
+      project,
+      envUserRole,
+      lakeformationManageAccessRole: lakeformationRole,
+      envBucket,
+      account: 'test-account',
+      region: 'test-region',
+      additionalAuthorizedPrincipalArns: [
+        'arn:test-partition:iam::test-account:role/etl-role',
+        'arn:test-partition:iam::test-account:role/engineer-role',
+      ],
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    template.hasResourceProperties('AWS::DataZone::SubscriptionTarget', {
+      AuthorizedPrincipals: [
+        { 'Fn::GetAtt': [Match.stringLikeRegexp('^EnvUserRole'), 'Arn'] },
+        'arn:test-partition:iam::test-account:role/etl-role',
+        'arn:test-partition:iam::test-account:role/engineer-role',
+      ],
+    });
+  });
+
+  it('rejects more authorized principals than CloudFormation allows', () => {
+    const additionalAuthorizedPrincipalArns = Array.from(
+      { length: MdaaDatazoneEnvironment.MAX_AUTHORIZED_PRINCIPALS },
+      (_, i) => `arn:test-partition:iam::test-account:role/role-${i}`,
+    );
+    expect(
+      () =>
+        new MdaaDatazoneEnvironment(testApp.testStack, 'test-env', {
+          naming: testApp.naming,
+          project,
+          envUserRole,
+          lakeformationManageAccessRole: lakeformationRole,
+          envBucket,
+          account: 'test-account',
+          region: 'test-region',
+          additionalAuthorizedPrincipalArns,
+        }),
+    ).toThrow(
+      'A DataZone subscription target accepts at most 10 authorized principals, but 11 were given ' +
+        '(the environment user role plus 10 additional roles).',
+    );
+  });
+
+  it('accepts exactly as many authorized principals as CloudFormation allows', () => {
+    const additionalAuthorizedPrincipalArns = Array.from(
+      { length: MdaaDatazoneEnvironment.MAX_AUTHORIZED_PRINCIPALS - 1 },
+      (_, i) => `arn:test-partition:iam::test-account:role/role-${i}`,
+    );
+    new MdaaDatazoneEnvironment(testApp.testStack, 'test-env', {
+      naming: testApp.naming,
+      project,
+      envUserRole,
+      lakeformationManageAccessRole: lakeformationRole,
+      envBucket,
+      account: 'test-account',
+      region: 'test-region',
+      additionalAuthorizedPrincipalArns,
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    template.hasResourceProperties('AWS::DataZone::SubscriptionTarget', {
+      AuthorizedPrincipals: Match.arrayWith(additionalAuthorizedPrincipalArns),
+    });
+    expect(
+      Object.values(template.findResources('AWS::DataZone::SubscriptionTarget'))[0].Properties.AuthorizedPrincipals,
+    ).toHaveLength(MdaaDatazoneEnvironment.MAX_AUTHORIZED_PRINCIPALS);
   });
 
   it('should create user managed policy', () => {

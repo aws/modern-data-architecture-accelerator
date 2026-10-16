@@ -5,6 +5,7 @@
 
 export * from './project';
 export * from './form-type';
+export * from './project-role-tagger';
 export * from './environment';
 export * from './domain_config';
 export * from './authorization';

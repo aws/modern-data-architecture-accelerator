@@ -749,6 +749,14 @@
                 "project": {
                     "$ref": "#/definitions/DataZoneProjectProps",
                     "description": "DataZone project configuration for DataOps integration."
+                },
+                "subscriptionAuthorizedRoleGroups": {
+                    "default": "[] (only the environment user role is authorized)",
+                    "description": "Role groups from this config that receive the tables the DataZone project subscribes to.\nEach listed role is added to the authorized principals of the project's subscription target,\nso DataZone grants it each subscription it fulfills after the role is listed and revokes it\nwhen the subscription is revoked. Listed roles also get decrypt access, through Glue only, to\nthe domain's Glue catalog keys, except roles marked `immutable` or `sso` and roles referenced\nby an IAM Identity Center ARN or role name, which MDAA does not modify. Roles referenced by a\nliteral ARN in another account are left out with a warning; roles resolved at deploy time must\nbe in the project's account. A role listed in two groups counts once only if both reference it\nthe same way, or one by name and the other by literal ARN.\n\nUse cases: Glue jobs and crawlers under projectExecutionRoles reading subscribed tables; Engineers and admins querying subscribed tables in Athena\n\nAWS: AWS::DataZone::SubscriptionTarget AuthorizedPrincipals\n\nValidation: Optional; list of 'projectExecutionRoles' | 'dataEngineerRoles' | 'dataAdminRoles'; listed roles must be in the project's account; at most 9 distinct role references, because a subscription target allows 10 principals including the environment user role; an IAM Identity Center role referenced by a deploy-time value must be marked `sso: true`, or attaching the catalog key policy to it fails the deployment",
+                    "items": {
+                        "$ref": "#/definitions/SubscriptionAuthorizedRoleGroup"
+                    },
+                    "type": "array"
                 }
             },
             "required": [
@@ -774,6 +782,14 @@
                 "project": {
                     "$ref": "#/definitions/SageMakerProjectProps",
                     "description": "SageMaker project configuration for DataOps integration."
+                },
+                "subscriptionAuthorizedRoleGroups": {
+                    "default": "[] (only the SMUS project role is authorized)",
+                    "description": "Role groups from this config that receive every table the SageMaker Unified Studio project\nsubscribes to. Each listed role is tagged `AmazonDataZoneProject=<projectId>`, the tag SMUS\ngrants subscriptions by, and gets decrypt access, through Glue only, to the domain's Glue\ncatalog keys. The tag also makes the role a Lake Formation member of the project. Lake Formation\ntreats every principal carrying the tag key as opted in to Lake Formation permissions for all\nData Catalog resources, so a listed role stops receiving access through IAMAllowedPrincipals or\nhybrid access mode on every table, not only the project's, and needs Lake Formation permissions\non each database and table it uses. A role can hold one project's tag, so deployment fails if a\nlisted role is already tagged for another project. The tag is removed when the role is unlisted\nor the module is destroyed, while the role still holds this project's ID. Roles marked\n`immutable` or `sso`, and roles referenced by a literal ARN in another account or by an IAM\nIdentity Center ARN or role name, are left out with a warning, so IAM Identity Center roles\ncannot be authorized this way. Roles resolved at deploy time must be in the project's account.\n\nUse cases: Glue jobs and crawlers under projectExecutionRoles reading subscribed tables; Engineers and admins querying subscribed tables in Athena\n\nAWS: IAM role tag AmazonDataZoneProject, which SageMaker Unified Studio Lake Formation subscription grants match on\n\nValidation: Optional; list of 'projectExecutionRoles' | 'dataEngineerRoles' | 'dataAdminRoles'; listed roles must be in the project's account; an IAM Identity Center role referenced by a deploy-time value must be marked `sso: true`, or tagging it fails the deployment",
+                    "items": {
+                        "$ref": "#/definitions/SubscriptionAuthorizedRoleGroup"
+                    },
+                    "type": "array"
                 }
             },
             "required": [
@@ -3816,6 +3832,15 @@
                 "urlSuffix"
             ],
             "type": "object"
+        },
+        "SubscriptionAuthorizedRoleGroup": {
+            "description": "Role group from the DataOps project config whose roles can be authorized into subscribed assets.",
+            "enum": [
+                "dataAdminRoles",
+                "dataEngineerRoles",
+                "projectExecutionRoles"
+            ],
+            "type": "string"
         },
         "TagBasedGrantConfig": {
             "additionalProperties": false,

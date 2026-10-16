@@ -488,44 +488,6 @@
         "Value": "Fraud Analytics Sandbox"
       }
     },
-    "constructsagemakerprojectdataopsenvdeploymentmonitor3D944211": {
-      "Type": "Custom::EnvDeploymentMonitor",
-      "Properties": {
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "customEnvDeploymentMonitorproviderframeworkonEvent32E39E2B",
-            "Arn"
-          ]
-        },
-        "domainId": {
-          "Ref": "constructsagemakerdomainconfigparserdomainconfigparserssmdomainidParameter6F93BD9C"
-        },
-        "projectId": {
-          "Fn::GetAtt": [
-            "constructsagemakerprojectdataopsproject7423C7DC",
-            "Id"
-          ]
-        },
-        "envName": "Tooling",
-        "connectionName": "LAKEHOUSE",
-        "kmsPolicyArn": {
-          "Fn::Join": [
-            "",
-            [
-              "arn:test-partition:iam::test-account:policy/",
-              {
-                "Ref": "constructsagemakerdomainconfigparserdomainconfigparserssmdomainkmsusagepolicynameParameter2A4AD1E3"
-              }
-            ]
-          ]
-        }
-      },
-      "DependsOn": [
-        "constructsagemakerprojectdataopsmonitorcrprojectmembership399EEAD8"
-      ],
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
-    },
     "constructsagemakerprojectdataopsuserprofilemanagermonitorhandlerroleD53AA513": {
       "Type": "Custom::UserProfileManager",
       "Properties": {
@@ -575,6 +537,44 @@
           ]
         }
       }
+    },
+    "constructsagemakerprojectdataopsenvdeploymentmonitor3D944211": {
+      "Type": "Custom::EnvDeploymentMonitor",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customEnvDeploymentMonitorproviderframeworkonEvent32E39E2B",
+            "Arn"
+          ]
+        },
+        "domainId": {
+          "Ref": "constructsagemakerdomainconfigparserdomainconfigparserssmdomainidParameter6F93BD9C"
+        },
+        "projectId": {
+          "Fn::GetAtt": [
+            "constructsagemakerprojectdataopsproject7423C7DC",
+            "Id"
+          ]
+        },
+        "envName": "Tooling",
+        "connectionName": "LAKEHOUSE",
+        "kmsPolicyArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:test-partition:iam::test-account:policy/",
+              {
+                "Ref": "constructsagemakerdomainconfigparserdomainconfigparserssmdomainkmsusagepolicynameParameter2A4AD1E3"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": [
+        "constructsagemakerprojectdataopsmonitorcrprojectmembership399EEAD8"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
     },
     "constructsagemakerprojectdataopstestsourcedatazonedatasource709228DC": {
       "Type": "AWS::DataZone::DataSource",
@@ -698,6 +698,139 @@
       ],
       "UpdateReplacePolicy": "Delete",
       "DeletionPolicy": "Delete"
+    },
+    "constructsubscriptionroletaggerBF3C50FB": {
+      "Type": "Custom::DataZoneProjectRoleTagger",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customDataZoneProjectRoleTaggerproviderframeworkonEvent9D19A33D",
+            "Arn"
+          ]
+        },
+        "projectId": {
+          "Fn::GetAtt": [
+            "constructsagemakerprojectdataopsproject7423C7DC",
+            "Id"
+          ]
+        },
+        "roleArns": [
+          {
+            "Ref": "SsmParameterValuesampleorginstance1generatedrolegluerolearnC96584B6F00A464EAD1953AFF4B05118Parameter"
+          },
+          {
+            "Fn::GetAtt": [
+              "RoleResProjectExRoles1",
+              "arn"
+            ]
+          },
+          "arn:test-partition:iam::test-account:role/sample-org-dev-instance1-roles-data-engineer"
+        ]
+      },
+      "DependsOn": [
+        "constructsubscriptionroletaggerhandlerpolicy5FC39DCF"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "constructsubscriptionroletaggerhandlerpolicy5FC39DCF": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "iam:ListRoleTags",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:iam::test-account:role/*"
+            },
+            {
+              "Action": "iam:TagRole",
+              "Condition": {
+                "ForAllValues:StringEquals": {
+                  "aws:TagKeys": [
+                    "AmazonDataZoneProject"
+                  ]
+                },
+                "StringEquals": {
+                  "aws:RequestTag/AmazonDataZoneProject": {
+                    "Fn::GetAtt": [
+                      "constructsagemakerprojectdataopsproject7423C7DC",
+                      "Id"
+                    ]
+                  }
+                }
+              },
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Ref": "SsmParameterValuesampleorginstance1generatedrolegluerolearnC96584B6F00A464EAD1953AFF4B05118Parameter"
+                },
+                {
+                  "Fn::GetAtt": [
+                    "RoleResProjectExRoles1",
+                    "arn"
+                  ]
+                },
+                "arn:test-partition:iam::test-account:role/sample-org-dev-instance1-roles-data-engineer"
+              ]
+            },
+            {
+              "Action": "iam:UntagRole",
+              "Condition": {
+                "ForAllValues:StringEquals": {
+                  "aws:TagKeys": [
+                    "AmazonDataZoneProject"
+                  ]
+                },
+                "StringEquals": {
+                  "aws:ResourceTag/AmazonDataZoneProject": {
+                    "Fn::GetAtt": [
+                      "constructsagemakerprojectdataopsproject7423C7DC",
+                      "Id"
+                    ]
+                  }
+                }
+              },
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:iam::test-account:role/*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "constructsubscriptionroletaggerhandlerpolicy5FC39DCF",
+        "Roles": [
+          {
+            "Ref": "customDataZoneProjectRoleTaggerhandlerroleF2719230"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/project-role-tagger.ts] iam:ListRoleTags and iam:UntagRole cover every role in the account so a role removed from config can still be untagged after the policy drops its ARN; ListRoleTags is read-only, and UntagRole is limited by aws:ResourceTag to roles holding this project ID and by aws:TagKeys to the AmazonDataZoneProject key (https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html).",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                {
+                  "regex": "/^Resource::arn:.+:iam::.+:role\\/\\*$/"
+                }
+              ]
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/project-role-tagger.ts] Each tagger's statements are an inline policy on the shared custom resource handler role, and the tagger's custom resource depends on it, so removing a tagger deletes the resource, untagging its roles, before its statements are removed.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/project-role-tagger.ts] Each tagger's statements are an inline policy on the shared custom resource handler role, and the tagger's custom resource depends on it, so removing a tagger deletes the resource, untagging its roles, before its statements are removed.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/project-role-tagger.ts] Each tagger's statements are an inline policy on the shared custom resource handler role, and the tagger's custom resource depends on it, so removing a tagger deletes the resource, untagging its roles, before its statements are removed.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
     },
     "constructathenaworkgroupE449636D": {
       "Type": "AWS::Athena::WorkGroup",
@@ -2379,34 +2512,6 @@
         "testdatabasesusdatabase"
       ]
     },
-    "RoleResDataAdmin0": {
-      "Type": "AWS::CloudFormation::CustomResource",
-      "Properties": {
-        "ServiceToken": {
-          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
-        },
-        "roleRef": {
-          "refId": "DataAdmin-0",
-          "name": "Admin"
-        }
-      },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
-    },
-    "RoleResDataAdmin1": {
-      "Type": "AWS::CloudFormation::CustomResource",
-      "Properties": {
-        "ServiceToken": {
-          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
-        },
-        "roleRef": {
-          "refId": "DataAdmin-1",
-          "arn": "arn:test-partition:iam::test-account:role/sample-org-dev-instance1-roles-data-admin"
-        }
-      },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
-    },
     "projectdeploymentrole542A1AAB": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -2728,36 +2833,6 @@
           "Ref": "dzuserrole4DA7E8E2"
         }
       }
-    },
-    "RoleResDataEngineer0": {
-      "Type": "AWS::CloudFormation::CustomResource",
-      "Properties": {
-        "ServiceToken": {
-          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
-        },
-        "roleRef": {
-          "refId": "DataEngineer-0",
-          "arn": "arn:test-partition:iam::test-account:role/sample-org-dev-instance1-roles-data-engineer"
-        }
-      },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
-    },
-    "RoleResProjectExRoles0": {
-      "Type": "AWS::CloudFormation::CustomResource",
-      "Properties": {
-        "ServiceToken": {
-          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
-        },
-        "roleRef": {
-          "refId": "ProjectExRoles-0",
-          "arn": {
-            "Ref": "SsmParameterValuesampleorginstance1generatedrolegluerolearnC96584B6F00A464EAD1953AFF4B05118Parameter"
-          }
-        }
-      },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
     },
     "ProjectKmsKey2B296F94": {
       "Type": "AWS::KMS::Key",
@@ -3154,6 +3229,64 @@
           "Ref": "ProjectKmsKey2B296F94"
         }
       }
+    },
+    "RoleResDataAdmin0": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "DataAdmin-0",
+          "name": "Admin"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "RoleResDataAdmin1": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "DataAdmin-1",
+          "arn": "arn:test-partition:iam::test-account:role/sample-org-dev-instance1-roles-data-admin"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "RoleResDataEngineer0": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "DataEngineer-0",
+          "arn": "arn:test-partition:iam::test-account:role/sample-org-dev-instance1-roles-data-engineer"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "RoleResProjectExRoles0": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "ProjectExRoles-0",
+          "arn": {
+            "Ref": "SsmParameterValuesampleorginstance1generatedrolegluerolearnC96584B6F00A464EAD1953AFF4B05118Parameter"
+          }
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
     },
     "ssmkmsarnA2708738": {
       "Type": "AWS::SSM::Parameter",
@@ -6950,6 +7083,797 @@
         }
       }
     },
+    "RoleResProjectExRoles1": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "ProjectExRoles-1",
+          "id": {
+            "Ref": "SsmParameterValuetestorgtestdomaingeneratedroledatabrewidC96584B6F00A464EAD1953AFF4B05118Parameter"
+          }
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "customDataZoneProjectRoleTaggerhandlerroleF2719230": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "RoleName": "test-org-test-env-test-domain-test-dataops-project-com--3cfe8bb8",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dataops-project-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customDataZoneProjectRoleTaggerhandlerroleDefaultPolicy5180DE6C": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-dataops-project-com--3cfe8bb8*"
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-dataops-project-com--3cfe8bb8*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "customDataZoneProjectRoleTaggerhandlerroleDefaultPolicy5180DE6C",
+        "Roles": [
+          {
+            "Ref": "customDataZoneProjectRoleTaggerhandlerroleF2719230"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customDataZoneProjectRoleTaggerhandlerfunctionC3AEAEDB": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Environment": {
+          "Variables": {
+            "LOG_LEVEL": "INFO",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-dataops-project-com--3cfe8bb8",
+        "Handler": "tag_project_roles.lambda_handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "customDataZoneProjectRoleTaggerhandlerroleF2719230",
+            "Arn"
+          ]
+        },
+        "Runtime": "python3.14",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dataops-project-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 300
+      },
+      "DependsOn": [
+        "customDataZoneProjectRoleTaggerhandlerroleDefaultPolicy5180DE6C",
+        "customDataZoneProjectRoleTaggerhandlerroleF2719230"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customDataZoneProjectRoleTaggerhandlerfunctionlambdaDataZoneProjectRoleTaggerhandlernamessmE9B51E4B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-comprehensive/lambda/datazoneprojectroletagger-handler/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "customDataZoneProjectRoleTaggerhandlerfunctionC3AEAEDB"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customDataZoneProjectRoleTaggerhandlerfunctionlambdaDataZoneProjectRoleTaggerhandlerarnssm70FF52E0": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-comprehensive/lambda/datazoneprojectroletagger-handler/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "customDataZoneProjectRoleTaggerhandlerfunctionC3AEAEDB",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customDataZoneProjectRoleTaggerhandlerfunctionlambdaDataZoneProjectRoleTaggerhandlerloggroupssm8771E36C": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-comprehensive/lambda/datazoneprojectroletagger-handler/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "customDataZoneProjectRoleTaggerhandlerfunctionC3AEAEDB"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customDataZoneProjectRoleTaggerproviderrole6815C153": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "CR Role",
+        "RoleName": "test-org-test-env-test-domain-test-dataops-project-comp-623188b3",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dataops-project-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customDataZoneProjectRoleTaggerproviderroleDefaultPolicy2FBD84DC": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-dataops-project-comp-623188b3*"
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-dataops-project-comp-623188b3*"
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "customDataZoneProjectRoleTaggerhandlerfunctionC3AEAEDB",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "customDataZoneProjectRoleTaggerhandlerfunctionC3AEAEDB",
+                          "Arn"
+                        ]
+                      },
+                      ":*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "lambda:GetFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "customDataZoneProjectRoleTaggerhandlerfunctionC3AEAEDB",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "customDataZoneProjectRoleTaggerproviderroleDefaultPolicy2FBD84DC",
+        "Roles": [
+          {
+            "Ref": "customDataZoneProjectRoleTaggerproviderrole6815C153"
+          }
+        ]
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customDataZoneProjectRoleTaggerproviderframeworkonEvent9D19A33D": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Description": "AWS CDK resource provider framework - onEvent (test-org-test-env-test-domain-test-dataops-project-comprehensive/custom-DataZoneProjectRoleTagger-provider)",
+        "Environment": {
+          "Variables": {
+            "USER_ON_EVENT_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "customDataZoneProjectRoleTaggerhandlerfunctionC3AEAEDB",
+                "Arn"
+              ]
+            }
+          }
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-dataops-project-comp-623188b3",
+        "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON"
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "customDataZoneProjectRoleTaggerproviderrole6815C153",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs24.x",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-project"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dataops-project-comprehensive"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Timeout": 900
+      },
+      "DependsOn": [
+        "customDataZoneProjectRoleTaggerproviderroleDefaultPolicy2FBD84DC",
+        "customDataZoneProjectRoleTaggerproviderrole6815C153"
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Lambda function Runtime set by CDK Provider Framework",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "subscriptioncatalogkeyaccesspolicyF6C76C68": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-dataops-project-comp-2b93d28e",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "kms:DescribeKey",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "constructsagemakerdomainconfigparserdomainconfigparserssmgluecatalogkmsarnsECC2CA6B"
+              }
+            },
+            {
+              "Action": "kms:Decrypt",
+              "Condition": {
+                "StringEquals": {
+                  "kms:ViaService": "glue.test-region.amazonaws.com"
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "constructsagemakerdomainconfigparserdomainconfigparserssmgluecatalogkmsarnsECC2CA6B"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Fn::GetAtt": [
+              "RoleResProjectExRoles0",
+              "name"
+            ]
+          },
+          {
+            "Fn::GetAtt": [
+              "RoleResProjectExRoles1",
+              "name"
+            ]
+          },
+          "sample-org-dev-instance1-roles-data-engineer"
+        ]
+      }
+    },
+    "subscriptioncatalogkeyaccesspolicymanagedpolicysubscriptioncatalogkeyaccessarnssmD5A2EF1E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-comprehensive/managed-policy/subscription-catalog-key-access/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "subscriptioncatalogkeyaccesspolicyF6C76C68"
+        }
+      }
+    },
+    "subscriptioncatalogkeyaccesspolicymanagedpolicysubscriptioncatalogkeyaccessnamessm3F080836": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-comprehensive/managed-policy/subscription-catalog-key-access/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-comprehensive",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "subscriptioncatalogkeyaccesspolicyF6C76C68"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
     "securityconfig6DD90031": {
       "Type": "AWS::Glue::SecurityConfiguration",
       "Properties": {
@@ -7011,22 +7935,6 @@
           "Name": "test-org-test-env-test-domain-test-dataops-project-comprehensive-test-database1"
         }
       }
-    },
-    "RoleResProjectExRoles1": {
-      "Type": "AWS::CloudFormation::CustomResource",
-      "Properties": {
-        "ServiceToken": {
-          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
-        },
-        "roleRef": {
-          "refId": "ProjectExRoles-1",
-          "id": {
-            "Ref": "SsmParameterValuetestorgtestdomaingeneratedroledatabrewidC96584B6F00A464EAD1953AFF4B05118Parameter"
-          }
-        }
-      },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
     },
     "RoleResDataAdmin2": {
       "Type": "AWS::CloudFormation::CustomResource",
@@ -8209,6 +9117,77 @@
       },
       "Export": {
         "Name": "test-org:test-domain:test-dataops-project-comprehensive:lambda:datazoneformtypehandler:log-group"
+      }
+    },
+    "customDataZoneProjectRoleTaggerhandlerfunctionlambdaDataZoneProjectRoleTaggerhandlernameout9AA1D645": {
+      "Value": {
+        "Ref": "customDataZoneProjectRoleTaggerhandlerfunctionC3AEAEDB"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-comprehensive:lambda:datazoneprojectroletaggerhandler:name"
+      }
+    },
+    "customDataZoneProjectRoleTaggerhandlerfunctionlambdaDataZoneProjectRoleTaggerhandlerarnout630F05DA": {
+      "Value": {
+        "Fn::GetAtt": [
+          "customDataZoneProjectRoleTaggerhandlerfunctionC3AEAEDB",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-comprehensive:lambda:datazoneprojectroletaggerhandler:arn"
+      }
+    },
+    "customDataZoneProjectRoleTaggerhandlerfunctionlambdaDataZoneProjectRoleTaggerhandlerloggroupoutB5E240F2": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "customDataZoneProjectRoleTaggerhandlerfunctionC3AEAEDB"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-comprehensive:lambda:datazoneprojectroletaggerhandler:log-group"
+      }
+    },
+    "subscriptioncatalogkeyaccesspolicymanagedpolicysubscriptioncatalogkeyaccessarnoutE1D7FF3A": {
+      "Value": {
+        "Ref": "subscriptioncatalogkeyaccesspolicyF6C76C68"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-comprehensive:managed-policy:subscriptioncatalogkeyaccess:arn"
+      }
+    },
+    "subscriptioncatalogkeyaccesspolicymanagedpolicysubscriptioncatalogkeyaccessnameout35D7D194": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "subscriptioncatalogkeyaccesspolicyF6C76C68"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-comprehensive:managed-policy:subscriptioncatalogkeyaccess:name"
       }
     },
     "dataopssnstopicTopicdataopssnstopicnameoutD7D1DCB0": {

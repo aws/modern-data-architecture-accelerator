@@ -32,12 +32,16 @@ monitor_env_deployment_src_path = os.path.join(
 create_form_type_src_path = os.path.join(
     os.path.dirname(__file__), '..', 'src', 'lambda', 'create_form_type'
 )
+tag_project_roles_src_path = os.path.join(
+    os.path.dirname(__file__), '..', 'src', 'lambda', 'tag_project_roles'
+)
 sys.path.insert(0, check_user_profiles_src_path)
 sys.path.insert(0, create_project_membership_src_path)
 sys.path.insert(0, domain_config_src_path)
 sys.path.insert(0, environment_blueprint_src_path)
 sys.path.insert(0, monitor_env_deployment_src_path)
 sys.path.insert(0, create_form_type_src_path)
+sys.path.insert(0, tag_project_roles_src_path)
 
 
 @pytest.fixture

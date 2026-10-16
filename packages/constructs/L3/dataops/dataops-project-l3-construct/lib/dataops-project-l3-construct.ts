@@ -14,6 +14,7 @@ import {
   MdaaDatazoneEnvironmentProps,
   MdaaDatazoneProject,
   MdaaDatazoneProjectProps,
+  MdaaDatazoneProjectRoleTagger,
 } from '@aws-mdaa/datazone-constructs';
 import { MdaaSecurityGroupRuleProps } from '@aws-mdaa/ec2-constructs';
 import {
@@ -54,7 +55,16 @@ import {
   SageMakerProjectProps,
 } from '@aws-mdaa/sagemaker-project-l3-construct';
 import { MdaaSnsTopic, MdaaSnsTopicProps } from '@aws-mdaa/sns-constructs';
-import { Arn, ArnComponents, ArnFormat, BOOTSTRAP_QUALIFIER_CONTEXT, DefaultStackSynthesizer, Tags } from 'aws-cdk-lib';
+import {
+  Annotations,
+  Arn,
+  ArnComponents,
+  ArnFormat,
+  BOOTSTRAP_QUALIFIER_CONTEXT,
+  DefaultStackSynthesizer,
+  Tags,
+  Token,
+} from 'aws-cdk-lib';
 import { CfnDataSource, CfnDataSourceProps } from 'aws-cdk-lib/aws-datazone';
 import { SecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import { CfnClassifier, CfnConnection, CfnCrawler, CfnDatabase } from 'aws-cdk-lib/aws-glue';
@@ -456,7 +466,29 @@ export interface DataOpsDatazoneProps {
   readonly domainConfig?: DomainConfig;
   /** DataZone project configuration for DataOps integration. */
   readonly project: DataZoneProjectProps;
+  /**
+   * Role groups from this config that receive the tables the DataZone project subscribes to.
+   * Each listed role is added to the authorized principals of the project's subscription target,
+   * so DataZone grants it each subscription it fulfills after the role is listed and revokes it
+   * when the subscription is revoked. Listed roles also get decrypt access, through Glue only, to
+   * the domain's Glue catalog keys, except roles marked `immutable` or `sso` and roles referenced
+   * by an IAM Identity Center ARN or role name, which MDAA does not modify. Roles referenced by a
+   * literal ARN in another account are left out with a warning; roles resolved at deploy time must
+   * be in the project's account. A role listed in two groups counts once only if both reference it
+   * the same way, or one by name and the other by literal ARN.
+   *
+   * Use cases: Glue jobs and crawlers under projectExecutionRoles reading subscribed tables; Engineers and admins querying subscribed tables in Athena
+   *
+   * AWS: AWS::DataZone::SubscriptionTarget AuthorizedPrincipals
+   *
+   * Validation: Optional; list of 'projectExecutionRoles' | 'dataEngineerRoles' | 'dataAdminRoles'; listed roles must be in the project's account; at most 9 distinct role references, because a subscription target allows 10 principals including the environment user role; an IAM Identity Center role referenced by a deploy-time value must be marked `sso: true`, or attaching the catalog key policy to it fails the deployment
+   * @default [] (only the environment user role is authorized)
+   */
+  readonly subscriptionAuthorizedRoleGroups?: SubscriptionAuthorizedRoleGroup[];
 }
+
+/** Role group from the DataOps project config whose roles can be authorized into subscribed assets. */
+export type SubscriptionAuthorizedRoleGroup = 'projectExecutionRoles' | 'dataEngineerRoles' | 'dataAdminRoles';
 
 export interface DataZoneProjectProps {
   /**
@@ -502,6 +534,29 @@ export interface DataOpsSageMakerProps {
   readonly createDataAdminOwners?: boolean;
   /** SageMaker project configuration for DataOps integration. */
   readonly project: SageMakerProjectProps;
+  /**
+   * Role groups from this config that receive every table the SageMaker Unified Studio project
+   * subscribes to. Each listed role is tagged `AmazonDataZoneProject=<projectId>`, the tag SMUS
+   * grants subscriptions by, and gets decrypt access, through Glue only, to the domain's Glue
+   * catalog keys. The tag also makes the role a Lake Formation member of the project. Lake Formation
+   * treats every principal carrying the tag key as opted in to Lake Formation permissions for all
+   * Data Catalog resources, so a listed role stops receiving access through IAMAllowedPrincipals or
+   * hybrid access mode on every table, not only the project's, and needs Lake Formation permissions
+   * on each database and table it uses. A role can hold one project's tag, so deployment fails if a
+   * listed role is already tagged for another project. The tag is removed when the role is unlisted
+   * or the module is destroyed, while the role still holds this project's ID. Roles marked
+   * `immutable` or `sso`, and roles referenced by a literal ARN in another account or by an IAM
+   * Identity Center ARN or role name, are left out with a warning, so IAM Identity Center roles
+   * cannot be authorized this way. Roles resolved at deploy time must be in the project's account.
+   *
+   * Use cases: Glue jobs and crawlers under projectExecutionRoles reading subscribed tables; Engineers and admins querying subscribed tables in Athena
+   *
+   * AWS: IAM role tag AmazonDataZoneProject, which SageMaker Unified Studio Lake Formation subscription grants match on
+   *
+   * Validation: Optional; list of 'projectExecutionRoles' | 'dataEngineerRoles' | 'dataAdminRoles'; listed roles must be in the project's account; an IAM Identity Center role referenced by a deploy-time value must be marked `sso: true`, or tagging it fails the deployment
+   * @default [] (only the SMUS project role is authorized)
+   */
+  readonly subscriptionAuthorizedRoleGroups?: SubscriptionAuthorizedRoleGroup[];
 }
 
 /**
@@ -548,6 +603,37 @@ export interface FailureNotificationsProps {
   readonly email?: string[];
 }
 
+const IDENTITY_CENTER_ROLE_PATH = ':role/aws-reserved/sso.amazonaws.com/';
+const IDENTITY_CENTER_ROLE_NAME_PREFIX = 'AWSReservedSSO_';
+
+/** A subscription-authorized role, with its name when the reference states it at synth. */
+interface SubscriptionRole {
+  readonly role: MdaaResolvableRole;
+  readonly literalName?: string;
+}
+
+/** IAM rejects changes to IAM Identity Center roles that do not come from Identity Center. */
+function isIdentityCenterRole({ role, literalName }: SubscriptionRole): boolean {
+  if (literalName?.startsWith(IDENTITY_CENTER_ROLE_NAME_PREFIX)) {
+    return true;
+  }
+  const arn = role.arn();
+  return !Token.isUnresolved(arn) && arn.includes(IDENTITY_CENTER_ROLE_PATH);
+}
+
+/**
+ * Returns the role name a reference points at when it is known at synth. An sso reference names a
+ * permission set rather than the role, and an ARN that is not a literal `arn:` string, such as the
+ * dynamic reference an `ssm-org:` value expands to, does not end in the role name.
+ */
+function literalRoleName(ref: MdaaRoleRef): string | undefined {
+  if (ref.sso) {
+    return undefined;
+  }
+  const name = ref.name ?? (ref.arn?.startsWith('arn:') ? ref.arn.split('/').pop() : undefined);
+  return name !== undefined && !Token.isUnresolved(name) ? name : undefined;
+}
+
 interface DatazoneResources {
   readonly datazoneProject: MdaaDatazoneProject;
   readonly datazoneEnvId?: string;
@@ -562,6 +648,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
   private readonly projectExecutionRoles: MdaaResolvableRole[];
   private readonly dataAdminRoles: MdaaResolvableRole[];
   private readonly dataEngineerRoles: MdaaResolvableRole[];
+  private readonly subscriptionAuthorizedRoles: SubscriptionRole[];
   private readonly projectLevelLFTagsConstruct?: LakeFormationTagsL3Construct;
 
   constructor(scope: Construct, id: string, props: DataOpsProjectL3ConstructProps) {
@@ -576,6 +663,9 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     this.dataEngineerRoles = this.props.roleHelper.resolveRoleRefsWithOrdinals(
       this.props.dataEngineerRoleRefs,
       'DataEngineer',
+    );
+    this.subscriptionAuthorizedRoles = this.resolveSubscriptionAuthorizedRoles(
+      (this.props.sagemaker ?? this.props.datazone)?.subscriptionAuthorizedRoleGroups ?? [],
     );
 
     const projectDeploymentRole = this.createProjectDeploymentRole();
@@ -735,8 +825,136 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
         DataOpsProjectUtils.SAGEMAKER_PROJECT_ID_KEY,
         resources.datazoneProject.project.attrId,
       );
+      this.authorizeSubscriptionRoles(resources.datazoneProject);
     }
     return resources;
+  }
+
+  /**
+   * Resolves the listed role groups to distinct roles in the project's account. Neither the SMUS
+   * tag-based grant nor a DataZone subscription target reaches a role in another account.
+   */
+  private resolveSubscriptionAuthorizedRoles(groups: SubscriptionAuthorizedRoleGroup[]): SubscriptionRole[] {
+    const groupRoles = new Map<string, { refs: MdaaRoleRef[]; roles: MdaaResolvableRole[] }>([
+      ['projectExecutionRoles', { refs: this.props.projectExecutionRoleRefs, roles: this.projectExecutionRoles }],
+      ['dataEngineerRoles', { refs: this.props.dataEngineerRoleRefs, roles: this.dataEngineerRoles }],
+      ['dataAdminRoles', { refs: this.props.dataAdminRoleRefs, roles: this.dataAdminRoles }],
+    ]);
+    const listed = groups.flatMap(group => {
+      const entry = groupRoles.get(group);
+      if (!entry) {
+        throw new Error(
+          `Unknown subscriptionAuthorizedRoleGroups entry '${group}'; expected one of ${[...groupRoles.keys()].join(', ')}`,
+        );
+      }
+      return entry.roles.map((role, i): SubscriptionRole => ({ role, literalName: literalRoleName(entry.refs[i]) }));
+    });
+    // The role helper returns one object per reference value, so the same reference in two groups is one object;
+    // the literal name catches one role referenced by name in one group and by ARN in another. A reference that
+    // states no name at synth (id, generated-role-id, or a deploy-time value) matches only itself.
+    const seenRoles = new Set<MdaaResolvableRole>();
+    const seenNames = new Set<string>();
+    return listed.filter(({ role, literalName }) => {
+      if (seenRoles.has(role)) {
+        return false;
+      }
+      seenRoles.add(role);
+      // Before the name check, so a role in another account that shares a local role's name is still reported.
+      if (role.isCrossAccount()) {
+        this.warnCrossAccountSubscriptionRole(role);
+        return false;
+      }
+      if (literalName !== undefined) {
+        if (seenNames.has(literalName)) {
+          return false;
+        }
+        seenNames.add(literalName);
+      }
+      return true;
+    });
+  }
+
+  private warnCrossAccountSubscriptionRole(role: MdaaResolvableRole) {
+    Annotations.of(this).addWarningV2(
+      `@aws-mdaa/dataops-project:crossAccountSubscriptionRole:${role.refId()}`,
+      `Role reference '${role.refId()}' is in another account, so it is not authorized into the project's ` +
+        `subscribed assets. Subscription grants reach only roles in the project's account.`,
+    );
+  }
+
+  /**
+   * Tags the subscription-authorized roles into the SMUS project and grants them the domain's Glue
+   * catalog keys. On the DataZone path the roles are authorized on the subscription target instead,
+   * in createDataZoneEnvironment.
+   */
+  private authorizeSubscriptionRoles(project: MdaaDatazoneProject) {
+    const roles = this.modifiableSubscriptionRoles(
+      this.props.sagemaker
+        ? "it is not authorized into the project's subscribed assets."
+        : "it gets no decrypt access to the domain's Glue catalog keys; grant that separately for it to read " +
+            "subscribed tables from other accounts' catalogs.",
+    );
+    if (roles.length === 0) {
+      return;
+    }
+    if (this.props.sagemaker) {
+      // Keep this id stable. A new logical ID makes CloudFormation delete the old tagger after creating
+      // the new one, and that Delete untags every role with nothing to tag them again.
+      new MdaaDatazoneProjectRoleTagger(this, 'subscription-role-tagger', {
+        naming: this.props.naming,
+        projectId: project.project.attrId,
+        roleArns: roles.map(({ role }) => role.arn()),
+      });
+    }
+    // A subscribed table in another account's catalog is decrypted with that catalog's key. A domain
+    // configured with no catalog keys has nothing to grant, and an identity policy statement needs a resource.
+    const glueCatalogKmsKeyArns = project.domainConfig.glueCatalogKmsKeyArns;
+    if (glueCatalogKmsKeyArns.length === 0) {
+      return;
+    }
+    new MdaaManagedPolicy(this.scope, 'subscription-catalog-key-access-policy', {
+      managedPolicyName: 'subscription-catalog-key-access',
+      naming: this.props.naming,
+      // By name: a role imported from an ARN known only at deploy is named after the ARN's first path
+      // segment, so a role with a path would get the wrong name.
+      roles: roles.map(({ role, literalName }, i) =>
+        MdaaRole.fromRoleName(this.scope, `subscription-role-${i}`, literalName ?? role.name()),
+      ),
+      statements: [
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: ['kms:DescribeKey'],
+          resources: glueCatalogKmsKeyArns,
+        }),
+        // Only through Glue: the catalog keys also encrypt Glue connection passwords, which GetConnection
+        // can return still encrypted, so direct decrypt would let the role read them.
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: DECRYPT_ACTIONS,
+          resources: glueCatalogKmsKeyArns,
+          conditions: { StringEquals: { 'kms:ViaService': `glue.${this.region}.amazonaws.com` } },
+        }),
+      ],
+    });
+  }
+
+  /**
+   * Returns the subscription-authorized roles MDAA may tag or attach policies to, warning with the
+   * given consequence for each one it must leave untouched.
+   */
+  private modifiableSubscriptionRoles(consequence: string): SubscriptionRole[] {
+    return this.subscriptionAuthorizedRoles.filter(subscriptionRole => {
+      const { role } = subscriptionRole;
+      if (!role.immutable() && !isIdentityCenterRole(subscriptionRole)) {
+        return true;
+      }
+      Annotations.of(this).addWarningV2(
+        `@aws-mdaa/dataops-project:unmodifiableSubscriptionRole:${role.refId()}`,
+        `Role reference '${role.refId()}' is immutable or an IAM Identity Center role, which MDAA does not ` +
+          `modify, so ${consequence}`,
+      );
+      return false;
+    });
   }
 
   private createLakeFormationRole() {
@@ -861,6 +1079,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       account: this.account,
       region: this.region,
       naming: this.props.naming,
+      additionalAuthorizedPrincipalArns: this.subscriptionTargetPrincipalArns(),
     };
     const env = new MdaaDatazoneEnvironment(this, `datazone-env`, envBuildProps, true);
 
@@ -913,6 +1132,19 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     lf.node.addDependency(env.subDatabase);
 
     return env;
+  }
+
+  /** ARNs authorized on the DataZone subscription target after the environment user role. */
+  private subscriptionTargetPrincipalArns(): string[] {
+    const maxSubscriptionRoles = MdaaDatazoneEnvironment.MAX_AUTHORIZED_PRINCIPALS - 1;
+    if (this.subscriptionAuthorizedRoles.length > maxSubscriptionRoles) {
+      throw new Error(
+        `datazone.subscriptionAuthorizedRoleGroups lists ${this.subscriptionAuthorizedRoles.length} distinct role references, ` +
+          `but a DataZone subscription target authorizes at most ${maxSubscriptionRoles} besides the environment ` +
+          `user role. List fewer role groups or fewer roles in them, and reference each role the same way in every group.`,
+      );
+    }
+    return this.subscriptionAuthorizedRoles.map(({ role }) => role.arn());
   }
 
   private createAthenaWorkgroup(

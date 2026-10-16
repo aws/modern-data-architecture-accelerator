@@ -256,6 +256,12 @@ sagemaker:
   domainConfigSSMParam: /sample-org/shared/sagemaker/domain/test-domain/config
   # Auto-assign data admin roles as project owners
   createDataAdminOwners: false
+  # (Optional) Role groups from this config that receive every table the SageMaker Unified Studio
+  # project subscribes to (enum: projectExecutionRoles, dataEngineerRoles, dataAdminRoles)
+  # (default: [])
+  subscriptionAuthorizedRoleGroups:
+    - projectExecutionRoles
+    - dataEngineerRoles
   project:
     # Name of the project profile to use
     profileName: test-profile

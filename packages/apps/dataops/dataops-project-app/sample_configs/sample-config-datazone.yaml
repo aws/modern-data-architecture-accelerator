@@ -19,6 +19,11 @@ projectExecutionRoles:
 datazone:
   # SSM parameter name containing domain configuration
   domainConfigSSMParam: /test-org/test-domain/test-datazone/domain/test-domain/config
+  # (Optional) Role groups from this config that receive the tables the DataZone project
+  # subscribes to (enum: projectExecutionRoles, dataEngineerRoles, dataAdminRoles) (default: [])
+  subscriptionAuthorizedRoleGroups:
+    - projectExecutionRoles
+    - dataAdminRoles
   # DataZone project configuration
   project:
     # (Optional) Exact DataZone project name used verbatim, bypassing MDAA naming.

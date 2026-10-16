@@ -476,6 +476,18 @@
               "dzuserrole4DA7E8E2",
               "Arn"
             ]
+          },
+          {
+            "Fn::GetAtt": [
+              "RoleResProjectExRoles0",
+              "arn"
+            ]
+          },
+          {
+            "Fn::GetAtt": [
+              "RoleResDataAdmin0",
+              "arn"
+            ]
           }
         ],
         "DomainIdentifier": {
@@ -1004,20 +1016,6 @@
         "testdatabasedatazonedatabase"
       ]
     },
-    "RoleResDataAdmin0": {
-      "Type": "AWS::CloudFormation::CustomResource",
-      "Properties": {
-        "ServiceToken": {
-          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
-        },
-        "roleRef": {
-          "refId": "DataAdmin-0",
-          "name": "Admin"
-        }
-      },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
-    },
     "projectdeploymentrole542A1AAB": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -1353,34 +1351,6 @@
         }
       }
     },
-    "RoleResDataEngineer0": {
-      "Type": "AWS::CloudFormation::CustomResource",
-      "Properties": {
-        "ServiceToken": {
-          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
-        },
-        "roleRef": {
-          "refId": "DataEngineer-0",
-          "name": "data-engineer"
-        }
-      },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
-    },
-    "RoleResProjectExRoles0": {
-      "Type": "AWS::CloudFormation::CustomResource",
-      "Properties": {
-        "ServiceToken": {
-          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
-        },
-        "roleRef": {
-          "refId": "ProjectExRoles-0",
-          "name": "glue-role"
-        }
-      },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
-    },
     "ProjectKmsKey2B296F94": {
       "Type": "AWS::KMS::Key",
       "Properties": {
@@ -1715,6 +1685,48 @@
           "Ref": "ProjectKmsKey2B296F94"
         }
       }
+    },
+    "RoleResDataAdmin0": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "DataAdmin-0",
+          "name": "Admin"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "RoleResDataEngineer0": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "DataEngineer-0",
+          "name": "data-engineer"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "RoleResProjectExRoles0": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "ProjectExRoles-0",
+          "name": "glue-role"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
     },
     "ssmkmsarnA2708738": {
       "Type": "AWS::SSM::Parameter",
@@ -4226,6 +4238,96 @@
         }
       }
     },
+    "subscriptioncatalogkeyaccesspolicyF6C76C68": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-dataops-project-dat--36f98532",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "kms:DescribeKey",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "constructdomainconfigparserdomainconfigparserssmgluecatalogkmsarnsDFE04B72"
+              }
+            },
+            {
+              "Action": "kms:Decrypt",
+              "Condition": {
+                "StringEquals": {
+                  "kms:ViaService": "glue.test-region.amazonaws.com"
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "constructdomainconfigparserdomainconfigparserssmgluecatalogkmsarnsDFE04B72"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          "glue-role",
+          "Admin"
+        ]
+      }
+    },
+    "subscriptioncatalogkeyaccesspolicymanagedpolicysubscriptioncatalogkeyaccessarnssmD5A2EF1E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/managed-policy/subscription-catalog-key-access/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "subscriptioncatalogkeyaccesspolicyF6C76C68"
+        }
+      }
+    },
+    "subscriptioncatalogkeyaccesspolicymanagedpolicysubscriptioncatalogkeyaccessnamessm3F080836": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-datazone/managed-policy/subscription-catalog-key-access/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-datazone",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "subscriptioncatalogkeyaccesspolicyF6C76C68"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
     "securityconfig6DD90031": {
       "Type": "AWS::Glue::SecurityConfiguration",
       "Properties": {
@@ -4828,6 +4930,42 @@
       },
       "Export": {
         "Name": "test-org:test-domain:test-dataops-project-datazone:lambda:userprofilemanagerhandler:log-group"
+      }
+    },
+    "subscriptioncatalogkeyaccesspolicymanagedpolicysubscriptioncatalogkeyaccessarnoutE1D7FF3A": {
+      "Value": {
+        "Ref": "subscriptioncatalogkeyaccesspolicyF6C76C68"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:managed-policy:subscriptioncatalogkeyaccess:arn"
+      }
+    },
+    "subscriptioncatalogkeyaccesspolicymanagedpolicysubscriptioncatalogkeyaccessnameout35D7D194": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "subscriptioncatalogkeyaccesspolicyF6C76C68"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-datazone:managed-policy:subscriptioncatalogkeyaccess:name"
       }
     },
     "dataopssnstopicTopicdataopssnstopicnameoutD7D1DCB0": {
