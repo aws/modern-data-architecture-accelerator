@@ -12,3 +12,11 @@ export {
   VpcEndpointProps,
   VpcEndpointSetProps,
 } from './supporting-vpc-endpoints';
+// The gateway target config surface, including the builder-level knowledgeBase target type.
+export {
+  BuilderGatewayTargetConfigurationProperty,
+  BuilderGatewayTargetProps,
+  GatewayKnowledgeBaseNetworkProperty,
+  GatewayKnowledgeBaseSearchType,
+  GatewayTargetKnowledgeBaseProperty,
+} from './gateway-knowledge-base';

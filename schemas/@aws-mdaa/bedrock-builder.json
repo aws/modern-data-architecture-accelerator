@@ -574,6 +574,63 @@
             },
             "type": "object"
         },
+        "BuilderGatewayTargetConfigurationProperty": {
+            "additionalProperties": false,
+            "description": "Tool source for a bedrock-builder gateway target: the gateway target types, plus `knowledgeBase`,\nwhich bedrock-builder turns into a generated Lambda connector.\n\nAWS: AWS::BedrockAgentCore::GatewayTarget TargetConfiguration.Mcp\n\nValidation: exactly one target type; currently `lambda` or `knowledgeBase`",
+            "maxProperties": 1,
+            "minProperties": 1,
+            "properties": {
+                "apiGateway": {
+                    "$ref": "#/definitions/GatewayTargetApiGatewayProperty",
+                    "description": "API Gateway tool source. Declared; not yet supported.\n\nAWS: TargetConfiguration.Mcp.ApiGateway"
+                },
+                "knowledgeBase": {
+                    "$ref": "#/definitions/GatewayTargetKnowledgeBaseProperty",
+                    "description": "Knowledge base tool source. bedrock-builder generates the connector Lambda, its execution role,\nand a Lambda target exposing a `Retrieve` tool.\n\nUse cases: RAG over a customer-managed knowledge base through a gateway\n\nAWS: AWS::Lambda::Function + AWS::BedrockAgentCore::GatewayTarget TargetConfiguration.Mcp.Lambda\n\nValidation: Optional; must be the only target type set; {@link GatewayTargetKnowledgeBaseProperty}"
+                },
+                "lambda": {
+                    "$ref": "#/definitions/GatewayTargetLambdaProperty",
+                    "description": "Lambda tool source (function ARN + tool schema).\n\nAWS: TargetConfiguration.Mcp.Lambda\n\nValidation: Optional; must be the only target type set"
+                },
+                "mcpServer": {
+                    "$ref": "#/definitions/GatewayTargetMcpServerProperty",
+                    "description": "MCP server tool source. Declared; not yet supported.\n\nAWS: TargetConfiguration.Mcp.McpServer"
+                },
+                "openApiSchema": {
+                    "$ref": "#/definitions/GatewayTargetOpenApiProperty",
+                    "description": "OpenAPI schema tool source. Declared; not yet supported.\n\nAWS: TargetConfiguration.Mcp.OpenApiSchema"
+                },
+                "smithyModel": {
+                    "$ref": "#/definitions/GatewayTargetSmithyProperty",
+                    "description": "Smithy model tool source. Declared; not yet supported.\n\nAWS: TargetConfiguration.Mcp.SmithyModel"
+                }
+            },
+            "type": "object"
+        },
+        "BuilderGatewayTargetProps": {
+            "additionalProperties": false,
+            "description": "Configuration for a single bedrock-builder gateway target (a tool source registered against a\ngateway).\n\nUse cases: registering a Lambda or knowledge base tool source against a gateway\n\nAWS: AWS::BedrockAgentCore::GatewayTarget\n\nValidation: `targetConfiguration` sets exactly one target type (currently `lambda` or `knowledgeBase`)",
+            "properties": {
+                "credentialProvider": {
+                    "$ref": "#/definitions/GatewayTargetCredentialProperty",
+                    "description": "Outbound credential provider. Optional - defaults to `GATEWAY_IAM_ROLE`.\n\nAWS: AWS::BedrockAgentCore::GatewayTarget CredentialProviderConfigurations\n\nValidation: Optional; when set, `type` must be a supported credential provider type"
+                },
+                "description": {
+                    "description": "Description of the target, as target metadata. It is not shown to the model: tool descriptions\ncome from the tool schema or, for a `knowledgeBase` target, from `knowledgeBase.description`.\n\nAWS: AWS::BedrockAgentCore::GatewayTarget Description\n\nValidation: Optional; String; 1-200 characters",
+                    "maxLength": 200,
+                    "minLength": 1,
+                    "type": "string"
+                },
+                "targetConfiguration": {
+                    "$ref": "#/definitions/BuilderGatewayTargetConfigurationProperty",
+                    "description": "Tool source for the target. Exactly one target type is set (currently `lambda` or `knowledgeBase`).\n\nAWS: AWS::BedrockAgentCore::GatewayTarget TargetConfiguration\n\nValidation: Required; {@link BuilderGatewayTargetConfigurationProperty}"
+                }
+            },
+            "required": [
+                "targetConfiguration"
+            ],
+            "type": "object"
+        },
         "CfnAgent.ActionGroupExecutorProperty": {
             "additionalProperties": false,
             "description": "Contains details about the Lambda function containing the business logic that is carried out upon invoking the action or the custom control method for handling the information elicited from the user.",
@@ -2026,6 +2083,36 @@
             ],
             "type": "object"
         },
+        "GatewayKnowledgeBaseNetworkProperty": {
+            "additionalProperties": false,
+            "description": "VPC placement of a knowledge base connector. The connector runs in `subnets`, in the VPC of the\n`vpcEndpoints` set it references. When the set creates or brings the Bedrock Agent Runtime endpoint,\nthe connector calls Retrieve through it, so its requests carry `aws:SourceVpc` and `aws:SourceVpce`;\nwhen the set marks it external, the network path is yours.\n\nUse cases: an organization policy that requires Lambda functions to be VPC-bound (`lambda:VpcIds`);\ndata perimeter policies that require `aws:SourceVpc` or `aws:SourceVpce` on `bedrock:Retrieve`\n\nAWS: AWS::Lambda::Function VpcConfig\n\nValidation: `subnets` and `vpcEndpoints` required",
+            "properties": {
+                "securityGroupId": {
+                    "description": "Security group for the connector, when the set marks `bedrockAgentRuntime` external: the module then\nhas no endpoint to wire, so this group must already allow HTTPS to wherever Retrieve is reached.\n\nUse cases: an endpoint whose security group is managed by a central networking team\n\nAWS: AWS::Lambda::Function VpcConfig.SecurityGroupIds\n\nValidation: Required when the set marks `bedrockAgentRuntime` external, and not allowed otherwise",
+                    "minLength": 1,
+                    "type": "string"
+                },
+                "subnets": {
+                    "description": "Subnets the connector's network interfaces are placed in, in the VPC of the `vpcEndpoints` set.\n\nUse cases: placing the connector in private subnets\n\nAWS: AWS::Lambda::Function VpcConfig.SubnetIds\n\nValidation: Required; String[]; 1-16 entries",
+                    "items": {
+                        "type": "string"
+                    },
+                    "maxItems": 16,
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "vpcEndpoints": {
+                    "description": "Name of the set in the module's `vpcEndpoints` map the connector reaches Retrieve through. When the\nset creates the Bedrock Agent Runtime endpoint or brings an existing one, the module creates the\nconnector's security group with HTTPS access to it; when the set marks it external, set\n`securityGroupId`.\n\nUse cases: a private path to Retrieve with no NAT\n\nAWS: AWS::EC2::VPCEndpoint (bedrock-agent-runtime)\n\nValidation: Required; String; a key in `vpcEndpoints`",
+                    "minLength": 1,
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subnets",
+                "vpcEndpoints"
+            ],
+            "type": "object"
+        },
         "GatewayLogDeliveryProperty": {
             "additionalProperties": false,
             "description": "Gateway audit log-delivery configuration. Controls the CMK-encrypted CloudWatch Logs vended\ndelivery pipeline this construct provisions (the service configures no log destination itself).\n\nUse cases: audit logging, retention tuning, opt-out\n\nAWS: AWS::Logs::DeliverySource / DeliveryDestination / Delivery + a CWL destination log group\n\nValidation: Optional; omit for the compliant default (enabled, indefinite retention)",
@@ -2062,33 +2149,6 @@
             ],
             "type": "object"
         },
-        "GatewayTargetConfigurationProperty": {
-            "additionalProperties": false,
-            "description": "Tool source (target-type configuration) for a gateway target. Exactly one target type must be\nset. MDAA currently supports only `lambda`; the other types are declared so the configuration\nsurface is stable as support is added, and are rejected as not yet supported at synth.\n\nAWS: AWS::BedrockAgentCore::GatewayTarget TargetConfiguration.Mcp\n\nValidation: exactly one target type; currently must be `lambda`",
-            "properties": {
-                "apiGateway": {
-                    "$ref": "#/definitions/GatewayTargetApiGatewayProperty",
-                    "description": "API Gateway tool source. Declared; not yet supported.\n\nAWS: TargetConfiguration.Mcp.ApiGateway"
-                },
-                "lambda": {
-                    "$ref": "#/definitions/GatewayTargetLambdaProperty",
-                    "description": "Lambda tool source (function ARN + tool schema).\n\nAWS: TargetConfiguration.Mcp.Lambda\n\nValidation: exactly one target type; `lambda` is currently the only supported type"
-                },
-                "mcpServer": {
-                    "$ref": "#/definitions/GatewayTargetMcpServerProperty",
-                    "description": "MCP server tool source. Declared; not yet supported.\n\nAWS: TargetConfiguration.Mcp.McpServer"
-                },
-                "openApiSchema": {
-                    "$ref": "#/definitions/GatewayTargetOpenApiProperty",
-                    "description": "OpenAPI schema tool source. Declared; not yet supported.\n\nAWS: TargetConfiguration.Mcp.OpenApiSchema"
-                },
-                "smithyModel": {
-                    "$ref": "#/definitions/GatewayTargetSmithyProperty",
-                    "description": "Smithy model tool source. Declared; not yet supported.\n\nAWS: TargetConfiguration.Mcp.SmithyModel"
-                }
-            },
-            "type": "object"
-        },
         "GatewayTargetCredentialProperty": {
             "additionalProperties": false,
             "description": "Outbound credential provider for a gateway target.\n\nAWS: AWS::BedrockAgentCore::GatewayTarget CredentialProviderConfiguration",
@@ -2105,6 +2165,44 @@
                     "type": "string"
                 }
             },
+            "type": "object"
+        },
+        "GatewayTargetKnowledgeBaseProperty": {
+            "additionalProperties": false,
+            "description": "Knowledge base tool source for a gateway target. bedrock-builder generates a Lambda connector that\ncalls `bedrock-agent-runtime:Retrieve` against this knowledge base and registers it as a Lambda\ntarget exposing one `Retrieve` tool, with the same input and output shape as the native\nmanaged-knowledge-base connector's `Retrieve` tool.\n\nUse cases: RAG over a customer-managed knowledge base from a harness or any MCP client of the gateway\n\nAWS: AWS::Lambda::Function (connector) + AWS::BedrockAgentCore::GatewayTarget (Lambda target)\n\nValidation: id and description are required",
+            "properties": {
+                "description": {
+                    "description": "Description of the `Retrieve` tool as the model sees it. Say what the knowledge base contains and\nwhen to search it; the model uses this to decide when to call the tool.\n\nUse cases: steering tool selection when a gateway exposes several knowledge bases or tools\n\nAWS: AWS::BedrockAgentCore::GatewayTarget ToolDefinition Description\n\nValidation: Required; non-empty String",
+                    "minLength": 1,
+                    "type": "string"
+                },
+                "id": {
+                    "description": "Knowledge base the connector queries. `config:<name>` references a knowledge base in this\nmodule's `knowledgeBases` map and resolves to the deployed knowledge base. Otherwise, the id of an\nexisting knowledge base in the same account and region, as a literal or an `ssm:` reference.\n\nUse cases: querying a knowledge base built by this module; querying one built by another module\n\nAWS: bedrock-agent-runtime Retrieve knowledgeBaseId; scopes the connector's bedrock:Retrieve grant\n\nValidation: Required; `config:<name>` naming a key in `knowledgeBases`, an `ssm:` reference, or a\n10-character alphanumeric knowledge base id (not an ARN or knowledge base name)",
+                    "type": "string"
+                },
+                "networkConfiguration": {
+                    "$ref": "#/definitions/GatewayKnowledgeBaseNetworkProperty",
+                    "description": "VPC placement of the connector Lambda, through a set in the module's `vpcEndpoints` map. Omit to run\nthe connector outside your VPC.\n\nUse cases: VPC-bound Lambda policies; data perimeter policies on `bedrock:Retrieve`\n\nAWS: AWS::Lambda::Function VpcConfig\n\nValidation: Optional; {@link GatewayKnowledgeBaseNetworkProperty}"
+                },
+                "numberOfResults": {
+                    "description": "Number of results each query retrieves. Omit to use the Retrieve service default.\n\nUse cases: trading answer grounding against response size\n\nAWS: bedrock-agent-runtime Retrieve vectorSearchConfiguration.numberOfResults\n\nValidation: Optional; integer 1-100",
+                    "maximum": 100,
+                    "minimum": 1,
+                    "type": "integer"
+                },
+                "overrideSearchType": {
+                    "description": "Search type each query requests. Omit to let the knowledge base choose.\n\nUse cases: forcing keyword-plus-vector search, or vector-only search\n\nAWS: bedrock-agent-runtime Retrieve vectorSearchConfiguration.overrideSearchType\n\nValidation: Optional; HYBRID | SEMANTIC",
+                    "enum": [
+                        "HYBRID",
+                        "SEMANTIC"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "description",
+                "id"
+            ],
             "type": "object"
         },
         "GatewayTargetLambdaProperty": {
@@ -2157,28 +2255,6 @@
                     "description": "Location of an OpenAPI schema document in S3.\n\nAWS: ApiSchemaConfiguration S3\n\nValidation: Optional; mutually exclusive with `inlinePayload`"
                 }
             },
-            "type": "object"
-        },
-        "GatewayTargetProps": {
-            "additionalProperties": false,
-            "description": "Configuration for a single gateway target (a tool source registered against a gateway).\n\nUse cases: registering a tool source (Lambda, and — as support is added — OpenAPI / Smithy /\nMCP-server / API-Gateway) against a gateway\n\nAWS: AWS::BedrockAgentCore::GatewayTarget\n\nValidation: `targetConfiguration` sets exactly one target type (currently `lambda`);\n`credentialProvider`, when set, must be a supported {@link GatewayTargetCredentialProviderType}",
-            "properties": {
-                "credentialProvider": {
-                    "$ref": "#/definitions/GatewayTargetCredentialProperty",
-                    "description": "Outbound credential provider. Optional — defaults to `GATEWAY_IAM_ROLE`.\n\nAWS: AWS::BedrockAgentCore::GatewayTarget CredentialProviderConfigurations\n\nValidation: Optional; when set, `type` must be a supported {@link GatewayTargetCredentialProviderType}"
-                },
-                "description": {
-                    "description": "Description of the target.\n\nAWS: AWS::BedrockAgentCore::GatewayTarget Description\n\nValidation: Optional; String; 1-200 characters",
-                    "type": "string"
-                },
-                "targetConfiguration": {
-                    "$ref": "#/definitions/GatewayTargetConfigurationProperty",
-                    "description": "Tool source for the target. Exactly one target type is set (currently `lambda`).\n\nAWS: AWS::BedrockAgentCore::GatewayTarget TargetConfiguration\n\nValidation: Required; {@link GatewayTargetConfigurationProperty}"
-                }
-            },
-            "required": [
-                "targetConfiguration"
-            ],
             "type": "object"
         },
         "GatewayTargetS3Property": {
@@ -4562,9 +4638,9 @@
         },
         "NamedGatewayTargetProps": {
             "additionalProperties": {
-                "$ref": "#/definitions/GatewayTargetProps"
+                "$ref": "#/definitions/BuilderGatewayTargetProps"
             },
-            "description": "Map of target name to {@link GatewayTargetProps}, referenced by name from a gateway's `targets`\nlist. The key becomes the target's MDAA-named resource name; each target must be referenced by\nexactly one gateway.",
+            "description": "Map of target name to {@link BuilderGatewayTargetProps}, referenced by name from a gateway's\n`targets` list. The key becomes the target's MDAA-named resource name; each target may be referenced\nby at most one gateway, and a target no gateway references is not deployed.",
             "type": "object"
         },
         "NamedGuardrailProps": {
@@ -5064,7 +5140,7 @@
             "description": "How the S3 gateway endpoint for container image layers is provided. It has only the `external` state\nof {@link VpcEndpointProps}: a gateway endpoint has no security group to wire, so an existing one\nneeds nothing from this set, and its placement comes from the set's `routeTableIds` rather than from\nsubnets.\n\nUse cases: a VPC where S3 is already reachable over NAT or an existing endpoint\n\nAWS: AWS::EC2::VPCEndpoint (Gateway)\n\nValidation: mutually exclusive with the set's `routeTableIds`",
             "properties": {
                 "external": {
-                    "description": "Mark S3 as already reachable, so no gateway endpoint is created for image layers. Set this for a VPC\nwith NAT, or one whose S3 gateway endpoint was provisioned elsewhere - a route table carries a\nservice's prefix-list route from only one endpoint, so creating a second fails at deploy.\n\nValidation: Required when the set has no `routeTableIds`; mutually exclusive with them",
+                    "description": "Mark S3 as already reachable, so no gateway endpoint is created for image layers. Set this for a VPC\nwith NAT, or one whose S3 gateway endpoint was provisioned elsewhere - a route table carries a\nservice's prefix-list route from only one endpoint, so creating a second fails at deploy.\n\nValidation: When a harness references the set, required unless the set has `routeTableIds`, and\nmutually exclusive with them; otherwise not allowed",
                     "type": "boolean"
                 }
             },
@@ -5800,30 +5876,34 @@
         },
         "VpcEndpointSetProps": {
             "additionalProperties": false,
-            "description": "One VPC's endpoint set: which VPC it serves, where created endpoints go, and how each endpoint the\nreferencing consumers need is provided. A consumer references a set by name from its own\nconfiguration, and the endpoints belong to the VPC rather than to any one consumer - AWS allows a\nsingle Private DNS interface endpoint per service per VPC, so one set owns them and every consumer\nreferencing it shares them.\n\nWhich endpoints exist is derived from the consumers, never added here: a set can only say how each\nderived endpoint is reached. Omitting an endpoint property means it is created; see\n{@link VpcEndpointProps} for the other two states.\n\nEndpoint policies are derived too, and are not configurable: the AgentCore Gateway endpoint is scoped\nto gateway invocation and the S3 gateway endpoint to the ECR image-layer bucket, while the\nmulti-action supporting services keep the AWS default - Private DNS makes an interface endpoint\nVPC-wide, so restricting those would deny unrelated workloads in the same VPC. That default permits\nevery action on those services in any account, so a set is a private network path and not an\nauthorization boundary: what a session may reach through it stays governed by its execution role.\n\nUse cases: private (no-NAT) AgentCore Harness sessions, reusing centrally provisioned endpoints,\nkeeping selected services on the VPC's existing egress path\n\nValidation: `vpcId` and `subnetIds` required; exactly one of `routeTableIds` and\n`s3ImageLayers.external`; each set must name a distinct VPC and be referenced by at least one consumer",
+            "description": "One VPC's endpoint set: which VPC it serves, where created endpoints go, and how each endpoint the\nreferencing consumers need is provided. A consumer - an AgentCore Harness, or a `knowledgeBase`\ngateway target's connector - references a set by name from its own `networkConfiguration`, and the\nendpoints belong to the VPC rather than to any one consumer - AWS allows a single Private DNS\ninterface endpoint per service per VPC, so one set owns them and every consumer referencing it shares\nthem.\n\nWhich endpoints exist is derived from the consumers, never added here: a set can only say how each\nderived endpoint is reached. Omitting an endpoint property means it is created; see\n{@link VpcEndpointProps} for the other two states.\n\nEndpoint policies are derived too, and are not configurable: the AgentCore Gateway endpoint is scoped\nto gateway invocation, the Bedrock Agent Runtime endpoint to `bedrock:Retrieve` on the knowledge bases\nthe set's connectors query, and the S3 gateway endpoint to the ECR image-layer bucket, while the\nmulti-action supporting services keep the AWS default - Private DNS makes an interface endpoint\nVPC-wide, so restricting those would deny unrelated workloads in the same VPC. That default permits\nevery action on those services in any account, so a set is a private network path and not an\nauthorization boundary: what a consumer may reach through it stays governed by its execution role.\n\nUse cases: private (no-NAT) AgentCore Harness sessions and knowledge base connectors, reusing\ncentrally provisioned endpoints, keeping selected services on the VPC's existing egress path\n\nValidation: `vpcId` and `subnetIds` required; when a harness references the set, exactly one of\n`routeTableIds` and `s3ImageLayers.external`, and neither otherwise; each set must name a distinct VPC\nand be referenced by at least one consumer",
             "properties": {
                 "agentCoreGateway": {
                     "$ref": "#/definitions/VpcEndpointProps",
                     "description": "AgentCore Gateway - the gateway's MCP host, a distinct service from the AgentCore data plane. Needed\nonly by a consumer declaring an `agentCoreGateway` tool; without it the tool load fails with a DNS\n\"Name or service not known\" error.\n\nValidation: Optional; VpcEndpointProps; only valid when a referencing consumer declares a gateway\ntool; omit to have it created"
                 },
+                "bedrockAgentRuntime": {
+                    "$ref": "#/definitions/VpcEndpointProps",
+                    "description": "Amazon Bedrock Agent Runtime, for the `Retrieve` calls of a `knowledgeBase` gateway target's\nconnector - a distinct service from Bedrock runtime. Needed only when a connector references the set.\nA created endpoint's policy allows only `bedrock:Retrieve`, on the knowledge bases the set's\nconnectors query; Private DNS makes it serve the whole VPC, so a VPC whose other workloads call this\nservice should bring its own endpoint or mark it external instead.\n\nValidation: Optional; VpcEndpointProps; only valid when a knowledge base connector references the\nset; omit to have it created"
+                },
                 "bedrockRuntime": {
                     "$ref": "#/definitions/VpcEndpointProps",
-                    "description": "Amazon Bedrock runtime, for model inference over the Converse API. Every AgentCore Harness needs it;\nwithout a path it reaches READY and every invoke hangs.\n\nValidation: Optional; VpcEndpointProps; omit to have it created"
+                    "description": "Amazon Bedrock runtime, for model inference over the Converse API. Every AgentCore Harness needs it;\nwithout a path it reaches READY and every invoke hangs.\n\nValidation: Optional; VpcEndpointProps; only valid when a harness references the set; omit to have\nit created"
                 },
                 "ecrApi": {
                     "$ref": "#/definitions/VpcEndpointProps",
-                    "description": "Amazon ECR API, for the registry calls a session's container image pull makes.\n\nValidation: Optional; VpcEndpointProps; omit to have it created"
+                    "description": "Amazon ECR API, for the registry calls a session's container image pull makes.\n\nValidation: Optional; VpcEndpointProps; only valid when a harness references the set; omit to have\nit created"
                 },
                 "ecrDocker": {
                     "$ref": "#/definitions/VpcEndpointProps",
-                    "description": "Amazon ECR Docker Registry, for the registry protocol of the image pull.\n\nValidation: Optional; VpcEndpointProps; omit to have it created"
+                    "description": "Amazon ECR Docker Registry, for the registry protocol of the image pull.\n\nValidation: Optional; VpcEndpointProps; only valid when a harness references the set; omit to have\nit created"
                 },
                 "logs": {
                     "$ref": "#/definitions/VpcEndpointProps",
-                    "description": "Amazon CloudWatch Logs, for log delivery from a session.\n\nValidation: Optional; VpcEndpointProps; omit to have it created"
+                    "description": "Amazon CloudWatch Logs, for log delivery from a session.\n\nValidation: Optional; VpcEndpointProps; only valid when a harness references the set; omit to have\nit created"
                 },
                 "routeTableIds": {
-                    "description": "Route tables that receive the S3 gateway endpoint's prefix-list route, enabling container image-layer\ndownloads: image layers are served from the ECR layer bucket over S3, so the ECR interface endpoints\nalone cannot complete a pull in a VPC with no NAT.\n\nIMPORTANT - blast radius: the endpoint intercepts **all** S3 traffic from every subnet associated\nwith these route tables, and its derived policy allows only the ECR image-layer read. If other\nworkloads share these route tables and need broader S3 access, provision the S3 gateway endpoint out\nof band and set `s3ImageLayers.external` instead.\n\nUse cases: no-NAT container image-layer pulls\n\nAWS: RouteTableIds\n\nValidation: Required unless `s3ImageLayers.external` is set, and mutually exclusive with it; String[]",
+                    "description": "Route tables that receive the S3 gateway endpoint's prefix-list route, enabling container image-layer\ndownloads: image layers are served from the ECR layer bucket over S3, so the ECR interface endpoints\nalone cannot complete a pull in a VPC with no NAT.\n\nIMPORTANT - blast radius: the endpoint intercepts **all** S3 traffic from every subnet associated\nwith these route tables, and its derived policy allows only the ECR image-layer read. If other\nworkloads share these route tables and need broader S3 access, provision the S3 gateway endpoint out\nof band and set `s3ImageLayers.external` instead.\n\nUse cases: no-NAT container image-layer pulls\n\nAWS: RouteTableIds\n\nValidation: When a harness references the set, required unless `s3ImageLayers.external` is set, and\nmutually exclusive with it; otherwise not allowed, since only harnesses pull images; String[]",
                     "items": {
                         "type": "string"
                     },
@@ -5832,11 +5912,11 @@
                 },
                 "s3ImageLayers": {
                     "$ref": "#/definitions/S3ImageLayerEndpointProps",
-                    "description": "Amazon S3, reached through a **gateway** endpoint, for container image layers. Created from the set's\n`routeTableIds`; set `external` here when S3 is already reachable.\n\nValidation: Optional; S3ImageLayerEndpointProps"
+                    "description": "Amazon S3, reached through a **gateway** endpoint, for container image layers. Created from the set's\n`routeTableIds`; set `external` here when S3 is already reachable.\n\nValidation: Optional; S3ImageLayerEndpointProps; only valid when a harness references the set"
                 },
                 "sts": {
                     "$ref": "#/definitions/VpcEndpointProps",
-                    "description": "AWS STS, for credential vending inside a session.\n\nValidation: Optional; VpcEndpointProps; omit to have it created"
+                    "description": "AWS STS, for credential vending inside a session.\n\nValidation: Optional; VpcEndpointProps; only valid when a harness references the set; omit to have\nit created"
                 },
                 "subnetIds": {
                     "description": "Subnets for the ENIs of every interface endpoint created by this set, unless an endpoint overrides\nit. An interface endpoint takes at most one subnet per availability zone, and is reachable from any\nzone - so covering fewer zones costs less in endpoint ENI hours and more in cross-zone data.\n\nUse cases: multi-AZ endpoint placement, endpoint ENI cost control\n\nAWS: SubnetIds\n\nValidation: Required; String[]; at least one, at most one per availability zone",
@@ -5876,7 +5956,7 @@
         },
         "gatewayTargets": {
             "$ref": "#/definitions/NamedGatewayTargetProps",
-            "description": "Bedrock AgentCore Gateway target definitions (MCP tool sources), keyed by target name.\nDeclared as a sibling of `gateways` (not nested) to keep the config flat; a gateway attaches a\ntarget by naming its key in the gateway's `targets` list. Each target must be referenced by\nexactly one gateway.\n\nUse cases: defining MCP tool sources (e.g. Lambda tools) once and referencing them from a gateway\n\nAWS: AWS::BedrockAgentCore::GatewayTarget\n\nValidation: Optional; NamedGatewayTargetProps (map of target name to config)"
+            "description": "Bedrock AgentCore Gateway target definitions (MCP tool sources), keyed by target name.\nDeclared as a sibling of `gateways` (not nested) to keep the config flat; a gateway attaches a\ntarget by naming its key in the gateway's `targets` list. Each target may be referenced by at most\none gateway; a target no gateway references is not deployed. A `knowledgeBase` target generates a\nLambda connector that exposes a knowledge base as a `Retrieve` tool.\n\nUse cases: defining MCP tool sources (Lambda tools, knowledge bases) once and referencing them from a gateway\n\nAWS: AWS::BedrockAgentCore::GatewayTarget\n\nValidation: Optional; NamedGatewayTargetProps (map of target name to config)"
         },
         "gateways": {
             "$ref": "#/definitions/NamedGatewayProps",
@@ -5920,7 +6000,7 @@
         },
         "vpcEndpoints": {
             "$ref": "#/definitions/NamedVpcEndpointSetProps",
-            "description": "VPC endpoint sets, keyed by set name, giving a harness's sessions a private outbound path\n(no NAT/internet). A harness references one by name from its `networkConfiguration.vpcEndpoints`;\nevery harness referencing a set shares its endpoints.\n\nWhich endpoints exist is derived from the referencing harnesses, so a set only states which VPC it\nserves, where created endpoints go, and how each derived endpoint is reached - created here, an\nexisting one to wire to, or reached without an endpoint the set manages. Endpoint policies are\nderived and not configurable.\n\nUse cases: private (no-NAT) harness sessions, reusing centrally provisioned endpoints\n\nAWS: AWS::EC2::VPCEndpoint (Interface and Gateway)\n\nValidation: Optional; NamedVpcEndpointSetProps; each set must name a distinct VPC and be referenced\nby at least one harness"
+            "description": "VPC endpoint sets, keyed by set name, giving harness sessions and knowledge base connectors a\nprivate outbound path (no NAT/internet). A harness references one by name from its\n`networkConfiguration.vpcEndpoints`, and a `knowledgeBase` gateway target from its\n`networkConfiguration.vpcEndpoints`; every consumer referencing a set shares its endpoints.\n\nWhich endpoints exist is derived from the referencing consumers, so a set only states which VPC it\nserves, where created endpoints go, and how each derived endpoint is reached - created here, an\nexisting one to wire to, or reached without an endpoint the set manages. Endpoint policies are\nderived and not configurable.\n\nUse cases: private (no-NAT) harness sessions and knowledge base connectors, reusing centrally\nprovisioned endpoints\n\nAWS: AWS::EC2::VPCEndpoint (Interface and Gateway)\n\nValidation: Optional; NamedVpcEndpointSetProps; each set must name a distinct VPC and be referenced\nby at least one harness or knowledge base connector"
         }
     },
     "required": [

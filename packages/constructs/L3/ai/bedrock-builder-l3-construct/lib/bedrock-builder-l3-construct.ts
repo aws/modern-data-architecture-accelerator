@@ -3,14 +3,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { FunctionProps, LambdaFunctionL3Construct, LayerProps } from '@aws-mdaa/dataops-lambda-l3-construct';
+import { join } from 'node:path';
+
+import {
+  FunctionProps,
+  LambdaFunctionL3Construct,
+  LayerProps,
+  VpcConfigProps,
+} from '@aws-mdaa/dataops-lambda-l3-construct';
 
 import { MdaaResolvableRole, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { DECRYPT_ACTIONS, ENCRYPT_ACTIONS, MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaResourceType } from '@aws-mdaa/naming';
 import { MdaaNagSuppressions, MdaaParamAndOutput } from '@aws-mdaa/construct';
+import { MdaaLogGroup } from '@aws-mdaa/cloudwatch-constructs';
 import { MdaaManagedPolicy } from '@aws-mdaa/iam-constructs';
+import { MdaaLambdaRole } from '@aws-mdaa/lambda-constructs';
 import { MdaaAuroraPgVector } from '@aws-mdaa/rds-constructs';
 import { MdaaOpensearchServerlessCollection } from '@aws-mdaa/opensearch-constructs';
 
@@ -19,6 +28,7 @@ import { aws_bedrock as bedrock, aws_kms as kms, aws_opensearchserverless as aos
 import { Effect, PolicyStatement, ServicePrincipal, ArnPrincipal, IRole } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { Vpc } from 'aws-cdk-lib/aws-ec2';
+import { ILogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 
 import { Construct } from 'constructs';
 import { MdaaSecurityGroup } from '@aws-mdaa/ec2-constructs';
@@ -46,14 +56,45 @@ import {
   ResolvedGatewayArnMap,
   ResolvedGuardrailRefMap,
   ResolvedVpcEndpointAccess,
+  VpcEndpointClientAccess,
 } from '@aws-mdaa/bedrock-agentcore-harness-l3-construct';
 import { VpcEndpointL3Construct } from '@aws-mdaa/vpc-endpoint-l3-construct';
 import { NamedOpensearchServerlessProps, validateAndGroupVpcEndpoints } from './vpc-endpoint-validator';
 import {
+  harnessVpcEndpointConsumers,
+  knowledgeBaseConnectorVpcEndpointConsumer,
   NamedVpcEndpointSetProps,
   reconcileVpcEndpointSets,
+  VpcEndpointSetConsumer,
   vpcEndpointAccessForHarness,
+  vpcEndpointAccessForKnowledgeBaseConnector,
 } from './supporting-vpc-endpoints';
+import {
+  BuilderGatewayTargetProps,
+  buildKnowledgeBaseConnectorEnvironment,
+  buildKnowledgeBaseToolSchema,
+  GatewayKnowledgeBaseNetworkProperty,
+  GatewayTargetKnowledgeBaseProperty,
+  KNOWLEDGE_BASE_CONFIG_REF_PREFIX,
+  validateKnowledgeBaseTarget,
+} from './gateway-knowledge-base';
+
+// The connector bounds each Retrieve call, retries included, to 27 seconds (see kb_retrieve.py).
+const KNOWLEDGE_BASE_CONNECTOR_TIMEOUT_SECONDS = 30;
+// Lambda allocates CPU in proportion to memory; at the 128 MB default, the cold-start boto3 import and
+// serializing up to 100 results are slow.
+const KNOWLEDGE_BASE_CONNECTOR_MEMORY_MB = 256;
+// What Lambda needs on the execution role to manage a VPC-bound function's network interfaces, allowed
+// on all resources as Lambda requires.
+// https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc.html#configuration-vpc-permissions
+const LAMBDA_VPC_ACCESS_ACTIONS = [
+  'ec2:CreateNetworkInterface',
+  'ec2:DescribeNetworkInterfaces',
+  'ec2:DescribeSubnets',
+  'ec2:DeleteNetworkInterface',
+  'ec2:AssignPrivateIpAddresses',
+  'ec2:UnassignPrivateIpAddresses',
+];
 
 /**
  * Lambda function and layer configuration for Bedrock agent action groups.
@@ -133,13 +174,34 @@ export interface NamedGatewayProps {
 }
 
 /**
- * Map of target name to {@link GatewayTargetProps}, referenced by name from a gateway's `targets`
- * list. The key becomes the target's MDAA-named resource name; each target must be referenced by
- * exactly one gateway.
+ * Map of target name to {@link BuilderGatewayTargetProps}, referenced by name from a gateway's
+ * `targets` list. The key becomes the target's MDAA-named resource name; each target may be referenced
+ * by at most one gateway, and a target no gateway references is not deployed.
  */
 export interface NamedGatewayTargetProps {
   /** @jsii ignore */
-  [targetName: string]: GatewayTargetProps;
+  [targetName: string]: BuilderGatewayTargetProps;
+}
+
+/** What gateway target resolution needs besides the target references themselves. */
+interface GatewayTargetResolutionContext {
+  readonly gatewayTargets: NamedGatewayTargetProps;
+  readonly knowledgeBases: { [kbName: string]: bedrock.CfnKnowledgeBase };
+  readonly kmsKey: IKey;
+  readonly endpointsBySet: Map<string, ResolvedVpcEndpointAccess>;
+}
+
+/** What gateway and harness creation need besides the module props and the CMK. */
+interface AgentcoreResourceContext {
+  readonly knowledgeBases: { [kbName: string]: bedrock.CfnKnowledgeBase };
+  readonly guardrails: { [name: string]: bedrock.CfnGuardrail };
+  readonly endpointsBySet: Map<string, ResolvedVpcEndpointAccess>;
+}
+
+/** A knowledge base a connector queries, as its id and the ARN its Retrieve grant is scoped to. */
+interface ResolvedKnowledgeBaseRef {
+  readonly knowledgeBaseId: string;
+  readonly knowledgeBaseArn: string;
 }
 
 // Re-export the Harness config surface so the app config can import it from the builder package
@@ -259,10 +321,12 @@ export interface BedrockBuilderL3ConstructProps extends MdaaL3ConstructProps {
   readonly gateways?: NamedGatewayProps;
   /**
    * Bedrock AgentCore Gateway target definitions (MCP tool sources), keyed by target name. A gateway
-   * attaches a target by naming its key in the gateway's `targets` list; each target must be
-   * referenced by exactly one gateway.
+   * attaches a target by naming its key in the gateway's `targets` list; each target may be
+   * referenced by at most one gateway, and a target no gateway references is not deployed. A
+   * `knowledgeBase` target generates a Lambda connector that exposes a knowledge base as a `Retrieve`
+   * tool.
    *
-   * Use cases: defining MCP tool sources (e.g. Lambda tools) once and referencing them from a gateway
+   * Use cases: defining MCP tool sources (Lambda tools, knowledge bases) once and referencing them from a gateway
    *
    * AWS: AWS::BedrockAgentCore::GatewayTarget
    *
@@ -283,21 +347,23 @@ export interface BedrockBuilderL3ConstructProps extends MdaaL3ConstructProps {
    **/
   readonly harnesses?: NamedHarnessProps;
   /**
-   * VPC endpoint sets, keyed by set name, giving a harness's sessions a private outbound path
-   * (no NAT/internet). A harness references one by name from its `networkConfiguration.vpcEndpoints`;
-   * every harness referencing a set shares its endpoints.
+   * VPC endpoint sets, keyed by set name, giving harness sessions and knowledge base connectors a
+   * private outbound path (no NAT/internet). A harness references one by name from its
+   * `networkConfiguration.vpcEndpoints`, and a `knowledgeBase` gateway target from its
+   * `networkConfiguration.vpcEndpoints`; every consumer referencing a set shares its endpoints.
    *
-   * Which endpoints exist is derived from the referencing harnesses, so a set only states which VPC it
+   * Which endpoints exist is derived from the referencing consumers, so a set only states which VPC it
    * serves, where created endpoints go, and how each derived endpoint is reached - created here, an
    * existing one to wire to, or reached without an endpoint the set manages. Endpoint policies are
    * derived and not configurable.
    *
-   * Use cases: private (no-NAT) harness sessions, reusing centrally provisioned endpoints
+   * Use cases: private (no-NAT) harness sessions and knowledge base connectors, reusing centrally
+   * provisioned endpoints
    *
    * AWS: AWS::EC2::VPCEndpoint (Interface and Gateway)
    *
    * Validation: Optional; NamedVpcEndpointSetProps; each set must name a distinct VPC and be referenced
-   * by at least one harness
+   * by at least one harness or knowledge base connector
    **/
   readonly vpcEndpoints?: NamedVpcEndpointSetProps;
 }
@@ -422,15 +488,23 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
       });
     }
 
+    // Create the VPC endpoint sets, before their consumers: the harnesses and the knowledge base
+    // connectors wire themselves to the endpoints. Reconciled even with no consumers at all, because
+    // reconciliation is what rejects a set nothing references. Runs after the knowledge bases, whose
+    // ARNs scope the Bedrock Agent Runtime endpoint policy.
+    const endpointsBySet = this.createVpcEndpointSets(props, knowledgeBases);
+    const agentcoreContext: AgentcoreResourceContext = { knowledgeBases, guardrails, endpointsBySet };
+
     // Create AgentCore gateways (+ their referenced targets). Runs after createLambdaFunctions so
     // gateway target/interceptor `generated-function:<name>` references resolve against the shared
-    // pool. Gateways reuse the same module CMK as agents/KBs/guardrails.
-    const gatewayArns = this.createGateways(props, kmsKey);
+    // pool, and after the knowledge bases so `knowledgeBase` targets resolve `config:<name>` against
+    // them. Gateways reuse the same module CMK as agents/KBs/guardrails.
+    const gatewayArns = this.createGateways(props, kmsKey, agentcoreContext);
 
     // Create AgentCore Harnesses. Runs after gateways/guardrails so `config:<name>` references in a
     // harness's `tools[].agentCoreGateway.gatewayArn` / `guardrail.id` resolve against their live
     // in-stack ARNs/ids.
-    this.createHarnesses(props, kmsKey, gatewayArns, guardrails);
+    this.createHarnesses(props, kmsKey, { ...agentcoreContext, gatewayArns });
 
     // Add suppressions for internal CDK constructs
     this.addInternalConstructSuppressions();
@@ -445,9 +519,8 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
    * injecting the shared module CMK (the harness is a pure key consumer for its log-group
    * encryption) and passing through the resolved gateway ARN map (for
    * `tools[].agentCoreGateway.gatewayArn: config:<name>` references) and the module's guardrails
-   * (for `guardrail.id: config:<name>` references). Creates no harness when none are configured, but
-   * still reconciles the declared endpoint sets, since a set with no harness to reference it is an
-   * error rather than a no-op.
+   * (for `guardrail.id: config:<name>` references), and wiring each harness to the endpoints of the
+   * set it references.
    *
    * The shared CMK already grants CloudWatch Logs service use on its key policy (see
    * {@link getOrCreateKmsKey}), which is all the harness's log-protection custom resource needs.
@@ -455,19 +528,14 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
   private createHarnesses(
     props: BedrockBuilderL3ConstructProps,
     kmsKey: IKey,
-    gatewayArns: ResolvedGatewayArnMap,
-    guardrails: { [name: string]: bedrock.CfnGuardrail },
+    context: AgentcoreResourceContext & { readonly gatewayArns: ResolvedGatewayArnMap },
   ): void {
     const harnessEntries = Object.entries(props.harnesses || {});
-    // Reconciled before the no-harness return, because reconciliation is what rejects a set nothing
-    // references - and a config declaring sets with no harnesses at all is the widest form of that.
-    // With no sets declared it reconciles nothing and creates nothing, so the ordering costs nothing.
-    const endpointsBySet = this.createVpcEndpointSets(props);
     if (harnessEntries.length === 0) {
       return;
     }
-
-    const resolvedGuardrails = this.resolveHarnessGuardrailRefs(guardrails);
+    const { gatewayArns, endpointsBySet } = context;
+    const resolvedGuardrails = this.resolveHarnessGuardrailRefs(context.guardrails);
 
     harnessEntries.forEach(([harnessName, harnessConfig]) => {
       new BedrockAgentcoreHarnessL3Construct(this, `bedrock-harness-${harnessName}`, {
@@ -487,22 +555,27 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
 
   /**
    * Creates the endpoints of each declared VPC endpoint set, and returns each set's endpoint security
-   * groups for the harnesses referencing it to wire themselves to.
+   * groups for the consumers referencing it - harnesses and knowledge base connectors - to wire
+   * themselves to.
    *
-   * The module owns the endpoints rather than each harness, because an interface endpoint with Private
-   * DNS is a per-service singleton in its VPC: harnesses each creating their own collide as soon as two
-   * share a VPC, and the workaround - hand-listing which harness owns which endpoint - put the conflict
-   * in the customer's config. Reconciling one set per VPC against the harnesses' derived requirements
+   * The module owns the endpoints rather than each consumer, because an interface endpoint with Private
+   * DNS is a per-service singleton in its VPC: consumers each creating their own collide as soon as two
+   * share a VPC, and the workaround - hand-listing which consumer owns which endpoint - put the conflict
+   * in the customer's config. Reconciling one set per VPC against the consumers' derived requirements
    * makes the duplicate unrepresentable, and leaves the endpoints as ordinary members of this stack, so
-   * removing the last harness that referenced a set removes its endpoints too.
+   * removing the last consumer that referenced a set removes its endpoints too.
    *
    * @returns the VPC and per-service endpoint security groups of each set, keyed by set name
    */
-  private createVpcEndpointSets(props: BedrockBuilderL3ConstructProps): Map<string, ResolvedVpcEndpointAccess> {
-    const reconciled = reconcileVpcEndpointSets(props.vpcEndpoints ?? {}, props.harnesses ?? {}, {
-      partition: this.partition,
-      region: this.region,
-    });
+  private createVpcEndpointSets(
+    props: BedrockBuilderL3ConstructProps,
+    knowledgeBases: { [kbName: string]: bedrock.CfnKnowledgeBase },
+  ): Map<string, ResolvedVpcEndpointAccess> {
+    const consumers = [
+      ...harnessVpcEndpointConsumers(props.harnesses ?? {}, { partition: this.partition, region: this.region }),
+      ...this.knowledgeBaseConnectorVpcEndpointConsumers(props, knowledgeBases),
+    ];
+    const reconciled = reconcileVpcEndpointSets(props.vpcEndpoints ?? {}, consumers);
     return new Map(
       reconciled.map(set => {
         // A set whose every endpoint is brought or external creates nothing, so the endpoint construct -
@@ -520,6 +593,34 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
         return [set.setName, { vpcId: set.vpcId, securityGroupIds: { ...created, ...set.broughtSecurityGroupIds } }];
       }),
     );
+  }
+
+  /**
+   * The VPC endpoint set consumers the knowledge base connectors are: one per VPC-bound `knowledgeBase`
+   * target a gateway registers. A target no gateway registers generates no connector, so it places no
+   * demand on its set.
+   */
+  private knowledgeBaseConnectorVpcEndpointConsumers(
+    props: BedrockBuilderL3ConstructProps,
+    knowledgeBases: { [kbName: string]: bedrock.CfnKnowledgeBase },
+  ): VpcEndpointSetConsumer[] {
+    const registeredTargets = new Set(Object.values(props.gateways ?? {}).flatMap(gateway => gateway.targets ?? []));
+    return [...registeredTargets].flatMap(targetName => {
+      // An unknown target name is rejected when the gateways are created.
+      const targetConfig = props.gatewayTargets?.[targetName];
+      if (!targetConfig?.targetConfiguration?.knowledgeBase?.networkConfiguration) {
+        return [];
+      }
+      const knowledgeBase = validateKnowledgeBaseTarget(targetName, targetConfig);
+      const { knowledgeBaseArn } = this.resolveKnowledgeBaseRef(targetName, knowledgeBase.id, knowledgeBases);
+      return [
+        knowledgeBaseConnectorVpcEndpointConsumer({
+          targetName,
+          setName: (knowledgeBase.networkConfiguration as GatewayKnowledgeBaseNetworkProperty).vpcEndpoints,
+          knowledgeBaseArn,
+        }),
+      ];
+    });
   }
 
   /**
@@ -543,8 +644,9 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
   /**
    * Instantiates one {@link BedrockAgentcoreGatewayL3Construct} per entry in `props.gateways`. For
    * each gateway it injects the shared module CMK, resolves the flat `targets` name-references into
-   * the inline {@link GatewayTargetsMap} the gateway L3 expects, and rewrites `generated-function:`
-   * Lambda references (in targets and interceptors) to the ARNs built from `lambdaFunctions`.
+   * the inline {@link GatewayTargetsMap} the gateway L3 expects, rewrites `generated-function:`
+   * Lambda references (in targets and interceptors) to the ARNs built from `lambdaFunctions`, and
+   * turns each `knowledgeBase` target into a generated connector Lambda target.
    *
    * The gateway L3 is a pure key consumer (neither creates nor grants the CMK), so the builder owns
    * the key grants: each gateway role's encryption use is granted via an identity policy (see
@@ -555,7 +657,11 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
    * @returns a map of gateway name to live gateway ARN, for a Harness's
    *   `tools[].agentCoreGateway.gatewayArn: config:<name>` references.
    */
-  private createGateways(props: BedrockBuilderL3ConstructProps, kmsKey: IKey): ResolvedGatewayArnMap {
+  private createGateways(
+    props: BedrockBuilderL3ConstructProps,
+    kmsKey: IKey,
+    context: AgentcoreResourceContext,
+  ): ResolvedGatewayArnMap {
     const gatewayArns: ResolvedGatewayArnMap = {};
     const gatewayEntries = Object.entries(props.gateways || {});
     if (gatewayEntries.length === 0) {
@@ -563,12 +669,18 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
     }
 
     this.validateGatewayTargetReferences(props.gateways || {}, props.gatewayTargets || {});
+    const resolutionContext: GatewayTargetResolutionContext = {
+      gatewayTargets: props.gatewayTargets || {},
+      knowledgeBases: context.knowledgeBases,
+      kmsKey,
+      endpointsBySet: context.endpointsBySet,
+    };
 
     gatewayEntries.forEach(([gatewayName, gatewayConfig]) => {
       // Split the flat `targets` name-refs off the rest; the gateway L3 takes an inline targets map.
       const { targets: targetRefs, ...gatewayRest } = gatewayConfig;
 
-      const resolvedTargets = this.resolveGatewayTargets(targetRefs, props.gatewayTargets || {});
+      const resolvedTargets = this.resolveGatewayTargets(targetRefs, resolutionContext);
 
       const resolvedInterceptors = this.resolveInterceptorLambdaReferences(gatewayRest.interceptors);
 
@@ -713,13 +825,14 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
 
   /**
    * Resolves a gateway's flat list of target name-references into the inline {@link GatewayTargetsMap}
-   * the gateway L3 expects, rewriting each Lambda target's `lambdaArn` from a `generated-function:`
-   * reference to the concrete ARN. Plain ARNs and non-Lambda targets pass through unchanged; returns
-   * undefined when the gateway references no targets.
+   * the gateway L3 expects. A `knowledgeBase` target becomes a Lambda target backed by a generated
+   * connector (see {@link resolveKnowledgeBaseTarget}); each Lambda target's `lambdaArn` is rewritten
+   * from a `generated-function:` reference to the concrete ARN. Plain ARNs and other targets pass
+   * through unchanged; returns undefined when the gateway references no targets.
    */
   private resolveGatewayTargets(
     targetRefs: string[] | undefined,
-    gatewayTargets: NamedGatewayTargetProps,
+    context: GatewayTargetResolutionContext,
   ): GatewayTargetsMap | undefined {
     if (!targetRefs || targetRefs.length === 0) {
       return undefined;
@@ -727,7 +840,11 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
     const resolved: { [targetName: string]: GatewayTargetProps } = {};
     targetRefs.forEach(targetRef => {
       // Existence is validated up front by validateGatewayTargetReferences.
-      const targetConfig = gatewayTargets[targetRef];
+      const targetConfig = context.gatewayTargets[targetRef];
+      if (targetConfig.targetConfiguration.knowledgeBase) {
+        resolved[targetRef] = this.resolveKnowledgeBaseTarget(targetRef, targetConfig, context);
+        return;
+      }
       const lambda = targetConfig.targetConfiguration.lambda;
       if (!lambda) {
         resolved[targetRef] = targetConfig;
@@ -745,6 +862,303 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
       };
     });
     return resolved;
+  }
+
+  /**
+   * Turns a `knowledgeBase` target into a plain Lambda target: validates it, resolves the knowledge
+   * base it queries, generates the connector, and describes the connector's `Retrieve` tool with an
+   * inline tool schema. The gateway L3 then grants the gateway role `lambda:InvokeFunction` on the
+   * connector, as for any Lambda target.
+   */
+  private resolveKnowledgeBaseTarget(
+    targetName: string,
+    targetConfig: BuilderGatewayTargetProps,
+    context: GatewayTargetResolutionContext,
+  ): GatewayTargetProps {
+    const knowledgeBase = validateKnowledgeBaseTarget(targetName, targetConfig);
+    const knowledgeBaseRef = this.resolveKnowledgeBaseRef(targetName, knowledgeBase.id, context.knowledgeBases);
+    const lambdaArn = this.createKnowledgeBaseConnector(targetName, knowledgeBase, {
+      knowledgeBaseRef,
+      kmsKey: context.kmsKey,
+      endpointsBySet: context.endpointsBySet,
+    });
+    return {
+      description: targetConfig.description,
+      credentialProvider: targetConfig.credentialProvider,
+      targetConfiguration: {
+        lambda: {
+          lambdaArn,
+          toolSchema: buildKnowledgeBaseToolSchema(knowledgeBase.description),
+        },
+      },
+    };
+  }
+
+  /**
+   * Resolves a `knowledgeBase.id` to the knowledge base's id and ARN. A `config:<name>` reference
+   * resolves to the live attributes of the module's knowledge base, so the connector deploys with it
+   * in one pass. Any other id (literal, or an `ssm:` dynamic reference) names a knowledge base in this
+   * account and region.
+   *
+   * @throws Error if a `config:` reference names no knowledge base in the module
+   */
+  private resolveKnowledgeBaseRef(
+    targetName: string,
+    id: string,
+    knowledgeBases: { [kbName: string]: bedrock.CfnKnowledgeBase },
+  ): ResolvedKnowledgeBaseRef {
+    if (!id.startsWith(KNOWLEDGE_BASE_CONFIG_REF_PREFIX)) {
+      return {
+        knowledgeBaseId: id,
+        knowledgeBaseArn: `arn:${this.partition}:bedrock:${this.region}:${this.account}:knowledge-base/${id}`,
+      };
+    }
+    const kbName = id.slice(KNOWLEDGE_BASE_CONFIG_REF_PREFIX.length).trim();
+    const knowledgeBase = knowledgeBases[kbName];
+    if (!knowledgeBase) {
+      throw new Error(
+        `Gateway target "${targetName}" references unknown knowledge base from config: "${kbName}". ` +
+          `Define it under the module's "knowledgeBases" map or correct the reference.`,
+      );
+    }
+    return {
+      knowledgeBaseId: knowledgeBase.attrKnowledgeBaseId,
+      knowledgeBaseArn: knowledgeBase.attrKnowledgeBaseArn,
+    };
+  }
+
+  /**
+   * Generates the connector for one `knowledgeBase` target, under a scope of its own: a Lambda
+   * (environment encrypted with the module CMK, in the target's subnets when `networkConfiguration` is
+   * set) that calls Retrieve on the knowledge base, the function's CMK-encrypted log group, and its own
+   * execution role with a managed policy granting `bedrock:Retrieve` on exactly that knowledge base and
+   * writes to exactly that log group. The role has no KMS statement: Lambda decrypts the CMK-encrypted
+   * environment through a grant it creates at deploy time.
+   *
+   * @returns the connector function's ARN
+   * @throws Error if the connector's function name is already used in `lambdaFunctions`
+   */
+  private createKnowledgeBaseConnector(
+    targetName: string,
+    knowledgeBase: GatewayTargetKnowledgeBaseProperty,
+    options: {
+      knowledgeBaseRef: ResolvedKnowledgeBaseRef;
+      kmsKey: IKey;
+      endpointsBySet: Map<string, ResolvedVpcEndpointAccess>;
+    },
+  ): string {
+    const functionName = `kb-connector-${targetName}`;
+    if ((this.props.lambdaFunctions?.functions ?? []).some(fn => fn.functionName === functionName)) {
+      throw new Error(
+        `Gateway target "${targetName}" generates connector function "${functionName}", which is already ` +
+          `defined in lambdaFunctions. Rename the function or the gateway target.`,
+      );
+    }
+    // Only this scope's id derives from the target name, so no child id can equal another target's.
+    const connectorScope = new Construct(this, `kb-connector-${targetName}`);
+    // Must match the name MdaaLambdaFunction gives the function, which is the log group Lambda writes to.
+    const functionResourceName = this.props.naming
+      .withResourceType(MdaaResourceType.LAMBDA_FUNCTION)
+      .resourceName(functionName, 64);
+    const logGroup = this.createKnowledgeBaseConnectorLogGroup(connectorScope, functionResourceName, options.kmsKey);
+    const { role, policy } = this.createKnowledgeBaseConnectorRole(connectorScope, {
+      targetName,
+      functionName,
+      knowledgeBaseArn: options.knowledgeBaseRef.knowledgeBaseArn,
+      logGroup,
+      vpcBoundFunctionArn: knowledgeBase.networkConfiguration
+        ? `arn:${this.partition}:lambda:${this.region}:${this.account}:function:${functionResourceName}`
+        : undefined,
+    });
+    const vpcConfig = knowledgeBase.networkConfiguration
+      ? this.knowledgeBaseConnectorVpcConfig(connectorScope, targetName, {
+          networkConfiguration: knowledgeBase.networkConfiguration,
+          endpointsBySet: options.endpointsBySet,
+        })
+      : undefined;
+
+    const connector = new LambdaFunctionL3Construct(connectorScope, 'function', {
+      kmsArn: options.kmsKey.keyArn,
+      roleHelper: this.props.roleHelper,
+      naming: this.props.naming,
+      functions: [
+        {
+          functionName,
+          description: `Knowledge base Retrieve connector for gateway target ${targetName}`,
+          srcDir: join(__dirname, 'lambda-functions', 'kb-retrieve'),
+          handler: 'kb_retrieve.lambda_handler',
+          runtime: 'python3.14',
+          roleArn: role.roleArn,
+          timeoutSeconds: KNOWLEDGE_BASE_CONNECTOR_TIMEOUT_SECONDS,
+          memorySizeMB: KNOWLEDGE_BASE_CONNECTOR_MEMORY_MB,
+          vpcConfig,
+          environment: buildKnowledgeBaseConnectorEnvironment(options.knowledgeBaseRef.knowledgeBaseId, knowledgeBase),
+        },
+      ],
+      overrideScope: true,
+    });
+    const connectorFunction = connector.functionsMap[functionName];
+    // The function is callable as soon as it exists, so keep it behind its grants and its log group -
+    // otherwise its first invocation could fail, or leave Lambda to create an unencrypted log group. A
+    // VPC-bound function also needs its network interface grants before Lambda creates it.
+    connectorFunction.node.addDependency(policy, logGroup);
+    return connectorFunction.functionArn;
+  }
+
+  /**
+   * The Lambda VPC configuration of a VPC-bound connector, in the VPC of the set it references. When the
+   * set creates or brings the Bedrock Agent Runtime endpoint, the connector gets a client security group
+   * of its own, wired to that endpoint; when the set marks it external, there is no endpoint to wire, so
+   * the connector uses the security group it brings.
+   *
+   * @throws Error if `securityGroupId` is missing for an external endpoint, or set for a wired one
+   */
+  private knowledgeBaseConnectorVpcConfig(
+    scope: Construct,
+    targetName: string,
+    network: {
+      networkConfiguration: GatewayKnowledgeBaseNetworkProperty;
+      endpointsBySet: Map<string, ResolvedVpcEndpointAccess>;
+    },
+  ): VpcConfigProps {
+    const { subnets, vpcEndpoints, securityGroupId } = network.networkConfiguration;
+    const access = vpcEndpointAccessForKnowledgeBaseConnector(vpcEndpoints, network.endpointsBySet);
+    const location = `Gateway target "${targetName}" knowledgeBase.networkConfiguration`;
+    if (Object.keys(access.securityGroupIds).length === 0) {
+      if (!securityGroupId) {
+        throw new Error(
+          `${location} must set "securityGroupId": VPC endpoint set "${vpcEndpoints}" marks ` +
+            '"bedrockAgentRuntime" external, so there is no endpoint to wire the connector to. Bring a security ' +
+            'group that allows HTTPS to wherever Retrieve is reached.',
+        );
+      }
+      return { vpcId: access.vpcId, subnetIds: subnets, securityGroupId };
+    }
+    if (securityGroupId) {
+      throw new Error(
+        `${location} sets "securityGroupId", but VPC endpoint set "${vpcEndpoints}" provides the ` +
+          'bedrockAgentRuntime endpoint, so the module creates the connector security group wired to it. ' +
+          'Remove "securityGroupId", or mark the set\'s "bedrockAgentRuntime" external.',
+      );
+    }
+    const clientAccess = new VpcEndpointClientAccess(scope, 'vpc-endpoint-access', {
+      securityGroupName: `kb-connector-vpce-client-${targetName}`,
+      securityGroupDescription: `Private endpoint client access for the knowledge base connector of ${targetName}`,
+      clientLabel: 'knowledge base connector',
+      access,
+      naming: this.props.naming,
+    });
+    return { vpcId: access.vpcId, subnetIds: subnets, securityGroupId: clientAccess.securityGroupId };
+  }
+
+  /**
+   * Creates the log group a knowledge base connector writes to, before the function, so it is
+   * encrypted with the module CMK and retained. The name is taken verbatim because Lambda only writes
+   * to `/aws/lambda/<function name>`; a name derived from the naming module would leave that group to
+   * be created unencrypted at first invocation.
+   */
+  private createKnowledgeBaseConnectorLogGroup(
+    scope: Construct,
+    functionResourceName: string,
+    kmsKey: IKey,
+  ): MdaaLogGroup {
+    return new MdaaLogGroup(scope, 'log-group', {
+      naming: this.props.naming,
+      createParams: false,
+      createOutputs: false,
+      logGroupNamePathPrefix: '/aws/lambda',
+      logGroupName: functionResourceName,
+      verbatimLogGroupName: true,
+      encryptionKey: kmsKey,
+      retention: RetentionDays.INFINITE,
+    });
+  }
+
+  /**
+   * Creates a knowledge base connector's execution role and the managed policy granting it
+   * `bedrock:Retrieve` on exactly one knowledge base and writes to exactly its own log group. The log
+   * group already exists, so the role is not granted `logs:CreateLogGroup`. For a VPC-bound connector
+   * (`vpcBoundFunctionArn` set), the policy also grants the network interface actions Lambda needs,
+   * and denies them to the function's own code.
+   */
+  private createKnowledgeBaseConnectorRole(
+    scope: Construct,
+    props: {
+      targetName: string;
+      functionName: string;
+      knowledgeBaseArn: string;
+      logGroup: ILogGroup;
+      vpcBoundFunctionArn?: string;
+    },
+  ): { role: MdaaLambdaRole; policy: MdaaManagedPolicy } {
+    const role = new MdaaLambdaRole(scope, 'role', {
+      naming: this.props.naming,
+      createParams: this.props.createParams,
+      createOutputs: this.props.createOutputs,
+      roleName: props.functionName,
+      description: `Execution role for the knowledge base connector of gateway target ${props.targetName}`,
+    });
+    const policy = new MdaaManagedPolicy(scope, 'policy', {
+      managedPolicyName: props.functionName,
+      naming: this.props.naming,
+      roles: [role],
+      statements: [
+        new PolicyStatement({
+          sid: 'RetrieveFromKnowledgeBase',
+          effect: Effect.ALLOW,
+          actions: ['bedrock:Retrieve'],
+          resources: [props.knowledgeBaseArn],
+        }),
+        new PolicyStatement({
+          sid: 'WriteConnectorLogs',
+          effect: Effect.ALLOW,
+          actions: ['logs:CreateLogStream', 'logs:PutLogEvents'],
+          resources: [props.logGroup.logGroupArn],
+        }),
+        ...(props.vpcBoundFunctionArn ? this.connectorVpcAccessStatements(props.vpcBoundFunctionArn) : []),
+      ],
+    });
+    if (props.vpcBoundFunctionArn) {
+      MdaaNagSuppressions.addCodeResourceSuppressions(policy, [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason:
+            'ec2:DescribeNetworkInterfaces and ec2:DescribeSubnets do not support resource-level permissions ' +
+            '(https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonec2.html). ' +
+            'ec2:CreateNetworkInterface, ec2:DeleteNetworkInterface, ec2:AssignPrivateIpAddresses and ' +
+            'ec2:UnassignPrivateIpAddresses must be allowed on all resources for Lambda to manage the network ' +
+            'interfaces of a VPC-bound function ' +
+            '(https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc.html#configuration-vpc-permissions); ' +
+            'the same policy denies all of them to the function code by lambda:SourceFunctionArn.',
+          appliesTo: ['Resource::*'],
+        },
+      ]);
+    }
+    return { role, policy };
+  }
+
+  /**
+   * The statements a VPC-bound connector's role needs: the network interface actions for the Lambda
+   * service, and a deny of the same actions to calls the function's own code makes, which carry
+   * `lambda:SourceFunctionArn` (calls by the Lambda service do not).
+   * https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc.html#configuration-vpc-best-practice-security
+   */
+  private connectorVpcAccessStatements(functionArn: string): PolicyStatement[] {
+    return [
+      new PolicyStatement({
+        sid: 'ManageVpcNetworkInterfaces',
+        effect: Effect.ALLOW,
+        actions: LAMBDA_VPC_ACCESS_ACTIONS,
+        resources: ['*'],
+      }),
+      new PolicyStatement({
+        sid: 'DenyNetworkInterfaceCallsFromFunctionCode',
+        effect: Effect.DENY,
+        actions: [...LAMBDA_VPC_ACCESS_ACTIONS, 'ec2:DetachNetworkInterface'],
+        resources: ['*'],
+        conditions: { ArnEquals: { 'lambda:SourceFunctionArn': functionArn } },
+      }),
+    ];
   }
 
   /**

@@ -6,23 +6,23 @@
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                             | Pattern | Type   | Deprecated | Definition                                          | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| -------------------------------------------------------------------- | ------- | ------ | ---------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [agentBucketArn](#agentBucketArn )                                 | No      | string | No         | -                                                   | Existing S3 bucket ARN for agent data storage.<br />If omitted, a dedicated bucket is created automatically.<br /><br />Use cases: Agent artifact storage, data management, bucket reuse<br /><br />AWS: S3 bucket for Bedrock agent storage<br /><br />Validation: Optional; String; must be valid S3 bucket ARN                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [agents](#agents )                                                 | No      | object | No         | In #/definitions/NamedAgentProps                    | Bedrock agent configurations with foundation models, action groups, knowledge base integration, and guardrails.<br /><br />Use cases: AI agent deployment, conversational AI, task automation, intelligent workflows<br /><br />AWS: Amazon Bedrock Agents<br /><br />Validation: Optional; NamedAgentProps (map of agent name to config)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| + [dataAdminRoles](#dataAdminRoles )                                 | No      | array  | No         | -                                                   | Admin roles granted access to Bedrock agent resources including KMS keys and S3 buckets.<br /><br />Use cases: Administrative access, role-based security, Bedrock resource management<br /><br />AWS: IAM roles for Bedrock resource administration<br /><br />Validation: Required; MdaaRoleRef[]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| - [gatewayTargets](#gatewayTargets )                                 | No      | object | No         | In #/definitions/NamedGatewayTargetProps            | Bedrock AgentCore Gateway target definitions (MCP tool sources), keyed by target name.<br />Declared as a sibling of \`gateways\` (not nested) to keep the config flat; a gateway attaches a<br />target by naming its key in the gateway's \`targets\` list. Each target must be referenced by<br />exactly one gateway.<br /><br />Use cases: defining MCP tool sources (e.g. Lambda tools) once and referencing them from a gateway<br /><br />AWS: AWS::BedrockAgentCore::GatewayTarget<br /><br />Validation: Optional; NamedGatewayTargetProps (map of target name to config)                                                                                                                                                                                                                                                                                                                                                |
-| - [gateways](#gateways )                                             | No      | object | No         | In #/definitions/NamedGatewayProps                  | Bedrock AgentCore Gateway configurations (compliant MCP servers), keyed by gateway name.<br />Each gateway references its tool targets by name from the sibling \`gatewayTargets\` map, and may<br />reuse Lambdas from \`lambdaFunctions\` via \`generated-function:<name>\` references.<br /><br />Use cases: exposing a unified MCP tool surface with per-tool authorization, agent tool gateways<br /><br />AWS: Amazon Bedrock AgentCore Gateway<br /><br />Validation: Optional; NamedGatewayProps (map of gateway name to config)                                                                                                                                                                                                                                                                                                                                                                                           |
-| - [guardrails](#guardrails )                                         | No      | object | No         | In #/definitions/NamedGuardrailProps                | Guardrail configurations for AI safety, content filtering, and responsible AI deployment.<br /><br />Use cases: AI safety controls, content filtering, responsible AI, content moderation<br /><br />AWS: Bedrock Guardrails<br /><br />Validation: Optional; NamedGuardrailProps (map of guardrail name to config)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| - [harnesses](#harnesses )                                           | No      | object | No         | In #/definitions/NamedHarnessProps                  | Bedrock AgentCore Harness configurations - a declarative agent loop (model + system prompt +<br />tools) - keyed by harness name. A harness's \`guardrail.id\` and<br />\`tools[].agentCoreGateway.gatewayArn\` may use a \`config:<name>\` reference into the sibling<br />\`guardrails\` / \`gateways\` maps, resolved to the live resource.<br /><br />Use cases: declarative tool-using/RAG agents<br /><br />AWS: AWS::BedrockAgentCore::Harness<br /><br />Validation: Optional; NamedHarnessProps (map of harness name to config)                                                                                                                                                                                                                                                                                                                                                                                           |
-| - [kmsKeyArn](#kmsKeyArn )                                           | No      | string | No         | -                                                   | Existing KMS key ARN for encrypting all Bedrock resources in this module — agents, knowledge<br />bases, guardrails, the shared Lambda pool, and AgentCore gateways all use this single key.<br />If omitted, one customer-managed key is created automatically and shared across them.<br /><br />When an existing key is provided, its key policy must already grant the required service and<br />execution-role use (the module cannot mutate an imported key's policy) — including the AgentCore<br />gateway grants when gateways are configured.<br /><br />Use cases: Customer-controlled encryption, security compliance, key reuse<br /><br />AWS: KMS key for Bedrock resource encryption<br /><br />Validation: Optional; String; must be valid KMS key ARN                                                                                                                                                            |
-| - [knowledgeBases](#knowledgeBases )                                 | No      | object | No         | In #/definitions/NamedKnowledgeBaseProps            | Knowledge base configurations with S3/SharePoint data sources and custom parsing strategies.<br />Enables document ingestion, embedding generation, and retrieval for RAG applications.<br /><br />Use cases: Knowledge management, document processing, question-answering, information retrieval<br /><br />AWS: Bedrock Knowledge Bases<br /><br />Validation: Optional; NamedKnowledgeBaseProps (map of KB name to config)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| - [lambdaFunctions](#lambdaFunctions )                               | No      | object | No         | In #/definitions/LambdaFunctionProps                | Lambda functions and layers for Bedrock agent action groups.<br />Enables custom business logic, API integrations, and business process automation within agents.<br /><br />Use cases: Custom action group logic, external API integration, business process automation<br /><br />AWS: Lambda functions/layers for Bedrock agent action groups<br /><br />Validation: Optional; LambdaFunctionProps                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| - [nag_suppressions](#nag_suppressions )                             | No      | object | No         | In #/definitions/MdaaNagSuppressionConfigs          | Q-ENHANCED-PROPERTY<br />Optional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.<br /><br />Use cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions<br /><br />AWS: CDK Nag suppressions for compliance rule management and security exception documentation<br /><br />Validation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management                                                                                                                                                                                                                                                     |
-| - [sagemakerBlueprint](#sagemakerBlueprint )                         | No      | object | No         | In #/definitions/MdaaSageMakerCustomBluePrintConfig | Q-ENHANCED-PROPERTY<br />Optional SageMaker blueprint configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a SageMaker blueprint instead of direct deployment for governed access and compliance.<br /><br />Use cases: Governed deployment; Self-service provisioning; SageMaker integration; Controlled access<br /><br />AWS: SageMaker blueprint configuration for governed infrastructure deployment and self-service provisioning<br /><br />Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables SageMaker deployment mode                                                                                                                                                                                                                                                                    |
-| - [service_catalog_product_config](#service_catalog_product_config ) | No      | object | No         | In #/definitions/MdaaServiceCatalogProductConfig    | Q-ENHANCED-PROPERTY<br />Optional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.<br /><br />Use cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access<br /><br />AWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning<br /><br />Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode                                                                                                                                                                                                                                            |
-| - [vectorStores](#vectorStores )                                     | No      | object | No         | In #/definitions/NamedVectorStoreProps              | Vector store configurations for knowledge bases (OpenSearch Serverless or Aurora).<br />Provides vector database storage for semantic search and retrieval-augmented generation.<br /><br />Use cases: Semantic search, RAG applications, knowledge retrieval, embedding storage<br /><br />AWS: OpenSearch Serverless or Aurora vector stores for Bedrock knowledge bases<br /><br />Validation: Optional; NamedVectorStoreProps (map of store name to config)                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| - [vpcEndpoints](#vpcEndpoints )                                     | No      | object | No         | In #/definitions/NamedVpcEndpointSetProps           | VPC endpoint sets, keyed by set name, giving a harness's sessions a private outbound path<br />(no NAT/internet). A harness references one by name from its \`networkConfiguration.vpcEndpoints\`;<br />every harness referencing a set shares its endpoints.<br /><br />Which endpoints exist is derived from the referencing harnesses, so a set only states which VPC it<br />serves, where created endpoints go, and how each derived endpoint is reached - created here, an<br />existing one to wire to, or reached without an endpoint the set manages. Endpoint policies are<br />derived and not configurable.<br /><br />Use cases: private (no-NAT) harness sessions, reusing centrally provisioned endpoints<br /><br />AWS: AWS::EC2::VPCEndpoint (Interface and Gateway)<br /><br />Validation: Optional; NamedVpcEndpointSetProps; each set must name a distinct VPC and be referenced<br />by at least one harness |
+| Property                                                             | Pattern | Type   | Deprecated | Definition                                          | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| -------------------------------------------------------------------- | ------- | ------ | ---------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [agentBucketArn](#agentBucketArn )                                 | No      | string | No         | -                                                   | Existing S3 bucket ARN for agent data storage.<br />If omitted, a dedicated bucket is created automatically.<br /><br />Use cases: Agent artifact storage, data management, bucket reuse<br /><br />AWS: S3 bucket for Bedrock agent storage<br /><br />Validation: Optional; String; must be valid S3 bucket ARN                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [agents](#agents )                                                 | No      | object | No         | In #/definitions/NamedAgentProps                    | Bedrock agent configurations with foundation models, action groups, knowledge base integration, and guardrails.<br /><br />Use cases: AI agent deployment, conversational AI, task automation, intelligent workflows<br /><br />AWS: Amazon Bedrock Agents<br /><br />Validation: Optional; NamedAgentProps (map of agent name to config)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| + [dataAdminRoles](#dataAdminRoles )                                 | No      | array  | No         | -                                                   | Admin roles granted access to Bedrock agent resources including KMS keys and S3 buckets.<br /><br />Use cases: Administrative access, role-based security, Bedrock resource management<br /><br />AWS: IAM roles for Bedrock resource administration<br /><br />Validation: Required; MdaaRoleRef[]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [gatewayTargets](#gatewayTargets )                                 | No      | object | No         | In #/definitions/NamedGatewayTargetProps            | Bedrock AgentCore Gateway target definitions (MCP tool sources), keyed by target name.<br />Declared as a sibling of \`gateways\` (not nested) to keep the config flat; a gateway attaches a<br />target by naming its key in the gateway's \`targets\` list. Each target may be referenced by at most<br />one gateway; a target no gateway references is not deployed. A \`knowledgeBase\` target generates a<br />Lambda connector that exposes a knowledge base as a \`Retrieve\` tool.<br /><br />Use cases: defining MCP tool sources (Lambda tools, knowledge bases) once and referencing them from a gateway<br /><br />AWS: AWS::BedrockAgentCore::GatewayTarget<br /><br />Validation: Optional; NamedGatewayTargetProps (map of target name to config)                                                                                                                                                                                                                                                                                                                                                        |
+| - [gateways](#gateways )                                             | No      | object | No         | In #/definitions/NamedGatewayProps                  | Bedrock AgentCore Gateway configurations (compliant MCP servers), keyed by gateway name.<br />Each gateway references its tool targets by name from the sibling \`gatewayTargets\` map, and may<br />reuse Lambdas from \`lambdaFunctions\` via \`generated-function:<name>\` references.<br /><br />Use cases: exposing a unified MCP tool surface with per-tool authorization, agent tool gateways<br /><br />AWS: Amazon Bedrock AgentCore Gateway<br /><br />Validation: Optional; NamedGatewayProps (map of gateway name to config)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [guardrails](#guardrails )                                         | No      | object | No         | In #/definitions/NamedGuardrailProps                | Guardrail configurations for AI safety, content filtering, and responsible AI deployment.<br /><br />Use cases: AI safety controls, content filtering, responsible AI, content moderation<br /><br />AWS: Bedrock Guardrails<br /><br />Validation: Optional; NamedGuardrailProps (map of guardrail name to config)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [harnesses](#harnesses )                                           | No      | object | No         | In #/definitions/NamedHarnessProps                  | Bedrock AgentCore Harness configurations - a declarative agent loop (model + system prompt +<br />tools) - keyed by harness name. A harness's \`guardrail.id\` and<br />\`tools[].agentCoreGateway.gatewayArn\` may use a \`config:<name>\` reference into the sibling<br />\`guardrails\` / \`gateways\` maps, resolved to the live resource.<br /><br />Use cases: declarative tool-using/RAG agents<br /><br />AWS: AWS::BedrockAgentCore::Harness<br /><br />Validation: Optional; NamedHarnessProps (map of harness name to config)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [kmsKeyArn](#kmsKeyArn )                                           | No      | string | No         | -                                                   | Existing KMS key ARN for encrypting all Bedrock resources in this module — agents, knowledge<br />bases, guardrails, the shared Lambda pool, and AgentCore gateways all use this single key.<br />If omitted, one customer-managed key is created automatically and shared across them.<br /><br />When an existing key is provided, its key policy must already grant the required service and<br />execution-role use (the module cannot mutate an imported key's policy) — including the AgentCore<br />gateway grants when gateways are configured.<br /><br />Use cases: Customer-controlled encryption, security compliance, key reuse<br /><br />AWS: KMS key for Bedrock resource encryption<br /><br />Validation: Optional; String; must be valid KMS key ARN                                                                                                                                                                                                                                                                                                                                                  |
+| - [knowledgeBases](#knowledgeBases )                                 | No      | object | No         | In #/definitions/NamedKnowledgeBaseProps            | Knowledge base configurations with S3/SharePoint data sources and custom parsing strategies.<br />Enables document ingestion, embedding generation, and retrieval for RAG applications.<br /><br />Use cases: Knowledge management, document processing, question-answering, information retrieval<br /><br />AWS: Bedrock Knowledge Bases<br /><br />Validation: Optional; NamedKnowledgeBaseProps (map of KB name to config)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| - [lambdaFunctions](#lambdaFunctions )                               | No      | object | No         | In #/definitions/LambdaFunctionProps                | Lambda functions and layers for Bedrock agent action groups.<br />Enables custom business logic, API integrations, and business process automation within agents.<br /><br />Use cases: Custom action group logic, external API integration, business process automation<br /><br />AWS: Lambda functions/layers for Bedrock agent action groups<br /><br />Validation: Optional; LambdaFunctionProps                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| - [nag_suppressions](#nag_suppressions )                             | No      | object | No         | In #/definitions/MdaaNagSuppressionConfigs          | Q-ENHANCED-PROPERTY<br />Optional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.<br /><br />Use cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions<br /><br />AWS: CDK Nag suppressions for compliance rule management and security exception documentation<br /><br />Validation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| - [sagemakerBlueprint](#sagemakerBlueprint )                         | No      | object | No         | In #/definitions/MdaaSageMakerCustomBluePrintConfig | Q-ENHANCED-PROPERTY<br />Optional SageMaker blueprint configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a SageMaker blueprint instead of direct deployment for governed access and compliance.<br /><br />Use cases: Governed deployment; Self-service provisioning; SageMaker integration; Controlled access<br /><br />AWS: SageMaker blueprint configuration for governed infrastructure deployment and self-service provisioning<br /><br />Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables SageMaker deployment mode                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| - [service_catalog_product_config](#service_catalog_product_config ) | No      | object | No         | In #/definitions/MdaaServiceCatalogProductConfig    | Q-ENHANCED-PROPERTY<br />Optional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.<br /><br />Use cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access<br /><br />AWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning<br /><br />Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [vectorStores](#vectorStores )                                     | No      | object | No         | In #/definitions/NamedVectorStoreProps              | Vector store configurations for knowledge bases (OpenSearch Serverless or Aurora).<br />Provides vector database storage for semantic search and retrieval-augmented generation.<br /><br />Use cases: Semantic search, RAG applications, knowledge retrieval, embedding storage<br /><br />AWS: OpenSearch Serverless or Aurora vector stores for Bedrock knowledge bases<br /><br />Validation: Optional; NamedVectorStoreProps (map of store name to config)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| - [vpcEndpoints](#vpcEndpoints )                                     | No      | object | No         | In #/definitions/NamedVpcEndpointSetProps           | VPC endpoint sets, keyed by set name, giving harness sessions and knowledge base connectors a<br />private outbound path (no NAT/internet). A harness references one by name from its<br />\`networkConfiguration.vpcEndpoints\`, and a \`knowledgeBase\` gateway target from its<br />\`networkConfiguration.vpcEndpoints\`; every consumer referencing a set shares its endpoints.<br /><br />Which endpoints exist is derived from the referencing consumers, so a set only states which VPC it<br />serves, where created endpoints go, and how each derived endpoint is reached - created here, an<br />existing one to wire to, or reached without an endpoint the set manages. Endpoint policies are<br />derived and not configurable.<br /><br />Use cases: private (no-NAT) harness sessions and knowledge base connectors, reusing centrally<br />provisioned endpoints<br /><br />AWS: AWS::EC2::VPCEndpoint (Interface and Gateway)<br /><br />Validation: Optional; NamedVpcEndpointSetProps; each set must name a distinct VPC and be referenced<br />by at least one harness or knowledge base connector |
 
 ## <a name="agentBucketArn"></a>1. Property `root > agentBucketArn`
 
@@ -1153,43 +1153,43 @@ Validation: Required; MdaaRoleRef[]
 
 **Description:** Bedrock AgentCore Gateway target definitions (MCP tool sources), keyed by target name.
 Declared as a sibling of `gateways` (not nested) to keep the config flat; a gateway attaches a
-target by naming its key in the gateway's `targets` list. Each target must be referenced by
-exactly one gateway.
+target by naming its key in the gateway's `targets` list. Each target may be referenced by at most
+one gateway; a target no gateway references is not deployed. A `knowledgeBase` target generates a
+Lambda connector that exposes a knowledge base as a `Retrieve` tool.
 
-Use cases: defining MCP tool sources (e.g. Lambda tools) once and referencing them from a gateway
+Use cases: defining MCP tool sources (Lambda tools, knowledge bases) once and referencing them from a gateway
 
 AWS: AWS::BedrockAgentCore::GatewayTarget
 
 Validation: Optional; NamedGatewayTargetProps (map of target name to config)
 
-| Property                                    | Pattern | Type   | Deprecated | Definition                          | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| ------------------------------------------- | ------- | ------ | ---------- | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [](#gatewayTargets_additionalProperties ) | No      | object | No         | In #/definitions/GatewayTargetProps | Configuration for a single gateway target (a tool source registered against a gateway).<br /><br />Use cases: registering a tool source (Lambda, and — as support is added — OpenAPI / Smithy /<br />MCP-server / API-Gateway) against a gateway<br /><br />AWS: AWS::BedrockAgentCore::GatewayTarget<br /><br />Validation: \`targetConfiguration\` sets exactly one target type (currently \`lambda\`);<br />\`credentialProvider\`, when set, must be a supported {@link GatewayTargetCredentialProviderType} |
+| Property                                    | Pattern | Type   | Deprecated | Definition                                 | Title/Description                                                                                                                                                                                                                                                                                                                                                                    |
+| ------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [](#gatewayTargets_additionalProperties ) | No      | object | No         | In #/definitions/BuilderGatewayTargetProps | Configuration for a single bedrock-builder gateway target (a tool source registered against a<br />gateway).<br /><br />Use cases: registering a Lambda or knowledge base tool source against a gateway<br /><br />AWS: AWS::BedrockAgentCore::GatewayTarget<br /><br />Validation: \`targetConfiguration\` sets exactly one target type (currently \`lambda\` or \`knowledgeBase\`) |
 
-### <a name="gatewayTargets_additionalProperties"></a>4.1. Property `root > gatewayTargets > GatewayTargetProps`
+### <a name="gatewayTargets_additionalProperties"></a>4.1. Property `root > gatewayTargets > BuilderGatewayTargetProps`
 
-|                           |                                  |
-| ------------------------- | -------------------------------- |
-| **Type**                  | `object`                         |
-| **Required**              | No                               |
-| **Additional properties** | Not allowed                      |
-| **Defined in**            | #/definitions/GatewayTargetProps |
+|                           |                                         |
+| ------------------------- | --------------------------------------- |
+| **Type**                  | `object`                                |
+| **Required**              | No                                      |
+| **Additional properties** | Not allowed                             |
+| **Defined in**            | #/definitions/BuilderGatewayTargetProps |
 
-**Description:** Configuration for a single gateway target (a tool source registered against a gateway).
+**Description:** Configuration for a single bedrock-builder gateway target (a tool source registered against a
+gateway).
 
-Use cases: registering a tool source (Lambda, and — as support is added — OpenAPI / Smithy /
-MCP-server / API-Gateway) against a gateway
+Use cases: registering a Lambda or knowledge base tool source against a gateway
 
 AWS: AWS::BedrockAgentCore::GatewayTarget
 
-Validation: `targetConfiguration` sets exactly one target type (currently `lambda`);
-`credentialProvider`, when set, must be a supported {@link GatewayTargetCredentialProviderType}
+Validation: `targetConfiguration` sets exactly one target type (currently `lambda` or `knowledgeBase`)
 
-| Property                                                                           | Pattern | Type   | Deprecated | Definition                                          | Title/Description                                                                                                                                                                                                                                                                    |
-| ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| - [credentialProvider](#gatewayTargets_additionalProperties_credentialProvider )   | No      | object | No         | In #/definitions/GatewayTargetCredentialProperty    | Outbound credential provider. Optional — defaults to \`GATEWAY_IAM_ROLE\`.<br /><br />AWS: AWS::BedrockAgentCore::GatewayTarget CredentialProviderConfigurations<br /><br />Validation: Optional; when set, \`type\` must be a supported {@link GatewayTargetCredentialProviderType} |
-| - [description](#gatewayTargets_additionalProperties_description )                 | No      | string | No         | -                                                   | Description of the target.<br /><br />AWS: AWS::BedrockAgentCore::GatewayTarget Description<br /><br />Validation: Optional; String; 1-200 characters                                                                                                                                |
-| + [targetConfiguration](#gatewayTargets_additionalProperties_targetConfiguration ) | No      | object | No         | In #/definitions/GatewayTargetConfigurationProperty | Tool source for the target. Exactly one target type is set (currently \`lambda\`).<br /><br />AWS: AWS::BedrockAgentCore::GatewayTarget TargetConfiguration<br /><br />Validation: Required; {@link GatewayTargetConfigurationProperty}                                              |
+| Property                                                                           | Pattern | Type   | Deprecated | Definition                                                 | Title/Description                                                                                                                                                                                                                                                                                                                |
+| ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [credentialProvider](#gatewayTargets_additionalProperties_credentialProvider )   | No      | object | No         | In #/definitions/GatewayTargetCredentialProperty           | Outbound credential provider. Optional - defaults to \`GATEWAY_IAM_ROLE\`.<br /><br />AWS: AWS::BedrockAgentCore::GatewayTarget CredentialProviderConfigurations<br /><br />Validation: Optional; when set, \`type\` must be a supported credential provider type                                                                |
+| - [description](#gatewayTargets_additionalProperties_description )                 | No      | string | No         | -                                                          | Description of the target, as target metadata. It is not shown to the model: tool descriptions<br />come from the tool schema or, for a \`knowledgeBase\` target, from \`knowledgeBase.description\`.<br /><br />AWS: AWS::BedrockAgentCore::GatewayTarget Description<br /><br />Validation: Optional; String; 1-200 characters |
+| + [targetConfiguration](#gatewayTargets_additionalProperties_targetConfiguration ) | No      | object | No         | In #/definitions/BuilderGatewayTargetConfigurationProperty | Tool source for the target. Exactly one target type is set (currently \`lambda\` or \`knowledgeBase\`).<br /><br />AWS: AWS::BedrockAgentCore::GatewayTarget TargetConfiguration<br /><br />Validation: Required; {@link BuilderGatewayTargetConfigurationProperty}                                                              |
 
 #### <a name="gatewayTargets_additionalProperties_credentialProvider"></a>4.1.1. Property `root > gatewayTargets > additionalProperties > credentialProvider`
 
@@ -1200,11 +1200,11 @@ Validation: `targetConfiguration` sets exactly one target type (currently `lambd
 | **Additional properties** | Not allowed                                   |
 | **Defined in**            | #/definitions/GatewayTargetCredentialProperty |
 
-**Description:** Outbound credential provider. Optional — defaults to `GATEWAY_IAM_ROLE`.
+**Description:** Outbound credential provider. Optional - defaults to `GATEWAY_IAM_ROLE`.
 
 AWS: AWS::BedrockAgentCore::GatewayTarget CredentialProviderConfigurations
 
-Validation: Optional; when set, `type` must be a supported {@link GatewayTargetCredentialProviderType}
+Validation: Optional; when set, `type` must be a supported credential provider type
 
 | Property                                                                | Pattern | Type             | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | ----------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1240,34 +1240,41 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Description of the target.
+**Description:** Description of the target, as target metadata. It is not shown to the model: tool descriptions
+come from the tool schema or, for a `knowledgeBase` target, from `knowledgeBase.description`.
 
 AWS: AWS::BedrockAgentCore::GatewayTarget Description
 
 Validation: Optional; String; 1-200 characters
 
+| Restrictions   |     |
+| -------------- | --- |
+| **Min length** | 1   |
+| **Max length** | 200 |
+
 #### <a name="gatewayTargets_additionalProperties_targetConfiguration"></a>4.1.3. Property `root > gatewayTargets > additionalProperties > targetConfiguration`
 
-|                           |                                                  |
-| ------------------------- | ------------------------------------------------ |
-| **Type**                  | `object`                                         |
-| **Required**              | Yes                                              |
-| **Additional properties** | Not allowed                                      |
-| **Defined in**            | #/definitions/GatewayTargetConfigurationProperty |
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | Yes                                                     |
+| **Additional properties** | Not allowed                                             |
+| **Defined in**            | #/definitions/BuilderGatewayTargetConfigurationProperty |
 
-**Description:** Tool source for the target. Exactly one target type is set (currently `lambda`).
+**Description:** Tool source for the target. Exactly one target type is set (currently `lambda` or `knowledgeBase`).
 
 AWS: AWS::BedrockAgentCore::GatewayTarget TargetConfiguration
 
-Validation: Required; {@link GatewayTargetConfigurationProperty}
+Validation: Required; {@link BuilderGatewayTargetConfigurationProperty}
 
-| Property                                                                                   | Pattern | Type   | Deprecated | Definition                                       | Title/Description                                                                                                                                                                               |
-| ------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [apiGateway](#gatewayTargets_additionalProperties_targetConfiguration_apiGateway )       | No      | object | No         | In #/definitions/GatewayTargetApiGatewayProperty | API Gateway tool source. Declared; not yet supported.<br /><br />AWS: TargetConfiguration.Mcp.ApiGateway                                                                                        |
-| - [lambda](#gatewayTargets_additionalProperties_targetConfiguration_lambda )               | No      | object | No         | In #/definitions/GatewayTargetLambdaProperty     | Lambda tool source (function ARN + tool schema).<br /><br />AWS: TargetConfiguration.Mcp.Lambda<br /><br />Validation: exactly one target type; \`lambda\` is currently the only supported type |
-| - [mcpServer](#gatewayTargets_additionalProperties_targetConfiguration_mcpServer )         | No      | object | No         | In #/definitions/GatewayTargetMcpServerProperty  | MCP server tool source. Declared; not yet supported.<br /><br />AWS: TargetConfiguration.Mcp.McpServer                                                                                          |
-| - [openApiSchema](#gatewayTargets_additionalProperties_targetConfiguration_openApiSchema ) | No      | object | No         | In #/definitions/GatewayTargetOpenApiProperty    | OpenAPI schema tool source. Declared; not yet supported.<br /><br />AWS: TargetConfiguration.Mcp.OpenApiSchema                                                                                  |
-| - [smithyModel](#gatewayTargets_additionalProperties_targetConfiguration_smithyModel )     | No      | object | No         | In #/definitions/GatewayTargetSmithyProperty     | Smithy model tool source. Declared; not yet supported.<br /><br />AWS: TargetConfiguration.Mcp.SmithyModel                                                                                      |
+| Property                                                                                   | Pattern | Type   | Deprecated | Definition                                          | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [apiGateway](#gatewayTargets_additionalProperties_targetConfiguration_apiGateway )       | No      | object | No         | In #/definitions/GatewayTargetApiGatewayProperty    | API Gateway tool source. Declared; not yet supported.<br /><br />AWS: TargetConfiguration.Mcp.ApiGateway                                                                                                                                                                                                                                                                                                                                                            |
+| - [knowledgeBase](#gatewayTargets_additionalProperties_targetConfiguration_knowledgeBase ) | No      | object | No         | In #/definitions/GatewayTargetKnowledgeBaseProperty | Knowledge base tool source. bedrock-builder generates the connector Lambda, its execution role,<br />and a Lambda target exposing a \`Retrieve\` tool.<br /><br />Use cases: RAG over a customer-managed knowledge base through a gateway<br /><br />AWS: AWS::Lambda::Function + AWS::BedrockAgentCore::GatewayTarget TargetConfiguration.Mcp.Lambda<br /><br />Validation: Optional; must be the only target type set; {@link GatewayTargetKnowledgeBaseProperty} |
+| - [lambda](#gatewayTargets_additionalProperties_targetConfiguration_lambda )               | No      | object | No         | In #/definitions/GatewayTargetLambdaProperty        | Lambda tool source (function ARN + tool schema).<br /><br />AWS: TargetConfiguration.Mcp.Lambda<br /><br />Validation: Optional; must be the only target type set                                                                                                                                                                                                                                                                                                   |
+| - [mcpServer](#gatewayTargets_additionalProperties_targetConfiguration_mcpServer )         | No      | object | No         | In #/definitions/GatewayTargetMcpServerProperty     | MCP server tool source. Declared; not yet supported.<br /><br />AWS: TargetConfiguration.Mcp.McpServer                                                                                                                                                                                                                                                                                                                                                              |
+| - [openApiSchema](#gatewayTargets_additionalProperties_targetConfiguration_openApiSchema ) | No      | object | No         | In #/definitions/GatewayTargetOpenApiProperty       | OpenAPI schema tool source. Declared; not yet supported.<br /><br />AWS: TargetConfiguration.Mcp.OpenApiSchema                                                                                                                                                                                                                                                                                                                                                      |
+| - [smithyModel](#gatewayTargets_additionalProperties_targetConfiguration_smithyModel )     | No      | object | No         | In #/definitions/GatewayTargetSmithyProperty        | Smithy model tool source. Declared; not yet supported.<br /><br />AWS: TargetConfiguration.Mcp.SmithyModel                                                                                                                                                                                                                                                                                                                                                          |
 
 ##### <a name="gatewayTargets_additionalProperties_targetConfiguration_apiGateway"></a>4.1.3.1. Property `root > gatewayTargets > additionalProperties > targetConfiguration > apiGateway`
 
@@ -1313,7 +1320,210 @@ AWS: ApiGatewayTargetConfiguration Stage
 
 Validation: Required; String
 
-##### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda"></a>4.1.3.2. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda`
+##### <a name="gatewayTargets_additionalProperties_targetConfiguration_knowledgeBase"></a>4.1.3.2. Property `root > gatewayTargets > additionalProperties > targetConfiguration > knowledgeBase`
+
+|                           |                                                  |
+| ------------------------- | ------------------------------------------------ |
+| **Type**                  | `object`                                         |
+| **Required**              | No                                               |
+| **Additional properties** | Not allowed                                      |
+| **Defined in**            | #/definitions/GatewayTargetKnowledgeBaseProperty |
+
+**Description:** Knowledge base tool source. bedrock-builder generates the connector Lambda, its execution role,
+and a Lambda target exposing a `Retrieve` tool.
+
+Use cases: RAG over a customer-managed knowledge base through a gateway
+
+AWS: AWS::Lambda::Function + AWS::BedrockAgentCore::GatewayTarget TargetConfiguration.Mcp.Lambda
+
+Validation: Optional; must be the only target type set; {@link GatewayTargetKnowledgeBaseProperty}
+
+| Property                                                                                                               | Pattern | Type             | Deprecated | Definition                                           | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ---------------------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| + [description](#gatewayTargets_additionalProperties_targetConfiguration_knowledgeBase_description )                   | No      | string           | No         | -                                                    | Description of the \`Retrieve\` tool as the model sees it. Say what the knowledge base contains and<br />when to search it; the model uses this to decide when to call the tool.<br /><br />Use cases: steering tool selection when a gateway exposes several knowledge bases or tools<br /><br />AWS: AWS::BedrockAgentCore::GatewayTarget ToolDefinition Description<br /><br />Validation: Required; non-empty String                                                                                                                                                                                                                                                                                                                   |
+| + [id](#gatewayTargets_additionalProperties_targetConfiguration_knowledgeBase_id )                                     | No      | string           | No         | -                                                    | Knowledge base the connector queries. \`config:<name>\` references a knowledge base in this<br />module's \`knowledgeBases\` map and resolves to the deployed knowledge base. Otherwise, the id of an<br />existing knowledge base in the same account and region, as a literal or an \`ssm:\` reference.<br /><br />Use cases: querying a knowledge base built by this module; querying one built by another module<br /><br />AWS: bedrock-agent-runtime Retrieve knowledgeBaseId; scopes the connector's bedrock:Retrieve grant<br /><br />Validation: Required; \`config:<name>\` naming a key in \`knowledgeBases\`, an \`ssm:\` reference, or a<br />10-character alphanumeric knowledge base id (not an ARN or knowledge base name) |
+| - [networkConfiguration](#gatewayTargets_additionalProperties_targetConfiguration_knowledgeBase_networkConfiguration ) | No      | object           | No         | In #/definitions/GatewayKnowledgeBaseNetworkProperty | VPC placement of the connector Lambda, through a set in the module's \`vpcEndpoints\` map. Omit to run<br />the connector outside your VPC.<br /><br />Use cases: VPC-bound Lambda policies; data perimeter policies on \`bedrock:Retrieve\`<br /><br />AWS: AWS::Lambda::Function VpcConfig<br /><br />Validation: Optional; {@link GatewayKnowledgeBaseNetworkProperty}                                                                                                                                                                                                                                                                                                                                                                  |
+| - [numberOfResults](#gatewayTargets_additionalProperties_targetConfiguration_knowledgeBase_numberOfResults )           | No      | integer          | No         | -                                                    | Number of results each query retrieves. Omit to use the Retrieve service default.<br /><br />Use cases: trading answer grounding against response size<br /><br />AWS: bedrock-agent-runtime Retrieve vectorSearchConfiguration.numberOfResults<br /><br />Validation: Optional; integer 1-100                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [overrideSearchType](#gatewayTargets_additionalProperties_targetConfiguration_knowledgeBase_overrideSearchType )     | No      | enum (of string) | No         | -                                                    | Search type each query requests. Omit to let the knowledge base choose.<br /><br />Use cases: forcing keyword-plus-vector search, or vector-only search<br /><br />AWS: bedrock-agent-runtime Retrieve vectorSearchConfiguration.overrideSearchType<br /><br />Validation: Optional; HYBRID \| SEMANTIC                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_knowledgeBase_description"></a>4.1.3.2.1. Property `root > gatewayTargets > additionalProperties > targetConfiguration > knowledgeBase > description`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Description of the `Retrieve` tool as the model sees it. Say what the knowledge base contains and
+when to search it; the model uses this to decide when to call the tool.
+
+Use cases: steering tool selection when a gateway exposes several knowledge bases or tools
+
+AWS: AWS::BedrockAgentCore::GatewayTarget ToolDefinition Description
+
+Validation: Required; non-empty String
+
+| Restrictions   |   |
+| -------------- | - |
+| **Min length** | 1 |
+
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_knowledgeBase_id"></a>4.1.3.2.2. Property `root > gatewayTargets > additionalProperties > targetConfiguration > knowledgeBase > id`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Knowledge base the connector queries. `config:<name>` references a knowledge base in this
+module's `knowledgeBases` map and resolves to the deployed knowledge base. Otherwise, the id of an
+existing knowledge base in the same account and region, as a literal or an `ssm:` reference.
+
+Use cases: querying a knowledge base built by this module; querying one built by another module
+
+AWS: bedrock-agent-runtime Retrieve knowledgeBaseId; scopes the connector's bedrock:Retrieve grant
+
+Validation: Required; `config:<name>` naming a key in `knowledgeBases`, an `ssm:` reference, or a
+10-character alphanumeric knowledge base id (not an ARN or knowledge base name)
+
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_knowledgeBase_networkConfiguration"></a>4.1.3.2.3. Property `root > gatewayTargets > additionalProperties > targetConfiguration > knowledgeBase > networkConfiguration`
+
+|                           |                                                   |
+| ------------------------- | ------------------------------------------------- |
+| **Type**                  | `object`                                          |
+| **Required**              | No                                                |
+| **Additional properties** | Not allowed                                       |
+| **Defined in**            | #/definitions/GatewayKnowledgeBaseNetworkProperty |
+
+**Description:** VPC placement of the connector Lambda, through a set in the module's `vpcEndpoints` map. Omit to run
+the connector outside your VPC.
+
+Use cases: VPC-bound Lambda policies; data perimeter policies on `bedrock:Retrieve`
+
+AWS: AWS::Lambda::Function VpcConfig
+
+Validation: Optional; {@link GatewayKnowledgeBaseNetworkProperty}
+
+| Property                                                                                                                          | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| --------------------------------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [securityGroupId](#gatewayTargets_additionalProperties_targetConfiguration_knowledgeBase_networkConfiguration_securityGroupId ) | No      | string          | No         | -          | Security group for the connector, when the set marks \`bedrockAgentRuntime\` external: the module then<br />has no endpoint to wire, so this group must already allow HTTPS to wherever Retrieve is reached.<br /><br />Use cases: an endpoint whose security group is managed by a central networking team<br /><br />AWS: AWS::Lambda::Function VpcConfig.SecurityGroupIds<br /><br />Validation: Required when the set marks \`bedrockAgentRuntime\` external, and not allowed otherwise                                      |
+| + [subnets](#gatewayTargets_additionalProperties_targetConfiguration_knowledgeBase_networkConfiguration_subnets )                 | No      | array of string | No         | -          | Subnets the connector's network interfaces are placed in, in the VPC of the \`vpcEndpoints\` set.<br /><br />Use cases: placing the connector in private subnets<br /><br />AWS: AWS::Lambda::Function VpcConfig.SubnetIds<br /><br />Validation: Required; String[]; 1-16 entries                                                                                                                                                                                                                                               |
+| + [vpcEndpoints](#gatewayTargets_additionalProperties_targetConfiguration_knowledgeBase_networkConfiguration_vpcEndpoints )       | No      | string          | No         | -          | Name of the set in the module's \`vpcEndpoints\` map the connector reaches Retrieve through. When the<br />set creates the Bedrock Agent Runtime endpoint or brings an existing one, the module creates the<br />connector's security group with HTTPS access to it; when the set marks it external, set<br />\`securityGroupId\`.<br /><br />Use cases: a private path to Retrieve with no NAT<br /><br />AWS: AWS::EC2::VPCEndpoint (bedrock-agent-runtime)<br /><br />Validation: Required; String; a key in \`vpcEndpoints\` |
+
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_knowledgeBase_networkConfiguration_securityGroupId"></a>4.1.3.2.3.1. Property `root > gatewayTargets > additionalProperties > targetConfiguration > knowledgeBase > networkConfiguration > securityGroupId`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Security group for the connector, when the set marks `bedrockAgentRuntime` external: the module then
+has no endpoint to wire, so this group must already allow HTTPS to wherever Retrieve is reached.
+
+Use cases: an endpoint whose security group is managed by a central networking team
+
+AWS: AWS::Lambda::Function VpcConfig.SecurityGroupIds
+
+Validation: Required when the set marks `bedrockAgentRuntime` external, and not allowed otherwise
+
+| Restrictions   |   |
+| -------------- | - |
+| **Min length** | 1 |
+
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_knowledgeBase_networkConfiguration_subnets"></a>4.1.3.2.3.2. Property `root > gatewayTargets > additionalProperties > targetConfiguration > knowledgeBase > networkConfiguration > subnets`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | Yes               |
+
+**Description:** Subnets the connector's network interfaces are placed in, in the VPC of the `vpcEndpoints` set.
+
+Use cases: placing the connector in private subnets
+
+AWS: AWS::Lambda::Function VpcConfig.SubnetIds
+
+Validation: Required; String[]; 1-16 entries
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | 1                  |
+| **Max items**        | 16                 |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                                            | Description |
+| -------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| [subnets items](#gatewayTargets_additionalProperties_targetConfiguration_knowledgeBase_networkConfiguration_subnets_items) | -           |
+
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_knowledgeBase_networkConfiguration_subnets_items"></a>4.1.3.2.3.2.1. root > gatewayTargets > additionalProperties > targetConfiguration > knowledgeBase > networkConfiguration > subnets > subnets items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_knowledgeBase_networkConfiguration_vpcEndpoints"></a>4.1.3.2.3.3. Property `root > gatewayTargets > additionalProperties > targetConfiguration > knowledgeBase > networkConfiguration > vpcEndpoints`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Name of the set in the module's `vpcEndpoints` map the connector reaches Retrieve through. When the
+set creates the Bedrock Agent Runtime endpoint or brings an existing one, the module creates the
+connector's security group with HTTPS access to it; when the set marks it external, set
+`securityGroupId`.
+
+Use cases: a private path to Retrieve with no NAT
+
+AWS: AWS::EC2::VPCEndpoint (bedrock-agent-runtime)
+
+Validation: Required; String; a key in `vpcEndpoints`
+
+| Restrictions   |   |
+| -------------- | - |
+| **Min length** | 1 |
+
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_knowledgeBase_numberOfResults"></a>4.1.3.2.4. Property `root > gatewayTargets > additionalProperties > targetConfiguration > knowledgeBase > numberOfResults`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Number of results each query retrieves. Omit to use the Retrieve service default.
+
+Use cases: trading answer grounding against response size
+
+AWS: bedrock-agent-runtime Retrieve vectorSearchConfiguration.numberOfResults
+
+Validation: Optional; integer 1-100
+
+| Restrictions |          |
+| ------------ | -------- |
+| **Minimum**  | &ge; 1   |
+| **Maximum**  | &le; 100 |
+
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_knowledgeBase_overrideSearchType"></a>4.1.3.2.5. Property `root > gatewayTargets > additionalProperties > targetConfiguration > knowledgeBase > overrideSearchType`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+**Description:** Search type each query requests. Omit to let the knowledge base choose.
+
+Use cases: forcing keyword-plus-vector search, or vector-only search
+
+AWS: bedrock-agent-runtime Retrieve vectorSearchConfiguration.overrideSearchType
+
+Validation: Optional; HYBRID | SEMANTIC
+
+Must be one of:
+* "HYBRID"
+* "SEMANTIC"
+
+##### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda"></a>4.1.3.3. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda`
 
 |                           |                                           |
 | ------------------------- | ----------------------------------------- |
@@ -1326,14 +1536,14 @@ Validation: Required; String
 
 AWS: TargetConfiguration.Mcp.Lambda
 
-Validation: exactly one target type; `lambda` is currently the only supported type
+Validation: Optional; must be the only target type set
 
 | Property                                                                                    | Pattern | Type   | Deprecated | Definition                                       | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | ------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | + [lambdaArn](#gatewayTargets_additionalProperties_targetConfiguration_lambda_lambdaArn )   | No      | string | No         | -                                                | ARN of the Lambda function that implements the tool(s). The gateway execution role is granted<br />scoped \`lambda:InvokeFunction\` on exactly this ARN (by the L3 orchestration construct).<br /><br />AWS: McpLambdaTargetConfiguration LambdaArn<br /><br />Validation: Required; Lambda function ARN                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | + [toolSchema](#gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema ) | No      | object | No         | In #/definitions/GatewayTargetToolSchemaProperty | Schema describing the MCP tools the Lambda exposes — the catalog (tool name + JSON-schema of<br />inputs/outputs) the gateway advertises to agents and dispatches to this Lambda. For example, a<br />\`getWeather\` tool taking a required \`city\` string:<br />\`{ inlinePayload: [{ name: 'getWeather', description: 'Returns the weather for a city',<br />inputSchema: { type: 'object', properties: { city: { type: 'string' } }, required: ['city'] } }] }\`.<br />See the AWS tool-schema examples<br />(https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-add-target-lambda.html#gateway-lambda-example).<br /><br />AWS: McpLambdaTargetConfiguration ToolSchema<br /><br />Validation: Required; exactly one of inlinePayload or s3 |
 
-###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_lambdaArn"></a>4.1.3.2.1. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > lambdaArn`
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_lambdaArn"></a>4.1.3.3.1. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > lambdaArn`
 
 |              |          |
 | ------------ | -------- |
@@ -1347,7 +1557,7 @@ AWS: McpLambdaTargetConfiguration LambdaArn
 
 Validation: Required; Lambda function ARN
 
-###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema"></a>4.1.3.2.2. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema`
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema"></a>4.1.3.3.2. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema`
 
 |                           |                                               |
 | ------------------------- | --------------------------------------------- |
@@ -1373,7 +1583,7 @@ Validation: Required; exactly one of inlinePayload or s3
 | - [inlinePayload](#gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload ) | No      | array  | No         | -                                        | Tool definitions declared inline. Each entry describes one MCP tool the Lambda implements.<br /><br />Use cases: small tool sets defined directly in config<br /><br />AWS: ToolSchema InlinePayload<br /><br />Validation: Optional; non-empty array when set; mutually exclusive with \`s3\`                                                                                                         |
 | - [s3](#gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_s3 )                       | No      | object | No         | In #/definitions/GatewayTargetS3Property | Location of a JSON tool-schema document in S3. To keep a tool schema as a file in the source<br />tree, upload it to a bucket you own (e.g. an \`MdaaBucket\`) and reference the object here.<br /><br />Use cases: large tool sets maintained as a separate artifact<br /><br />AWS: ToolSchema S3<br /><br />Validation: Optional; valid S3 configuration; mutually exclusive with \`inlinePayload\` |
 
-###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload"></a>4.1.3.2.2.1. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > inlinePayload`
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload"></a>4.1.3.3.2.1. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > inlinePayload`
 
 |              |         |
 | ------------ | ------- |
@@ -1400,7 +1610,7 @@ Validation: Optional; non-empty array when set; mutually exclusive with `s3`
 | ------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
 | [GatewayTargetToolDefinitionProperty](#gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items) | A single MCP tool definition for an inline tool schema. ... |
 
-###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items"></a>4.1.3.2.2.1.1. root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > inlinePayload > GatewayTargetToolDefinitionProperty
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items"></a>4.1.3.3.2.1.1. root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > inlinePayload > GatewayTargetToolDefinitionProperty
 
 |                           |                                                   |
 | ------------------------- | ------------------------------------------------- |
@@ -1421,7 +1631,7 @@ AWS: AWS::BedrockAgentCore::GatewayTarget ToolDefinition
 | + [name](#gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_name )                 | No      | string | No         | -                                                                                                                                  | Tool name (as surfaced to the agent over MCP).<br /><br />AWS: ToolDefinition Name<br /><br />Validation: Required; String                                                                                                                                                         |
 | - [outputSchema](#gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_outputSchema ) | No      | object | No         | Same as [inputSchema](#gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_inputSchema ) | JSON-schema definition of the tool's output.<br /><br />AWS: ToolDefinition OutputSchema<br />(https://docs.aws.amazon.com/bedrock-agentcore-control/latest/APIReference/API_SchemaDefinition.html)<br /><br />Validation: Optional; {@link GatewayTargetSchemaDefinitionProperty} |
 
-###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_description"></a>4.1.3.2.2.1.1.1. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > inlinePayload > inlinePayload items > description`
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_description"></a>4.1.3.3.2.1.1.1. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > inlinePayload > inlinePayload items > description`
 
 |              |          |
 | ------------ | -------- |
@@ -1434,7 +1644,7 @@ AWS: ToolDefinition Description
 
 Validation: Required; String
 
-###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_inputSchema"></a>4.1.3.2.2.1.1.2. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > inlinePayload > inlinePayload items > inputSchema`
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_inputSchema"></a>4.1.3.3.2.1.1.2. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > inlinePayload > inlinePayload items > inputSchema`
 
 |                           |                                                     |
 | ------------------------- | --------------------------------------------------- |
@@ -1458,7 +1668,7 @@ Validation: Required; {@link GatewayTargetSchemaDefinitionProperty}
 | - [required](#gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_inputSchema_required )       | No      | array of string | No         | -                                                                                                                                  | Names of required properties (for \`object\` types).<br /><br />AWS: SchemaDefinition Required<br /><br />Validation: Optional; String[]                                                           |
 | + [type](#gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_inputSchema_type )               | No      | string          | No         | -                                                                                                                                  | JSON-schema type (e.g. \`string\`, \`number\`, \`object\`, \`array\`, \`boolean\`).<br /><br />AWS: SchemaDefinition Type<br /><br />Validation: Required; String                                  |
 
-###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_inputSchema_description"></a>4.1.3.2.2.1.1.2.1. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > inlinePayload > inlinePayload items > inputSchema > description`
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_inputSchema_description"></a>4.1.3.3.2.1.1.2.1. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > inlinePayload > inlinePayload items > inputSchema > description`
 
 |              |          |
 | ------------ | -------- |
@@ -1471,7 +1681,7 @@ AWS: SchemaDefinition Description
 
 Validation: Optional; String
 
-###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_inputSchema_items"></a>4.1.3.2.2.1.1.2.2. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > inlinePayload > inlinePayload items > inputSchema > items`
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_inputSchema_items"></a>4.1.3.3.2.1.1.2.2. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > inlinePayload > inlinePayload items > inputSchema > items`
 
 |                           |                                                                                                                           |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
@@ -1486,7 +1696,7 @@ AWS: SchemaDefinition Items
 
 Validation: Optional; {@link GatewayTargetSchemaDefinitionProperty}
 
-###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_inputSchema_properties"></a>4.1.3.2.2.1.1.2.3. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > inlinePayload > inlinePayload items > inputSchema > properties`
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_inputSchema_properties"></a>4.1.3.3.2.1.1.2.3. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > inlinePayload > inlinePayload items > inputSchema > properties`
 
 |                           |                                                                                                                                                                                                   |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1504,7 +1714,7 @@ Validation: Optional; map of {@link GatewayTargetSchemaDefinitionProperty}
 | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | - [](#gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_inputSchema_properties_additionalProperties ) | No      | object | No         | Same as [inputSchema](#gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_inputSchema ) | A JSON-schema definition node (recursive), mirroring the AWS gateway-target SchemaDefinition.<br /><br />AWS: AWS::BedrockAgentCore::GatewayTarget SchemaDefinition<br />(https://docs.aws.amazon.com/bedrock-agentcore-control/latest/APIReference/API_SchemaDefinition.html) |
 
-###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_inputSchema_properties_additionalProperties"></a>4.1.3.2.2.1.1.2.3.1. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > inlinePayload > inlinePayload items > inputSchema > properties > GatewayTargetSchemaDefinitionProperty`
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_inputSchema_properties_additionalProperties"></a>4.1.3.3.2.1.1.2.3.1. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > inlinePayload > inlinePayload items > inputSchema > properties > GatewayTargetSchemaDefinitionProperty`
 
 |                           |                                                                                                                           |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
@@ -1518,7 +1728,7 @@ Validation: Optional; map of {@link GatewayTargetSchemaDefinitionProperty}
 AWS: AWS::BedrockAgentCore::GatewayTarget SchemaDefinition
 (https://docs.aws.amazon.com/bedrock-agentcore-control/latest/APIReference/API_SchemaDefinition.html)
 
-###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_inputSchema_required"></a>4.1.3.2.2.1.1.2.4. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > inlinePayload > inlinePayload items > inputSchema > required`
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_inputSchema_required"></a>4.1.3.3.2.1.1.2.4. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > inlinePayload > inlinePayload items > inputSchema > required`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1543,14 +1753,14 @@ Validation: Optional; String[]
 | ------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
 | [required items](#gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_inputSchema_required_items) | -           |
 
-###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_inputSchema_required_items"></a>4.1.3.2.2.1.1.2.4.1. root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > inlinePayload > inlinePayload items > inputSchema > required > required items
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_inputSchema_required_items"></a>4.1.3.3.2.1.1.2.4.1. root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > inlinePayload > inlinePayload items > inputSchema > required > required items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_inputSchema_type"></a>4.1.3.2.2.1.1.2.5. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > inlinePayload > inlinePayload items > inputSchema > type`
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_inputSchema_type"></a>4.1.3.3.2.1.1.2.5. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > inlinePayload > inlinePayload items > inputSchema > type`
 
 |              |          |
 | ------------ | -------- |
@@ -1563,7 +1773,7 @@ AWS: SchemaDefinition Type
 
 Validation: Required; String
 
-###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_name"></a>4.1.3.2.2.1.1.3. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > inlinePayload > inlinePayload items > name`
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_name"></a>4.1.3.3.2.1.1.3. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > inlinePayload > inlinePayload items > name`
 
 |              |          |
 | ------------ | -------- |
@@ -1576,7 +1786,7 @@ AWS: ToolDefinition Name
 
 Validation: Required; String
 
-###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_outputSchema"></a>4.1.3.2.2.1.1.4. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > inlinePayload > inlinePayload items > outputSchema`
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_inlinePayload_items_outputSchema"></a>4.1.3.3.2.1.1.4. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > inlinePayload > inlinePayload items > outputSchema`
 
 |                           |                                                                                                                           |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
@@ -1592,7 +1802,7 @@ AWS: ToolDefinition OutputSchema
 
 Validation: Optional; {@link GatewayTargetSchemaDefinitionProperty}
 
-###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_s3"></a>4.1.3.2.2.2. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > s3`
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_s3"></a>4.1.3.3.2.2. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > s3`
 
 |                           |                                       |
 | ------------------------- | ------------------------------------- |
@@ -1615,7 +1825,7 @@ Validation: Optional; valid S3 configuration; mutually exclusive with `inlinePay
 | - [bucketOwnerAccountId](#gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_s3_bucketOwnerAccountId ) | No      | string | No         | -          | Expected owner account id of the S3 bucket (cross-account confused-deputy protection). MDAA<br />defaults this to the deploying account when omitted (or empty), so the gateway verifies the<br />bucket owner on the cross-account read. An explicit value is validated at synth: it must be a<br />12-digit account id (or an unresolved CDK token).<br /><br />AWS: S3Configuration BucketOwnerAccountId<br /><br />Validation: Optional; 12-digit account id; defaults to the deploying account |
 | + [uri](#gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_s3_uri )                                   | No      | string | No         | -          | S3 URI of the schema object (\`s3://bucket/key\`).<br /><br />AWS: S3Configuration Uri<br /><br />Validation: Required; S3 URI                                                                                                                                                                                                                                                                                                                                                                      |
 
-###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_s3_bucketOwnerAccountId"></a>4.1.3.2.2.2.1. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > s3 > bucketOwnerAccountId`
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_s3_bucketOwnerAccountId"></a>4.1.3.3.2.2.1. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > s3 > bucketOwnerAccountId`
 
 |              |          |
 | ------------ | -------- |
@@ -1631,7 +1841,7 @@ AWS: S3Configuration BucketOwnerAccountId
 
 Validation: Optional; 12-digit account id; defaults to the deploying account
 
-###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_s3_uri"></a>4.1.3.2.2.2.2. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > s3 > uri`
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_s3_uri"></a>4.1.3.3.2.2.2. Property `root > gatewayTargets > additionalProperties > targetConfiguration > lambda > toolSchema > s3 > uri`
 
 |              |          |
 | ------------ | -------- |
@@ -1644,7 +1854,7 @@ AWS: S3Configuration Uri
 
 Validation: Required; S3 URI
 
-##### <a name="gatewayTargets_additionalProperties_targetConfiguration_mcpServer"></a>4.1.3.3. Property `root > gatewayTargets > additionalProperties > targetConfiguration > mcpServer`
+##### <a name="gatewayTargets_additionalProperties_targetConfiguration_mcpServer"></a>4.1.3.4. Property `root > gatewayTargets > additionalProperties > targetConfiguration > mcpServer`
 
 |                           |                                              |
 | ------------------------- | -------------------------------------------- |
@@ -1662,7 +1872,7 @@ AWS: TargetConfiguration.Mcp.McpServer
 | + [endpoint](#gatewayTargets_additionalProperties_targetConfiguration_mcpServer_endpoint )       | No      | string | No         | -          | HTTPS endpoint of the MCP server.<br /><br />AWS: McpServerTargetConfiguration Endpoint<br /><br />Validation: Required; HTTPS URL |
 | - [listingMode](#gatewayTargets_additionalProperties_targetConfiguration_mcpServer_listingMode ) | No      | string | No         | -          | Tool listing mode.<br /><br />AWS: McpServerTargetConfiguration ListingMode<br /><br />Validation: Optional; String                |
 
-###### <a name="gatewayTargets_additionalProperties_targetConfiguration_mcpServer_endpoint"></a>4.1.3.3.1. Property `root > gatewayTargets > additionalProperties > targetConfiguration > mcpServer > endpoint`
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_mcpServer_endpoint"></a>4.1.3.4.1. Property `root > gatewayTargets > additionalProperties > targetConfiguration > mcpServer > endpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -1675,7 +1885,7 @@ AWS: McpServerTargetConfiguration Endpoint
 
 Validation: Required; HTTPS URL
 
-###### <a name="gatewayTargets_additionalProperties_targetConfiguration_mcpServer_listingMode"></a>4.1.3.3.2. Property `root > gatewayTargets > additionalProperties > targetConfiguration > mcpServer > listingMode`
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_mcpServer_listingMode"></a>4.1.3.4.2. Property `root > gatewayTargets > additionalProperties > targetConfiguration > mcpServer > listingMode`
 
 |              |          |
 | ------------ | -------- |
@@ -1688,7 +1898,7 @@ AWS: McpServerTargetConfiguration ListingMode
 
 Validation: Optional; String
 
-##### <a name="gatewayTargets_additionalProperties_targetConfiguration_openApiSchema"></a>4.1.3.4. Property `root > gatewayTargets > additionalProperties > targetConfiguration > openApiSchema`
+##### <a name="gatewayTargets_additionalProperties_targetConfiguration_openApiSchema"></a>4.1.3.5. Property `root > gatewayTargets > additionalProperties > targetConfiguration > openApiSchema`
 
 |                           |                                            |
 | ------------------------- | ------------------------------------------ |
@@ -1706,7 +1916,7 @@ AWS: TargetConfiguration.Mcp.OpenApiSchema
 | - [inlinePayload](#gatewayTargets_additionalProperties_targetConfiguration_openApiSchema_inlinePayload ) | No      | string | No         | -                                                                                            | OpenAPI schema declared inline (a JSON/YAML document as a string).<br /><br />AWS: ApiSchemaConfiguration InlinePayload<br /><br />Validation: Optional; mutually exclusive with \`s3\` |
 | - [s3](#gatewayTargets_additionalProperties_targetConfiguration_openApiSchema_s3 )                       | No      | object | No         | Same as [s3](#gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_s3 ) | Location of an OpenAPI schema document in S3.<br /><br />AWS: ApiSchemaConfiguration S3<br /><br />Validation: Optional; mutually exclusive with \`inlinePayload\`                      |
 
-###### <a name="gatewayTargets_additionalProperties_targetConfiguration_openApiSchema_inlinePayload"></a>4.1.3.4.1. Property `root > gatewayTargets > additionalProperties > targetConfiguration > openApiSchema > inlinePayload`
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_openApiSchema_inlinePayload"></a>4.1.3.5.1. Property `root > gatewayTargets > additionalProperties > targetConfiguration > openApiSchema > inlinePayload`
 
 |              |          |
 | ------------ | -------- |
@@ -1719,7 +1929,7 @@ AWS: ApiSchemaConfiguration InlinePayload
 
 Validation: Optional; mutually exclusive with `s3`
 
-###### <a name="gatewayTargets_additionalProperties_targetConfiguration_openApiSchema_s3"></a>4.1.3.4.2. Property `root > gatewayTargets > additionalProperties > targetConfiguration > openApiSchema > s3`
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_openApiSchema_s3"></a>4.1.3.5.2. Property `root > gatewayTargets > additionalProperties > targetConfiguration > openApiSchema > s3`
 
 |                           |                                                                                     |
 | ------------------------- | ----------------------------------------------------------------------------------- |
@@ -1734,7 +1944,7 @@ AWS: ApiSchemaConfiguration S3
 
 Validation: Optional; mutually exclusive with `inlinePayload`
 
-##### <a name="gatewayTargets_additionalProperties_targetConfiguration_smithyModel"></a>4.1.3.5. Property `root > gatewayTargets > additionalProperties > targetConfiguration > smithyModel`
+##### <a name="gatewayTargets_additionalProperties_targetConfiguration_smithyModel"></a>4.1.3.6. Property `root > gatewayTargets > additionalProperties > targetConfiguration > smithyModel`
 
 |                           |                                           |
 | ------------------------- | ----------------------------------------- |
@@ -1752,7 +1962,7 @@ AWS: TargetConfiguration.Mcp.SmithyModel
 | - [inlinePayload](#gatewayTargets_additionalProperties_targetConfiguration_smithyModel_inlinePayload ) | No      | string | No         | -                                                                                            | Smithy model declared inline (a JSON document as a string).<br /><br />AWS: ApiSchemaConfiguration InlinePayload<br /><br />Validation: Optional; mutually exclusive with \`s3\` |
 | - [s3](#gatewayTargets_additionalProperties_targetConfiguration_smithyModel_s3 )                       | No      | object | No         | Same as [s3](#gatewayTargets_additionalProperties_targetConfiguration_lambda_toolSchema_s3 ) | Location of a Smithy model document in S3.<br /><br />AWS: ApiSchemaConfiguration S3<br /><br />Validation: Optional; mutually exclusive with \`inlinePayload\`                  |
 
-###### <a name="gatewayTargets_additionalProperties_targetConfiguration_smithyModel_inlinePayload"></a>4.1.3.5.1. Property `root > gatewayTargets > additionalProperties > targetConfiguration > smithyModel > inlinePayload`
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_smithyModel_inlinePayload"></a>4.1.3.6.1. Property `root > gatewayTargets > additionalProperties > targetConfiguration > smithyModel > inlinePayload`
 
 |              |          |
 | ------------ | -------- |
@@ -1765,7 +1975,7 @@ AWS: ApiSchemaConfiguration InlinePayload
 
 Validation: Optional; mutually exclusive with `s3`
 
-###### <a name="gatewayTargets_additionalProperties_targetConfiguration_smithyModel_s3"></a>4.1.3.5.2. Property `root > gatewayTargets > additionalProperties > targetConfiguration > smithyModel > s3`
+###### <a name="gatewayTargets_additionalProperties_targetConfiguration_smithyModel_s3"></a>4.1.3.6.2. Property `root > gatewayTargets > additionalProperties > targetConfiguration > smithyModel > s3`
 
 |                           |                                                                                     |
 | ------------------------- | ----------------------------------------------------------------------------------- |
@@ -14670,25 +14880,27 @@ Must be one of:
 | **Additional properties** | [Each additional property must conform to the schema](#vpcEndpoints_additionalProperties) |
 | **Defined in**            | #/definitions/NamedVpcEndpointSetProps                                                    |
 
-**Description:** VPC endpoint sets, keyed by set name, giving a harness's sessions a private outbound path
-(no NAT/internet). A harness references one by name from its `networkConfiguration.vpcEndpoints`;
-every harness referencing a set shares its endpoints.
+**Description:** VPC endpoint sets, keyed by set name, giving harness sessions and knowledge base connectors a
+private outbound path (no NAT/internet). A harness references one by name from its
+`networkConfiguration.vpcEndpoints`, and a `knowledgeBase` gateway target from its
+`networkConfiguration.vpcEndpoints`; every consumer referencing a set shares its endpoints.
 
-Which endpoints exist is derived from the referencing harnesses, so a set only states which VPC it
+Which endpoints exist is derived from the referencing consumers, so a set only states which VPC it
 serves, where created endpoints go, and how each derived endpoint is reached - created here, an
 existing one to wire to, or reached without an endpoint the set manages. Endpoint policies are
 derived and not configurable.
 
-Use cases: private (no-NAT) harness sessions, reusing centrally provisioned endpoints
+Use cases: private (no-NAT) harness sessions and knowledge base connectors, reusing centrally
+provisioned endpoints
 
 AWS: AWS::EC2::VPCEndpoint (Interface and Gateway)
 
 Validation: Optional; NamedVpcEndpointSetProps; each set must name a distinct VPC and be referenced
-by at least one harness
+by at least one harness or knowledge base connector
 
-| Property                                  | Pattern | Type   | Deprecated | Definition                           | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| ----------------------------------------- | ------- | ------ | ---------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [](#vpcEndpoints_additionalProperties ) | No      | object | No         | In #/definitions/VpcEndpointSetProps | One VPC's endpoint set: which VPC it serves, where created endpoints go, and how each endpoint the<br />referencing consumers need is provided. A consumer references a set by name from its own<br />configuration, and the endpoints belong to the VPC rather than to any one consumer - AWS allows a<br />single Private DNS interface endpoint per service per VPC, so one set owns them and every consumer<br />referencing it shares them.<br /><br />Which endpoints exist is derived from the consumers, never added here: a set can only say how each<br />derived endpoint is reached. Omitting an endpoint property means it is created; see<br />{@link VpcEndpointProps} for the other two states.<br /><br />Endpoint policies are derived too, and are not configurable: the AgentCore Gateway endpoint is scoped<br />to gateway invocation and the S3 gateway endpoint to the ECR image-layer bucket, while the<br />multi-action supporting services keep the AWS default - Private DNS makes an interface endpoint<br />VPC-wide, so restricting those would deny unrelated workloads in the same VPC. That default permits<br />every action on those services in any account, so a set is a private network path and not an<br />authorization boundary: what a session may reach through it stays governed by its execution role.<br /><br />Use cases: private (no-NAT) AgentCore Harness sessions, reusing centrally provisioned endpoints,<br />keeping selected services on the VPC's existing egress path<br /><br />Validation: \`vpcId\` and \`subnetIds\` required; exactly one of \`routeTableIds\` and<br />\`s3ImageLayers.external\`; each set must name a distinct VPC and be referenced by at least one consumer |
+| Property                                  | Pattern | Type   | Deprecated | Definition                           | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ----------------------------------------- | ------- | ------ | ---------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [](#vpcEndpoints_additionalProperties ) | No      | object | No         | In #/definitions/VpcEndpointSetProps | One VPC's endpoint set: which VPC it serves, where created endpoints go, and how each endpoint the<br />referencing consumers need is provided. A consumer - an AgentCore Harness, or a \`knowledgeBase\`<br />gateway target's connector - references a set by name from its own \`networkConfiguration\`, and the<br />endpoints belong to the VPC rather than to any one consumer - AWS allows a single Private DNS<br />interface endpoint per service per VPC, so one set owns them and every consumer referencing it shares<br />them.<br /><br />Which endpoints exist is derived from the consumers, never added here: a set can only say how each<br />derived endpoint is reached. Omitting an endpoint property means it is created; see<br />{@link VpcEndpointProps} for the other two states.<br /><br />Endpoint policies are derived too, and are not configurable: the AgentCore Gateway endpoint is scoped<br />to gateway invocation, the Bedrock Agent Runtime endpoint to \`bedrock:Retrieve\` on the knowledge bases<br />the set's connectors query, and the S3 gateway endpoint to the ECR image-layer bucket, while the<br />multi-action supporting services keep the AWS default - Private DNS makes an interface endpoint<br />VPC-wide, so restricting those would deny unrelated workloads in the same VPC. That default permits<br />every action on those services in any account, so a set is a private network path and not an<br />authorization boundary: what a consumer may reach through it stays governed by its execution role.<br /><br />Use cases: private (no-NAT) AgentCore Harness sessions and knowledge base connectors, reusing<br />centrally provisioned endpoints, keeping selected services on the VPC's existing egress path<br /><br />Validation: \`vpcId\` and \`subnetIds\` required; when a harness references the set, exactly one of<br />\`routeTableIds\` and \`s3ImageLayers.external\`, and neither otherwise; each set must name a distinct VPC<br />and be referenced by at least one consumer |
 
 ### <a name="vpcEndpoints_additionalProperties"></a>15.1. Property `root > vpcEndpoints > VpcEndpointSetProps`
 
@@ -14700,40 +14912,44 @@ by at least one harness
 | **Defined in**            | #/definitions/VpcEndpointSetProps |
 
 **Description:** One VPC's endpoint set: which VPC it serves, where created endpoints go, and how each endpoint the
-referencing consumers need is provided. A consumer references a set by name from its own
-configuration, and the endpoints belong to the VPC rather than to any one consumer - AWS allows a
-single Private DNS interface endpoint per service per VPC, so one set owns them and every consumer
-referencing it shares them.
+referencing consumers need is provided. A consumer - an AgentCore Harness, or a `knowledgeBase`
+gateway target's connector - references a set by name from its own `networkConfiguration`, and the
+endpoints belong to the VPC rather than to any one consumer - AWS allows a single Private DNS
+interface endpoint per service per VPC, so one set owns them and every consumer referencing it shares
+them.
 
 Which endpoints exist is derived from the consumers, never added here: a set can only say how each
 derived endpoint is reached. Omitting an endpoint property means it is created; see
 {@link VpcEndpointProps} for the other two states.
 
 Endpoint policies are derived too, and are not configurable: the AgentCore Gateway endpoint is scoped
-to gateway invocation and the S3 gateway endpoint to the ECR image-layer bucket, while the
+to gateway invocation, the Bedrock Agent Runtime endpoint to `bedrock:Retrieve` on the knowledge bases
+the set's connectors query, and the S3 gateway endpoint to the ECR image-layer bucket, while the
 multi-action supporting services keep the AWS default - Private DNS makes an interface endpoint
 VPC-wide, so restricting those would deny unrelated workloads in the same VPC. That default permits
 every action on those services in any account, so a set is a private network path and not an
-authorization boundary: what a session may reach through it stays governed by its execution role.
+authorization boundary: what a consumer may reach through it stays governed by its execution role.
 
-Use cases: private (no-NAT) AgentCore Harness sessions, reusing centrally provisioned endpoints,
-keeping selected services on the VPC's existing egress path
+Use cases: private (no-NAT) AgentCore Harness sessions and knowledge base connectors, reusing
+centrally provisioned endpoints, keeping selected services on the VPC's existing egress path
 
-Validation: `vpcId` and `subnetIds` required; exactly one of `routeTableIds` and
-`s3ImageLayers.external`; each set must name a distinct VPC and be referenced by at least one consumer
+Validation: `vpcId` and `subnetIds` required; when a harness references the set, exactly one of
+`routeTableIds` and `s3ImageLayers.external`, and neither otherwise; each set must name a distinct VPC
+and be referenced by at least one consumer
 
-| Property                                                                   | Pattern | Type            | Deprecated | Definition                                                                       | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| -------------------------------------------------------------------------- | ------- | --------------- | ---------- | -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [agentCoreGateway](#vpcEndpoints_additionalProperties_agentCoreGateway ) | No      | object          | No         | In #/definitions/VpcEndpointProps                                                | AgentCore Gateway - the gateway's MCP host, a distinct service from the AgentCore data plane. Needed<br />only by a consumer declaring an \`agentCoreGateway\` tool; without it the tool load fails with a DNS<br />"Name or service not known" error.<br /><br />Validation: Optional; VpcEndpointProps; only valid when a referencing consumer declares a gateway<br />tool; omit to have it created                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| - [bedrockRuntime](#vpcEndpoints_additionalProperties_bedrockRuntime )     | No      | object          | No         | Same as [agentCoreGateway](#vpcEndpoints_additionalProperties_agentCoreGateway ) | Amazon Bedrock runtime, for model inference over the Converse API. Every AgentCore Harness needs it;<br />without a path it reaches READY and every invoke hangs.<br /><br />Validation: Optional; VpcEndpointProps; omit to have it created                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| - [ecrApi](#vpcEndpoints_additionalProperties_ecrApi )                     | No      | object          | No         | Same as [agentCoreGateway](#vpcEndpoints_additionalProperties_agentCoreGateway ) | Amazon ECR API, for the registry calls a session's container image pull makes.<br /><br />Validation: Optional; VpcEndpointProps; omit to have it created                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [ecrDocker](#vpcEndpoints_additionalProperties_ecrDocker )               | No      | object          | No         | Same as [agentCoreGateway](#vpcEndpoints_additionalProperties_agentCoreGateway ) | Amazon ECR Docker Registry, for the registry protocol of the image pull.<br /><br />Validation: Optional; VpcEndpointProps; omit to have it created                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| - [logs](#vpcEndpoints_additionalProperties_logs )                         | No      | object          | No         | Same as [agentCoreGateway](#vpcEndpoints_additionalProperties_agentCoreGateway ) | Amazon CloudWatch Logs, for log delivery from a session.<br /><br />Validation: Optional; VpcEndpointProps; omit to have it created                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| - [routeTableIds](#vpcEndpoints_additionalProperties_routeTableIds )       | No      | array of string | No         | -                                                                                | Route tables that receive the S3 gateway endpoint's prefix-list route, enabling container image-layer<br />downloads: image layers are served from the ECR layer bucket over S3, so the ECR interface endpoints<br />alone cannot complete a pull in a VPC with no NAT.<br /><br />IMPORTANT - blast radius: the endpoint intercepts **all** S3 traffic from every subnet associated<br />with these route tables, and its derived policy allows only the ECR image-layer read. If other<br />workloads share these route tables and need broader S3 access, provision the S3 gateway endpoint out<br />of band and set \`s3ImageLayers.external\` instead.<br /><br />Use cases: no-NAT container image-layer pulls<br /><br />AWS: RouteTableIds<br /><br />Validation: Required unless \`s3ImageLayers.external\` is set, and mutually exclusive with it; String[] |
-| - [s3ImageLayers](#vpcEndpoints_additionalProperties_s3ImageLayers )       | No      | object          | No         | In #/definitions/S3ImageLayerEndpointProps                                       | Amazon S3, reached through a **gateway** endpoint, for container image layers. Created from the set's<br />\`routeTableIds\`; set \`external\` here when S3 is already reachable.<br /><br />Validation: Optional; S3ImageLayerEndpointProps                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| - [sts](#vpcEndpoints_additionalProperties_sts )                           | No      | object          | No         | Same as [agentCoreGateway](#vpcEndpoints_additionalProperties_agentCoreGateway ) | AWS STS, for credential vending inside a session.<br /><br />Validation: Optional; VpcEndpointProps; omit to have it created                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| + [subnetIds](#vpcEndpoints_additionalProperties_subnetIds )               | No      | array of string | No         | -                                                                                | Subnets for the ENIs of every interface endpoint created by this set, unless an endpoint overrides<br />it. An interface endpoint takes at most one subnet per availability zone, and is reachable from any<br />zone - so covering fewer zones costs less in endpoint ENI hours and more in cross-zone data.<br /><br />Use cases: multi-AZ endpoint placement, endpoint ENI cost control<br /><br />AWS: SubnetIds<br /><br />Validation: Required; String[]; at least one, at most one per availability zone                                                                                                                                                                                                                                                                                                                                                       |
-| + [vpcId](#vpcEndpoints_additionalProperties_vpcId )                       | No      | string          | No         | -                                                                                | VPC the endpoints are created in, and in which each referencing consumer's endpoint client security<br />group is created.<br /><br />Use cases: private workload connectivity in a specific VPC<br /><br />AWS: VpcId<br /><br />Validation: Required; String; each set must name a distinct VPC                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| Property                                                                         | Pattern | Type            | Deprecated | Definition                                                                       | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| -------------------------------------------------------------------------------- | ------- | --------------- | ---------- | -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [agentCoreGateway](#vpcEndpoints_additionalProperties_agentCoreGateway )       | No      | object          | No         | In #/definitions/VpcEndpointProps                                                | AgentCore Gateway - the gateway's MCP host, a distinct service from the AgentCore data plane. Needed<br />only by a consumer declaring an \`agentCoreGateway\` tool; without it the tool load fails with a DNS<br />"Name or service not known" error.<br /><br />Validation: Optional; VpcEndpointProps; only valid when a referencing consumer declares a gateway<br />tool; omit to have it created                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [bedrockAgentRuntime](#vpcEndpoints_additionalProperties_bedrockAgentRuntime ) | No      | object          | No         | Same as [agentCoreGateway](#vpcEndpoints_additionalProperties_agentCoreGateway ) | Amazon Bedrock Agent Runtime, for the \`Retrieve\` calls of a \`knowledgeBase\` gateway target's<br />connector - a distinct service from Bedrock runtime. Needed only when a connector references the set.<br />A created endpoint's policy allows only \`bedrock:Retrieve\`, on the knowledge bases the set's<br />connectors query; Private DNS makes it serve the whole VPC, so a VPC whose other workloads call this<br />service should bring its own endpoint or mark it external instead.<br /><br />Validation: Optional; VpcEndpointProps; only valid when a knowledge base connector references the<br />set; omit to have it created                                                                                                                                                                                                                                                                                                                       |
+| - [bedrockRuntime](#vpcEndpoints_additionalProperties_bedrockRuntime )           | No      | object          | No         | Same as [agentCoreGateway](#vpcEndpoints_additionalProperties_agentCoreGateway ) | Amazon Bedrock runtime, for model inference over the Converse API. Every AgentCore Harness needs it;<br />without a path it reaches READY and every invoke hangs.<br /><br />Validation: Optional; VpcEndpointProps; only valid when a harness references the set; omit to have<br />it created                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [ecrApi](#vpcEndpoints_additionalProperties_ecrApi )                           | No      | object          | No         | Same as [agentCoreGateway](#vpcEndpoints_additionalProperties_agentCoreGateway ) | Amazon ECR API, for the registry calls a session's container image pull makes.<br /><br />Validation: Optional; VpcEndpointProps; only valid when a harness references the set; omit to have<br />it created                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| - [ecrDocker](#vpcEndpoints_additionalProperties_ecrDocker )                     | No      | object          | No         | Same as [agentCoreGateway](#vpcEndpoints_additionalProperties_agentCoreGateway ) | Amazon ECR Docker Registry, for the registry protocol of the image pull.<br /><br />Validation: Optional; VpcEndpointProps; only valid when a harness references the set; omit to have<br />it created                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [logs](#vpcEndpoints_additionalProperties_logs )                               | No      | object          | No         | Same as [agentCoreGateway](#vpcEndpoints_additionalProperties_agentCoreGateway ) | Amazon CloudWatch Logs, for log delivery from a session.<br /><br />Validation: Optional; VpcEndpointProps; only valid when a harness references the set; omit to have<br />it created                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [routeTableIds](#vpcEndpoints_additionalProperties_routeTableIds )             | No      | array of string | No         | -                                                                                | Route tables that receive the S3 gateway endpoint's prefix-list route, enabling container image-layer<br />downloads: image layers are served from the ECR layer bucket over S3, so the ECR interface endpoints<br />alone cannot complete a pull in a VPC with no NAT.<br /><br />IMPORTANT - blast radius: the endpoint intercepts **all** S3 traffic from every subnet associated<br />with these route tables, and its derived policy allows only the ECR image-layer read. If other<br />workloads share these route tables and need broader S3 access, provision the S3 gateway endpoint out<br />of band and set \`s3ImageLayers.external\` instead.<br /><br />Use cases: no-NAT container image-layer pulls<br /><br />AWS: RouteTableIds<br /><br />Validation: When a harness references the set, required unless \`s3ImageLayers.external\` is set, and<br />mutually exclusive with it; otherwise not allowed, since only harnesses pull images; String[] |
+| - [s3ImageLayers](#vpcEndpoints_additionalProperties_s3ImageLayers )             | No      | object          | No         | In #/definitions/S3ImageLayerEndpointProps                                       | Amazon S3, reached through a **gateway** endpoint, for container image layers. Created from the set's<br />\`routeTableIds\`; set \`external\` here when S3 is already reachable.<br /><br />Validation: Optional; S3ImageLayerEndpointProps; only valid when a harness references the set                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [sts](#vpcEndpoints_additionalProperties_sts )                                 | No      | object          | No         | Same as [agentCoreGateway](#vpcEndpoints_additionalProperties_agentCoreGateway ) | AWS STS, for credential vending inside a session.<br /><br />Validation: Optional; VpcEndpointProps; only valid when a harness references the set; omit to have<br />it created                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| + [subnetIds](#vpcEndpoints_additionalProperties_subnetIds )                     | No      | array of string | No         | -                                                                                | Subnets for the ENIs of every interface endpoint created by this set, unless an endpoint overrides<br />it. An interface endpoint takes at most one subnet per availability zone, and is reachable from any<br />zone - so covering fewer zones costs less in endpoint ENI hours and more in cross-zone data.<br /><br />Use cases: multi-AZ endpoint placement, endpoint ENI cost control<br /><br />AWS: SubnetIds<br /><br />Validation: Required; String[]; at least one, at most one per availability zone                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| + [vpcId](#vpcEndpoints_additionalProperties_vpcId )                             | No      | string          | No         | -                                                                                | VPC the endpoints are created in, and in which each referencing consumer's endpoint client security<br />group is created.<br /><br />Use cases: private workload connectivity in a specific VPC<br /><br />AWS: VpcId<br /><br />Validation: Required; String; each set must name a distinct VPC                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 
 #### <a name="vpcEndpoints_additionalProperties_agentCoreGateway"></a>15.1.1. Property `root > vpcEndpoints > additionalProperties > agentCoreGateway`
 
@@ -14829,7 +15045,25 @@ endpoint
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="vpcEndpoints_additionalProperties_bedrockRuntime"></a>15.1.2. Property `root > vpcEndpoints > additionalProperties > bedrockRuntime`
+#### <a name="vpcEndpoints_additionalProperties_bedrockAgentRuntime"></a>15.1.2. Property `root > vpcEndpoints > additionalProperties > bedrockAgentRuntime`
+
+|                           |                                                                         |
+| ------------------------- | ----------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                |
+| **Required**              | No                                                                      |
+| **Additional properties** | Not allowed                                                             |
+| **Same definition as**    | [agentCoreGateway](#vpcEndpoints_additionalProperties_agentCoreGateway) |
+
+**Description:** Amazon Bedrock Agent Runtime, for the `Retrieve` calls of a `knowledgeBase` gateway target's
+connector - a distinct service from Bedrock runtime. Needed only when a connector references the set.
+A created endpoint's policy allows only `bedrock:Retrieve`, on the knowledge bases the set's
+connectors query; Private DNS makes it serve the whole VPC, so a VPC whose other workloads call this
+service should bring its own endpoint or mark it external instead.
+
+Validation: Optional; VpcEndpointProps; only valid when a knowledge base connector references the
+set; omit to have it created
+
+#### <a name="vpcEndpoints_additionalProperties_bedrockRuntime"></a>15.1.3. Property `root > vpcEndpoints > additionalProperties > bedrockRuntime`
 
 |                           |                                                                         |
 | ------------------------- | ----------------------------------------------------------------------- |
@@ -14841,9 +15075,10 @@ endpoint
 **Description:** Amazon Bedrock runtime, for model inference over the Converse API. Every AgentCore Harness needs it;
 without a path it reaches READY and every invoke hangs.
 
-Validation: Optional; VpcEndpointProps; omit to have it created
+Validation: Optional; VpcEndpointProps; only valid when a harness references the set; omit to have
+it created
 
-#### <a name="vpcEndpoints_additionalProperties_ecrApi"></a>15.1.3. Property `root > vpcEndpoints > additionalProperties > ecrApi`
+#### <a name="vpcEndpoints_additionalProperties_ecrApi"></a>15.1.4. Property `root > vpcEndpoints > additionalProperties > ecrApi`
 
 |                           |                                                                         |
 | ------------------------- | ----------------------------------------------------------------------- |
@@ -14854,9 +15089,10 @@ Validation: Optional; VpcEndpointProps; omit to have it created
 
 **Description:** Amazon ECR API, for the registry calls a session's container image pull makes.
 
-Validation: Optional; VpcEndpointProps; omit to have it created
+Validation: Optional; VpcEndpointProps; only valid when a harness references the set; omit to have
+it created
 
-#### <a name="vpcEndpoints_additionalProperties_ecrDocker"></a>15.1.4. Property `root > vpcEndpoints > additionalProperties > ecrDocker`
+#### <a name="vpcEndpoints_additionalProperties_ecrDocker"></a>15.1.5. Property `root > vpcEndpoints > additionalProperties > ecrDocker`
 
 |                           |                                                                         |
 | ------------------------- | ----------------------------------------------------------------------- |
@@ -14867,9 +15103,10 @@ Validation: Optional; VpcEndpointProps; omit to have it created
 
 **Description:** Amazon ECR Docker Registry, for the registry protocol of the image pull.
 
-Validation: Optional; VpcEndpointProps; omit to have it created
+Validation: Optional; VpcEndpointProps; only valid when a harness references the set; omit to have
+it created
 
-#### <a name="vpcEndpoints_additionalProperties_logs"></a>15.1.5. Property `root > vpcEndpoints > additionalProperties > logs`
+#### <a name="vpcEndpoints_additionalProperties_logs"></a>15.1.6. Property `root > vpcEndpoints > additionalProperties > logs`
 
 |                           |                                                                         |
 | ------------------------- | ----------------------------------------------------------------------- |
@@ -14880,9 +15117,10 @@ Validation: Optional; VpcEndpointProps; omit to have it created
 
 **Description:** Amazon CloudWatch Logs, for log delivery from a session.
 
-Validation: Optional; VpcEndpointProps; omit to have it created
+Validation: Optional; VpcEndpointProps; only valid when a harness references the set; omit to have
+it created
 
-#### <a name="vpcEndpoints_additionalProperties_routeTableIds"></a>15.1.6. Property `root > vpcEndpoints > additionalProperties > routeTableIds`
+#### <a name="vpcEndpoints_additionalProperties_routeTableIds"></a>15.1.7. Property `root > vpcEndpoints > additionalProperties > routeTableIds`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -14902,7 +15140,8 @@ Use cases: no-NAT container image-layer pulls
 
 AWS: RouteTableIds
 
-Validation: Required unless `s3ImageLayers.external` is set, and mutually exclusive with it; String[]
+Validation: When a harness references the set, required unless `s3ImageLayers.external` is set, and
+mutually exclusive with it; otherwise not allowed, since only harnesses pull images; String[]
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -14916,14 +15155,14 @@ Validation: Required unless `s3ImageLayers.external` is set, and mutually exclus
 | ----------------------------------------------------------------------------- | ----------- |
 | [routeTableIds items](#vpcEndpoints_additionalProperties_routeTableIds_items) | -           |
 
-##### <a name="vpcEndpoints_additionalProperties_routeTableIds_items"></a>15.1.6.1. root > vpcEndpoints > additionalProperties > routeTableIds > routeTableIds items
+##### <a name="vpcEndpoints_additionalProperties_routeTableIds_items"></a>15.1.7.1. root > vpcEndpoints > additionalProperties > routeTableIds > routeTableIds items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="vpcEndpoints_additionalProperties_s3ImageLayers"></a>15.1.7. Property `root > vpcEndpoints > additionalProperties > s3ImageLayers`
+#### <a name="vpcEndpoints_additionalProperties_s3ImageLayers"></a>15.1.8. Property `root > vpcEndpoints > additionalProperties > s3ImageLayers`
 
 |                           |                                         |
 | ------------------------- | --------------------------------------- |
@@ -14935,13 +15174,13 @@ Validation: Required unless `s3ImageLayers.external` is set, and mutually exclus
 **Description:** Amazon S3, reached through a **gateway** endpoint, for container image layers. Created from the set's
 `routeTableIds`; set `external` here when S3 is already reachable.
 
-Validation: Optional; S3ImageLayerEndpointProps
+Validation: Optional; S3ImageLayerEndpointProps; only valid when a harness references the set
 
-| Property                                                                 | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                           |
-| ------------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [external](#vpcEndpoints_additionalProperties_s3ImageLayers_external ) | No      | boolean | No         | -          | Mark S3 as already reachable, so no gateway endpoint is created for image layers. Set this for a VPC<br />with NAT, or one whose S3 gateway endpoint was provisioned elsewhere - a route table carries a<br />service's prefix-list route from only one endpoint, so creating a second fails at deploy.<br /><br />Validation: Required when the set has no \`routeTableIds\`; mutually exclusive with them |
+| Property                                                                 | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| ------------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [external](#vpcEndpoints_additionalProperties_s3ImageLayers_external ) | No      | boolean | No         | -          | Mark S3 as already reachable, so no gateway endpoint is created for image layers. Set this for a VPC<br />with NAT, or one whose S3 gateway endpoint was provisioned elsewhere - a route table carries a<br />service's prefix-list route from only one endpoint, so creating a second fails at deploy.<br /><br />Validation: When a harness references the set, required unless the set has \`routeTableIds\`, and<br />mutually exclusive with them; otherwise not allowed |
 
-##### <a name="vpcEndpoints_additionalProperties_s3ImageLayers_external"></a>15.1.7.1. Property `root > vpcEndpoints > additionalProperties > s3ImageLayers > external`
+##### <a name="vpcEndpoints_additionalProperties_s3ImageLayers_external"></a>15.1.8.1. Property `root > vpcEndpoints > additionalProperties > s3ImageLayers > external`
 
 |              |           |
 | ------------ | --------- |
@@ -14952,9 +15191,10 @@ Validation: Optional; S3ImageLayerEndpointProps
 with NAT, or one whose S3 gateway endpoint was provisioned elsewhere - a route table carries a
 service's prefix-list route from only one endpoint, so creating a second fails at deploy.
 
-Validation: Required when the set has no `routeTableIds`; mutually exclusive with them
+Validation: When a harness references the set, required unless the set has `routeTableIds`, and
+mutually exclusive with them; otherwise not allowed
 
-#### <a name="vpcEndpoints_additionalProperties_sts"></a>15.1.8. Property `root > vpcEndpoints > additionalProperties > sts`
+#### <a name="vpcEndpoints_additionalProperties_sts"></a>15.1.9. Property `root > vpcEndpoints > additionalProperties > sts`
 
 |                           |                                                                         |
 | ------------------------- | ----------------------------------------------------------------------- |
@@ -14965,9 +15205,10 @@ Validation: Required when the set has no `routeTableIds`; mutually exclusive wit
 
 **Description:** AWS STS, for credential vending inside a session.
 
-Validation: Optional; VpcEndpointProps; omit to have it created
+Validation: Optional; VpcEndpointProps; only valid when a harness references the set; omit to have
+it created
 
-#### <a name="vpcEndpoints_additionalProperties_subnetIds"></a>15.1.9. Property `root > vpcEndpoints > additionalProperties > subnetIds`
+#### <a name="vpcEndpoints_additionalProperties_subnetIds"></a>15.1.10. Property `root > vpcEndpoints > additionalProperties > subnetIds`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -14996,14 +15237,14 @@ Validation: Required; String[]; at least one, at most one per availability zone
 | --------------------------------------------------------------------- | ----------- |
 | [subnetIds items](#vpcEndpoints_additionalProperties_subnetIds_items) | -           |
 
-##### <a name="vpcEndpoints_additionalProperties_subnetIds_items"></a>15.1.9.1. root > vpcEndpoints > additionalProperties > subnetIds > subnetIds items
+##### <a name="vpcEndpoints_additionalProperties_subnetIds_items"></a>15.1.10.1. root > vpcEndpoints > additionalProperties > subnetIds > subnetIds items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="vpcEndpoints_additionalProperties_vpcId"></a>15.1.10. Property `root > vpcEndpoints > additionalProperties > vpcId`
+#### <a name="vpcEndpoints_additionalProperties_vpcId"></a>15.1.11. Property `root > vpcEndpoints > additionalProperties > vpcId`
 
 |              |          |
 | ------------ | -------- |

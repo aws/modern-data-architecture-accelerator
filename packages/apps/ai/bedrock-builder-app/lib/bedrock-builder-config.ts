@@ -126,10 +126,11 @@ export interface BedrockBuilderConfigContents extends MdaaBaseConfigContents {
   /**
    * Bedrock AgentCore Gateway target definitions (MCP tool sources), keyed by target name.
    * Declared as a sibling of `gateways` (not nested) to keep the config flat; a gateway attaches a
-   * target by naming its key in the gateway's `targets` list. Each target must be referenced by
-   * exactly one gateway.
+   * target by naming its key in the gateway's `targets` list. Each target may be referenced by at most
+   * one gateway; a target no gateway references is not deployed. A `knowledgeBase` target generates a
+   * Lambda connector that exposes a knowledge base as a `Retrieve` tool.
    *
-   * Use cases: defining MCP tool sources (e.g. Lambda tools) once and referencing them from a gateway
+   * Use cases: defining MCP tool sources (Lambda tools, knowledge bases) once and referencing them from a gateway
    *
    * AWS: AWS::BedrockAgentCore::GatewayTarget
    *
@@ -150,21 +151,23 @@ export interface BedrockBuilderConfigContents extends MdaaBaseConfigContents {
    **/
   readonly harnesses?: NamedHarnessProps;
   /**
-   * VPC endpoint sets, keyed by set name, giving a harness's sessions a private outbound path
-   * (no NAT/internet). A harness references one by name from its `networkConfiguration.vpcEndpoints`;
-   * every harness referencing a set shares its endpoints.
+   * VPC endpoint sets, keyed by set name, giving harness sessions and knowledge base connectors a
+   * private outbound path (no NAT/internet). A harness references one by name from its
+   * `networkConfiguration.vpcEndpoints`, and a `knowledgeBase` gateway target from its
+   * `networkConfiguration.vpcEndpoints`; every consumer referencing a set shares its endpoints.
    *
-   * Which endpoints exist is derived from the referencing harnesses, so a set only states which VPC it
+   * Which endpoints exist is derived from the referencing consumers, so a set only states which VPC it
    * serves, where created endpoints go, and how each derived endpoint is reached - created here, an
    * existing one to wire to, or reached without an endpoint the set manages. Endpoint policies are
    * derived and not configurable.
    *
-   * Use cases: private (no-NAT) harness sessions, reusing centrally provisioned endpoints
+   * Use cases: private (no-NAT) harness sessions and knowledge base connectors, reusing centrally
+   * provisioned endpoints
    *
    * AWS: AWS::EC2::VPCEndpoint (Interface and Gateway)
    *
    * Validation: Optional; NamedVpcEndpointSetProps; each set must name a distinct VPC and be referenced
-   * by at least one harness
+   * by at least one harness or knowledge base connector
    **/
   readonly vpcEndpoints?: NamedVpcEndpointSetProps;
 }

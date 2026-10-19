@@ -3350,6 +3350,74 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
 
     testApp.checkCdkNagCompliance(testApp.testStack);
   });
+
+  describe('AgentCore Gateway Knowledge Base Connector Compliance', () => {
+    // Runs the rulesets over the connector resources a knowledgeBase gateway target generates - the
+    // connector Lambda, its log group, its dead letter queue, its execution role and its scoped policy -
+    // for an in-module (config:) knowledge base, one referenced by id, and a VPC-bound connector with
+    // the Bedrock Agent Runtime endpoint and the client security group the module creates. The
+    // policy-content assertions live in bedrock-builder-gateway-kb.test.ts.
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+
+    const constructProps: BedrockBuilderL3ConstructProps = {
+      dataAdminRoles: [dataAdminRoleRef],
+      roleHelper,
+      naming: testApp.naming,
+      vectorStores: { 'test-vector-store': { vpcId: 'test-vpc-id', subnetIds: ['test-subnet'] } },
+      knowledgeBases: {
+        'support-docs': {
+          role: kbRoleRef,
+          vectorStore: 'test-vector-store',
+          embeddingModel: 'amazon.titan-embed-text-v2:0',
+        },
+      },
+      gatewayTargets: {
+        'support-kb': {
+          targetConfiguration: {
+            knowledgeBase: { id: 'config:support-docs', description: 'Search customer support documentation.' },
+          },
+        },
+        'external-kb': {
+          targetConfiguration: {
+            knowledgeBase: { id: 'ABCDE12345', description: 'Search the shared runbooks.', numberOfResults: 5 },
+          },
+        },
+        'vpc-kb': {
+          targetConfiguration: {
+            knowledgeBase: {
+              id: 'config:support-docs',
+              description: 'Search customer support documentation from the VPC.',
+              networkConfiguration: { subnets: ['test-subnet'], vpcEndpoints: 'kb-private' },
+            },
+          },
+        },
+      },
+      gateways: {
+        'kb-gateway': {
+          authorizerConfiguration: {
+            customJwt: { discoveryUrl: 'https://example.com/.well-known/openid-configuration', allowedAudience: ['a'] },
+          },
+          targets: ['support-kb', 'external-kb', 'vpc-kb'],
+        },
+      },
+      vpcEndpoints: { 'kb-private': { vpcId: 'test-vpc-id', subnetIds: ['test-subnet'] } },
+    };
+
+    new BedrockBuilderL3Construct(testApp.testStack, 'test-construct', constructProps);
+
+    const template = Template.fromStack(testApp.testStack);
+    test('Connector Lambdas and their gateway targets are present', () => {
+      template.resourceCountIs('AWS::BedrockAgentCore::GatewayTarget', 3);
+      expect(
+        Object.keys(
+          template.findResources('AWS::Lambda::Function', { Properties: { Handler: 'kb_retrieve.lambda_handler' } }),
+        ),
+      ).toHaveLength(3);
+    });
+
+    testApp.checkCdkNagCompliance(testApp.testStack);
+  });
 });
 
 function generateTemplateFromTestInput(

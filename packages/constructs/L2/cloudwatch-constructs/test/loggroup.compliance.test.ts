@@ -28,6 +28,12 @@ describe('MDAA Construct Compliance Tests', () => {
   };
 
   new MdaaLogGroup(testApp.testStack, 'test-construct', testContstructProps);
+  new MdaaLogGroup(testApp.testStack, 'test-construct-verbatim', {
+    ...testContstructProps,
+    logGroupNamePathPrefix: '/aws/lambda',
+    logGroupName: 'test-org-test-env-test-domain-test-module-function',
+    verbatimLogGroupName: true,
+  });
   testApp.checkCdkNagCompliance(testApp.testStack);
   const template = Template.fromStack(testApp.testStack);
 
@@ -42,6 +48,20 @@ describe('MDAA Construct Compliance Tests', () => {
   test('LogGroupName', () => {
     template.hasResourceProperties('AWS::Logs::LogGroup', {
       LogGroupName: '/test/prefix/test-org-test-env-test-domain-test-module',
+    });
+  });
+
+  test('VerbatimLogGroupName', () => {
+    template.hasResourceProperties('AWS::Logs::LogGroup', {
+      LogGroupName: '/aws/lambda/test-org-test-env-test-domain-test-module-function',
+    });
+  });
+
+  test('VerbatimLogGroupRetained', () => {
+    template.hasResource('AWS::Logs::LogGroup', {
+      Properties: { LogGroupName: '/aws/lambda/test-org-test-env-test-domain-test-module-function' },
+      DeletionPolicy: 'Retain',
+      UpdateReplacePolicy: 'Retain',
     });
   });
 

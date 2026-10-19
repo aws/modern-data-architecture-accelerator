@@ -9,6 +9,10 @@
 - Added an opt-in `nameOverride` attribute to SMUS / DataZone projects (`projects.<key>` in `@aws-mdaa/sagemaker-project`; `sagemaker.project` / `datazone.project` in `@aws-mdaa/dataops-project`), used verbatim as the project name so the title can be a free-form label like `Customer 360 Analytics`. Optional and additive; other resources keep MDAA naming. See the [SageMaker Project](packages/apps/governance/sagemaker-project-app/SCHEMA.md#projects_additionalProperties_nameOverride) and [DataOps Project](packages/apps/dataops/dataops-project-app/SCHEMA.md#sagemaker_project_nameOverride) schema docs for accepted values.
 - Added opt-in `subscriptionAuthorizedRoleGroups` to `sagemaker` and `datazone` in `@aws-mdaa/dataops-project`, so the listed `projectExecutionRoles`, `dataEngineerRoles`, or `dataAdminRoles` can read the tables the project subscribes to. See [Subscribed Asset Access for Project Roles](packages/apps/dataops/dataops-project-app/README.md#subscribed-asset-access-for-project-roles).
 
+#### Bedrock Builder Module
+
+- Added a `knowledgeBase` gateway target type that exposes a knowledge base to gateway clients, such as harnesses, as a `Retrieve` tool through a generated Lambda connector. Optional `networkConfiguration` runs the connector in your VPC through a `vpcEndpoints` set, which gains a `bedrockAgentRuntime` endpoint. Additive only - existing configs are unchanged. See the [module README](packages/apps/ai/bedrock-builder-app/README.md#knowledge-bases-through-a-gateway).
+
 ### General Changes
 
 - Updated dependencies to address CVEs (`js-yaml`, `axios`, `smol-toml`, `nx`, `@xmldom/xmldom`, `browserslist`, `baseline-browser-mapping`, `markdown-it`, `linkify-it`, `brace-expansion`, `stream-json`, `@babel/core`)

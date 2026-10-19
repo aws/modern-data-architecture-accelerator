@@ -96,34 +96,38 @@ export interface S3ImageLayerEndpointProps {
    * with NAT, or one whose S3 gateway endpoint was provisioned elsewhere - a route table carries a
    * service's prefix-list route from only one endpoint, so creating a second fails at deploy.
    *
-   * Validation: Required when the set has no `routeTableIds`; mutually exclusive with them
+   * Validation: When a harness references the set, required unless the set has `routeTableIds`, and
+   * mutually exclusive with them; otherwise not allowed
    **/
   readonly external?: boolean;
 }
 
 /**
  * One VPC's endpoint set: which VPC it serves, where created endpoints go, and how each endpoint the
- * referencing consumers need is provided. A consumer references a set by name from its own
- * configuration, and the endpoints belong to the VPC rather than to any one consumer - AWS allows a
- * single Private DNS interface endpoint per service per VPC, so one set owns them and every consumer
- * referencing it shares them.
+ * referencing consumers need is provided. A consumer - an AgentCore Harness, or a `knowledgeBase`
+ * gateway target's connector - references a set by name from its own `networkConfiguration`, and the
+ * endpoints belong to the VPC rather than to any one consumer - AWS allows a single Private DNS
+ * interface endpoint per service per VPC, so one set owns them and every consumer referencing it shares
+ * them.
  *
  * Which endpoints exist is derived from the consumers, never added here: a set can only say how each
  * derived endpoint is reached. Omitting an endpoint property means it is created; see
  * {@link VpcEndpointProps} for the other two states.
  *
  * Endpoint policies are derived too, and are not configurable: the AgentCore Gateway endpoint is scoped
- * to gateway invocation and the S3 gateway endpoint to the ECR image-layer bucket, while the
+ * to gateway invocation, the Bedrock Agent Runtime endpoint to `bedrock:Retrieve` on the knowledge bases
+ * the set's connectors query, and the S3 gateway endpoint to the ECR image-layer bucket, while the
  * multi-action supporting services keep the AWS default - Private DNS makes an interface endpoint
  * VPC-wide, so restricting those would deny unrelated workloads in the same VPC. That default permits
  * every action on those services in any account, so a set is a private network path and not an
- * authorization boundary: what a session may reach through it stays governed by its execution role.
+ * authorization boundary: what a consumer may reach through it stays governed by its execution role.
  *
- * Use cases: private (no-NAT) AgentCore Harness sessions, reusing centrally provisioned endpoints,
- * keeping selected services on the VPC's existing egress path
+ * Use cases: private (no-NAT) AgentCore Harness sessions and knowledge base connectors, reusing
+ * centrally provisioned endpoints, keeping selected services on the VPC's existing egress path
  *
- * Validation: `vpcId` and `subnetIds` required; exactly one of `routeTableIds` and
- * `s3ImageLayers.external`; each set must name a distinct VPC and be referenced by at least one consumer
+ * Validation: `vpcId` and `subnetIds` required; when a harness references the set, exactly one of
+ * `routeTableIds` and `s3ImageLayers.external`, and neither otherwise; each set must name a distinct VPC
+ * and be referenced by at least one consumer
  */
 export interface VpcEndpointSetProps {
   /**
@@ -165,7 +169,8 @@ export interface VpcEndpointSetProps {
    *
    * AWS: RouteTableIds
    *
-   * Validation: Required unless `s3ImageLayers.external` is set, and mutually exclusive with it; String[]
+   * Validation: When a harness references the set, required unless `s3ImageLayers.external` is set, and
+   * mutually exclusive with it; otherwise not allowed, since only harnesses pull images; String[]
    *
    * @minItems 1
    **/
@@ -174,31 +179,36 @@ export interface VpcEndpointSetProps {
    * Amazon Bedrock runtime, for model inference over the Converse API. Every AgentCore Harness needs it;
    * without a path it reaches READY and every invoke hangs.
    *
-   * Validation: Optional; VpcEndpointProps; omit to have it created
+   * Validation: Optional; VpcEndpointProps; only valid when a harness references the set; omit to have
+   * it created
    **/
   readonly bedrockRuntime?: VpcEndpointProps;
   /**
    * Amazon ECR API, for the registry calls a session's container image pull makes.
    *
-   * Validation: Optional; VpcEndpointProps; omit to have it created
+   * Validation: Optional; VpcEndpointProps; only valid when a harness references the set; omit to have
+   * it created
    **/
   readonly ecrApi?: VpcEndpointProps;
   /**
    * Amazon ECR Docker Registry, for the registry protocol of the image pull.
    *
-   * Validation: Optional; VpcEndpointProps; omit to have it created
+   * Validation: Optional; VpcEndpointProps; only valid when a harness references the set; omit to have
+   * it created
    **/
   readonly ecrDocker?: VpcEndpointProps;
   /**
    * AWS STS, for credential vending inside a session.
    *
-   * Validation: Optional; VpcEndpointProps; omit to have it created
+   * Validation: Optional; VpcEndpointProps; only valid when a harness references the set; omit to have
+   * it created
    **/
   readonly sts?: VpcEndpointProps;
   /**
    * Amazon CloudWatch Logs, for log delivery from a session.
    *
-   * Validation: Optional; VpcEndpointProps; omit to have it created
+   * Validation: Optional; VpcEndpointProps; only valid when a harness references the set; omit to have
+   * it created
    **/
   readonly logs?: VpcEndpointProps;
   /**
@@ -211,10 +221,21 @@ export interface VpcEndpointSetProps {
    **/
   readonly agentCoreGateway?: VpcEndpointProps;
   /**
+   * Amazon Bedrock Agent Runtime, for the `Retrieve` calls of a `knowledgeBase` gateway target's
+   * connector - a distinct service from Bedrock runtime. Needed only when a connector references the set.
+   * A created endpoint's policy allows only `bedrock:Retrieve`, on the knowledge bases the set's
+   * connectors query; Private DNS makes it serve the whole VPC, so a VPC whose other workloads call this
+   * service should bring its own endpoint or mark it external instead.
+   *
+   * Validation: Optional; VpcEndpointProps; only valid when a knowledge base connector references the
+   * set; omit to have it created
+   **/
+  readonly bedrockAgentRuntime?: VpcEndpointProps;
+  /**
    * Amazon S3, reached through a **gateway** endpoint, for container image layers. Created from the set's
    * `routeTableIds`; set `external` here when S3 is already reachable.
    *
-   * Validation: Optional; S3ImageLayerEndpointProps
+   * Validation: Optional; S3ImageLayerEndpointProps; only valid when a harness references the set
    **/
   readonly s3ImageLayers?: S3ImageLayerEndpointProps;
 }
@@ -245,6 +266,30 @@ export interface EndpointPolicyEnvironment {
   readonly region: string;
 }
 
+/**
+ * What one consumer requires of an interface endpoint: the service, and - for an endpoint whose only
+ * legitimate traffic is known - the actions and resources its policy may be scoped to.
+ */
+export interface VpcEndpointSetInterfaceRequirement extends HarnessInterfaceEndpointRequirement {
+  /** Resources the endpoint policy may be scoped to; all resources when absent. */
+  readonly policyResources?: string[];
+}
+
+/** One workload that references a VPC endpoint set, and what it requires of the set. */
+export interface VpcEndpointSetConsumer {
+  /** The consumer as error messages name it, e.g. `Harness "support"`. */
+  readonly label: string;
+  /** Name of the set the consumer references. */
+  readonly setName: string;
+  /** Interface endpoints the consumer requires. */
+  readonly interfaces: VpcEndpointSetInterfaceRequirement[];
+  /** The image-layer gateway endpoint, required only by consumers that pull container images. */
+  readonly imageLayerGateway?: HarnessGatewayEndpointRequirement;
+}
+
+/** The endpoint service a knowledge base connector calls Retrieve through. */
+export const KNOWLEDGE_BASE_CONNECTOR_ENDPOINT_SERVICE = InterfaceVpcEndpointAwsService.BEDROCK_AGENT_RUNTIME;
+
 /** One set reconciled against the demand of the consumers referencing it. */
 export interface ReconciledVpcEndpointSet {
   /** Set name, used as the construct id and the endpoint security group name qualifier. */
@@ -266,7 +311,14 @@ export interface ReconciledVpcEndpointSet {
  * The set property each interface endpoint service is configured under - the module's whole endpoint
  * configuration vocabulary.
  */
-type InterfaceEndpointKey = 'bedrockRuntime' | 'ecrApi' | 'ecrDocker' | 'sts' | 'logs' | 'agentCoreGateway';
+type InterfaceEndpointKey =
+  | 'bedrockRuntime'
+  | 'ecrApi'
+  | 'ecrDocker'
+  | 'sts'
+  | 'logs'
+  | 'agentCoreGateway'
+  | 'bedrockAgentRuntime';
 
 /**
  * Maps each supported service to its set property, and is the only place a service is named. Keyed by
@@ -281,26 +333,85 @@ const ENDPOINT_PROPERTY_BY_SERVICE = new Map<InterfaceVpcEndpointAwsService, Int
   [InterfaceVpcEndpointAwsService.STS, 'sts'],
   [InterfaceVpcEndpointAwsService.CLOUDWATCH_LOGS, 'logs'],
   [InterfaceVpcEndpointAwsService.BEDROCK_AGENTCORE_GATEWAY, 'agentCoreGateway'],
+  [InterfaceVpcEndpointAwsService.BEDROCK_AGENT_RUNTIME, 'bedrockAgentRuntime'],
 ]);
+
+/** How to put an unused endpoint property to use, for the endpoints only some consumers require. */
+const UNUSED_ENDPOINT_HINTS: { [property in InterfaceEndpointKey]?: string } = {
+  agentCoreGateway: ', or add an agentCoreGateway tool to a harness referencing this set',
+  bedrockAgentRuntime:
+    ', or reference this set from the "networkConfiguration.vpcEndpoints" of a knowledgeBase gateway ' +
+    'target a gateway registers',
+};
+
+/** The actions a knowledge base connector calls through its endpoint. */
+const KNOWLEDGE_BASE_CONNECTOR_ENDPOINT_ACTIONS = ['bedrock:Retrieve'];
+
+/**
+ * The consumers the harnesses are, one per harness referencing a set, each requiring the endpoints it
+ * derives from its own configuration.
+ */
+export function harnessVpcEndpointConsumers(
+  harnesses: NamedHarnessConfigProps,
+  environment: EndpointPolicyEnvironment,
+): VpcEndpointSetConsumer[] {
+  return Object.entries(harnesses).flatMap(([harnessName, harnessConfig]) => {
+    const setName = harnessConfig.networkConfiguration.vpcEndpoints;
+    if (!setName) {
+      return [];
+    }
+    const required = requiredHarnessVpcEndpoints({ ...environment, tools: harnessConfig.tools });
+    return [
+      {
+        label: `Harness "${harnessName}"`,
+        setName,
+        interfaces: required.interfaces,
+        imageLayerGateway: required.imageLayerGateway,
+      },
+    ];
+  });
+}
+
+/**
+ * The consumer a knowledge base connector is: it requires only the Bedrock Agent Runtime endpoint, for
+ * Retrieve on the one knowledge base it queries.
+ */
+export function knowledgeBaseConnectorVpcEndpointConsumer(props: {
+  readonly targetName: string;
+  readonly setName: string;
+  readonly knowledgeBaseArn: string;
+}): VpcEndpointSetConsumer {
+  return {
+    label: `Gateway target "${props.targetName}" knowledgeBase`,
+    setName: props.setName,
+    interfaces: [
+      {
+        service: KNOWLEDGE_BASE_CONNECTOR_ENDPOINT_SERVICE,
+        policyActions: KNOWLEDGE_BASE_CONNECTOR_ENDPOINT_ACTIONS,
+        policyResources: [props.knowledgeBaseArn],
+      },
+    ],
+  };
+}
 
 /**
  * Reconciles every declared endpoint set against the endpoints the consumers referencing it need.
  *
- * Demand comes from the consumers: a harness declares the endpoints it requires from its own
- * configuration, so a set cannot introduce an endpoint nobody uses - it can only say how each required
- * one is reached. Supply comes from the set: created here, brought by security group, or external.
+ * Demand comes from the consumers: a harness or a knowledge base connector declares the endpoints it
+ * requires from its own configuration, so a set cannot introduce an endpoint nobody uses - it can only
+ * say how each required one is reached. Supply comes from the set: created here, brought by security
+ * group, or external.
  *
  * @returns one entry per set, in declaration order
  * @throws Error on any configuration that would deploy a broken or unused endpoint
  */
 export function reconcileVpcEndpointSets(
   sets: NamedVpcEndpointSetProps,
-  harnesses: NamedHarnessConfigProps,
-  environment: EndpointPolicyEnvironment,
+  consumers: VpcEndpointSetConsumer[],
 ): ReconciledVpcEndpointSet[] {
   validateSetNames(sets);
   validateDistinctVpcs(sets);
-  const demandBySet = collectDemand(sets, harnesses, environment);
+  const demandBySet = collectDemand(sets, consumers);
   return Object.entries(sets).map(([setName, setProps]) => {
     const demand = demandBySet.get(setName);
     // collectDemand rejects a set no consumer references, so every set has demand by the time we get
@@ -329,20 +440,46 @@ export function vpcEndpointAccessForHarness(
   if (!setName) {
     return undefined;
   }
+  const required = requiredHarnessVpcEndpoints({ ...environment, tools: harnessConfig.tools });
+  return narrowedVpcEndpointAccess(
+    setName,
+    required.interfaces.map(requirement => requirement.service),
+    resolvedBySet,
+  );
+}
+
+/**
+ * The endpoint a knowledge base connector reaches from its set: the Bedrock Agent Runtime endpoint's
+ * security group when the set creates or brings it, and none when the set marks it external.
+ */
+export function vpcEndpointAccessForKnowledgeBaseConnector(
+  setName: string,
+  resolvedBySet: Map<string, ResolvedVpcEndpointAccess>,
+): ResolvedVpcEndpointAccess {
+  return narrowedVpcEndpointAccess(setName, [KNOWLEDGE_BASE_CONNECTOR_ENDPOINT_SERVICE], resolvedBySet);
+}
+
+/**
+ * A set's resolved endpoints, narrowed to the services one consumer requires, minus any the set marks
+ * external.
+ */
+function narrowedVpcEndpointAccess(
+  setName: string,
+  services: InterfaceVpcEndpointAwsService[],
+  resolvedBySet: Map<string, ResolvedVpcEndpointAccess>,
+): ResolvedVpcEndpointAccess {
   const resolved = resolvedBySet.get(setName);
   // collectDemand rejects a reference to an undeclared set, and every declared set is reconciled, so a
   // referenced set is always resolved here. Asserted rather than returned as "no endpoints": that would
-  // surface as the Harness construct's "configure this through the module" error, pointing at the caller
-  // instead of at the inconsistency.
+  // surface as a consumer-side error pointing at the caller instead of at the inconsistency.
   if (!resolved) {
     throw new Error(`No resolved endpoints for VPC endpoint set "${setName}".`);
   }
-  const required = requiredHarnessVpcEndpoints({ ...environment, tools: harnessConfig.tools });
   return {
     vpcId: resolved.vpcId,
     securityGroupIds: Object.fromEntries(
-      required.interfaces
-        .map(requirement => requirement.service.shortName)
+      services
+        .map(service => service.shortName)
         .filter(shortName => resolved.securityGroupIds[shortName])
         .map(shortName => [shortName, resolved.securityGroupIds[shortName]]),
     ),
@@ -352,9 +489,9 @@ export function vpcEndpointAccessForHarness(
 /** The demand one set's consumers place on it, deduplicated across them. */
 interface SetDemand {
   /** Interface endpoints required, by service, with the policy each should be scoped with. */
-  readonly interfaces: Map<InterfaceVpcEndpointAwsService, HarnessInterfaceEndpointRequirement>;
-  /** The image-layer gateway endpoint required by every consumer. */
-  readonly imageLayerGateway: HarnessGatewayEndpointRequirement;
+  readonly interfaces: Map<InterfaceVpcEndpointAwsService, VpcEndpointSetInterfaceRequirement>;
+  /** The image-layer gateway endpoint, required when a harness references the set. */
+  readonly imageLayerGateway?: HarnessGatewayEndpointRequirement;
 }
 
 /**
@@ -365,46 +502,70 @@ interface SetDemand {
  * reaching them, which costs money hourly, and the likeliest cause is a consumer that meant to
  * reference it and does not - so the workload that was supposed to be private silently is not.
  */
-function collectDemand(
-  sets: NamedVpcEndpointSetProps,
-  harnesses: NamedHarnessConfigProps,
-  environment: EndpointPolicyEnvironment,
-): Map<string, SetDemand> {
+function collectDemand(sets: NamedVpcEndpointSetProps, consumers: VpcEndpointSetConsumer[]): Map<string, SetDemand> {
   const demand = new Map<string, SetDemand>();
-  Object.entries(harnesses).forEach(([harnessName, harnessConfig]) => {
-    const setName = harnessConfig.networkConfiguration.vpcEndpoints;
-    if (!setName) {
-      return;
-    }
+  consumers.forEach(consumer => {
+    const { setName } = consumer;
     if (!(setName in sets)) {
       const declared = Object.keys(sets);
       throw new Error(
-        `Harness "${harnessName}" references VPC endpoint set "${setName}", which is not defined in ` +
+        `${consumer.label} references VPC endpoint set "${setName}", which is not defined in ` +
           `vpcEndpoints. Define it under vpcEndpoints, or correct the reference.` +
           (declared.length > 0 ? ` Defined sets: ${declared.join(', ')}.` : ''),
       );
     }
-    const required = requiredHarnessVpcEndpoints({ ...environment, tools: harnessConfig.tools });
     const existing = demand.get(setName);
-    const interfaces = existing?.interfaces ?? new Map();
-    required.interfaces.forEach(requirement => interfaces.set(requirement.service, requirement));
-    demand.set(setName, { interfaces, imageLayerGateway: required.imageLayerGateway });
+    const interfaces = new Map<InterfaceVpcEndpointAwsService, VpcEndpointSetInterfaceRequirement>(
+      existing?.interfaces,
+    );
+    consumer.interfaces.forEach(requirement =>
+      interfaces.set(requirement.service, mergeRequirements(interfaces.get(requirement.service), requirement)),
+    );
+    demand.set(setName, {
+      interfaces,
+      imageLayerGateway: existing?.imageLayerGateway ?? consumer.imageLayerGateway,
+    });
   });
   Object.keys(sets).forEach(setName => {
     if (!demand.has(setName)) {
       throw new Error(
-        `VPC endpoint set "${setName}" is referenced by no harness, so its endpoints would be created ` +
-          `with nothing using them. Reference it from a harness's "networkConfiguration.vpcEndpoints", ` +
-          `or remove the set.`,
+        `VPC endpoint set "${setName}" is referenced by no harness or knowledge base connector, so its ` +
+          `endpoints would be created with nothing using them. Reference it from a harness's ` +
+          `"networkConfiguration.vpcEndpoints", or from the "networkConfiguration.vpcEndpoints" of a ` +
+          `knowledgeBase gateway target a gateway registers, or remove the set.`,
       );
     }
   });
   return demand;
 }
 
+/**
+ * Merges two consumers' requirements of one endpoint, so its policy covers both: the union of their
+ * policy resources, or all resources if either is unscoped. Every consumer of a service scopes it to the
+ * same actions.
+ */
+function mergeRequirements(
+  existing: VpcEndpointSetInterfaceRequirement | undefined,
+  requirement: VpcEndpointSetInterfaceRequirement,
+): VpcEndpointSetInterfaceRequirement {
+  if (!existing) {
+    return requirement;
+  }
+  if (!existing.policyResources) {
+    return existing;
+  }
+  if (!requirement.policyResources) {
+    return requirement;
+  }
+  return {
+    ...existing,
+    policyResources: [...new Set([...existing.policyResources, ...requirement.policyResources])],
+  };
+}
+
 /** Turns one set plus its consumers' demand into the endpoints to create and the ones to wire. */
 function reconcileSet(setName: string, setProps: VpcEndpointSetProps, demand: SetDemand): ReconciledVpcEndpointSet {
-  validateSet(setName, setProps, demand.interfaces);
+  validateSet(setName, setProps, demand);
   const interfaces: InterfaceVpcEndpointProperty[] = [];
   const broughtSecurityGroupIds: { [serviceShortName: string]: string } = {};
   demand.interfaces.forEach((requirement, service) => {
@@ -422,21 +583,24 @@ function reconcileSet(setName: string, setProps: VpcEndpointSetProps, demand: Se
       // security group name, and the key each consumer's wiring looks it up by.
       name: service.shortName,
       subnetIds: endpoint?.subnetIds ?? setProps.subnetIds,
-      policy: requirement.policyActions ? scopedPolicy(requirement.policyActions) : undefined,
+      policy: requirement.policyActions
+        ? scopedPolicy(requirement.policyActions, requirement.policyResources)
+        : undefined,
     });
   });
-  // Empty when image layers are external, which validateImageLayerAccess has already paired with the
-  // absence of route tables.
+  // Empty when image layers are external or no harness needs them, which validateImageLayerAccess and
+  // rejectImageLayerConfig have already paired with the absence of route tables.
   const routeTableIds = setProps.routeTableIds ?? [];
+  const imageLayerGateway = demand.imageLayerGateway;
   const gateways: GatewayVpcEndpointProperty[] =
-    routeTableIds.length > 0
+    imageLayerGateway && routeTableIds.length > 0
       ? [
           {
-            service: demand.imageLayerGateway.service,
-            name: demand.imageLayerGateway.name,
+            service: imageLayerGateway.service,
+            name: imageLayerGateway.name,
             routeTableIds,
             policy: {
-              statements: demand.imageLayerGateway.policyStatements.map(statement => ({
+              statements: imageLayerGateway.policyStatements.map(statement => ({
                 ...statement,
                 effect: VpcEndpointPolicyEffect.ALLOW,
                 // A gateway endpoint has no security group, so its policy is the only control on it. The
@@ -460,15 +624,18 @@ function endpointProps(
   const property = ENDPOINT_PROPERTY_BY_SERVICE.get(service);
   if (!property) {
     throw new Error(
-      `A harness requires the "${service.shortName}" VPC endpoint, which this module has no configuration ` +
+      `A consumer requires the "${service.shortName}" VPC endpoint, which this module has no configuration ` +
         `property for. This is an MDAA defect: add it to the VPC endpoint set surface.`,
     );
   }
   return setProps[property];
 }
 
-/** An action-scoped endpoint policy, for an endpoint whose only legitimate traffic is known. */
-function scopedPolicy(actions: string[]): VpcEndpointPolicyProperty {
+/**
+ * An action-scoped endpoint policy, for an endpoint whose only legitimate traffic is known, scoped to
+ * the given resources or, when none are given, to all.
+ */
+function scopedPolicy(actions: string[], resources: string[] = ['*']): VpcEndpointPolicyProperty {
   return {
     statements: [
       {
@@ -476,10 +643,10 @@ function scopedPolicy(actions: string[]): VpcEndpointPolicyProperty {
         effect: VpcEndpointPolicyEffect.ALLOW,
         actions,
         // Reachability is already restricted at the endpoint security group (inbound 443 from the client
-        // groups of the consumers that need it) and the actions are scoped above; a session's
+        // groups of the consumers that need it) and the actions are scoped above; a consumer's
         // execution-role identity is not matchable at the endpoint, so the principal cannot be narrowed.
         principals: ['*'],
-        resources: ['*'],
+        resources,
       },
     ],
   };
@@ -530,11 +697,7 @@ function validateDistinctVpcs(sets: NamedVpcEndpointSetProps): void {
 }
 
 /** Fail-fast validation of one set against the demand of the consumers referencing it. */
-function validateSet(
-  setName: string,
-  setProps: VpcEndpointSetProps,
-  required: Map<InterfaceVpcEndpointAwsService, HarnessInterfaceEndpointRequirement>,
-): void {
+function validateSet(setName: string, setProps: VpcEndpointSetProps, demand: SetDemand): void {
   if (!setProps.vpcId) {
     throw new Error(`VPC endpoint set "${setName}" requires "vpcId".`);
   }
@@ -544,9 +707,13 @@ function validateSet(
         `creates are placed - at most one subnet per availability zone.`,
     );
   }
-  validateImageLayerAccess(setName, setProps);
+  if (demand.imageLayerGateway) {
+    validateImageLayerAccess(setName, setProps);
+  } else {
+    rejectImageLayerConfig(setName, setProps);
+  }
   validateEndpointStates(setName, setProps);
-  validateNoUnusedEndpoints(setName, setProps, required);
+  validateNoUnusedEndpoints(setName, setProps, demand.interfaces);
 }
 
 /**
@@ -572,6 +739,20 @@ function validateImageLayerAccess(setName: string, setProps: VpcEndpointSetProps
         `from the ECR layer bucket over S3, which the ECR endpoints cannot fetch. Set "routeTableIds" to ` +
         `create an S3 gateway endpoint on those route tables, or "s3ImageLayers: { external: true }" if S3 ` +
         `is already reachable over NAT or an endpoint provisioned elsewhere.`,
+    );
+  }
+}
+
+/**
+ * Rejects image-layer configuration on a set no harness references. Only harnesses pull container
+ * images, so there "routeTableIds" or "s3ImageLayers" would configure nothing.
+ */
+function rejectImageLayerConfig(setName: string, setProps: VpcEndpointSetProps): void {
+  if (setProps.routeTableIds?.length || setProps.s3ImageLayers) {
+    throw new Error(
+      `VPC endpoint set "${setName}" configures container image-layer access ("routeTableIds" or ` +
+        `"s3ImageLayers"), but no harness references it, and only harnesses pull container images. ` +
+        `Remove it.`,
     );
   }
 }
@@ -619,19 +800,18 @@ function validateEndpointStates(setName: string, setProps: VpcEndpointSetProps):
 function validateNoUnusedEndpoints(
   setName: string,
   setProps: VpcEndpointSetProps,
-  required: Map<InterfaceVpcEndpointAwsService, HarnessInterfaceEndpointRequirement>,
+  required: Map<InterfaceVpcEndpointAwsService, VpcEndpointSetInterfaceRequirement>,
 ): void {
   ENDPOINT_PROPERTY_BY_SERVICE.forEach((property, service) => {
     if (setProps[property] && !required.has(service)) {
       throw new Error(
-        `VPC endpoint set "${setName}" configures "${property}", but no harness referencing it requires ` +
+        `VPC endpoint set "${setName}" configures "${property}", but nothing referencing it requires ` +
           `the "${service.shortName}" endpoint, so it would serve nothing. Remove it${
-            property === 'agentCoreGateway' ? ', or add an agentCoreGateway tool to a harness referencing this set' : ''
+            UNUSED_ENDPOINT_HINTS[property] ?? ''
           }.`,
       );
     }
   });
-  // s3ImageLayers needs no unused check of its own: every Harness requires the image-layer gateway
-  // unconditionally, and collectDemand rejects a set with no consumers, so it is never configured for a
-  // set that does not need it.
+  // s3ImageLayers has its unused check in rejectImageLayerConfig: every harness requires the
+  // image-layer gateway and nothing else does, so it is unused exactly when no harness references the set.
 }

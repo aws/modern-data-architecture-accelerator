@@ -348,7 +348,7 @@ export interface GatewayTargetConfigurationProperty {
    *
    * AWS: TargetConfiguration.Mcp.Lambda
    *
-   * Validation: exactly one target type; `lambda` is currently the only supported type
+   * Validation: Optional; must be the only target type set
    **/
   readonly lambda?: GatewayTargetLambdaProperty;
   /**

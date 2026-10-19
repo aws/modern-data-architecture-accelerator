@@ -1,0 +1,167 @@
+# Bedrock Builder configuration exposing knowledge bases to an AgentCore Harness through an AgentCore
+# Gateway. Each `knowledgeBase` gateway target generates a Lambda connector that calls Retrieve on one
+# knowledge base, registered as a Lambda target exposing a single `Retrieve` tool. The model sees each
+# tool as `<target name>___Retrieve`, where the prefix is the deployed (MDAA-named) target name.
+#
+# This config shows the three ways to reference a knowledge base: `config:<name>` for one built by this
+# module, an `ssm:` reference for one built by another module, and the id of an existing one, all in the
+# same account and region.
+
+# See CONFIGURATION.md for role reference options (name, arn, id).
+# Admin roles granted key-admin rights on the module's KMS key.
+dataAdminRoles:
+  - name: 'Admin'
+
+# (Optional) Vector store backing the knowledge base below.
+vectorStores:
+  support-vector-store:
+    # (Optional) Aurora Serverless PostgreSQL with pgvector
+    # (enum: AURORA_SERVERLESS, OPENSEARCH_SERVERLESS)
+    vectorStoreType: 'AURORA_SERVERLESS'
+    # VPC the vector store is deployed into.
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/vpc/id
+    vpcId: test-vpc-id
+    # Subnets the vector store is deployed into.
+    # Often created by your VPC/networking stack.
+    subnetIds:
+      - 'test-subnet-id1'
+      - 'test-subnet-id2'
+
+# (Optional) Knowledge base built by this module, referenced by the support-kb target below.
+knowledgeBases:
+  kb-test-customer-support:
+    # Embedding model used to vectorize ingested documents.
+    embeddingModel: 'amazon.titan-embed-text-v2:0'
+    # Vector store (from vectorStores above) holding the embeddings.
+    vectorStore: support-vector-store
+    # Execution role the knowledge base and its sync Lambdas run as. The connector gets its own role.
+    role:
+      id: generated-role-id:kb-execution-role
+    # (Optional) S3 data sources, keyed by data source name.
+    s3DataSources:
+      support-docs:
+        # Bucket holding the source documents.
+        # Often created by your data lake module.
+        bucketName: 'customer-docs-bucket'
+        # (Optional) Key prefix scoping ingestion within the bucket.
+        prefix: 'support-documents/'
+
+# (Optional) Gateway targets, keyed by target name.
+gatewayTargets:
+  support-kb:
+    # (Optional) Target description (1-200 chars). The tool description the model sees is
+    # knowledgeBase.description below.
+    description: 'Customer support knowledge base'
+    targetConfiguration:
+      # (Optional) Knowledge base tool source: generates a Lambda connector serving one Retrieve tool.
+      knowledgeBase:
+        # Knowledge base from the knowledgeBases map above.
+        id: 'config:kb-test-customer-support'
+        # Tool description the model sees: what the knowledge base holds and when to search it.
+        description: 'Search customer support and product documentation.'
+        # (Optional) Results per query, 1-100. Omit for the service default.
+        numberOfResults: 5
+        # (Optional) Search type. Omit to let the knowledge base choose. (enum: HYBRID, SEMANTIC)
+        overrideSearchType: HYBRID
+  runbooks-kb:
+    targetConfiguration:
+      # (Optional) Knowledge base tool source.
+      knowledgeBase:
+        # Knowledge base built by another module, by the id it publishes to SSM.
+        # Often created by another bedrock-builder module.
+        id: 'ssm:/{{org}}/{{domain}}/shared-kb/knowledgebase/kb-runbooks/id'
+        # Tool description the model sees.
+        description: 'Search operational runbooks for troubleshooting steps.'
+        # (Optional) Search type. (enum: HYBRID, SEMANTIC)
+        overrideSearchType: SEMANTIC
+        # (Optional) Runs this target's connector in your subnets, reaching Retrieve through the
+        # vpcEndpoints set below. Omit to run it outside your VPC.
+        networkConfiguration:
+          # Often created by your VPC/networking stack.
+          subnets:
+            - 'test-subnet-id1'
+            - 'test-subnet-id2'
+          # Set from vpcEndpoints below. The module creates the connector's security group.
+          vpcEndpoints: 'kb-private'
+  policies-kb:
+    targetConfiguration:
+      # (Optional) Knowledge base tool source.
+      knowledgeBase:
+        # Id of an existing knowledge base (10 alphanumeric characters).
+        id: 'KBPOLICY01'
+        # Tool description the model sees.
+        description: 'Search internal policies and compliance guidelines.'
+        # (Optional) Runs this target's connector in your subnets. Omit to run it outside your VPC.
+        networkConfiguration:
+          # Often created by your VPC/networking stack.
+          subnets:
+            - 'test-subnet-id3'
+          # Set from vpcEndpoints below, which leaves Retrieve to your network.
+          vpcEndpoints: 'kb-network-managed'
+          # (Optional) Required because that set marks bedrockAgentRuntime external: a security group
+          # allowing HTTPS to wherever Retrieve is reached.
+          # Often created by your VPC/networking stack.
+          securityGroupId: 'sg-0123456789abcdef1'
+
+# (Optional) VPC endpoint sets, keyed by set name, one per VPC. kb-private gives the runbooks-kb
+# connector a private path to Retrieve; kb-network-managed leaves the policies-kb connector's path to
+# your network.
+vpcEndpoints:
+  kb-private:
+    # VPC the endpoints are created in, and the connectors referencing this set run in.
+    # Often created by your VPC/networking stack.
+    vpcId: test-vpc-id
+    # Subnets for the endpoint network interfaces, at most one per availability zone.
+    subnetIds:
+      - 'test-subnet-id1'
+      - 'test-subnet-id2'
+    # bedrockAgentRuntime is omitted, so its endpoint is created. Set it to wire to an existing endpoint
+    # (securityGroupId), or to leave Retrieve to your network (external: true).
+  kb-network-managed:
+    # Often created by your VPC/networking stack.
+    vpcId: test-vpc-id-2
+    # Subnets for any endpoint the set creates; it creates none here.
+    # Often created by your VPC/networking stack.
+    subnetIds:
+      - 'test-subnet-id3'
+    # (Optional) How the Bedrock Agent Runtime endpoint is reached.
+    bedrockAgentRuntime:
+      # (Optional) Retrieve is reached over NAT or an endpoint your network team manages, so nothing is
+      # created or wired here.
+      external: true
+
+# (Optional) Gateway fronting the knowledge base targets. Omitting authorizerConfiguration uses AWS IAM
+# (SigV4) inbound auth.
+gateways:
+  kb-gateway:
+    # (Optional) Gateway description (1-200 chars).
+    description: 'Knowledge base tools for the support harness'
+    # (Optional) Targets registered against this gateway, by name from gatewayTargets above.
+    targets:
+      - support-kb
+      - runbooks-kb
+      - policies-kb
+
+# (Optional) Harness that answers from the knowledge bases through the gateway.
+harnesses:
+  support-harness:
+    # Foundation model identifier for the agent loop.
+    modelId: 'anthropic.claude-3-sonnet-20240229-v1:0'
+    # System prompt defining the agent's behavior.
+    systemPrompt: 'You are a customer support assistant. Search the knowledge bases before answering.'
+    # (Optional) Tools, keyed by tool name. This one reaches every tool on the gateway above.
+    tools:
+      kb_tools:
+        agentCoreGateway:
+          gatewayArn: 'config:kb-gateway'
+    # (Optional) Tool allowlist. `@kb_tools` allows every tool the kb_tools gateway exposes.
+    allowedTools:
+      - '@kb_tools'
+    # Security groups and subnets running the harness's runtime sessions.
+    # Often created by your VPC/networking stack.
+    networkConfiguration:
+      securityGroups:
+        - 'sg-0123456789abcdef0'
+      subnets:
+        - 'subnet-0123456789abcdef0'

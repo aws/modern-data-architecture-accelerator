@@ -54,6 +54,28 @@ describe('Bedrock Builder Baseline Diff Tests', () => {
   );
 
   baselineDiffTestApp(
+    'Bedrock Builder Knowledge Base Only',
+    Create.appProvider(
+      context => {
+        const moduleApp = new BedrockBuilderApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-kb-only.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-bedrock-builder-kb-only',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
+
+  baselineDiffTestApp(
     'Bedrock Builder Gateway',
     Create.appProvider(
       context => {
@@ -112,6 +134,28 @@ describe('Bedrock Builder Baseline Diff Tests', () => {
       },
       {
         module_name: 'test-bedrock-builder-gateway-logdelivery',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
+
+  baselineDiffTestApp(
+    'Bedrock Builder Gateway Knowledge Base',
+    Create.appProvider(
+      context => {
+        const moduleApp = new BedrockBuilderApp({
+          context: {
+            ...context,
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-gateway-kb.yaml'),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-bedrock-builder-gateway-kb',
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',

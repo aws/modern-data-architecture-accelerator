@@ -67,6 +67,26 @@ describe('updateProps', () => {
     expect(result.logGroupName).toBe('/my/logs/app-logs-mocked');
   });
 
+  test('appends the given name unchanged when verbatimLogGroupName is set', () => {
+    const props = {
+      ...baseProps,
+      logGroupName: 'test-org-test-env-test-domain-test-module-app-logs',
+      verbatimLogGroupName: true,
+    } as MdaaLogGroupProps;
+    const result = updateProps(props);
+    expect(result.logGroupName).toBe('/my/logs/test-org-test-env-test-domain-test-module-app-logs');
+    expect(result.removalPolicy).toBe(RemovalPolicy.RETAIN);
+  });
+
+  test('throws when verbatimLogGroupName is set without a logGroupName', () => {
+    const props = {
+      ...baseProps,
+      logGroupName: undefined,
+      verbatimLogGroupName: true,
+    } as MdaaLogGroupProps;
+    expect(() => updateProps(props)).toThrow(/"verbatimLogGroupName" requires "logGroupName"/);
+  });
+
   test('uses default log group name if not provided', () => {
     const props = {
       ...baseProps,

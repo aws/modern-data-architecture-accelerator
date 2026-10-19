@@ -4,9 +4,17 @@
  */
 
 import { DEFAULT_GATEWAY_ACTIONS } from '@aws-mdaa/agentcore-shared';
+import { MdaaTestApp } from '@aws-mdaa/testing';
+import { Stack } from 'aws-cdk-lib';
+import { Template } from 'aws-cdk-lib/assertions';
 import { GatewayVpcEndpointAwsService, InterfaceVpcEndpointAwsService } from 'aws-cdk-lib/aws-ec2';
 import { NamedHarnessToolProps } from '../lib';
-import { requiredHarnessVpcEndpoints } from '../lib/vpc-endpoint-access';
+import {
+  HarnessVpcEndpointAccess,
+  requiredHarnessVpcEndpoints,
+  ResolvedVpcEndpointAccess,
+  VpcEndpointClientAccess,
+} from '../lib/vpc-endpoint-access';
 
 // The orchestrating module matches requirements to its own configuration on service identity, so these
 // tests assert the service objects themselves rather than their rendered names.
@@ -129,3 +137,94 @@ describe('requiredHarnessVpcEndpoints', () => {
     });
   });
 });
+
+describe('VpcEndpointClientAccess', () => {
+  const ACCESS: ResolvedVpcEndpointAccess = {
+    vpcId: 'vpc-0123456789abcdef0',
+    securityGroupIds: { 'bedrock-runtime': 'sg-0aaaaaaaaaaaaaaa0', sts: 'sg-0bbbbbbbbbbbbbbb0' },
+  };
+
+  function consumerAccess(testApp: MdaaTestApp): VpcEndpointClientAccess {
+    return new VpcEndpointClientAccess(testApp.testStack, 'access', {
+      securityGroupName: 'my-consumer-client',
+      securityGroupDescription: 'Endpoint client access for my consumer',
+      clientLabel: 'my consumer',
+      access: ACCESS,
+      naming: testApp.naming,
+    });
+  }
+
+  function synth(build: (testApp: MdaaTestApp) => VpcEndpointClientAccess): {
+    t: Template;
+    access: VpcEndpointClientAccess;
+  } {
+    const testApp = new MdaaTestApp();
+    const access = build(testApp);
+    return { t: Template.fromStack(testApp.testStack), access };
+  }
+
+  test('creates a client security group named for the consumer, allowing no other outbound traffic', () => {
+    const { t } = synth(consumerAccess);
+
+    t.resourceCountIs('AWS::EC2::SecurityGroup', 1);
+    t.hasResourceProperties('AWS::EC2::SecurityGroup', {
+      GroupName: 'test-org-test-env-test-domain-test-module-my-consumer-client',
+      GroupDescription: 'Endpoint client access for my consumer',
+      VpcId: ACCESS.vpcId,
+      SecurityGroupEgress: [{ CidrIp: '255.255.255.255/32', Description: 'Disallow all traffic' }],
+    });
+  });
+
+  test('pairs HTTPS egress and endpoint ingress per service, naming the client in the ingress rule', () => {
+    const { t, access } = synth(consumerAccess);
+    const clientGroupId = clientGroupRef(t);
+
+    t.resourceCountIs('AWS::EC2::SecurityGroupEgress', 2);
+    t.resourceCountIs('AWS::EC2::SecurityGroupIngress', 2);
+    Object.entries(ACCESS.securityGroupIds).forEach(([service, endpointGroupId]) => {
+      t.hasResourceProperties('AWS::EC2::SecurityGroupEgress', {
+        GroupId: clientGroupId,
+        DestinationSecurityGroupId: endpointGroupId,
+        IpProtocol: 'tcp',
+        FromPort: 443,
+        ToPort: 443,
+        Description: `HTTPS to the ${service} VPC endpoint`,
+      });
+      t.hasResourceProperties('AWS::EC2::SecurityGroupIngress', {
+        GroupId: endpointGroupId,
+        SourceSecurityGroupId: clientGroupId,
+        IpProtocol: 'tcp',
+        FromPort: 443,
+        ToPort: 443,
+        Description: `HTTPS from my consumer endpoint client to ${service}`,
+      });
+    });
+    // The id the consumer attaches is the client group's.
+    expect(Stack.of(access).resolve(access.securityGroupId)).toEqual(clientGroupId);
+  });
+
+  test('keeps the Harness group name, description and rule wording', () => {
+    const { t } = synth(
+      testApp =>
+        new HarnessVpcEndpointAccess(testApp.testStack, 'access', {
+          harnessName: 'support',
+          access: ACCESS,
+          naming: testApp.naming,
+        }),
+    );
+
+    t.hasResourceProperties('AWS::EC2::SecurityGroup', {
+      GroupName: 'test-org-test-env-test-domain-test-module-agentcore-harness-vpce-client-support',
+      GroupDescription: 'Private endpoint client access for Harness support',
+    });
+    t.hasResourceProperties('AWS::EC2::SecurityGroupIngress', {
+      Description: 'HTTPS from Harness endpoint client to sts',
+    });
+  });
+});
+
+/** The GetAtt reference to the single security group's id. */
+function clientGroupRef(t: Template): { 'Fn::GetAtt': string[] } {
+  const [logicalId] = Object.keys(t.findResources('AWS::EC2::SecurityGroup'));
+  return { 'Fn::GetAtt': [logicalId, 'GroupId'] };
+}

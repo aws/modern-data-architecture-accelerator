@@ -5,7 +5,9 @@ Opinionated implementation of the Layer 2 CDK Construct for CloudWatch.
 ## Security/Compliance
 
 ### CloudWatch LogGroups
-* Enforce LogGroup Name
+* Enforce LogGroup Name. `verbatimLogGroupName` keeps the supplied name under the path prefix
+  unchanged, for groups whose name is owned by the service writing to them (such as a Lambda
+  function's `/aws/lambda/<function name>`).
 * Enforces KMS CMK Encryption of LogGroup
 * Enforces specification of LogGroup Retention
 * Enforces LogGroup retention on stack deletion

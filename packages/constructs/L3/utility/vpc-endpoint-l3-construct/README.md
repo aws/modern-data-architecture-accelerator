@@ -2,7 +2,7 @@
 
 The VPC Endpoint CDK L3 construct deploys the interface and gateway VPC endpoints of **one VPC**, each with its own security group and endpoint policy, and exposes each interface endpoint's security group id so the orchestrating module can wire its own workloads to them.
 
-It is a nested primitive, not a module of its own: an orchestrating module reconciles what its workloads need against what its own configuration declares, instantiates one of these per VPC, and grants each workload access to the endpoints it uses. See the [Bedrock Builder module](../../../../apps/ai/bedrock-builder-app/README.md#harness-vpc-endpoints) for how its AgentCore Harness endpoint sets are declared and reconciled.
+It is a nested primitive, not a module of its own: an orchestrating module reconciles what its workloads need against what its own configuration declares, instantiates one of these per VPC, and grants each workload access to the endpoints it uses. See the [Bedrock Builder module](../../../../apps/ai/bedrock-builder-app/README.md#vpc-endpoint-sets) for how its endpoint sets are declared and reconciled.
 
 ---
 

@@ -203,31 +203,33 @@ export interface ResolvedVpcEndpointAccess {
   readonly securityGroupIds: { [serviceShortName: string]: string };
 }
 
-/** Properties for {@link HarnessVpcEndpointAccess}. */
-export interface HarnessVpcEndpointAccessProps {
-  /** Harness name, used to create a client security group unique to this Harness. */
-  readonly harnessName: string;
-  /** The endpoints this Harness reaches, resolved by the orchestrating module. */
+/** Properties for {@link VpcEndpointClientAccess}. */
+export interface VpcEndpointClientAccessProps {
+  /** Name of the consumer's client security group, before MDAA naming. Unique per consumer. */
+  readonly securityGroupName: string;
+  /** Description of the consumer's client security group. */
+  readonly securityGroupDescription: string;
+  /** What the consumer is, as the endpoint ingress rule descriptions name it (e.g. `Harness`). */
+  readonly clientLabel: string;
+  /** The endpoints this consumer reaches, resolved by the orchestrating module. */
   readonly access: ResolvedVpcEndpointAccess;
   /** MDAA naming implementation for the client security group. */
   readonly naming: IMdaaResourceNaming;
 }
 
 /**
- * Creates the consumer-owned connectivity wiring between a Harness and the VPC endpoints of the set it
- * references.
+ * Creates the consumer-owned connectivity wiring between one consumer of a VPC endpoint set (a Harness,
+ * or another workload the orchestrating module places in the set's VPC) and the endpoints it reaches.
  *
- * A client security group unique to this Harness keeps endpoint ingress rules per consumer, so a
- * Harness is granted access to only the endpoints it derives and adding or removing one Harness never
- * rewrites another's rules. The client group is attached to the Harness in addition to its configured
- * service groups and permits HTTPS only to those endpoints - so they stay reachable however the
- * configured service groups are set up.
+ * A client security group unique to the consumer keeps endpoint ingress rules per consumer, so a
+ * consumer is granted access to only the endpoints it needs and adding or removing one consumer never
+ * rewrites another's rules. The client group permits HTTPS only to those endpoints.
  */
-export class HarnessVpcEndpointAccess extends Construct {
-  /** Client security group attached to the Harness runtime sessions. */
+export class VpcEndpointClientAccess extends Construct {
+  /** Client security group to attach to the consumer. */
   public readonly securityGroupId: string;
 
-  constructor(scope: Construct, id: string, props: HarnessVpcEndpointAccessProps) {
+  constructor(scope: Construct, id: string, props: VpcEndpointClientAccessProps) {
     super(scope, id);
     const vpc = Vpc.fromVpcAttributes(this, 'Vpc', {
       vpcId: props.access.vpcId,
@@ -235,8 +237,8 @@ export class HarnessVpcEndpointAccess extends Construct {
     });
     const clientSecurityGroup = new MdaaSecurityGroup(this, 'ClientSecurityGroup', {
       naming: props.naming,
-      securityGroupName: `agentcore-harness-vpce-client-${props.harnessName}`,
-      description: `Private endpoint client access for Harness ${props.harnessName}`,
+      securityGroupName: props.securityGroupName,
+      description: props.securityGroupDescription,
       vpc,
       allowAllOutbound: false,
       // Egress rules are created below instead of being passed here. `egressRules.sg` routes them through
@@ -260,7 +262,7 @@ export class HarnessVpcEndpointAccess extends Construct {
    * Both rules of a pair are named after the service, so a rule's logical id depends only on which
    * service it serves - never on how many other services there are or on configuration order.
    */
-  private grantEndpointAccess(props: HarnessVpcEndpointAccessProps, clientSecurityGroupId: string): void {
+  private grantEndpointAccess(props: VpcEndpointClientAccessProps, clientSecurityGroupId: string): void {
     const endpointsScope = new Construct(this, 'Endpoints');
     Object.entries(props.access.securityGroupIds).forEach(([service, securityGroupId]) => {
       new CfnSecurityGroupEgress(endpointsScope, `${service}-egress`, {
@@ -277,8 +279,36 @@ export class HarnessVpcEndpointAccess extends Construct {
         ipProtocol: 'tcp',
         fromPort: ENDPOINT_PORT,
         toPort: ENDPOINT_PORT,
-        description: `HTTPS from Harness endpoint client to ${service}`,
+        description: `HTTPS from ${props.clientLabel} endpoint client to ${service}`,
       });
+    });
+  }
+}
+
+/** Properties for {@link HarnessVpcEndpointAccess}. */
+export interface HarnessVpcEndpointAccessProps {
+  /** Harness name, used to create a client security group unique to this Harness. */
+  readonly harnessName: string;
+  /** The endpoints this Harness reaches, resolved by the orchestrating module. */
+  readonly access: ResolvedVpcEndpointAccess;
+  /** MDAA naming implementation for the client security group. */
+  readonly naming: IMdaaResourceNaming;
+}
+
+/**
+ * Creates the consumer-owned connectivity wiring between a Harness and the VPC endpoints of the set it
+ * references (see {@link VpcEndpointClientAccess}). The client group is attached to the Harness in
+ * addition to its configured service groups, so the endpoints stay reachable however the configured
+ * service groups are set up.
+ */
+export class HarnessVpcEndpointAccess extends VpcEndpointClientAccess {
+  constructor(scope: Construct, id: string, props: HarnessVpcEndpointAccessProps) {
+    super(scope, id, {
+      securityGroupName: `agentcore-harness-vpce-client-${props.harnessName}`,
+      securityGroupDescription: `Private endpoint client access for Harness ${props.harnessName}`,
+      clientLabel: 'Harness',
+      access: props.access,
+      naming: props.naming,
     });
   }
 }

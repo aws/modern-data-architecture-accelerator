@@ -553,20 +553,20 @@ describe('BedrockBuilderL3Construct AgentCore harness wiring', () => {
             vpcEndpoints: { private: set(VPC_A), unused: set(VPC_B, { routeTableIds: ['rtb-b1'] }) },
             harnesses: { 'harness-a': harness('private') },
           }),
-        ).toThrow('VPC endpoint set "unused" is referenced by no harness');
+        ).toThrow('VPC endpoint set "unused" is referenced by no harness or knowledge base connector');
       });
 
       // A set declared with no harnesses block at all is the same error as an unreferenced set beside a
       // referenced one, and reaches it only because reconciliation runs before the no-harness return.
       test('a set declared with no harnesses at all', () => {
         expect(() => build({ vpcEndpoints: { private: set(VPC_A) } })).toThrow(
-          'VPC endpoint set "private" is referenced by no harness',
+          'VPC endpoint set "private" is referenced by no harness or knowledge base connector',
         );
       });
 
       test('a set declared with an empty harnesses map', () => {
         expect(() => build({ vpcEndpoints: { private: set(VPC_A) }, harnesses: {} })).toThrow(
-          'VPC endpoint set "private" is referenced by no harness',
+          'VPC endpoint set "private" is referenced by no harness or knowledge base connector',
         );
       });
 
@@ -682,7 +682,7 @@ describe('BedrockBuilderL3Construct AgentCore harness wiring', () => {
             harnesses: { 'harness-a': harness('private') },
           }),
         ).toThrow(
-          'configures "agentCoreGateway", but no harness referencing it requires the ' +
+          'configures "agentCoreGateway", but nothing referencing it requires the ' +
             '"bedrock-agentcore.gateway" endpoint',
         );
       });

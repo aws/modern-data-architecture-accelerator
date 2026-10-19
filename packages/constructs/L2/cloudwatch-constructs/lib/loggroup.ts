@@ -13,6 +13,12 @@ export interface MdaaLogGroupProps extends MdaaConstructProps {
   readonly encryptionKey: IKey;
   readonly logGroupNamePathPrefix: string;
   readonly logGroupName?: string;
+  /**
+   * Flag to append `logGroupName` to the path prefix as given, without MDAA naming convention
+   * processing. Use when another service owns the name of the group it writes to, such as a Lambda
+   * function, which only ever writes to `/aws/lambda/<its function name>`. Requires `logGroupName`.
+   */
+  readonly verbatimLogGroupName?: boolean;
   readonly retention: RetentionDays;
 }
 

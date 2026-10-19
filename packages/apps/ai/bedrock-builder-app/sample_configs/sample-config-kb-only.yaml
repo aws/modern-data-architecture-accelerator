@@ -1,0 +1,72 @@
+# Knowledge-base-only Bedrock Builder configuration: vector stores and knowledge bases, with no agents,
+# gateways, harnesses, guardrails or shared Lambda functions. `kmsKeyArn` is omitted, so the module
+# creates its own KMS key.
+
+# See CONFIGURATION.md for role reference options (name, arn, id).
+# Admin roles granted key-admin rights on the module's KMS key.
+dataAdminRoles:
+  - name: 'Admin'
+
+# (Optional) Vector stores backing the knowledge bases below, keyed by store name.
+vectorStores:
+  kb-aurora-store:
+    # (Optional) Aurora Serverless PostgreSQL with pgvector
+    # (enum: AURORA_SERVERLESS, OPENSEARCH_SERVERLESS)
+    vectorStoreType: 'AURORA_SERVERLESS'
+    # VPC the vector store is deployed into.
+    # Often created by your VPC/networking stack.
+    # Example SSM: ssm:/path/to/vpc/id
+    vpcId: test-vpc-id
+    # Subnets the vector store is deployed into.
+    # Often created by your VPC/networking stack.
+    subnetIds:
+      - 'test-subnet-id1'
+      - 'test-subnet-id2'
+  kb-opensearch-store:
+    # (Optional) OpenSearch Serverless collection; the module creates the collection's VPC endpoint.
+    # (enum: AURORA_SERVERLESS, OPENSEARCH_SERVERLESS)
+    vectorStoreType: 'OPENSEARCH_SERVERLESS'
+    # VPC the collection's VPC endpoint is created in.
+    # Often created by your VPC/networking stack.
+    vpcId: test-vpc-id
+    # Subnets for the collection's VPC endpoint.
+    # Often created by your VPC/networking stack.
+    subnetIds:
+      - 'test-subnet-id1'
+      - 'test-subnet-id2'
+
+# (Optional) Knowledge bases, keyed by knowledge base name.
+knowledgeBases:
+  kb-product-docs:
+    # Embedding model used to vectorize ingested documents.
+    embeddingModel: 'amazon.titan-embed-text-v2:0'
+    # Vector store (from vectorStores above) holding this knowledge base's embeddings.
+    vectorStore: kb-aurora-store
+    # Execution role the knowledge base and its sync Lambdas run as.
+    role:
+      id: generated-role-id:kb-execution-role
+    # (Optional) S3 data sources, keyed by data source name.
+    s3DataSources:
+      product-docs:
+        # Bucket holding the source documents.
+        # Often created by your data lake module.
+        bucketName: 'product-docs-bucket'
+        # (Optional) Key prefix scoping ingestion within the bucket.
+        prefix: 'docs/'
+        # (Optional) Re-ingest automatically when objects under the prefix change. (default: false)
+        enableSync: true
+      product-faqs:
+        bucketName: 'product-docs-bucket'
+        prefix: 'faqs/'
+        enableSync: true
+        # (Optional) Batch sync events through a queue instead of syncing per object. (default: false)
+        enableMultiSync: true
+  kb-support-runbooks:
+    embeddingModel: 'amazon.titan-embed-text-v2:0'
+    vectorStore: kb-opensearch-store
+    role:
+      id: generated-role-id:kb-execution-role
+    s3DataSources:
+      runbooks:
+        bucketName: 'support-runbooks-bucket'
+        prefix: 'runbooks/'
