@@ -14,13 +14,15 @@ organization: <YOUR_ORG_NAME>
 context:
   # TODO: Set your VPC ID (must exist in the deployment account/region)
   vpc_id: <YOUR_VPC_ID>
-  # TODO: Set your first private subnet ID
+  # TODO: Set your first private subnet ID (routed through a NAT gateway, in an Availability Zone AgentCore supports)
   subnet_id_1: <YOUR_SUBNET_ID_1>
-  # TODO: Set your second private subnet ID
+  # TODO: Set your second private subnet ID (routed through a NAT gateway, in an Availability Zone AgentCore supports)
   subnet_id_2: <YOUR_SUBNET_ID_2>
-  # TODO: Set your third private subnet ID
+  # TODO: Set your third private subnet ID (routed through a NAT gateway, in an Availability Zone AgentCore supports)
   subnet_id_3: <YOUR_SUBNET_ID_3>
-  # TODO: Set your Bedrock LLM model ID (e.g., anthropic.claude-3-5-sonnet-20240620-v1:0 or a cross-region inference profile ARN)
+  # TODO: Set the ID of a security group in your VPC for the agent harness sessions (must allow outbound HTTPS)
+  security_group_id: <YOUR_SECURITY_GROUP_ID>
+  # TODO: Set the Bedrock model ID or inference profile ID the agent calls (e.g., global.anthropic.claude-sonnet-4-6)
   llm_model: <YOUR_BEDROCK_MODEL_ID>
   # TODO: Set your knowledge base embedding model ID (e.g., amazon.titan-embed-text-v2:0)
   kb_embedding_model: <YOUR_BEDROCK_MODEL_ID_2>
@@ -58,7 +60,8 @@ domains:
       dev:
         # One or more environments may be specified, typically along the lines of 'dev', 'test', and/or 'prod'
         modules:
-          # Bedrock Builder module for deploying Bedrock Agents and Knowledge Bases
+          # Bedrock Builder module for deploying the AgentCore Harness agent, its AgentCore Gateway
+          # tools, the Knowledge Base, and the Guardrail
           customer-support-agent:
             module_path: "@aws-mdaa/bedrock-builder"
             module_configs:

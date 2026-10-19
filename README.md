@@ -69,7 +69,7 @@ Start by identifying the business problem you need to solve, then select the sta
 | Starter Kit                                                                       | What you get                                                                    | Est. Deploy Time |
 | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ---------------- |
 | [Minimal](starter_kits/minimal/README.md)                                         | IAM roles, Glue Catalog encryption, LakeFormation settings — build from scratch | ~5–10 min        |
-| [GenAI Foundation](starter_kits/genai_foundation/README.md)                       | Enterprise-ready Bedrock Agent with RAG and knowledge bases                     | ~10–15 min       |
+| [GenAI Foundation](starter_kits/genai_foundation/README.md)                       | Enterprise-ready AgentCore agent with RAG, gateway tools, and guardrails        | ~10–15 min       |
 | [GenAI GAIA Chatbot](starter_kits/genai_gaia_chatbot/README.md)                   | RAG chatbot backend with document search, auth, and streaming API               | ~10–15 min       |
 | [Basic DataLake](starter_kits/basic_datalake/README.md)                           | Encrypted S3 storage, data catalog, SQL queries, audit trail                    | ~15–20 min       |
 | [Basic DataScience Platform](starter_kits/basic_datascience_platform/README.md)   | Notebook environment with shared data lake and team isolation                   | ~20–30 min       |

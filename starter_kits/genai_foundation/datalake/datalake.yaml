@@ -6,8 +6,6 @@ roles:
     - id: generated-role-id:data-admin
   DataUserRole:
     - id: generated-role-id:data-user
-  AgentRole:
-    - id: generated-role-id:agent-execution-role
   KnowledgeBaseRole:
     - id: generated-role-id:kb-execution-role
   AgentLambdaRole:
@@ -34,8 +32,7 @@ accessPolicies:
       ReadRoles:
         - DataUserRole
 
-  # Access policy for Bedrock Knowledge Base operations — full read/write for ingestion,
-  # read access for agent retrieval
+  # Access policy for Bedrock Knowledge Base operations — full read/write for ingestion
   KnowledgeBasePolicy:
     rule:
       # S3 key prefix this policy applies to (/ means the entire bucket)
@@ -43,12 +40,11 @@ accessPolicies:
       # Roles granted full read, write, and delete permissions (for KB ingestion)
       ReadWriteSuperRoles:
         - KnowledgeBaseRole
-      # Roles granted read-only permissions (for agent retrieval from KB data sources)
+      # Roles granted read-only permissions on the KB data sources
       ReadRoles:
         - KnowledgeBaseRole
-        - AgentRole
 
-  # Access policy for Lambda functions backing Bedrock Agent action groups
+  # Access policy for the kit's Lambda functions (the support tools and the KB transformer)
   AgentPolicy:
     rule:
       # S3 key prefix this policy applies to (/ means the entire bucket)

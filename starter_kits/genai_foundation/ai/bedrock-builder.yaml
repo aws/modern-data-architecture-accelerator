@@ -1,62 +1,68 @@
 # yaml-language-server: $schema=../../../schemas/@aws-mdaa/bedrock-builder.json
-# List of admin roles which will be provided access to agent resources (like KMS/Bucket)
+# List of admin roles which will be provided access to module resources (like KMS/Bucket)
 dataAdminRoles:
   - id: 'ssm-org:/shared/generated-role/data-admin/id'
 
-lambdaFunctions:
-  functions:
-    - functionName: customer-support-agent-lambda
-      srcDir: ../lambda/src
-      handler: support_function.lambda_handler
-      runtime: python3.14
-      roleArn: ssm-org:/shared/generated-role/agent-lambda-role/arn
-      description: 'Lambda function for Bedrock Agent Action group: customer-support-agent/support-actions'
-
-    - functionName: knowledge-base-transformer
-      srcDir: ../lambda/src
-      handler: kb_custom_transform.lambda_handler
-      runtime: python3.14
-      roleArn: ssm-org:/shared/generated-role/agent-lambda-role/arn
-      description: 'Lambda function for performing custom transformations on data while ingesting into knowledgebases'
-
-# Bedrock Agent Configuration
-agents:
+# AgentCore Harness: the customer support agent. A managed agent loop that calls the model, which
+# calls the gateway tools. Callers need bedrock-agentcore:InvokeHarness and InvokeAgentRuntime on it
+# (see roles.yaml).
+harnesses:
   customer-support-agent:
-    agentAliasName: 'prod-alias'
+    # Bedrock model the agent loop calls: a model ID, an inference profile ID, or an ARN.
+    modelId: '{{context:llm_model}}'
+    # (Optional) Execution role the harness runs as, from roles.yaml. The module attaches the harness's
+    # permissions to it. Omit to have the module create the role.
     role:
-      id: ssm-org:/shared/generated-role/agent-execution-role/id
-    foundationModel: '{{context:llm_model}}'
-
-    description: 'Customer Support Agent'
-    autoPrepare: true
-    instruction: |
+      id: ssm-org:/shared/generated-role/harness-execution-role/id
+    systemPrompt: |
       You are a customer support agent for a cloud services company. Your role is to help customers with:
       1. Finding information about their account and services
       2. Troubleshooting common issues
       3. Providing guidance on best practices
       4. Escalating complex issues to human support when necessary
 
-      Always be professional, courteous, and helpful. If you don't know the answer to a question, 
+      Search the support documentation before answering a product or troubleshooting question, base your
+      answer on what the search returns, and name the documents you used. Use the account and ticket tools
+      to look up or change account and ticket data, and never invent it.
+
+      Always be professional, courteous, and helpful. If you don't know the answer to a question,
       acknowledge that and offer to find more information or escalate the issue.
 
       When users ask about your functionality, provide guidance in natural language and do not include function names.
-    idleSessionTtlInSeconds: 600
+    # Guardrail for the agent's model calls, by name from guardrails below. A caller that passes its own
+    # model on InvokeHarness replaces it, so who may call InvokeHarness is what enforces it.
     guardrail:
       id: 'config:enterpriseguardrail'
-      version: 'DRAFT'
-
-    # Action groups for the agent
-    actionGroups:
-      - actionGroupName: 'support-actions'
-        description: 'Actions for customer support functions'
-        actionGroupExecutor:
-          lambda: generated-function:customer-support-agent-lambda
-        apiSchema:
-          openApiSchemaPath: ../api-schema/support-actions-api.yaml
-
-    knowledgeBases:
-      - description: 'Customer Support Knowledge Base'
-        id: 'config:kb-test-customer-support'
+    # A session keeps its conversation until it is idle this long, in seconds (60-28800).
+    # (Optional) maxLifetime caps a session's total length. (default: 28800)
+    lifecycleConfiguration:
+      idleRuntimeSessionTimeout: 600
+    # The harness runs its sessions in these subnets, which reach AWS over your NAT gateway. For subnets
+    # without a NAT gateway, see Private VPC in docs/USAGE.md.
+    networkConfiguration:
+      securityGroups:
+        - '{{context:security_group_id}}'
+      subnets:
+        - '{{context:subnet_id_1}}'
+        - '{{context:subnet_id_2}}'
+        - '{{context:subnet_id_3}}'
+    # Tools the agent can call, keyed by the name the allowedTools entries below refer to.
+    tools:
+      support_tools:
+        agentCoreGateway:
+          gatewayArn: 'config:support-gateway'
+    # The tools the agent may select: every tool on the support_tools gateway, and not the built-in
+    # shell and file tools. Callers can override this per invocation, so who may call InvokeHarness is
+    # what controls access.
+    allowedTools:
+      - '@support_tools'
+    # (Optional) A named endpoint pinned to a harness version, for promoting versions deliberately.
+    # Without it, callers use the DEFAULT endpoint, which moves to each new version on deploy. MDAA
+    # renames the endpoint: its ARN is in SSM at /<org>/genai/customer-support-agent/harnessendpoint/
+    # customer-support-agent/id, and the InvokeHarness qualifier is the ARN's last segment.
+    # endpoint:
+    #   name: 'prod'
+    #   targetVersion: '1'
 
 vectorStores:
   cs-vector-store:
@@ -67,12 +73,6 @@ vectorStores:
       - '{{context:subnet_id_3}}'
     minCapacity: 1.0
     maxCapacity: 8.0
-    # Optional: If you already have an OpenSearch Serverless VPC endpoint for this VPC,
-    # provide the ossVpce configuration to reuse it instead of creating a new one.
-    # This prevents deployment failures when a VPC endpoint already exists.
-    # ossVpce:
-    #   vpceId: "vpce-1234567890abcdef0"
-    #   securityGroupId: "sg-1234567890abcdef0"
 
 knowledgeBases:
   kb-test-customer-support:
@@ -130,6 +130,96 @@ guardrails:
         inputStrength: 'MEDIUM'
         outputStrength: 'MEDIUM'
 
-    contextualGroundingFilters:
-      grounding: 0.95
-      relevance: 0.90
+lambdaFunctions:
+  functions:
+    - functionName: customer-support-agent-lambda
+      srcDir: ../lambda/src
+      handler: support_function.lambda_handler
+      runtime: python3.14
+      roleArn: ssm-org:/shared/generated-role/agent-lambda-role/arn
+      description: 'Customer support tools served through the support-actions gateway target'
+
+    - functionName: knowledge-base-transformer
+      srcDir: ../lambda/src
+      handler: kb_custom_transform.lambda_handler
+      runtime: python3.14
+      roleArn: ssm-org:/shared/generated-role/agent-lambda-role/arn
+      description: 'Lambda function for performing custom transformations on data while ingesting into knowledgebases'
+
+# Tool sources served by the gateway below, keyed by target name. The model sees each tool as
+# `<deployed target name>___<tool name>`.
+gatewayTargets:
+  # The customer support tools, implemented by the customer-support-agent-lambda function above over
+  # mock account and ticket data (lambda/src/support_function.py). Replace the mock with calls to your
+  # own systems to use real data.
+  support-actions:
+    description: 'Customer account and support ticket tools'
+    targetConfiguration:
+      lambda:
+        lambdaArn: generated-function:customer-support-agent-lambda
+        # The tools this function serves. The model chooses a tool and its arguments from these names
+        # and descriptions, so describe when to use each one.
+        toolSchema:
+          inlinePayload:
+            - name: getAccountInfo
+              description: 'Get the details and status of a customer account.'
+              inputSchema:
+                type: object
+                properties:
+                  accountId:
+                    type: string
+                    description: "The customer's account ID, for example acc-12345"
+                required:
+                  - accountId
+            - name: createSupportTicket
+              description: 'Create a support ticket for a customer account.'
+              inputSchema:
+                type: object
+                properties:
+                  accountId:
+                    type: string
+                    description: "The customer's account ID"
+                  subject:
+                    type: string
+                    description: 'A short summary of the issue'
+                  description:
+                    type: string
+                    description: 'A detailed description of the issue'
+                  priority:
+                    type: string
+                    description: 'The ticket priority: low, medium, high, or critical'
+                required:
+                  - accountId
+                  - subject
+                  - description
+                  - priority
+            - name: getTicketStatus
+              description: 'Get the status, assignee, and comments of a support ticket.'
+              inputSchema:
+                type: object
+                properties:
+                  ticketId:
+                    type: string
+                    description: 'The support ticket ID, for example ticket-001'
+                required:
+                  - ticketId
+
+  # Search over the knowledge base defined below. The module deploys a Lambda connector that calls
+  # Retrieve on it, and the model sees it as a single Retrieve tool.
+  support-kb:
+    description: 'Customer support knowledge base'
+    targetConfiguration:
+      knowledgeBase:
+        id: 'config:kb-test-customer-support'
+        # The tool description the model sees: what the knowledge base holds and when to search it.
+        description: 'Search the customer support and product documentation.'
+
+# AgentCore Gateway serving both tool sources to the harness above. authorizerConfiguration is
+# omitted, so callers authenticate with AWS IAM (SigV4).
+gateways:
+  support-gateway:
+    description: 'Customer support tools and documentation search'
+    # Targets registered on this gateway, by name from gatewayTargets above.
+    targets:
+      - support-actions
+      - support-kb

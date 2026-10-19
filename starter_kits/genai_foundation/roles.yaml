@@ -85,37 +85,41 @@ generatePolicies:
     # TODO: Review the below policyDocument permissions and suppression. Uncomment the suppression prior to deployment.
     # suppressions:
     #   - id: "AwsSolutions-IAM5"
-    #     reason: "Bedrock agent/*, knowledge-base/*, and guardrail/* use wildcard suffixes because resource IDs are generated at deployment time. Foundation model resource uses region wildcard (bedrock:*::foundation-model/*) to support cross-region inference profiles. EC2 Describe* and S3 bucket-level actions do not support resource-level permissions. IAM role/* is required because CDK-generated role names are not known at authoring time. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonbedrock.html"
+    #     reason: "AgentCore harness/* and gateway/*, and Bedrock knowledge-base/* and guardrail/*, use wildcard suffixes because resource IDs are generated at deployment time. AgentCore List* actions do not support resource-level permissions. Foundation model resource uses region wildcard (bedrock:*::foundation-model/*) to support cross-region inference profiles. EC2 Describe* and S3 bucket-level actions do not support resource-level permissions. IAM role/* is required because CDK-generated role names are not known at authoring time. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_bedrock-agentcore.html and https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonbedrock.html"
     policyDocument:
       Statement:
-        - SID: BedrockAgentAccess
+        - Sid: AgentCoreHarnessAccess
           Effect: Allow
           Action:
-            - "bedrock:CreateAgent"
-            - "bedrock:DeleteAgent"
-            - "bedrock:GetAgent"
-            - "bedrock:ListAgents"
-            - "bedrock:UpdateAgent"
-            - "bedrock:CreateAgentAlias"
-            - "bedrock:DeleteAgentAlias"
-            - "bedrock:GetAgentAlias"
-            - "bedrock:ListAgentAliases"
-            - "bedrock:UpdateAgentAlias"
-            - "bedrock:CreateAgentActionGroup"
-            - "bedrock:DeleteAgentActionGroup"
-            - "bedrock:GetAgentActionGroup"
-            - "bedrock:ListAgentActionGroups"
-            - "bedrock:UpdateAgentActionGroup"
-            - "bedrock:PrepareAgent"
-            - "bedrock:AssociateAgentKnowledgeBase"
-            - "bedrock:DisassociateAgentKnowledgeBase"
-            - "bedrock:ListAgentKnowledgeBases"
-            - "bedrock:InvokeAgent"
+            - "bedrock-agentcore:InvokeHarness"
+            - "bedrock-agentcore:InvokeAgentRuntime"
+            - "bedrock-agentcore:GetHarness"
+            - "bedrock-agentcore:GetHarnessEndpoint"
           Resource:
-            - "arn:{{partition}}:bedrock:{{region}}:{{account}}:agent/*"
-        
+            - "arn:{{partition}}:bedrock-agentcore:{{region}}:{{account}}:harness/*"
+
+        # Inspect the gateway serving the harness tools, and its targets
+        - Sid: AgentCoreGatewayAccess
+          Effect: Allow
+          Action:
+            - "bedrock-agentcore:GetGateway"
+            - "bedrock-agentcore:GetGatewayTarget"
+            - "bedrock-agentcore:ListGatewayTargets"
+          Resource:
+            - "arn:{{partition}}:bedrock-agentcore:{{region}}:{{account}}:gateway/*"
+
+        # AgentCore List actions, which do not support resource-level permissions
+        - Sid: AgentCoreListAccess
+          Effect: Allow
+          Action:
+            - "bedrock-agentcore:ListHarnesses"
+            - "bedrock-agentcore:ListHarnessEndpoints"
+            - "bedrock-agentcore:ListHarnessVersions"
+            - "bedrock-agentcore:ListGateways"
+          Resource: "*"
+
         # Bedrock Knowledge Base permissions
-        - SID: BedrockKnowledgeBaseAccess
+        - Sid: BedrockKnowledgeBaseAccess
           Effect: Allow
           Action:
             - "bedrock:CreateKnowledgeBase"
@@ -137,7 +141,7 @@ generatePolicies:
             - "arn:{{partition}}:bedrock:{{region}}:{{account}}:knowledge-base/*"
         
         # Bedrock Guardrail permissions
-        - SID: BedrockGuardrailAccess
+        - Sid: BedrockGuardrailAccess
           Effect: Allow
           Action:
             - "bedrock:CreateGuardrail"
@@ -153,7 +157,7 @@ generatePolicies:
             - "arn:{{partition}}:bedrock:{{region}}:{{account}}:guardrail/*"
         
         # Bedrock Foundation Model permissions
-        - SID: BedrockModelAccess
+        - Sid: BedrockModelAccess
           Effect: Allow
           Action:
             - "bedrock:InvokeModel"
@@ -163,8 +167,8 @@ generatePolicies:
           Resource:
             - "arn:{{partition}}:bedrock:*::foundation-model/*"
         
-        # Lambda permissions for action groups
-        - SID: LambdaAccess
+        # Lambda permissions for managing the kit's functions
+        - Sid: LambdaAccess
           Effect: Allow
           Action:
             - "lambda:CreateFunction"
@@ -185,7 +189,7 @@ generatePolicies:
             - "arn:{{partition}}:lambda:{{region}}:{{account}}:layer:*"
         
         # S3 permissions for knowledge bases
-        - SID: S3Access
+        - Sid: S3Access
           Effect: Allow
           Action:
             - "s3:CreateBucket"
@@ -201,7 +205,7 @@ generatePolicies:
             - "arn:{{partition}}:s3:::*"
         
         # IAM permissions for roles
-        - SID: IAMAccess
+        - Sid: IAMAccess
           Effect: Allow
           Action:
             - "iam:CreateRole"
@@ -217,7 +221,7 @@ generatePolicies:
             - "arn:{{partition}}:iam::{{account}}:role/*"
         
         # KMS permissions for encryption
-        - SID: KMSAccess
+        - Sid: KMSAccess
           Effect: Allow
           Action:
             - "kms:CreateKey"
@@ -239,7 +243,7 @@ generatePolicies:
             - "arn:{{partition}}:kms:{{region}}:{{account}}:key/*"
         
         # RDS permissions for vector stores
-        - SID: RDSAccess
+        - Sid: RDSAccess
           Effect: Allow
           Action:
             - "rds:CreateDBCluster"
@@ -259,7 +263,7 @@ generatePolicies:
             - "arn:{{partition}}:rds:{{region}}:{{account}}:subgrp:*"
         
         # CloudWatch Logs permissions
-        - SID: CloudWatchLogsAccess
+        - Sid: CloudWatchLogsAccess
           Effect: Allow
           Action:
             - "logs:CreateLogGroup"
@@ -271,7 +275,7 @@ generatePolicies:
             - "arn:{{partition}}:logs:{{region}}:{{account}}:log-group:*"
         
         # EC2 permissions for networking
-        - SID: EC2Access
+        - Sid: EC2Access
           Effect: Allow
           Action:
             - "ec2:CreateSecurityGroup"
@@ -285,76 +289,6 @@ generatePolicies:
             - "ec2:DescribeVpcs"
           Resource: "*"
 
-  BedrockAgentExecutionPolicy:
-    # TODO: Review the below policyDocument permissions and suppression. Uncomment the suppression prior to deployment.
-    # suppressions:
-    #   - id: "AwsSolutions-IAM5"
-    #     reason: "Bedrock InvokeModel and InvokeModelWithResponseStream use region wildcard (bedrock:*::foundation-model/*) to support cross-region inference profiles. Lambda function:* wildcard is required because action group function names are generated at deployment time. Knowledge-base/* wildcard is needed because KB IDs are dynamic. S3 uses org-prefixed wildcard ({{org}}-*) to limit scope. KMS key/* is required because key IDs are generated at deployment time."
-    policyDocument:
-      Statement:
-        # Bedrock Foundation Model permissions
-        - SID: BedrockModelAccess
-          Effect: Allow
-          Action:
-            - "bedrock:InvokeModel"
-            - "bedrock:InvokeModelWithResponseStream"
-          Resource:
-            - "arn:{{partition}}:bedrock:*::foundation-model/*"
-
-        # Lambda permissions for action groups
-        - SID: LambdaAccess
-          Effect: Allow
-          Action:
-            - "lambda:InvokeFunction"
-          Resource:
-            - "arn:{{partition}}:lambda:{{region}}:{{account}}:function:*"
-        
-        # Knowledge Base permissions
-        - SID: KnowledgeBaseAccess
-          Effect: Allow
-          Action:
-            - "bedrock:RetrieveAndGenerate"
-            - "bedrock:Retrieve"
-          Resource:
-            - "arn:{{partition}}:bedrock:{{region}}:{{account}}:knowledge-base/*"
-        
-        # S3 permissions for knowledge bases
-        - SID: S3Access
-          Effect: Allow
-          Action:
-            - "s3:GetObject"
-            - "s3:ListBucket"
-          Resource:
-            - "arn:{{partition}}:s3:::{{org}}-*/*"
-            - "arn:{{partition}}:s3:::{{org}}-*"
-        
-        # CloudWatch Logs permissions
-        - SID: CloudWatchLogsAccess
-          Effect: Allow
-          Action:
-            - "logs:CreateLogGroup"
-            - "logs:CreateLogStream"
-            - "logs:PutLogEvents"
-          Resource:
-            - "arn:{{partition}}:logs:{{region}}:{{account}}:log-group:/aws/bedrock/*"
-        
-        # Guardrail permissions
-        - SID: GuardrailAccess
-          Effect: Allow
-          Action:
-            - "bedrock:ApplyGuardrail"
-          Resource:
-            - "arn:{{partition}}:bedrock:{{region}}:{{account}}:guardrail/enterprise-guardrail"
-        
-        # KMS permissions
-        - SID: KMSAccess
-          Effect: Allow
-          Action:
-            - "kms:Decrypt"
-            - "kms:GenerateDataKey"
-          Resource:
-            - "arn:{{partition}}:kms:{{region}}:{{account}}:key/*"
-
   KnowledgeBaseExecutionPolicy:
     # TODO: Review the below policyDocument permissions and suppression. Uncomment the suppression prior to deployment.
     # suppressions:
@@ -363,7 +297,7 @@ generatePolicies:
     policyDocument:
       Statement:
         # S3 permissions for knowledge bases
-        - SID: S3Access
+        - Sid: S3Access
           Effect: Allow
           Action:
             - "s3:GetObject"
@@ -374,7 +308,7 @@ generatePolicies:
             - "arn:{{partition}}:s3:::{{org}}-*"
         
         # CloudWatch Logs permissions
-        - SID: CloudWatchLogsAccess
+        - Sid: CloudWatchLogsAccess
           Effect: Allow
           Action:
             - "logs:CreateLogGroup"
@@ -385,7 +319,7 @@ generatePolicies:
             - "arn:{{partition}}:logs:{{region}}:{{account}}:log-group:/aws/lambda/*"
         
         # Lambda permissions for custom transformers
-        - SID: LambdaAccess
+        - Sid: LambdaAccess
           Effect: Allow
           Action:
             - "lambda:InvokeFunction"
@@ -393,7 +327,7 @@ generatePolicies:
             - "arn:{{partition}}:lambda:{{region}}:{{account}}:function:*"
         
         # Bedrock Foundation Model permissions for parsing
-        - SID: BedrockModelAccess
+        - Sid: BedrockModelAccess
           Effect: Allow
           Action:
             - "bedrock:InvokeModel"
@@ -401,7 +335,7 @@ generatePolicies:
             - "arn:{{partition}}:bedrock:*::foundation-model/*"
 
         # Bedrock Data Automation permissions for parsing
-        - SID: BedrockDataAutomationAccess
+        - Sid: BedrockDataAutomationAccess
           Effect: Allow
           Action:
             - "bedrock:InvokeDataAutomationAsync"
@@ -409,7 +343,7 @@ generatePolicies:
           Resource: "*"
         
         # Bedrock Knowledge Base ingestion permissions
-        - SID: BedrockIngestionAccess
+        - Sid: BedrockIngestionAccess
           Effect: Allow
           Action:
             - "bedrock:StartIngestionJob"
@@ -419,7 +353,7 @@ generatePolicies:
             - "arn:{{partition}}:bedrock:{{region}}:{{account}}:knowledge-base/*"
         
         # KMS permissions
-        - SID: KMSAccess
+        - Sid: KMSAccess
           Effect: Allow
           Action:
             - "kms:Decrypt"
@@ -435,7 +369,7 @@ generatePolicies:
     policyDocument:
       Statement:
         # CloudWatch Logs permissions
-        - SID: CloudWatchLogsAccess
+        - Sid: CloudWatchLogsAccess
           Effect: Allow
           Action:
             - "logs:CreateLogGroup"
@@ -445,7 +379,7 @@ generatePolicies:
             - "arn:{{partition}}:logs:{{region}}:{{account}}:log-group:/aws/lambda/*"
         
         # S3 permissions for accessing documents
-        - SID: S3Access
+        - Sid: S3Access
           Effect: Allow
           Action:
             - "s3:GetObject"
@@ -456,7 +390,7 @@ generatePolicies:
             - "arn:{{partition}}:s3:::{{org}}-*"
         
         # KMS permissions
-        - SID: KMSAccess
+        - Sid: KMSAccess
           Effect: Allow
           Action:
             - "kms:Decrypt"
@@ -472,7 +406,7 @@ generatePolicies:
     policyDocument:
       Statement:
         # CloudWatch Logs permissions
-        - SID: CloudWatchLogsAccess
+        - Sid: CloudWatchLogsAccess
           Effect: Allow
           Action:
             - "logs:CreateLogGroup"
@@ -481,7 +415,7 @@ generatePolicies:
           Resource:
             - "arn:{{partition}}:logs:{{region}}:{{account}}:log-group:/aws/lambda/*"
         
-        - SID: SQSAccess
+        - Sid: SQSAccess
           Effect: Allow
           Action:
             - "sqs:ReceiveMessage"
@@ -491,7 +425,7 @@ generatePolicies:
           Resource:
             - "arn:{{partition}}:sqs:{{region}}:{{account}}:{{org}}-*"
         
-        - SID: BedrockIngestionAccess
+        - Sid: BedrockIngestionAccess
           Effect: Allow
           Action:
             - "bedrock:StartIngestionJob"
@@ -503,7 +437,7 @@ generatePolicies:
           Resource:
             - "arn:{{partition}}:bedrock:{{region}}:{{account}}:knowledge-base/*"
         
-        - SID: KMSAccess
+        - Sid: KMSAccess
           Effect: Allow
           Action:
             - "kms:Decrypt"
@@ -514,7 +448,7 @@ generatePolicies:
             StringLike:
               "kms:ViaService": "s3.{{region}}.amazonaws.com"
         
-        - SID: CloudWatchMetricsAccess
+        - Sid: CloudWatchMetricsAccess
           Effect: Allow
           Action:
             - "cloudwatch:PutMetricData"
@@ -527,7 +461,7 @@ generateRoles:
     # TODO: Review the below awsManagedPolicies and suppression. Uncomment the suppression prior to deployment.
     # suppressions:
     #   - id: "AwsSolutions-IAM4"
-    #     reason: "AmazonBedrockFullAccess is required for Bedrock agents to invoke models, manage knowledge bases, and access guardrails. See https://docs.aws.amazon.com/bedrock/latest/userguide/security-iam-awsmanpol.html"
+    #     reason: "AmazonBedrockFullAccess is required for the data admin to invoke models, manage and sync knowledge bases, and test guardrails in the Bedrock console. See https://docs.aws.amazon.com/bedrock/latest/userguide/security-iam-awsmanpol.html"
     trustedPrincipal: this_account
     awsManagedPolicies:
       - "AmazonBedrockFullAccess"
@@ -535,17 +469,26 @@ generateRoles:
       - BedrockAdminPolicy
       - DataAdminPolicy
       - DataUserPolicy
-  
+
   data-user:
     trustedPrincipal: this_account
     generatedPolicies:
       - DataUserPolicy
 
-  # Bedrock Agent Execution Role
-  agent-execution-role:
-    trustedPrincipal: service:bedrock.amazonaws.com
-    generatedPolicies:
-      - BedrockAgentExecutionPolicy
+  # AgentCore Harness Execution Role, assumed by the customer support agent harness. The bedrock-builder
+  # module attaches the permissions the harness needs (model, guardrail, gateway, logs, image pull) to
+  # this role, scoped to the deployed resources. (Optional) Add generatedPolicies or
+  # customerManagedPolicies for any further access your agent needs. Omit the role, and the harness
+  # `role` reference in ai/bedrock-builder.yaml, to have the module create the role itself.
+  harness-execution-role:
+    trustedPrincipal: service:bedrock-agentcore.amazonaws.com
+    # Confused-deputy protection: only AgentCore in this account may assume the role. SourceArn must
+    # cover all AgentCore resources (:*), since AgentCore validates the role with a non-harness SourceArn.
+    assumeRoleTrustConditions:
+      StringEquals:
+        aws:SourceAccount: "{{account}}"
+      ArnLike:
+        aws:SourceArn: "arn:{{partition}}:bedrock-agentcore:{{region}}:{{account}}:*"
 
   # Knowledge Base Execution Role
   kb-execution-role:
@@ -555,7 +498,7 @@ generateRoles:
     generatedPolicies:
       - KnowledgeBaseExecutionPolicy
 
-  # Lambda Execution Role for Agent Action Groups
+  # Lambda Execution Role for the support tools and knowledge base transformer functions
   agent-lambda-role:
     # TODO: Review the below awsManagedPolicies and suppression. Uncomment the suppression prior to deployment.
     # suppressions:

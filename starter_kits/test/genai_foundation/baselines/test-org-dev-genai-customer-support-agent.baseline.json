@@ -14,9 +14,9 @@
       "Type": "AWS::SSM::Parameter::Value<String>",
       "Default": "/test-org/shared/generated-role/agent-lambda-role/arn"
     },
-    "SsmParameterValuetestorgsharedgeneratedroleagentexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter": {
+    "SsmParameterValuetestorgsharedgeneratedroleharnessexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter": {
       "Type": "AWS::SSM::Parameter::Value<String>",
-      "Default": "/test-org/shared/generated-role/agent-execution-role/id"
+      "Default": "/test-org/shared/generated-role/harness-execution-role/id"
     },
     "SsmParameterValuetestorgsharedgeneratedrolekbexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter": {
       "Type": "AWS::SSM::Parameter::Value<String>",
@@ -291,7 +291,7 @@
             ]
           }
         },
-        "Description": "Lambda function for Bedrock Agent Action group: customer-support-agent/support-actions",
+        "Description": "Customer support tools served through the support-actions gateway target",
         "Environment": {
           "Variables": {
             "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
@@ -5843,18 +5843,6 @@
             }
           ]
         },
-        "ContextualGroundingPolicyConfig": {
-          "FiltersConfig": [
-            {
-              "Threshold": 0.95,
-              "Type": "GROUNDING"
-            },
-            {
-              "Threshold": 0.9,
-              "Type": "RELEVANCE"
-            }
-          ]
-        },
         "Description": "Enterprise content safety guardrail for customer support",
         "KmsKeyArn": {
           "Fn::GetAtt": [
@@ -5948,120 +5936,125 @@
         "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-guardrail-enterpriseguardrail/guardrail-enterpriseguardrail-id/ssm/Resource"
       }
     },
-    "bedrockbuilderbedrockagentcustomersupportagentagentmanagedpolcustomersupportagent11C33440": {
-      "Type": "AWS::IAM::ManagedPolicy",
+    "bedrockbuilderkbconnectorsupportkbloggroup234FE4BA": {
+      "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "Description": "",
-        "ManagedPolicyName": "test-org-dev-genai-customer-support-agent-agent-custome-558e8c44",
-        "Path": "/",
-        "PolicyDocument": {
+        "KmsKeyId": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        },
+        "LogGroupName": "/aws/lambda/test-org-dev-genai-customer-support-agent-kb-connector--53d6aad9",
+        "Tags": [
+          {
+            "Key": "costcentre",
+            "Value": "123456"
+          },
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "genai"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "dev"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "customer-support-agent"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "project",
+            "Value": "genai_foundation"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/kb-connector-support-kb/log-group/Resource",
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "HIPAA.Security-CloudWatchLogGroupRetentionPeriod"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "PCI.DSS.321-CloudWatchLogGroupRetentionPeriod"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderkbconnectorsupportkbrole92EF368D": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
           "Statement": [
             {
-              "Action": [
-                "kms:Decrypt",
-                "kms:Encrypt",
-                "kms:ReEncryptFrom",
-                "kms:ReEncryptTo",
-                "kms:GenerateDataKey",
-                "kms:GenerateDataKeyWithoutPlaintext",
-                "kms:GenerateDataKeyPair",
-                "kms:GenerateDataKeyPairWithoutPlaintext"
-              ],
+              "Action": "sts:AssumeRole",
               "Effect": "Allow",
-              "Resource": {
-                "Fn::GetAtt": [
-                  "bedrockcmk710EFABC",
-                  "Arn"
-                ]
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
               }
-            },
-            {
-              "Action": [
-                "bedrock:InvokeModel",
-                "bedrock:InvokeModelWithResponseStream"
-              ],
-              "Effect": "Allow",
-              "Resource": "arn:test-partition:bedrock:test-region::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0",
-              "Sid": "InvokeFoundationModel"
-            },
-            {
-              "Action": "bedrock:ApplyGuardrail",
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:aws:bedrock:test-region:test-account:guardrail/",
-                    {
-                      "Fn::GetAtt": [
-                        "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrail9AD0A567",
-                        "GuardrailId"
-                      ]
-                    }
-                  ]
-                ]
-              },
-              "Sid": "AllowApplyBedrockGuardrail"
-            },
-            {
-              "Action": "bedrock:Retrieve",
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:test-partition:bedrock:test-region:test-account:knowledge-base/",
-                    {
-                      "Fn::GetAtt": [
-                        "bedrockbuilderbedrockkbkbtestcustomersupportkbtestcustomersupportKnowledgeBaseA179A7BE",
-                        "KnowledgeBaseId"
-                      ]
-                    }
-                  ]
-                ]
-              },
-              "Sid": "AllowBedrockKnowledgeBase"
             }
           ],
           "Version": "2012-10-17"
         },
-        "Roles": [
+        "Description": "Execution role for the knowledge base connector of gateway target support-kb",
+        "RoleName": "test-org-dev-genai-customer-support-agent-kb-connector--53d6aad9",
+        "Tags": [
           {
-            "Fn::Select": [
-              1,
-              {
-                "Fn::Split": [
-                  "/",
-                  {
-                    "Fn::Select": [
-                      5,
-                      {
-                        "Fn::Split": [
-                          ":",
-                          {
-                            "Fn::GetAtt": [
-                              "RoleResagentexecutionrolecustomersupportagent",
-                              "arn"
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
+            "Key": "costcentre",
+            "Value": "123456"
+          },
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "genai"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "dev"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "customer-support-agent"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "project",
+            "Value": "genai_foundation"
           }
         ]
       },
       "Metadata": {
-        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-agent-customer-support-agent/agent-managed-pol-customer-support-agent/Resource"
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/kb-connector-support-kb/role/Resource"
       }
     },
-    "bedrockbuilderbedrockagentcustomersupportagentagentmanagedpolcustomersupportagentmanagedpolicyagentcustomersupportagentarnssm174BE2EC": {
+    "bedrockbuilderkbconnectorsupportkbrolerolekbconnectorsupportkbarnssm1305C487": {
       "Type": "AWS::SSM::Parameter",
       "Properties": {
-        "Name": "/test-org/genai/customer-support-agent/managed-policy/agent-customer-support-agent/arn",
+        "Name": "/test-org/genai/customer-support-agent/role/kb-connector-support-kb/arn",
         "Tags": {
           "costcentre": "123456",
           "mdaa_cdk_app": "bedrock-builder",
@@ -6073,17 +6066,135 @@
         },
         "Type": "String",
         "Value": {
-          "Ref": "bedrockbuilderbedrockagentcustomersupportagentagentmanagedpolcustomersupportagent11C33440"
+          "Fn::GetAtt": [
+            "bedrockbuilderkbconnectorsupportkbrole92EF368D",
+            "Arn"
+          ]
         }
       },
       "Metadata": {
-        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-agent-customer-support-agent/agent-managed-pol-customer-support-agent/managed-policy-agent-customer-support-agent-arn/ssm/Resource"
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/kb-connector-support-kb/role/role-kb-connector-support-kb-arn/ssm/Resource"
       }
     },
-    "bedrockbuilderbedrockagentcustomersupportagentagentmanagedpolcustomersupportagentmanagedpolicyagentcustomersupportagentnamessmD1DB675A": {
+    "bedrockbuilderkbconnectorsupportkbrolerolekbconnectorsupportkbidssmB0BBF355": {
       "Type": "AWS::SSM::Parameter",
       "Properties": {
-        "Name": "/test-org/genai/customer-support-agent/managed-policy/agent-customer-support-agent/name",
+        "Name": "/test-org/genai/customer-support-agent/role/kb-connector-support-kb/id",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderkbconnectorsupportkbrole92EF368D",
+            "RoleId"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/kb-connector-support-kb/role/role-kb-connector-support-kb-id/ssm/Resource"
+      }
+    },
+    "bedrockbuilderkbconnectorsupportkbrolerolekbconnectorsupportkbnamessm5722B27E": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/role/kb-connector-support-kb/name",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderkbconnectorsupportkbrole92EF368D"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/kb-connector-support-kb/role/role-kb-connector-support-kb-name/ssm/Resource"
+      }
+    },
+    "bedrockbuilderkbconnectorsupportkbpolicy8D66A041": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-dev-genai-customer-support-agent-kb-connector--53d6aad9",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "bedrock:Retrieve",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockbuilderbedrockkbkbtestcustomersupportkbtestcustomersupportKnowledgeBaseA179A7BE",
+                  "KnowledgeBaseArn"
+                ]
+              },
+              "Sid": "RetrieveFromKnowledgeBase"
+            },
+            {
+              "Action": [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockbuilderkbconnectorsupportkbloggroup234FE4BA",
+                  "Arn"
+                ]
+              },
+              "Sid": "WriteConnectorLogs"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Ref": "bedrockbuilderkbconnectorsupportkbrole92EF368D"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/kb-connector-support-kb/policy/Resource"
+      }
+    },
+    "bedrockbuilderkbconnectorsupportkbpolicymanagedpolicykbconnectorsupportkbarnssm41B9A9C4": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/managed-policy/kb-connector-support-kb/arn",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderkbconnectorsupportkbpolicy8D66A041"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/kb-connector-support-kb/policy/managed-policy-kb-connector-support-kb-arn/ssm/Resource"
+      }
+    },
+    "bedrockbuilderkbconnectorsupportkbpolicymanagedpolicykbconnectorsupportkbnamessmCDFEE33B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/managed-policy/kb-connector-support-kb/name",
         "Tags": {
           "costcentre": "123456",
           "mdaa_cdk_app": "bedrock-builder",
@@ -6107,7 +6218,7 @@
                       "Fn::Split": [
                         ":",
                         {
-                          "Ref": "bedrockbuilderbedrockagentcustomersupportagentagentmanagedpolcustomersupportagent11C33440"
+                          "Ref": "bedrockbuilderkbconnectorsupportkbpolicy8D66A041"
                         }
                       ]
                     }
@@ -6119,67 +6230,657 @@
         }
       },
       "Metadata": {
-        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-agent-customer-support-agent/agent-managed-pol-customer-support-agent/managed-policy-agent-customer-support-agent-name/ssm/Resource"
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/kb-connector-support-kb/policy/managed-policy-kb-connector-support-kb-name/ssm/Resource"
       }
     },
-    "bedrockbuilderbedrockagentcustomersupportagentmdaabedrockagentcustomersupportagent1F563FB7": {
-      "Type": "AWS::Bedrock::Agent",
+    "bedrockbuilderkbconnectorsupportkbfunctiondlqkbconnectorsupportkb62D1196A": {
+      "Type": "AWS::SQS::Queue",
       "Properties": {
-        "ActionGroups": [
-          {
-            "ActionGroupExecutor": {
-              "Lambda": {
-                "Fn::GetAtt": [
-                  "bedrockbuilderbedrockbuilderlambdafunctionscustomersupportagentlambda9334B0DE",
-                  "Arn"
-                ]
-              }
-            },
-            "ActionGroupName": "support-actions",
-            "ApiSchema": {
-              "Payload": "openapi: 3.0.0\ninfo:\n  title: Customer Support API\n  version: 1.0.0\n  description: API for customer support functions\npaths:\n  /getAccountInfo:\n    post:\n      operationId: getAccountInfo\n      description: Get customer account information\n      requestBody:\n        required: true\n        content:\n          application/json:\n            schema:\n              type: object\n              properties:\n                accountId:\n                  type: string\n                  description: The customer's account ID\n              required:\n                - accountId\n      responses:\n        \"200\":\n          description: Account information retrieved successfully\n          content:\n            application/json:\n              schema:\n                type: object\n                properties:\n                  accountId:\n                    type: string\n                  accountName:\n                    type: string\n                  accountType:\n                    type: string\n                  creationDate:\n                    type: string\n                  status:\n                    type: string\n  /createSupportTicket:\n    post:\n      operationId: createSupportTicket\n      description: Create a new support ticket\n      requestBody:\n        required: true\n        content:\n          application/json:\n            schema:\n              type: object\n              properties:\n                accountId:\n                  type: string\n                  description: The customer's account ID\n                subject:\n                  type: string\n                  description: The subject of the ticket\n                description:\n                  type: string\n                  description: Detailed description of the issue\n                priority:\n                  type: string\n                  description: Priority level of the ticket\n                  enum:\n                    - low\n                    - medium\n                    - high\n                    - critical\n              required:\n                - accountId\n                - subject\n                - description\n                - priority\n      responses:\n        \"200\":\n          description: Support ticket created successfully\n          content:\n            application/json:\n              schema:\n                type: object\n                properties:\n                  ticketId:\n                    type: string\n                  status:\n                    type: string\n                  createdAt:\n                    type: string\n  /getTicketStatus:\n    post:\n      operationId: getTicketStatus\n      description: Get the status of an existing support ticket\n      requestBody:\n        required: true\n        content:\n          application/json:\n            schema:\n              type: object\n              properties:\n                ticketId:\n                  type: string\n                  description: The ID of the support ticket\n              required:\n                - ticketId\n      responses:\n        \"200\":\n          description: Ticket status retrieved successfully\n          content:\n            application/json:\n              schema:\n                type: object\n                properties:\n                  ticketId:\n                    type: string\n                  status:\n                    type: string\n                  lastUpdated:\n                    type: string\n                  assignedTo:\n                    type: string\n                  comments:\n                    type: array\n                    items:\n                      type: object\n"
-            },
-            "Description": "Actions for customer support functions"
-          }
-        ],
-        "AgentName": "test-org-dev-genai-customer-support-agent-customer-support-agent",
-        "AgentResourceRoleArn": {
-          "Fn::GetAtt": [
-            "RoleResagentexecutionrolecustomersupportagent",
-            "arn"
-          ]
-        },
-        "AutoPrepare": true,
-        "CustomerEncryptionKeyArn": {
+        "KmsMasterKeyId": {
           "Fn::GetAtt": [
             "bedrockcmk710EFABC",
             "Arn"
           ]
         },
-        "Description": "Customer Support Agent",
-        "FoundationModel": "arn:test-partition:bedrock:test-region::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0",
-        "GuardrailConfiguration": {
-          "GuardrailIdentifier": {
-            "Fn::GetAtt": [
-              "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrail9AD0A567",
-              "GuardrailId"
-            ]
-          },
-          "GuardrailVersion": "DRAFT"
-        },
-        "IdleSessionTTLInSeconds": 600,
-        "Instruction": "You are a customer support agent for a cloud services company. Your role is to help customers with:\n1. Finding information about their account and services\n2. Troubleshooting common issues\n3. Providing guidance on best practices\n4. Escalating complex issues to human support when necessary\n\nAlways be professional, courteous, and helpful. If you don't know the answer to a question, \nacknowledge that and offer to find more information or escalate the issue.\n\nWhen users ask about your functionality, provide guidance in natural language and do not include function names.\n",
-        "KnowledgeBases": [
+        "QueueName": "test-org-dev-genai-customer-support-agent-kb-connector-support-kb-dlq",
+        "Tags": [
           {
-            "Description": "Customer Support Knowledge Base",
-            "KnowledgeBaseId": {
+            "Key": "costcentre",
+            "Value": "123456"
+          },
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "genai"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "dev"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "customer-support-agent"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "project",
+            "Value": "genai_foundation"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/kb-connector-support-kb/function/dlq-kb-connector-support-kb/Resource",
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderkbconnectorsupportkbfunctiondlqkbconnectorsupportkbPolicy6215F3C4": {
+      "Type": "AWS::SQS::QueuePolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL"
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "bedrockbuilderkbconnectorsupportkbrole92EF368D",
+                    "Arn"
+                  ]
+                }
+              },
+              "Resource": "*",
+              "Sid": "SendMessage"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Queues": [
+          {
+            "Ref": "bedrockbuilderkbconnectorsupportkbfunctiondlqkbconnectorsupportkb62D1196A"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/kb-connector-support-kb/function/dlq-kb-connector-support-kb/Policy/Resource",
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderkbconnectorsupportkbfunctiondlqkbconnectorsupportkbqueuekbconnectorsupportkbdlqnamessmF0271D68": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/queue/kb-connector-support-kb-dlq/name",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderkbconnectorsupportkbfunctiondlqkbconnectorsupportkb62D1196A",
+            "QueueName"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/kb-connector-support-kb/function/dlq-kb-connector-support-kb/queue-kb-connector-support-kb-dlq-name/ssm/Resource",
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderkbconnectorsupportkbfunctiondlqkbconnectorsupportkbqueuekbconnectorsupportkbdlqarnssm05A21A88": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/queue/kb-connector-support-kb-dlq/arn",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderkbconnectorsupportkbfunctiondlqkbconnectorsupportkb62D1196A",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/kb-connector-support-kb/function/dlq-kb-connector-support-kb/queue-kb-connector-support-kb-dlq-arn/ssm/Resource",
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderkbconnectorsupportkbfunctiondlqkbconnectorsupportkbqueuekbconnectorsupportkbdlqurlssm7C236CB4": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/queue/kb-connector-support-kb-dlq/url",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderkbconnectorsupportkbfunctiondlqkbconnectorsupportkb62D1196A"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/kb-connector-support-kb/function/dlq-kb-connector-support-kb/queue-kb-connector-support-kb-dlq-url/ssm/Resource",
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts] Queue is a DLQ.",
+              "id": "AwsSolutions-SQS3"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderkbconnectorsupportkbfunctionkbconnectorsupportkb95E0D668": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "DeadLetterConfig": {
+          "TargetArn": {
+            "Fn::GetAtt": [
+              "bedrockbuilderkbconnectorsupportkbfunctiondlqkbconnectorsupportkb62D1196A",
+              "Arn"
+            ]
+          }
+        },
+        "Description": "Knowledge base Retrieve connector for gateway target support-kb",
+        "Environment": {
+          "Variables": {
+            "KNOWLEDGE_BASE_ID": {
               "Fn::GetAtt": [
                 "bedrockbuilderbedrockkbkbtestcustomersupportkbtestcustomersupportKnowledgeBaseA179A7BE",
                 "KnowledgeBaseId"
               ]
-            }
+            },
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-dev-genai-customer-support-agent-kb-connector--53d6aad9",
+        "Handler": "kb_retrieve.lambda_handler",
+        "KmsKeyArn": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        },
+        "MemorySize": 256,
+        "Role": {
+          "Fn::GetAtt": [
+            "bedrockbuilderkbconnectorsupportkbrole92EF368D",
+            "Arn"
+          ]
+        },
+        "Runtime": "python3.14",
+        "Tags": [
+          {
+            "Key": "costcentre",
+            "Value": "123456"
+          },
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "genai"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "dev"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "customer-support-agent"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "project",
+            "Value": "genai_foundation"
           }
         ],
+        "Timeout": 30
+      },
+      "DependsOn": [
+        "bedrockbuilderkbconnectorsupportkbloggroup234FE4BA",
+        "bedrockbuilderkbconnectorsupportkbpolicymanagedpolicykbconnectorsupportkbarnssm41B9A9C4",
+        "bedrockbuilderkbconnectorsupportkbpolicymanagedpolicykbconnectorsupportkbnamessmCDFEE33B",
+        "bedrockbuilderkbconnectorsupportkbpolicy8D66A041"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/kb-connector-support-kb/function/kb-connector-support-kb/Resource",
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderkbconnectorsupportkbfunctionkbconnectorsupportkblambdakbconnectorsupportkbnamessm00C6AA25": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/lambda/kb-connector-support-kb/name",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderkbconnectorsupportkbfunctionkbconnectorsupportkb95E0D668"
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderkbconnectorsupportkbloggroup234FE4BA",
+        "bedrockbuilderkbconnectorsupportkbpolicymanagedpolicykbconnectorsupportkbarnssm41B9A9C4",
+        "bedrockbuilderkbconnectorsupportkbpolicymanagedpolicykbconnectorsupportkbnamessmCDFEE33B",
+        "bedrockbuilderkbconnectorsupportkbpolicy8D66A041"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/kb-connector-support-kb/function/kb-connector-support-kb/lambda-kb-connector-support-kb-name/ssm/Resource",
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderkbconnectorsupportkbfunctionkbconnectorsupportkblambdakbconnectorsupportkbarnssm6B576658": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/lambda/kb-connector-support-kb/arn",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderkbconnectorsupportkbfunctionkbconnectorsupportkb95E0D668",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderkbconnectorsupportkbloggroup234FE4BA",
+        "bedrockbuilderkbconnectorsupportkbpolicymanagedpolicykbconnectorsupportkbarnssm41B9A9C4",
+        "bedrockbuilderkbconnectorsupportkbpolicymanagedpolicykbconnectorsupportkbnamessmCDFEE33B",
+        "bedrockbuilderkbconnectorsupportkbpolicy8D66A041"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/kb-connector-support-kb/function/kb-connector-support-kb/lambda-kb-connector-support-kb-arn/ssm/Resource",
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderkbconnectorsupportkbfunctionkbconnectorsupportkblambdakbconnectorsupportkbloggroupssm609E5F56": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/lambda/kb-connector-support-kb/log-group",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "bedrockbuilderkbconnectorsupportkbfunctionkbconnectorsupportkb95E0D668"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderkbconnectorsupportkbloggroup234FE4BA",
+        "bedrockbuilderkbconnectorsupportkbpolicymanagedpolicykbconnectorsupportkbarnssm41B9A9C4",
+        "bedrockbuilderkbconnectorsupportkbpolicymanagedpolicykbconnectorsupportkbnamessmCDFEE33B",
+        "bedrockbuilderkbconnectorsupportkbpolicy8D66A041"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/kb-connector-support-kb/function/kb-connector-support-kb/lambda-kb-connector-support-kb-log-group/ssm/Resource",
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] Concurrency Limits not required.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts] VPC Not Required",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewayGatewayRole5178136D": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account"
+                },
+                "ArnLike": {
+                  "aws:SourceArn": "arn:test-partition:bedrock-agentcore:test-region:test-account:gateway/test-org-dev-genai-customer-support-ag-59f8f0de-*"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "bedrock-agentcore.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "IAM role for Bedrock AgentCore Gateway: support-gateway",
+        "RoleName": "test-org-dev-genai-customer-support-agent-bedrock-agent-66497f49",
+        "Tags": [
+          {
+            "Key": "costcentre",
+            "Value": "123456"
+          },
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "genai"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "dev"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "customer-support-agent"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "project",
+            "Value": "genai_foundation"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-support-gateway/GatewayRole/Resource"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewayGatewayRolerolebedrockagentcoregatewaysupportgatewayarnssm01C732D6": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/role/bedrock-agentcore-gateway-support-gateway/arn",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewaysupportgatewayGatewayRole5178136D",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-support-gateway/GatewayRole/role-bedrock-agentcore-gateway-support-gateway-arn/ssm/Resource"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewayGatewayRolerolebedrockagentcoregatewaysupportgatewayidssmA5F74484": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/role/bedrock-agentcore-gateway-support-gateway/id",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewaysupportgatewayGatewayRole5178136D",
+            "RoleId"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-support-gateway/GatewayRole/role-bedrock-agentcore-gateway-support-gateway-id/ssm/Resource"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewayGatewayRolerolebedrockagentcoregatewaysupportgatewaynamessm960133E4": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/role/bedrock-agentcore-gateway-support-gateway/name",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockgatewaysupportgatewayGatewayRole5178136D"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-support-gateway/GatewayRole/role-bedrock-agentcore-gateway-support-gateway-name/ssm/Resource"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewayGateway2368CCBA": {
+      "Type": "AWS::BedrockAgentCore::Gateway",
+      "Properties": {
+        "AuthorizerType": "AWS_IAM",
+        "Description": "Customer support tools and documentation search",
+        "KmsKeyArn": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        },
+        "Name": "test-org-dev-genai-customer-support-ag-59f8f0de",
+        "ProtocolType": "MCP",
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewaysupportgatewayGatewayRole5178136D",
+            "Arn"
+          ]
+        },
         "Tags": {
           "costcentre": "123456",
           "mdaa_cdk_app": "bedrock-builder",
@@ -6191,16 +6892,18 @@
         }
       },
       "DependsOn": [
-        "bedrockbuilderbedrockagentcustomersupportagentagentmanagedpolcustomersupportagent11C33440"
+        "bedrockbuilderbedrockgatewaycmkusagesupportgatewaymanagedpolicybedrockagentcoregatewaycmksupportgatewayarnssm647B15CC",
+        "bedrockbuilderbedrockgatewaycmkusagesupportgatewaymanagedpolicybedrockagentcoregatewaycmksupportgatewaynamessm52A2FF3B",
+        "bedrockbuilderbedrockgatewaycmkusagesupportgatewayBC12A0CB"
       ],
       "Metadata": {
-        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-agent-customer-support-agent/mdaa-bedrock-agent-customer-support-agent"
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-support-gateway/Gateway"
       }
     },
-    "bedrockbuilderbedrockagentcustomersupportagentagentcustomersupportagentidssm131A91E3": {
+    "bedrockbuilderbedrockgatewaysupportgatewayGatewaygatewaysupportgatewayarnssmFCDCAD97": {
       "Type": "AWS::SSM::Parameter",
       "Properties": {
-        "Name": "/test-org/genai/customer-support-agent/agent/customer-support-agent/id",
+        "Name": "/test-org/genai/customer-support-agent/gateway/support-gateway/arn",
         "Tags": {
           "costcentre": "123456",
           "mdaa_cdk_app": "bedrock-builder",
@@ -6213,19 +6916,24 @@
         "Type": "String",
         "Value": {
           "Fn::GetAtt": [
-            "bedrockbuilderbedrockagentcustomersupportagentmdaabedrockagentcustomersupportagent1F563FB7",
-            "AgentId"
+            "bedrockbuilderbedrockgatewaysupportgatewayGateway2368CCBA",
+            "GatewayArn"
           ]
         }
       },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaycmkusagesupportgatewaymanagedpolicybedrockagentcoregatewaycmksupportgatewayarnssm647B15CC",
+        "bedrockbuilderbedrockgatewaycmkusagesupportgatewaymanagedpolicybedrockagentcoregatewaycmksupportgatewaynamessm52A2FF3B",
+        "bedrockbuilderbedrockgatewaycmkusagesupportgatewayBC12A0CB"
+      ],
       "Metadata": {
-        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-agent-customer-support-agent/agent-customer-support-agent-id/ssm/Resource"
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-support-gateway/Gateway/gateway-support-gateway-arn/ssm/Resource"
       }
     },
-    "bedrockbuilderbedrockagentcustomersupportagentagentcustomersupportagentarnssmDED38940": {
+    "bedrockbuilderbedrockgatewaysupportgatewayGatewaygatewaysupportgatewayidssm956FCB4E": {
       "Type": "AWS::SSM::Parameter",
       "Properties": {
-        "Name": "/test-org/genai/customer-support-agent/agent/customer-support-agent/arn",
+        "Name": "/test-org/genai/customer-support-agent/gateway/support-gateway/id",
         "Tags": {
           "costcentre": "123456",
           "mdaa_cdk_app": "bedrock-builder",
@@ -6238,47 +6946,117 @@
         "Type": "String",
         "Value": {
           "Fn::GetAtt": [
-            "bedrockbuilderbedrockagentcustomersupportagentmdaabedrockagentcustomersupportagent1F563FB7",
-            "AgentArn"
+            "bedrockbuilderbedrockgatewaysupportgatewayGateway2368CCBA",
+            "GatewayIdentifier"
           ]
         }
       },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaycmkusagesupportgatewaymanagedpolicybedrockagentcoregatewaycmksupportgatewayarnssm647B15CC",
+        "bedrockbuilderbedrockgatewaycmkusagesupportgatewaymanagedpolicybedrockagentcoregatewaycmksupportgatewaynamessm52A2FF3B",
+        "bedrockbuilderbedrockgatewaycmkusagesupportgatewayBC12A0CB"
+      ],
       "Metadata": {
-        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-agent-customer-support-agent/agent-customer-support-agent-arn/ssm/Resource"
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-support-gateway/Gateway/gateway-support-gateway-id/ssm/Resource"
       }
     },
-    "bedrockbuilderbedrockagentcustomersupportagentBedrockInvokePermission021519D99": {
-      "Type": "AWS::Lambda::Permission",
+    "bedrockbuilderbedrockgatewaysupportgatewayGatewaygatewaysupportgatewayurlssm230226EC": {
+      "Type": "AWS::SSM::Parameter",
       "Properties": {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": {
+        "Name": "/test-org/genai/customer-support-agent/gateway/support-gateway/url",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
           "Fn::GetAtt": [
-            "bedrockbuilderbedrockbuilderlambdafunctionscustomersupportagentlambda9334B0DE",
+            "bedrockbuilderbedrockgatewaysupportgatewayGateway2368CCBA",
+            "GatewayUrl"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaycmkusagesupportgatewaymanagedpolicybedrockagentcoregatewaycmksupportgatewayarnssm647B15CC",
+        "bedrockbuilderbedrockgatewaycmkusagesupportgatewaymanagedpolicybedrockagentcoregatewaycmksupportgatewaynamessm52A2FF3B",
+        "bedrockbuilderbedrockgatewaycmkusagesupportgatewayBC12A0CB"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-support-gateway/Gateway/gateway-support-gateway-url/ssm/Resource"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewaygatewayloggroupBB12FF94": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "KmsKeyId": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
             "Arn"
           ]
         },
-        "Principal": "bedrock.amazonaws.com",
-        "SourceArn": {
-          "Fn::GetAtt": [
-            "bedrockbuilderbedrockagentcustomersupportagentmdaabedrockagentcustomersupportagent1F563FB7",
-            "AgentArn"
+        "LogGroupName": "/aws/vendedlogs/bedrock-agentcore/gateway/APPLICATION_LOGS/test-org-dev-genai-customer-support-agent-support-gateway",
+        "Tags": [
+          {
+            "Key": "costcentre",
+            "Value": "123456"
+          },
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "genai"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "dev"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "customer-support-agent"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "project",
+            "Value": "genai_foundation"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-support-gateway/gateway-loggroup/Resource",
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "HIPAA.Security-CloudWatchLogGroupRetentionPeriod"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
+              "id": "PCI.DSS.321-CloudWatchLogGroupRetentionPeriod"
+            }
           ]
         }
-      },
-      "Metadata": {
-        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-agent-customer-support-agent/BedrockInvokePermission-0"
       }
     },
-    "bedrockbuilderbedrockagentcustomersupportagentmdaabedrockagentcustomersupportagentaliasE2AE7101": {
-      "Type": "AWS::Bedrock::AgentAlias",
+    "bedrockbuilderbedrockgatewaysupportgatewaygatewayloggrouploggroupsupportgatewaynamessm166498F2": {
+      "Type": "AWS::SSM::Parameter",
       "Properties": {
-        "AgentAliasName": "prod-alias",
-        "AgentId": {
-          "Fn::GetAtt": [
-            "bedrockbuilderbedrockagentcustomersupportagentmdaabedrockagentcustomersupportagent1F563FB7",
-            "AgentId"
-          ]
-        },
+        "Name": "/test-org/genai/customer-support-agent/loggroup/support-gateway/name",
         "Tags": {
           "costcentre": "123456",
           "mdaa_cdk_app": "bedrock-builder",
@@ -6287,16 +7065,157 @@
           "mdaa_module_name": "customer-support-agent",
           "mdaa_org": "test-org",
           "project": "genai_foundation"
-        }
+        },
+        "Type": "String",
+        "Value": "/aws/vendedlogs/bedrock-agentcore/gateway/APPLICATION_LOGS/test-org-dev-genai-customer-support-agent-support-gateway"
       },
       "Metadata": {
-        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-agent-customer-support-agent/mdaa-bedrock-agent-customer-support-agent-alias"
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-support-gateway/gateway-loggroup/loggroup-support-gateway-name/ssm/Resource"
       }
     },
-    "bedrockbuilderbedrockagentcustomersupportagentagentcustomersupportagentaliasidssmF56D8663": {
+    "bedrockbuilderbedrockgatewaysupportgatewaygatewaylogsource160CA740": {
+      "Type": "AWS::Logs::DeliverySource",
+      "Properties": {
+        "LogType": "APPLICATION_LOGS",
+        "Name": "test-org-dev-genai-customer-support-agent-support-gateway",
+        "ResourceArn": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewaysupportgatewayGateway2368CCBA",
+            "GatewayArn"
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "costcentre",
+            "Value": "123456"
+          },
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "genai"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "dev"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "customer-support-agent"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "project",
+            "Value": "genai_foundation"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-support-gateway/gateway-logsource"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewaygatewaylogdestination45FBA363": {
+      "Type": "AWS::Logs::DeliveryDestination",
+      "Properties": {
+        "DestinationResourceArn": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewaysupportgatewaygatewayloggroupBB12FF94",
+            "Arn"
+          ]
+        },
+        "Name": "test-org-dev-genai-customer-support-agent-support-gateway",
+        "Tags": [
+          {
+            "Key": "costcentre",
+            "Value": "123456"
+          },
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "genai"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "dev"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "customer-support-agent"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "project",
+            "Value": "genai_foundation"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-support-gateway/gateway-logdestination"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewaygatewaylogdelivery884D6D94": {
+      "Type": "AWS::Logs::Delivery",
+      "Properties": {
+        "DeliveryDestinationArn": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewaysupportgatewaygatewaylogdestination45FBA363",
+            "Arn"
+          ]
+        },
+        "DeliverySourceName": "test-org-dev-genai-customer-support-agent-support-gateway",
+        "Tags": [
+          {
+            "Key": "costcentre",
+            "Value": "123456"
+          },
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "genai"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "dev"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "customer-support-agent"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "project",
+            "Value": "genai_foundation"
+          }
+        ]
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaysupportgatewaygatewaylogsource160CA740"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-support-gateway/gateway-logdelivery"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewaygatewaysupportgatewayrolearnssm72C00771": {
       "Type": "AWS::SSM::Parameter",
       "Properties": {
-        "Name": "/test-org/genai/customer-support-agent/agent/customer-support-agent/alias-id",
+        "Name": "/test-org/genai/customer-support-agent/gateway/support-gateway/role-arn",
         "Tags": {
           "costcentre": "123456",
           "mdaa_cdk_app": "bedrock-builder",
@@ -6309,13 +7228,1112 @@
         "Type": "String",
         "Value": {
           "Fn::GetAtt": [
-            "bedrockbuilderbedrockagentcustomersupportagentmdaabedrockagentcustomersupportagentaliasE2AE7101",
-            "AgentAliasId"
+            "bedrockbuilderbedrockgatewaysupportgatewayGatewayRole5178136D",
+            "Arn"
           ]
         }
       },
       "Metadata": {
-        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-agent-customer-support-agent/agent-customer-support-agent-alias-id/ssm/Resource"
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-support-gateway/gateway-support-gateway-role-arn/ssm/Resource"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewaygatewaysupportgatewaykmskeyarnssm38ADAE1A": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/gateway/support-gateway/kms-key-arn",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-support-gateway/gateway-support-gateway-kms-key-arn/ssm/Resource"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicy342ED978": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-dev-genai-customer-support-agent-bedrock-agent-6e906ba7",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "bedrockbuilderbedrockbuilderlambdafunctionscustomersupportagentlambda9334B0DE",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::GetAtt": [
+                    "bedrockbuilderkbconnectorsupportkbfunctionkbconnectorsupportkb95E0D668",
+                    "Arn"
+                  ]
+                }
+              ],
+              "Sid": "GatewayInvokeTargetLambdas"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Ref": "bedrockbuilderbedrockgatewaysupportgatewayGatewayRole5178136D"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-support-gateway/GatewayTargetInvokePolicy/Resource"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetsupportgatewayarnssmBE477BB5": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/managed-policy/bedrock-agentcore-gateway-target-support-gateway/arn",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicy342ED978"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-support-gateway/GatewayTargetInvokePolicy/managed-policy-bedrock-agentcore-gateway-target-support-gateway-arn/ssm/Resource"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetsupportgatewaynamessm55482743": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/managed-policy/bedrock-agentcore-gateway-target-support-gateway/name",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicy342ED978"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-support-gateway/GatewayTargetInvokePolicy/managed-policy-bedrock-agentcore-gateway-target-support-gateway-name/ssm/Resource"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewaygatewaytargetsupportactions9B0F602B": {
+      "Type": "AWS::BedrockAgentCore::GatewayTarget",
+      "Properties": {
+        "CredentialProviderConfigurations": [
+          {
+            "CredentialProviderType": "GATEWAY_IAM_ROLE"
+          }
+        ],
+        "Description": "Customer account and support ticket tools",
+        "GatewayIdentifier": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewaysupportgatewayGateway2368CCBA",
+            "GatewayIdentifier"
+          ]
+        },
+        "Name": "test-org-dev-genai-customer-support-agent-6c0d11db",
+        "TargetConfiguration": {
+          "Mcp": {
+            "Lambda": {
+              "LambdaArn": {
+                "Fn::GetAtt": [
+                  "bedrockbuilderbedrockbuilderlambdafunctionscustomersupportagentlambda9334B0DE",
+                  "Arn"
+                ]
+              },
+              "ToolSchema": {
+                "InlinePayload": [
+                  {
+                    "Description": "Get the details and status of a customer account.",
+                    "InputSchema": {
+                      "Properties": {
+                        "accountId": {
+                          "Description": "The customer's account ID, for example acc-12345",
+                          "Type": "string"
+                        }
+                      },
+                      "Required": [
+                        "accountId"
+                      ],
+                      "Type": "object"
+                    },
+                    "Name": "getAccountInfo"
+                  },
+                  {
+                    "Description": "Create a support ticket for a customer account.",
+                    "InputSchema": {
+                      "Properties": {
+                        "accountId": {
+                          "Description": "The customer's account ID",
+                          "Type": "string"
+                        },
+                        "subject": {
+                          "Description": "A short summary of the issue",
+                          "Type": "string"
+                        },
+                        "description": {
+                          "Description": "A detailed description of the issue",
+                          "Type": "string"
+                        },
+                        "priority": {
+                          "Description": "The ticket priority: low, medium, high, or critical",
+                          "Type": "string"
+                        }
+                      },
+                      "Required": [
+                        "accountId",
+                        "subject",
+                        "description",
+                        "priority"
+                      ],
+                      "Type": "object"
+                    },
+                    "Name": "createSupportTicket"
+                  },
+                  {
+                    "Description": "Get the status, assignee, and comments of a support ticket.",
+                    "InputSchema": {
+                      "Properties": {
+                        "ticketId": {
+                          "Description": "The support ticket ID, for example ticket-001",
+                          "Type": "string"
+                        }
+                      },
+                      "Required": [
+                        "ticketId"
+                      ],
+                      "Type": "object"
+                    },
+                    "Name": "getTicketStatus"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaysupportgatewayGateway2368CCBA",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewaygatewaysupportgatewayarnssmFCDCAD97",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewaygatewaysupportgatewayidssm956FCB4E",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewaygatewaysupportgatewayurlssm230226EC",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetsupportgatewayarnssmBE477BB5",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetsupportgatewaynamessm55482743",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicy342ED978"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-support-gateway/gateway-target-support-actions"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewaygatewaytargetsupportactionsgatewaytargetsupportactionsarnssm3E14EBE5": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/gateway-target/support-actions/arn",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewaysupportgatewaygatewaytargetsupportactions9B0F602B",
+            "GatewayArn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaysupportgatewayGateway2368CCBA",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewaygatewaysupportgatewayarnssmFCDCAD97",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewaygatewaysupportgatewayidssm956FCB4E",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewaygatewaysupportgatewayurlssm230226EC",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetsupportgatewayarnssmBE477BB5",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetsupportgatewaynamessm55482743",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicy342ED978"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-support-gateway/gateway-target-support-actions/gateway-target-support-actions-arn/ssm/Resource"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewaygatewaytargetsupportactionsgatewaytargetsupportactionsidssm6C8AB121": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/gateway-target/support-actions/id",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewaysupportgatewaygatewaytargetsupportactions9B0F602B",
+            "TargetId"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaysupportgatewayGateway2368CCBA",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewaygatewaysupportgatewayarnssmFCDCAD97",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewaygatewaysupportgatewayidssm956FCB4E",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewaygatewaysupportgatewayurlssm230226EC",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetsupportgatewayarnssmBE477BB5",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetsupportgatewaynamessm55482743",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicy342ED978"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-support-gateway/gateway-target-support-actions/gateway-target-support-actions-id/ssm/Resource"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewaygatewaytargetsupportkb1CCF2E83": {
+      "Type": "AWS::BedrockAgentCore::GatewayTarget",
+      "Properties": {
+        "CredentialProviderConfigurations": [
+          {
+            "CredentialProviderType": "GATEWAY_IAM_ROLE"
+          }
+        ],
+        "Description": "Customer support knowledge base",
+        "GatewayIdentifier": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewaysupportgatewayGateway2368CCBA",
+            "GatewayIdentifier"
+          ]
+        },
+        "Name": "test-org-dev-genai-customer-support-agent-7134b1b9",
+        "TargetConfiguration": {
+          "Mcp": {
+            "Lambda": {
+              "LambdaArn": {
+                "Fn::GetAtt": [
+                  "bedrockbuilderkbconnectorsupportkbfunctionkbconnectorsupportkb95E0D668",
+                  "Arn"
+                ]
+              },
+              "ToolSchema": {
+                "InlinePayload": [
+                  {
+                    "Description": "Search the customer support and product documentation.",
+                    "InputSchema": {
+                      "Properties": {
+                        "retrievalQuery": {
+                          "Description": "Contains the query to send to the knowledge base.",
+                          "Properties": {
+                            "text": {
+                              "Description": "The text of the query made to the knowledge base.",
+                              "Type": "string"
+                            }
+                          },
+                          "Required": [
+                            "text"
+                          ],
+                          "Type": "object"
+                        }
+                      },
+                      "Required": [
+                        "retrievalQuery"
+                      ],
+                      "Type": "object"
+                    },
+                    "Name": "Retrieve"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaysupportgatewayGateway2368CCBA",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewaygatewaysupportgatewayarnssmFCDCAD97",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewaygatewaysupportgatewayidssm956FCB4E",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewaygatewaysupportgatewayurlssm230226EC",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetsupportgatewayarnssmBE477BB5",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetsupportgatewaynamessm55482743",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicy342ED978"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-support-gateway/gateway-target-support-kb"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewaygatewaytargetsupportkbgatewaytargetsupportkbarnssmEC653E07": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/gateway-target/support-kb/arn",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewaysupportgatewaygatewaytargetsupportkb1CCF2E83",
+            "GatewayArn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaysupportgatewayGateway2368CCBA",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewaygatewaysupportgatewayarnssmFCDCAD97",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewaygatewaysupportgatewayidssm956FCB4E",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewaygatewaysupportgatewayurlssm230226EC",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetsupportgatewayarnssmBE477BB5",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetsupportgatewaynamessm55482743",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicy342ED978"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-support-gateway/gateway-target-support-kb/gateway-target-support-kb-arn/ssm/Resource"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewaygatewaytargetsupportkbgatewaytargetsupportkbidssm8D216DFE": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/gateway-target/support-kb/id",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockgatewaysupportgatewaygatewaytargetsupportkb1CCF2E83",
+            "TargetId"
+          ]
+        }
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockgatewaysupportgatewayGateway2368CCBA",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewaygatewaysupportgatewayarnssmFCDCAD97",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewaygatewaysupportgatewayidssm956FCB4E",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewaygatewaysupportgatewayurlssm230226EC",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetsupportgatewayarnssmBE477BB5",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetsupportgatewaynamessm55482743",
+        "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicy342ED978"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-support-gateway/gateway-target-support-kb/gateway-target-support-kb-id/ssm/Resource"
+      }
+    },
+    "bedrockbuilderbedrockgatewaycmkusagesupportgatewayBC12A0CB": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-dev-genai-customer-support-agent-bedrock-agen--5179dac3",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "kms:DescribeKey",
+                "kms:Decrypt",
+                "kms:GenerateDataKey"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockcmk710EFABC",
+                  "Arn"
+                ]
+              },
+              "Sid": "GatewayCmkEncryptDecrypt"
+            },
+            {
+              "Action": "kms:CreateGrant",
+              "Condition": {
+                "StringEquals": {
+                  "kms:GrantConstraintType": "EncryptionContextSubset"
+                },
+                "ForAllValues:StringEquals": {
+                  "kms:GrantOperations": [
+                    "Decrypt",
+                    "GenerateDataKey"
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockcmk710EFABC",
+                  "Arn"
+                ]
+              },
+              "Sid": "GatewayCmkCreateGrant"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Ref": "bedrockbuilderbedrockgatewaysupportgatewayGatewayRole5178136D"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-cmk-usage-support-gateway/Resource"
+      }
+    },
+    "bedrockbuilderbedrockgatewaycmkusagesupportgatewaymanagedpolicybedrockagentcoregatewaycmksupportgatewayarnssm647B15CC": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/managed-policy/bedrock-agentcore-gateway-cmk-support-gateway/arn",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockgatewaycmkusagesupportgatewayBC12A0CB"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-cmk-usage-support-gateway/managed-policy-bedrock-agentcore-gateway-cmk-support-gateway-arn/ssm/Resource"
+      }
+    },
+    "bedrockbuilderbedrockgatewaycmkusagesupportgatewaymanagedpolicybedrockagentcoregatewaycmksupportgatewaynamessm52A2FF3B": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/managed-policy/bedrock-agentcore-gateway-cmk-support-gateway/name",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "bedrockbuilderbedrockgatewaycmkusagesupportgatewayBC12A0CB"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-gateway-cmk-usage-support-gateway/managed-policy-bedrock-agentcore-gateway-cmk-support-gateway-name/ssm/Resource"
+      }
+    },
+    "bedrockbuilderbedrockharnesscustomersupportagentHarnessManagedPolicyB697C35B": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "Managed policy for Bedrock AgentCore Harness: customer-support-agent",
+        "ManagedPolicyName": "test-org-dev-genai-customer-support-agent-agentcore-har-66f72f42",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "bedrock:InvokeModel",
+                "bedrock:InvokeModelWithResponseStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:bedrock:test-region::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0",
+              "Sid": "BedrockModelInvocation"
+            },
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+                "xray:GetSamplingRules",
+                "xray:GetSamplingTargets"
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "XRayTracingAccess"
+            },
+            {
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:DescribeLogStreams"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:/aws/bedrock-agentcore/runtimes/*",
+              "Sid": "CloudWatchLogsGroup"
+            },
+            {
+              "Action": "logs:DescribeLogGroups",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:*",
+              "Sid": "CloudWatchLogsDescribeGroups"
+            },
+            {
+              "Action": [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:/aws/bedrock-agentcore/runtimes/*:log-stream:*",
+              "Sid": "CloudWatchLogsStream"
+            },
+            {
+              "Action": "logs:PutResourcePolicy",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:/aws/bedrock-agentcore/runtimes/*",
+              "Sid": "CloudWatchLogsPutResourcePolicy"
+            },
+            {
+              "Action": "cloudwatch:PutMetricData",
+              "Condition": {
+                "StringEquals": {
+                  "cloudwatch:namespace": "bedrock-agentcore"
+                }
+              },
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "CloudWatchMetricsPublish"
+            },
+            {
+              "Action": [
+                "bedrock-agentcore:GetWorkloadAccessToken",
+                "bedrock-agentcore:GetWorkloadAccessTokenForJWT"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                "arn:test-partition:bedrock-agentcore:test-region:test-account:workload-identity-directory/default",
+                "arn:test-partition:bedrock-agentcore:test-region:test-account:workload-identity-directory/default/workload-identity/harness_test_org_dev_genai_customer_su__54304084*"
+              ],
+              "Sid": "AgentCoreWorkloadIdentity"
+            },
+            {
+              "Action": [
+                "bedrock-agentcore:StartBrowserSession",
+                "bedrock-agentcore:GetBrowserSession",
+                "bedrock-agentcore:ListBrowserSessions",
+                "bedrock-agentcore:StopBrowserSession",
+                "bedrock-agentcore:ConnectBrowserAutomationStream",
+                "bedrock-agentcore:ConnectBrowserLiveViewStream",
+                "bedrock-agentcore:UpdateBrowserStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:bedrock-agentcore:test-region:aws:browser/*",
+              "Sid": "AgentCoreBrowserDefault"
+            },
+            {
+              "Action": [
+                "bedrock-agentcore:StartCodeInterpreterSession",
+                "bedrock-agentcore:GetCodeInterpreterSession",
+                "bedrock-agentcore:ListCodeInterpreterSessions",
+                "bedrock-agentcore:StopCodeInterpreterSession",
+                "bedrock-agentcore:InvokeCodeInterpreter"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:bedrock-agentcore:test-region:aws:code-interpreter/*",
+              "Sid": "AgentCoreCodeInterpreterDefault"
+            },
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Deny",
+              "Resource": "*",
+              "Sid": "DenyRoleAssumption"
+            },
+            {
+              "Action": [
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage",
+                "ecr:BatchCheckLayerAvailability"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:ecr:test-region:*:repository/harness-test-region",
+              "Sid": "HarnessImageEcrPull"
+            },
+            {
+              "Action": "ecr:GetAuthorizationToken",
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "HarnessImageEcrToken"
+            },
+            {
+              "Action": "bedrock:ApplyGuardrail",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:test-partition:bedrock:test-region:test-account:guardrail/",
+                    {
+                      "Fn::GetAtt": [
+                        "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrail9AD0A567",
+                        "GuardrailId"
+                      ]
+                    }
+                  ]
+                ]
+              },
+              "Sid": "AllowApplyBedrockGuardrail"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey"
+              ],
+              "Condition": {
+                "StringLike": {
+                  "kms:ViaService": "bedrock.test-region.amazonaws.com"
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockcmk710EFABC",
+                  "Arn"
+                ]
+              },
+              "Sid": "GuardrailKmsDecrypt"
+            },
+            {
+              "Action": "bedrock-agentcore:InvokeGateway",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockbuilderbedrockgatewaysupportgatewayGateway2368CCBA",
+                  "GatewayArn"
+                ]
+              },
+              "Sid": "AllowInvokeGateway"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Roles": [
+          {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::Split": [
+                  "/",
+                  {
+                    "Fn::Select": [
+                      5,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResharnessexecutionrolecustomersupportagent",
+                              "arn"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-harness-customer-support-agent/HarnessManagedPolicy/Resource",
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-harness-l3-construct/lib/bedrock-agentcore-harness-l3-construct.ts] Wildcard resources are required for actions that do not support resource-level permissions, per the AWS service-authorization reference for each service: ECR GetAuthorizationToken (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonelasticcontainerregistry.html); X-Ray tracing PutTraceSegments/PutTelemetryRecords/GetSamplingRules/GetSamplingTargets (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsx-ray.html); and cloudwatch:PutMetricData (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatch.html), further scoped by a condition restricting it to the bedrock-agentcore metrics namespace. logs:DescribeLogGroups likewise does not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html), so it is scoped to the log-group resource type (log-group:*) - the tightest scope the action accepts - rather than a bare \"*\". The AWS-managed-image ECR pull (HarnessImageEcrPull, always granted; a bring-your-own container adds its own repository ARN alongside it) scopes the repository name to harness-<region> but wildcards the account segment because the managed image lives in an AWS-owned registry account that varies by region and is not knowable at synth; the repository name is pinned, so this is the tightest scope available. The cross-region inference-profile grant (BedrockInferenceProfileModelInvocation, emitted only for an inference-profile modelId) wildcards the REGION segment of the destination foundation-model ARN because a profile routes to destination regions that are not knowable at synth; the partition and model name are pinned, and the grant is bounded by a StringLike condition on bedrock:InferenceProfileArn so it is usable only through this profile (https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-prereq.html). The remaining wildcards are narrowed to the service-managed harness resource prefixes (CloudWatch Logs log-group, log-stream, and PutResourcePolicy ARN prefixes under /aws/bedrock-agentcore/runtimes/, AgentCore workload-identity, and the AWS-owned default browser & code-interpreter prefixes) rather than a bare \"*\". Residual breadth: the logs:PutResourcePolicy resource prefix (/aws/bedrock-agentcore/runtimes/*) spans every AgentCore runtime log group in the account, not just this harness's group, because the service generates the runtime id only after this role is built, so the exact log-group ARN is not knowable at synth. This is accepted: the action is scoped to the AgentCore runtimes log-group prefix (never a bare \"*\"), and tightening to the specific group would require a custom resource to resolve the service-generated id post-create.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockharnesscustomersupportagentHarnessManagedPolicymanagedpolicyagentcoreharnesscustomersupportagentarnssm66779EE3": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/managed-policy/agentcore-harness-customer-support-agent/arn",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderbedrockharnesscustomersupportagentHarnessManagedPolicyB697C35B"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-harness-customer-support-agent/HarnessManagedPolicy/managed-policy-agentcore-harness-customer-support-agent-arn/ssm/Resource",
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-harness-l3-construct/lib/bedrock-agentcore-harness-l3-construct.ts] Wildcard resources are required for actions that do not support resource-level permissions, per the AWS service-authorization reference for each service: ECR GetAuthorizationToken (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonelasticcontainerregistry.html); X-Ray tracing PutTraceSegments/PutTelemetryRecords/GetSamplingRules/GetSamplingTargets (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsx-ray.html); and cloudwatch:PutMetricData (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatch.html), further scoped by a condition restricting it to the bedrock-agentcore metrics namespace. logs:DescribeLogGroups likewise does not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html), so it is scoped to the log-group resource type (log-group:*) - the tightest scope the action accepts - rather than a bare \"*\". The AWS-managed-image ECR pull (HarnessImageEcrPull, always granted; a bring-your-own container adds its own repository ARN alongside it) scopes the repository name to harness-<region> but wildcards the account segment because the managed image lives in an AWS-owned registry account that varies by region and is not knowable at synth; the repository name is pinned, so this is the tightest scope available. The cross-region inference-profile grant (BedrockInferenceProfileModelInvocation, emitted only for an inference-profile modelId) wildcards the REGION segment of the destination foundation-model ARN because a profile routes to destination regions that are not knowable at synth; the partition and model name are pinned, and the grant is bounded by a StringLike condition on bedrock:InferenceProfileArn so it is usable only through this profile (https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-prereq.html). The remaining wildcards are narrowed to the service-managed harness resource prefixes (CloudWatch Logs log-group, log-stream, and PutResourcePolicy ARN prefixes under /aws/bedrock-agentcore/runtimes/, AgentCore workload-identity, and the AWS-owned default browser & code-interpreter prefixes) rather than a bare \"*\". Residual breadth: the logs:PutResourcePolicy resource prefix (/aws/bedrock-agentcore/runtimes/*) spans every AgentCore runtime log group in the account, not just this harness's group, because the service generates the runtime id only after this role is built, so the exact log-group ARN is not knowable at synth. This is accepted: the action is scoped to the AgentCore runtimes log-group prefix (never a bare \"*\"), and tightening to the specific group would require a custom resource to resolve the service-generated id post-create.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockharnesscustomersupportagentHarnessManagedPolicymanagedpolicyagentcoreharnesscustomersupportagentnamessm920AAA39": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/managed-policy/agentcore-harness-customer-support-agent/name",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "bedrockbuilderbedrockharnesscustomersupportagentHarnessManagedPolicyB697C35B"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-harness-customer-support-agent/HarnessManagedPolicy/managed-policy-agentcore-harness-customer-support-agent-name/ssm/Resource",
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-harness-l3-construct/lib/bedrock-agentcore-harness-l3-construct.ts] Wildcard resources are required for actions that do not support resource-level permissions, per the AWS service-authorization reference for each service: ECR GetAuthorizationToken (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonelasticcontainerregistry.html); X-Ray tracing PutTraceSegments/PutTelemetryRecords/GetSamplingRules/GetSamplingTargets (https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsx-ray.html); and cloudwatch:PutMetricData (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatch.html), further scoped by a condition restricting it to the bedrock-agentcore metrics namespace. logs:DescribeLogGroups likewise does not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html), so it is scoped to the log-group resource type (log-group:*) - the tightest scope the action accepts - rather than a bare \"*\". The AWS-managed-image ECR pull (HarnessImageEcrPull, always granted; a bring-your-own container adds its own repository ARN alongside it) scopes the repository name to harness-<region> but wildcards the account segment because the managed image lives in an AWS-owned registry account that varies by region and is not knowable at synth; the repository name is pinned, so this is the tightest scope available. The cross-region inference-profile grant (BedrockInferenceProfileModelInvocation, emitted only for an inference-profile modelId) wildcards the REGION segment of the destination foundation-model ARN because a profile routes to destination regions that are not knowable at synth; the partition and model name are pinned, and the grant is bounded by a StringLike condition on bedrock:InferenceProfileArn so it is usable only through this profile (https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-prereq.html). The remaining wildcards are narrowed to the service-managed harness resource prefixes (CloudWatch Logs log-group, log-stream, and PutResourcePolicy ARN prefixes under /aws/bedrock-agentcore/runtimes/, AgentCore workload-identity, and the AWS-owned default browser & code-interpreter prefixes) rather than a bare \"*\". Residual breadth: the logs:PutResourcePolicy resource prefix (/aws/bedrock-agentcore/runtimes/*) spans every AgentCore runtime log group in the account, not just this harness's group, because the service generates the runtime id only after this role is built, so the exact log-group ARN is not knowable at synth. This is accepted: the action is scoped to the AgentCore runtimes log-group prefix (never a bare \"*\"), and tightening to the specific group would require a custom resource to resolve the service-generated id post-create.",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockharnesscustomersupportagentHarnessF2E4E3E0": {
+      "Type": "AWS::BedrockAgentCore::Harness",
+      "Properties": {
+        "AllowedTools": [
+          "@support_tools"
+        ],
+        "Environment": {
+          "AgentCoreRuntimeEnvironment": {
+            "LifecycleConfiguration": {
+              "IdleRuntimeSessionTimeout": 600
+            },
+            "NetworkConfiguration": {
+              "NetworkMode": "VPC",
+              "NetworkModeConfig": {
+                "SecurityGroups": [
+                  "test-security-group-id"
+                ],
+                "Subnets": [
+                  "test-subnet-id-1",
+                  "test-subnet-id-2",
+                  "test-subnet-id-3"
+                ]
+              }
+            }
+          }
+        },
+        "ExecutionRoleArn": {
+          "Fn::GetAtt": [
+            "RoleResharnessexecutionrolecustomersupportagent",
+            "arn"
+          ]
+        },
+        "HarnessName": "test_org_dev_genai_customer_su__54304084",
+        "Memory": {
+          "Disabled": {}
+        },
+        "Model": {
+          "BedrockModelConfig": {
+            "ApiFormat": "converse_stream",
+            "ModelId": "arn:test-partition:bedrock:test-region::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0",
+            "AdditionalParams": {
+              "guardrailConfig": {
+                "guardrailIdentifier": {
+                  "Fn::GetAtt": [
+                    "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrail9AD0A567",
+                    "GuardrailId"
+                  ]
+                },
+                "guardrailVersion": {
+                  "Fn::GetAtt": [
+                    "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrail9AD0A567",
+                    "Version"
+                  ]
+                },
+                "trace": "enabled"
+              }
+            }
+          }
+        },
+        "SystemPrompt": [
+          {
+            "Text": "You are a customer support agent for a cloud services company. Your role is to help customers with:\n1. Finding information about their account and services\n2. Troubleshooting common issues\n3. Providing guidance on best practices\n4. Escalating complex issues to human support when necessary\n\nSearch the support documentation before answering a product or troubleshooting question, base your\nanswer on what the search returns, and name the documents you used. Use the account and ticket tools\nto look up or change account and ticket data, and never invent it.\n\nAlways be professional, courteous, and helpful. If you don't know the answer to a question,\nacknowledge that and offer to find more information or escalate the issue.\n\nWhen users ask about your functionality, provide guidance in natural language and do not include function names.\n"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "costcentre",
+            "Value": "123456"
+          },
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "genai"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "dev"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "customer-support-agent"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "project",
+            "Value": "genai_foundation"
+          }
+        ],
+        "Tools": [
+          {
+            "Config": {
+              "AgentCoreGateway": {
+                "GatewayArn": {
+                  "Fn::GetAtt": [
+                    "bedrockbuilderbedrockgatewaysupportgatewayGateway2368CCBA",
+                    "GatewayArn"
+                  ]
+                },
+                "OutboundAuth": {
+                  "AwsIam": {}
+                }
+              }
+            },
+            "Name": "support_tools",
+            "Type": "agentcore_gateway"
+          }
+        ]
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockharnesscustomersupportagentHarnessManagedPolicymanagedpolicyagentcoreharnesscustomersupportagentarnssm66779EE3",
+        "bedrockbuilderbedrockharnesscustomersupportagentHarnessManagedPolicymanagedpolicyagentcoreharnesscustomersupportagentnamessm920AAA39",
+        "bedrockbuilderbedrockharnesscustomersupportagentHarnessManagedPolicyB697C35B"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-harness-customer-support-agent/Harness"
+      }
+    },
+    "bedrockbuilderbedrockharnesscustomersupportagentLogProtectionAF686161": {
+      "Type": "Custom::AgentCoreLogProtection",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customAgentCoreLogProtectionproviderframeworkonEvent185E2063",
+            "Arn"
+          ]
+        },
+        "runtimeId": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockharnesscustomersupportagentHarnessF2E4E3E0",
+            "Environment.AgentCoreRuntimeEnvironment.AgentRuntimeId"
+          ]
+        },
+        "kmsKeyArn": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        },
+        "dataProtectionPolicy": "{\"Name\":\"agentcore-harness-data-protection\",\"Version\":\"2021-06-01\",\"Statement\":[{\"Sid\":\"audit-policy\",\"DataIdentifier\":[\"arn:aws:dataprotection::aws:data-identifier/EmailAddress\",\"arn:aws:dataprotection::aws:data-identifier/CreditCardNumber\",\"arn:aws:dataprotection::aws:data-identifier/Ssn-US\",\"arn:aws:dataprotection::aws:data-identifier/Name\",\"arn:aws:dataprotection::aws:data-identifier/Address\",\"arn:aws:dataprotection::aws:data-identifier/PhoneNumber-US\",\"arn:aws:dataprotection::aws:data-identifier/IpAddress\"],\"Operation\":{\"Audit\":{\"FindingsDestination\":{}}}},{\"Sid\":\"redact-policy\",\"DataIdentifier\":[\"arn:aws:dataprotection::aws:data-identifier/EmailAddress\",\"arn:aws:dataprotection::aws:data-identifier/CreditCardNumber\",\"arn:aws:dataprotection::aws:data-identifier/Ssn-US\",\"arn:aws:dataprotection::aws:data-identifier/Name\",\"arn:aws:dataprotection::aws:data-identifier/Address\",\"arn:aws:dataprotection::aws:data-identifier/PhoneNumber-US\",\"arn:aws:dataprotection::aws:data-identifier/IpAddress\"],\"Operation\":{\"Deidentify\":{\"MaskConfig\":{}}}}]}"
+      },
+      "DependsOn": [
+        "bedrockbuilderbedrockharnesscustomersupportagentHarnessF2E4E3E0"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-harness-customer-support-agent/LogProtection/Default"
+      }
+    },
+    "bedrockbuilderbedrockharnesscustomersupportagentharnesscustomersupportagentarnssmA78FFF9D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/harness/customer-support-agent/arn",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockharnesscustomersupportagentHarnessF2E4E3E0",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-harness-customer-support-agent/harness-customer-support-agent-arn/ssm/Resource"
+      }
+    },
+    "bedrockbuilderbedrockharnesscustomersupportagentharnesscustomersupportagentidssm316D2BB2": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/harness/customer-support-agent/id",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockharnesscustomersupportagentHarnessF2E4E3E0",
+            "HarnessId"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-harness-customer-support-agent/harness-customer-support-agent-id/ssm/Resource"
+      }
+    },
+    "bedrockbuilderbedrockharnesscustomersupportagentharnesscustomersupportagentrolearnssm41B07208": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/harness/customer-support-agent/role-arn",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "RoleResharnessexecutionrolecustomersupportagent",
+            "arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-builder/bedrock-harness-customer-support-agent/harness-customer-support-agent-role-arn/ssm/Resource"
       }
     },
     "bedrockcmk710EFABC": {
@@ -6445,20 +8463,12 @@
               },
               "Effect": "Allow",
               "Principal": {
-                "AWS": [
-                  {
-                    "Fn::GetAtt": [
-                      "RoleResagentexecutionrolecustomersupportagent",
-                      "arn"
-                    ]
-                  },
-                  {
-                    "Fn::GetAtt": [
-                      "RoleReskbexecutionrolekbtestcustomersupport",
-                      "arn"
-                    ]
-                  }
-                ]
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "RoleReskbexecutionrolekbtestcustomersupport",
+                    "arn"
+                  ]
+                }
               },
               "Resource": "*",
               "Sid": "AllowExecutionRolesToUseKeyWithContext"
@@ -6483,20 +8493,12 @@
               },
               "Effect": "Allow",
               "Principal": {
-                "AWS": [
-                  {
-                    "Fn::GetAtt": [
-                      "RoleResagentexecutionrolecustomersupportagent",
-                      "arn"
-                    ]
-                  },
-                  {
-                    "Fn::GetAtt": [
-                      "RoleReskbexecutionrolekbtestcustomersupport",
-                      "arn"
-                    ]
-                  }
-                ]
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "RoleReskbexecutionrolekbtestcustomersupport",
+                    "arn"
+                  ]
+                }
               },
               "Resource": "*",
               "Sid": "AllowCreateGrantForBedrockResources"
@@ -6621,6 +8623,24 @@
                 "Service": "s3.amazonaws.com"
               },
               "Resource": "*"
+            },
+            {
+              "Action": [
+                "kms:GenerateDataKey",
+                "kms:Decrypt"
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "kms:EncryptionContext:SourceArn": "arn:test-partition:logs:test-region:test-account:*",
+                  "aws:SourceAccount": "test-account"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "delivery.logs.amazonaws.com"
+              },
+              "Resource": "*",
+              "Sid": "AllowGatewayVendedLogDeliveryEncryption"
             }
           ],
           "Version": "2012-10-17"
@@ -6722,25 +8742,6 @@
       },
       "Metadata": {
         "aws:cdk:path": "test-org-dev-genai-customer-support-agent/bedrock-cmk/kms-id/ssm/Resource"
-      }
-    },
-    "RoleResagentexecutionrolecustomersupportagent": {
-      "Type": "AWS::CloudFormation::CustomResource",
-      "Properties": {
-        "ServiceToken": {
-          "Ref": "SsmParameterValuetestorggenaicaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
-        },
-        "roleRef": {
-          "refId": "agent-execution-role-customer-support-agent",
-          "id": {
-            "Ref": "SsmParameterValuetestorgsharedgeneratedroleagentexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
-          }
-        }
-      },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
-      "Metadata": {
-        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/Role-Res-agent-execution-role-customer-support-agent/Default"
       }
     },
     "RoleReskbexecutionrolekbtestcustomersupport": {
@@ -7804,6 +9805,833 @@
           ]
         }
       }
+    },
+    "RoleResharnessexecutionrolecustomersupportagent": {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorggenaicaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "roleRef": {
+          "refId": "harness-execution-role-customer-support-agent",
+          "id": {
+            "Ref": "SsmParameterValuetestorgsharedgeneratedroleharnessexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
+          }
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/Role-Res-harness-execution-role-customer-support-agent/Default"
+      }
+    },
+    "customAgentCoreLogProtectionhandlerrole772ADF8C": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "RoleName": "test-org-dev-genai-customer-support-agent-agentcorelog--2597db66",
+        "Tags": [
+          {
+            "Key": "costcentre",
+            "Value": "123456"
+          },
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "genai"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "dev"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "customer-support-agent"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "project",
+            "Value": "genai_foundation"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/custom-AgentCoreLogProtection-handler-role/Resource",
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionhandlerroleDefaultPolicy74388693": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-dev-genai-customer-support-agent-agentcorelog--2597db66*"
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-dev-genai-customer-support-agent-agentcorelog--2597db66*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "customAgentCoreLogProtectionhandlerroleDefaultPolicy74388693",
+        "Roles": [
+          {
+            "Ref": "customAgentCoreLogProtectionhandlerrole772ADF8C"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/custom-AgentCoreLogProtection-handler-role/DefaultPolicy/Resource",
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionhandlerpolicy6DC99A72": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "logs:DescribeLogGroups",
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "logs:AssociateKmsKey",
+                "logs:DisassociateKmsKey",
+                "logs:PutRetentionPolicy",
+                "logs:PutDataProtectionPolicy"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:test-partition:logs:test-region:test-account:log-group:/aws/bedrock-agentcore/runtimes/",
+                    {
+                      "Fn::GetAtt": [
+                        "bedrockbuilderbedrockharnesscustomersupportagentHarnessF2E4E3E0",
+                        "Environment.AgentCoreRuntimeEnvironment.AgentRuntimeId"
+                      ]
+                    },
+                    "-*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": "kms:DescribeKey",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockcmk710EFABC",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "AgentCoreLogProtection-handler",
+        "Roles": [
+          {
+            "Ref": "customAgentCoreLogProtectionhandlerrole772ADF8C"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/custom-AgentCoreLogProtection-handler-policy/Resource",
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource; inline policy use appropriate",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] logs:DescribeLogGroups does not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html). Log group mutation actions are scoped to the deployment account/region and runtime-specific prefix pattern (/aws/bedrock-agentcore/runtimes/{runtimeId}-*).",
+              "id": "AwsSolutions-IAM5"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionhandlerfunction04508FB7": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Environment": {
+          "Variables": {
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
+          }
+        },
+        "FunctionName": "test-org-dev-genai-customer-support-agent-agentcorelog--2597db66",
+        "Handler": "log_protection.lambda_handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "customAgentCoreLogProtectionhandlerrole772ADF8C",
+            "Arn"
+          ]
+        },
+        "Runtime": "python3.14",
+        "Tags": [
+          {
+            "Key": "costcentre",
+            "Value": "123456"
+          },
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "genai"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "dev"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "customer-support-agent"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "project",
+            "Value": "genai_foundation"
+          }
+        ],
+        "Timeout": 300
+      },
+      "DependsOn": [
+        "customAgentCoreLogProtectionhandlerpolicy6DC99A72",
+        "customAgentCoreLogProtectionhandlerroleDefaultPolicy74388693",
+        "customAgentCoreLogProtectionhandlerrole772ADF8C"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/custom-AgentCoreLogProtection-handler-function/Resource",
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionhandlerfunctionlambdaAgentCoreLogProtectionhandlernamessmF07E99E2": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/lambda/agentcorelogprotection-handler/name",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "customAgentCoreLogProtectionhandlerfunction04508FB7"
+        }
+      },
+      "DependsOn": [
+        "customAgentCoreLogProtectionhandlerpolicy6DC99A72"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/custom-AgentCoreLogProtection-handler-function/lambda-AgentCoreLogProtection-handler-name/ssm/Resource",
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionhandlerfunctionlambdaAgentCoreLogProtectionhandlerarnssmEC90D0CB": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/lambda/agentcorelogprotection-handler/arn",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "customAgentCoreLogProtectionhandlerfunction04508FB7",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "customAgentCoreLogProtectionhandlerpolicy6DC99A72"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/custom-AgentCoreLogProtection-handler-function/lambda-AgentCoreLogProtection-handler-arn/ssm/Resource",
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionhandlerfunctionlambdaAgentCoreLogProtectionhandlerloggroupssm640D0F72": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/genai/customer-support-agent/lambda/agentcorelogprotection-handler/log-group",
+        "Tags": {
+          "costcentre": "123456",
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "genai",
+          "mdaa_env": "dev",
+          "mdaa_module_name": "customer-support-agent",
+          "mdaa_org": "test-org",
+          "project": "genai_foundation"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "customAgentCoreLogProtectionhandlerfunction04508FB7"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": [
+        "customAgentCoreLogProtectionhandlerpolicy6DC99A72"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/custom-AgentCoreLogProtection-handler-function/lambda-AgentCoreLogProtection-handler-log-group/ssm/Resource",
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionproviderrole75408012": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "CR Role",
+        "RoleName": "test-org-dev-genai-customer-support-agent-agentcorelogp-37a0e2a1",
+        "Tags": [
+          {
+            "Key": "costcentre",
+            "Value": "123456"
+          },
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "genai"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "dev"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "customer-support-agent"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "project",
+            "Value": "genai_foundation"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/custom-AgentCoreLogProtection-provider-role/Resource",
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionproviderroleDefaultPolicyC06F89FF": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-dev-genai-customer-support-agent-agentcorelogp-37a0e2a1*"
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:logs:*:*:log-group:/aws/lambda/test-org-dev-genai-customer-support-agent-agentcorelogp-37a0e2a1*"
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "customAgentCoreLogProtectionhandlerfunction04508FB7",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "customAgentCoreLogProtectionhandlerfunction04508FB7",
+                          "Arn"
+                        ]
+                      },
+                      ":*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": "lambda:GetFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "customAgentCoreLogProtectionhandlerfunction04508FB7",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "customAgentCoreLogProtectionproviderroleDefaultPolicyC06F89FF",
+        "Roles": [
+          {
+            "Ref": "customAgentCoreLogProtectionproviderrole75408012"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/custom-AgentCoreLogProtection-provider-role/DefaultPolicy/Resource",
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "id": "AwsSolutions-IAM5"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts] Inline policy is specific to this role and its custom resource.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "HIPAA.Security-IAMNoInlinePolicy"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "id": "PCI.DSS.321-IAMNoInlinePolicy"
+            }
+          ]
+        }
+      }
+    },
+    "customAgentCoreLogProtectionproviderframeworkonEvent185E2063": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "mock-bucket",
+          "S3Key": "mock-key"
+        },
+        "Description": "AWS CDK resource provider framework - onEvent (test-org-dev-genai-customer-support-agent/custom-AgentCoreLogProtection-provider)",
+        "Environment": {
+          "Variables": {
+            "USER_ON_EVENT_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "customAgentCoreLogProtectionhandlerfunction04508FB7",
+                "Arn"
+              ]
+            }
+          }
+        },
+        "FunctionName": "test-org-dev-genai-customer-support-agent-agentcorelogp-37a0e2a1",
+        "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON"
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "customAgentCoreLogProtectionproviderrole75408012",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs24.x",
+        "Tags": [
+          {
+            "Key": "costcentre",
+            "Value": "123456"
+          },
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "genai"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "dev"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "customer-support-agent"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          },
+          {
+            "Key": "project",
+            "Value": "genai_foundation"
+          }
+        ],
+        "Timeout": 900
+      },
+      "DependsOn": [
+        "customAgentCoreLogProtectionproviderroleDefaultPolicyC06F89FF",
+        "customAgentCoreLogProtectionproviderrole75408012"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "test-org-dev-genai-customer-support-agent/custom-AgentCoreLogProtection-provider/framework-onEvent/Resource",
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Lambda function Runtime set by CDK Provider Framework",
+              "id": "AwsSolutions-L1"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "NIST.800.53.R5-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "NIST.800.53.R5-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "NIST.800.53.R5-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "HIPAA.Security-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "HIPAA.Security-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "HIPAA.Security-LambdaConcurrency"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "id": "PCI.DSS.321-LambdaDLQ"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource.",
+              "id": "PCI.DSS.321-LambdaInsideVPC"
+            },
+            {
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "id": "PCI.DSS.321-LambdaConcurrency"
+            }
+          ]
+        }
+      }
     }
   },
   "Outputs": {
@@ -8480,15 +11308,45 @@
         "Name": "test-org:genai:customer-support-agent:guardrail:enterpriseguardrail:id"
       }
     },
-    "bedrockbuilderbedrockagentcustomersupportagentagentmanagedpolcustomersupportagentmanagedpolicyagentcustomersupportagentarnoutEE2BBD88": {
+    "bedrockbuilderkbconnectorsupportkbrolerolekbconnectorsupportkbarnoutEAFEA471": {
       "Value": {
-        "Ref": "bedrockbuilderbedrockagentcustomersupportagentagentmanagedpolcustomersupportagent11C33440"
+        "Fn::GetAtt": [
+          "bedrockbuilderkbconnectorsupportkbrole92EF368D",
+          "Arn"
+        ]
       },
       "Export": {
-        "Name": "test-org:genai:customer-support-agent:managed-policy:agentcustomersupportagent:arn"
+        "Name": "test-org:genai:customer-support-agent:role:kbconnectorsupportkb:arn"
       }
     },
-    "bedrockbuilderbedrockagentcustomersupportagentagentmanagedpolcustomersupportagentmanagedpolicyagentcustomersupportagentnameout847D2CFB": {
+    "bedrockbuilderkbconnectorsupportkbrolerolekbconnectorsupportkbidout993ABDB7": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderkbconnectorsupportkbrole92EF368D",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:role:kbconnectorsupportkb:id"
+      }
+    },
+    "bedrockbuilderkbconnectorsupportkbrolerolekbconnectorsupportkbnameoutEA72D952": {
+      "Value": {
+        "Ref": "bedrockbuilderkbconnectorsupportkbrole92EF368D"
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:role:kbconnectorsupportkb:name"
+      }
+    },
+    "bedrockbuilderkbconnectorsupportkbpolicymanagedpolicykbconnectorsupportkbarnout57963496": {
+      "Value": {
+        "Ref": "bedrockbuilderkbconnectorsupportkbpolicy8D66A041"
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:managed-policy:kbconnectorsupportkb:arn"
+      }
+    },
+    "bedrockbuilderkbconnectorsupportkbpolicymanagedpolicykbconnectorsupportkbnameout478EE906": {
       "Value": {
         "Fn::Select": [
           1,
@@ -8502,7 +11360,7 @@
                     "Fn::Split": [
                       ":",
                       {
-                        "Ref": "bedrockbuilderbedrockagentcustomersupportagentagentmanagedpolcustomersupportagent11C33440"
+                        "Ref": "bedrockbuilderkbconnectorsupportkbpolicy8D66A041"
                       }
                     ]
                   }
@@ -8513,40 +11371,348 @@
         ]
       },
       "Export": {
-        "Name": "test-org:genai:customer-support-agent:managed-policy:agentcustomersupportagent:name"
+        "Name": "test-org:genai:customer-support-agent:managed-policy:kbconnectorsupportkb:name"
       }
     },
-    "bedrockbuilderbedrockagentcustomersupportagentagentcustomersupportagentidout87EE848D": {
+    "bedrockbuilderkbconnectorsupportkbfunctiondlqkbconnectorsupportkbqueuekbconnectorsupportkbdlqnameout232259C9": {
       "Value": {
         "Fn::GetAtt": [
-          "bedrockbuilderbedrockagentcustomersupportagentmdaabedrockagentcustomersupportagent1F563FB7",
-          "AgentId"
+          "bedrockbuilderkbconnectorsupportkbfunctiondlqkbconnectorsupportkb62D1196A",
+          "QueueName"
         ]
       },
       "Export": {
-        "Name": "test-org:genai:customer-support-agent:agent:customersupportagent:id"
+        "Name": "test-org:genai:customer-support-agent:queue:kbconnectorsupportkbdlq:name"
       }
     },
-    "bedrockbuilderbedrockagentcustomersupportagentagentcustomersupportagentarnout0D329B3D": {
+    "bedrockbuilderkbconnectorsupportkbfunctiondlqkbconnectorsupportkbqueuekbconnectorsupportkbdlqarnout3D8F806A": {
       "Value": {
         "Fn::GetAtt": [
-          "bedrockbuilderbedrockagentcustomersupportagentmdaabedrockagentcustomersupportagent1F563FB7",
-          "AgentArn"
+          "bedrockbuilderkbconnectorsupportkbfunctiondlqkbconnectorsupportkb62D1196A",
+          "Arn"
         ]
       },
       "Export": {
-        "Name": "test-org:genai:customer-support-agent:agent:customersupportagent:arn"
+        "Name": "test-org:genai:customer-support-agent:queue:kbconnectorsupportkbdlq:arn"
       }
     },
-    "bedrockbuilderbedrockagentcustomersupportagentagentcustomersupportagentaliasidout5CB8778C": {
+    "bedrockbuilderkbconnectorsupportkbfunctiondlqkbconnectorsupportkbqueuekbconnectorsupportkbdlqurloutB077A8CB": {
+      "Value": {
+        "Ref": "bedrockbuilderkbconnectorsupportkbfunctiondlqkbconnectorsupportkb62D1196A"
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:queue:kbconnectorsupportkbdlq:url"
+      }
+    },
+    "bedrockbuilderkbconnectorsupportkbfunctionkbconnectorsupportkblambdakbconnectorsupportkbnameout4766E7E2": {
+      "Value": {
+        "Ref": "bedrockbuilderkbconnectorsupportkbfunctionkbconnectorsupportkb95E0D668"
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:lambda:kbconnectorsupportkb:name"
+      }
+    },
+    "bedrockbuilderkbconnectorsupportkbfunctionkbconnectorsupportkblambdakbconnectorsupportkbarnoutF20D9E00": {
       "Value": {
         "Fn::GetAtt": [
-          "bedrockbuilderbedrockagentcustomersupportagentmdaabedrockagentcustomersupportagentaliasE2AE7101",
-          "AgentAliasId"
+          "bedrockbuilderkbconnectorsupportkbfunctionkbconnectorsupportkb95E0D668",
+          "Arn"
         ]
       },
       "Export": {
-        "Name": "test-org:genai:customer-support-agent:agent:customersupportagent:alias-id"
+        "Name": "test-org:genai:customer-support-agent:lambda:kbconnectorsupportkb:arn"
+      }
+    },
+    "bedrockbuilderkbconnectorsupportkbfunctionkbconnectorsupportkblambdakbconnectorsupportkbloggroupout471D5384": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "bedrockbuilderkbconnectorsupportkbfunctionkbconnectorsupportkb95E0D668"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:lambda:kbconnectorsupportkb:log-group"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewayGatewayRolerolebedrockagentcoregatewaysupportgatewayarnoutEFDBEDA8": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewaysupportgatewayGatewayRole5178136D",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:role:bedrockagentcoregatewaysupportgateway:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewayGatewayRolerolebedrockagentcoregatewaysupportgatewayidoutB462F8C2": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewaysupportgatewayGatewayRole5178136D",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:role:bedrockagentcoregatewaysupportgateway:id"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewayGatewayRolerolebedrockagentcoregatewaysupportgatewaynameout506EA674": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockgatewaysupportgatewayGatewayRole5178136D"
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:role:bedrockagentcoregatewaysupportgateway:name"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewayGatewaygatewaysupportgatewayarnoutAEE56C9B": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewaysupportgatewayGateway2368CCBA",
+          "GatewayArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:gateway:supportgateway:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewayGatewaygatewaysupportgatewayidout2B4EBA79": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewaysupportgatewayGateway2368CCBA",
+          "GatewayIdentifier"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:gateway:supportgateway:id"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewayGatewaygatewaysupportgatewayurlout87267C6C": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewaysupportgatewayGateway2368CCBA",
+          "GatewayUrl"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:gateway:supportgateway:url"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewaygatewayloggrouploggroupsupportgatewaynameoutAECD8A76": {
+      "Value": "/aws/vendedlogs/bedrock-agentcore/gateway/APPLICATION_LOGS/test-org-dev-genai-customer-support-agent-support-gateway",
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:loggroup:supportgateway:name"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewaygatewaysupportgatewayrolearnoutA4510BD5": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewaysupportgatewayGatewayRole5178136D",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:gateway:supportgateway:role-arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewaygatewaysupportgatewaykmskeyarnoutDFB5DC3D": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockcmk710EFABC",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:gateway:supportgateway:kms-key-arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetsupportgatewayarnoutBE4657B6": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicy342ED978"
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:managed-policy:bedrockagentcoregatewaytargetsupportgateway:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicymanagedpolicybedrockagentcoregatewaytargetsupportgatewaynameoutE1857921": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "bedrockbuilderbedrockgatewaysupportgatewayGatewayTargetInvokePolicy342ED978"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:managed-policy:bedrockagentcoregatewaytargetsupportgateway:name"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewaygatewaytargetsupportactionsgatewaytargetsupportactionsarnout2EE5AC7C": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewaysupportgatewaygatewaytargetsupportactions9B0F602B",
+          "GatewayArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:gateway-target:supportactions:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewaygatewaytargetsupportactionsgatewaytargetsupportactionsidout4645B0E3": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewaysupportgatewaygatewaytargetsupportactions9B0F602B",
+          "TargetId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:gateway-target:supportactions:id"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewaygatewaytargetsupportkbgatewaytargetsupportkbarnout3EF411C6": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewaysupportgatewaygatewaytargetsupportkb1CCF2E83",
+          "GatewayArn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:gateway-target:supportkb:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewaysupportgatewaygatewaytargetsupportkbgatewaytargetsupportkbidout4C024EC9": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockgatewaysupportgatewaygatewaytargetsupportkb1CCF2E83",
+          "TargetId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:gateway-target:supportkb:id"
+      }
+    },
+    "bedrockbuilderbedrockgatewaycmkusagesupportgatewaymanagedpolicybedrockagentcoregatewaycmksupportgatewayarnoutF2513192": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockgatewaycmkusagesupportgatewayBC12A0CB"
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:managed-policy:bedrockagentcoregatewaycmksupportgateway:arn"
+      }
+    },
+    "bedrockbuilderbedrockgatewaycmkusagesupportgatewaymanagedpolicybedrockagentcoregatewaycmksupportgatewaynameoutBC9F920F": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "bedrockbuilderbedrockgatewaycmkusagesupportgatewayBC12A0CB"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:managed-policy:bedrockagentcoregatewaycmksupportgateway:name"
+      }
+    },
+    "bedrockbuilderbedrockharnesscustomersupportagentHarnessManagedPolicymanagedpolicyagentcoreharnesscustomersupportagentarnout6D287D53": {
+      "Value": {
+        "Ref": "bedrockbuilderbedrockharnesscustomersupportagentHarnessManagedPolicyB697C35B"
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:managed-policy:agentcoreharnesscustomersupportagent:arn"
+      }
+    },
+    "bedrockbuilderbedrockharnesscustomersupportagentHarnessManagedPolicymanagedpolicyagentcoreharnesscustomersupportagentnameoutC08294AB": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "bedrockbuilderbedrockharnesscustomersupportagentHarnessManagedPolicyB697C35B"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:managed-policy:agentcoreharnesscustomersupportagent:name"
+      }
+    },
+    "bedrockbuilderbedrockharnesscustomersupportagentharnesscustomersupportagentarnout55B73635": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockharnesscustomersupportagentHarnessF2E4E3E0",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:harness:customersupportagent:arn"
+      }
+    },
+    "bedrockbuilderbedrockharnesscustomersupportagentharnesscustomersupportagentidout5CB58CE0": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockharnesscustomersupportagentHarnessF2E4E3E0",
+          "HarnessId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:harness:customersupportagent:id"
+      }
+    },
+    "bedrockbuilderbedrockharnesscustomersupportagentharnesscustomersupportagentrolearnoutC17379DB": {
+      "Value": {
+        "Fn::GetAtt": [
+          "RoleResharnessexecutionrolecustomersupportagent",
+          "arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:harness:customersupportagent:role-arn"
       }
     },
     "bedrockcmkkmsarnout0D3BC511": {
@@ -8601,6 +11767,41 @@
       },
       "Export": {
         "Name": "test-org:genai:customer-support-agent:lambda:rdsdatahandler:log-group"
+      }
+    },
+    "customAgentCoreLogProtectionhandlerfunctionlambdaAgentCoreLogProtectionhandlernameoutC1A1A368": {
+      "Value": {
+        "Ref": "customAgentCoreLogProtectionhandlerfunction04508FB7"
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:lambda:agentcorelogprotectionhandler:name"
+      }
+    },
+    "customAgentCoreLogProtectionhandlerfunctionlambdaAgentCoreLogProtectionhandlerarnout04AFBBA1": {
+      "Value": {
+        "Fn::GetAtt": [
+          "customAgentCoreLogProtectionhandlerfunction04508FB7",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:lambda:agentcorelogprotectionhandler:arn"
+      }
+    },
+    "customAgentCoreLogProtectionhandlerfunctionlambdaAgentCoreLogProtectionhandlerloggroupoutAFB34640": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "/aws/lambda/",
+            {
+              "Ref": "customAgentCoreLogProtectionhandlerfunction04508FB7"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:genai:customer-support-agent:lambda:agentcorelogprotectionhandler:log-group"
       }
     }
   },

@@ -352,7 +352,7 @@ Each starter kit provides a preconfigured `mdaa.yaml` for a common use case. Ref
 | **Basic DataLake** | Foundational data lake with S3 storage, Glue catalog, and Athena query access | [README](starter_kits/basic_datalake/README.md) |
 | **Basic DataScience Platform** | Data science environment with SageMaker notebooks and shared data access | [README](starter_kits/basic_datascience_platform/README.md) |
 | **DataZone Governed Lakehouse** | Lake Formation–governed lakehouse with fine-grained access controls | [README](starter_kits/datazone_governed_lakehouse/README.md) |
-| **GenAI Foundation** | Bedrock Agent with RAG and knowledge bases | [README](starter_kits/genai_foundation/README.md) |
+| **GenAI Foundation** | AgentCore agent with RAG, gateway tools, and guardrails | [README](starter_kits/genai_foundation/README.md) |
 | **GenAI GAIA Chatbot** | RAG chatbot backend with document search, auth, and streaming API | [README](starter_kits/genai_gaia_chatbot/README.md) |
 | **Health Data Accelerator** | Healthcare-focused data platform with compliance-oriented configurations | [README](starter_kits/health_data_accelerator/README.md) |
 | **Minimal** | Base governance layer — starting point for custom configurations | [README](starter_kits/minimal/README.md) |

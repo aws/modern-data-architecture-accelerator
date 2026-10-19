@@ -146,7 +146,7 @@ The endpoint properties are `bedrockRuntime`, `ecrApi`, `ecrDocker`, `sts`, `log
 
 Image layers are served from the ECR layer bucket over S3, so the ECR endpoints alone cannot complete a pull. A set a harness references must therefore state one of:
 
-- `routeTableIds` — create an S3 gateway endpoint on those route tables. It intercepts **all** S3 traffic from every subnet on them, and its derived policy allows only the image-layer read, so if other workloads share those tables and need broader S3 access, use the option below instead and provision the endpoint out of band.
+- `routeTableIds` — create an S3 gateway endpoint on those route tables. List the route table of every subnet the referencing harnesses run in: private subnets often each have their own, and a session in a subnet whose table lacks the endpoint's route can't pull image layers. It intercepts **all** S3 traffic from every subnet on them, and its derived policy allows only the image-layer read, so if other workloads share those tables and need broader S3 access, use the option below instead and provision the endpoint out of band.
 - `s3ImageLayers: { external: true }` — S3 is already reachable, over NAT or an endpoint provisioned elsewhere. Required for a VPC that already has an S3 gateway endpoint on those route tables: a route table carries a service's prefix-list route from only one endpoint, so a second fails at deploy.
 
 Stating neither is a synth error, because a no-NAT VPC without image-layer access deploys cleanly and its sessions never start. A set only knowledge base connectors reference states neither: connectors pull no images.

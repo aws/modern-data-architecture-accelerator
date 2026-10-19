@@ -1,113 +1,84 @@
+"""
+Custom transformation for the product-docs knowledge base, applied after chunking.
+
+The ingestion job writes each batch of chunks to the intermediate storage bucket as a JSON object of the
+form `{"fileContents": [{"contentBody": ..., "contentType": ..., "contentMetadata": {...}}]}`, and passes
+the batch keys in `inputFiles[].contentBatches`. This function writes a transformed copy of each batch to
+the same bucket and returns the copies' keys in the same shape. See
+https://docs.aws.amazon.com/bedrock/latest/userguide/kb-custom-transformation.html.
+
+The transformation prefixes the body of each text chunk with a label that makes product documentation
+easier to find, and adds the processing date to the file metadata.
+
+An error, such as a batch that cannot be read or written, is raised rather than logged, so the ingestion
+job reports the documents as failed instead of ingesting them untransformed.
+"""
+
 import json
 import logging
+import posixpath
+from collections.abc import Mapping
+from datetime import UTC, datetime
+from typing import Any
+
 import boto3
-from datetime import datetime
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
-s3_client = boto3.client('s3')
+s3_client = boto3.client("s3")
 
-def lambda_handler(event, context):
-    """
-    Handler function for the knowledge base custom transformer Lambda.
-    """
-    try:
-        logger.info(f"Received event: {json.dumps(event)}")
-        
-        bucket_name = event.get("bucketName")
-        input_files = event.get("inputFiles", [])
-        output_files = []
-        
-        for input_file in input_files:
-            transformed_file = transform_file(input_file, bucket_name)
-            output_files.append(transformed_file)
-        
-        response = {
-            "outputFiles": output_files
-        }
-        
-        logger.info(f"Returning response with {len(output_files)} files")
-        return response
-    
-    except Exception as e:
-        logger.exception("Error processing document")
-        return {
-            "outputFiles": []
-        }
+TEXT_LABEL = "[PRODUCT DOCUMENTATION]"
+PROCESSOR_VERSION = "1.0.0"
 
-def transform_file(input_file, bucket_name):
-    """Transform a single file by reading and modifying JSON content from S3."""
-    
-    # Get original metadata and enhance it
-    original_metadata = input_file.get("fileMetadata", {})
-    enhanced_metadata = original_metadata.copy()
-    enhanced_metadata["processedDate"] = datetime.now(datetime.UTC).isoformat()
-    enhanced_metadata["processorVersion"] = "1.0.0"
-    
-    # Transform content batches
-    original_batches = input_file.get("contentBatches", [])
-    transformed_batches = []
-    
-    for batch in original_batches:
-        s3_key = batch.get("key")
-        if s3_key:
-            # Read JSON content from S3
-            try:
-                response = s3_client.get_object(Bucket=bucket_name, Key=s3_key)
-                content = json.loads(response['Body'].read().decode('utf-8'))
-                
-                # Transform the content
-                transformed_content = transform_content(content)
-                
-                # Write transformed content back to S3 with new key
-                new_key = s3_key.replace('.JSON', '_transformed.JSON').replace('.json', '_transformed.json')
-                s3_client.put_object(
-                    Bucket=bucket_name,
-                    Key=new_key,
-                    Body=json.dumps(transformed_content),
-                    ContentType='application/json'
-                )
-                
-                # Add transformed batch with new key
-                transformed_batch = {
-                    "key": new_key,
-                    "transformed": True,
-                    "transformedAt": datetime.now(datetime.UTC).isoformat()
-                }
-                transformed_batches.append(transformed_batch)
-                
-            except Exception as e:
-                logger.error(f"Error processing batch {s3_key}: {str(e)}")
-                # Keep original batch if transformation fails
-                transformed_batches.append(batch)
-    
+# The content types of a text chunk. The ingestion job writes PLAIN_TEXT; the documentation names TEXT.
+TEXT_CONTENT_TYPES = ("PLAIN_TEXT", "TEXT")
+
+
+def lambda_handler(event: Mapping[str, Any], context: Any) -> dict[str, Any]:
+    """Handler function for the knowledge base custom transformer Lambda."""
+    logger.info("Received event: %s", json.dumps(event))
+
+    bucket_name = event["bucketName"]
+    output_files = [transform_file(input_file, bucket_name) for input_file in event.get("inputFiles", [])]
+
+    logger.info("Returning response with %d files", len(output_files))
+    return {"outputFiles": output_files}
+
+
+def transform_file(input_file: Mapping[str, Any], bucket_name: str) -> dict[str, Any]:
+    """Transform the content batches of one input file, and add the processing date to its metadata."""
     return {
-        "originalFileLocation": input_file.get("originalFileLocation", {}),
-        "fileMetadata": enhanced_metadata,
-        "contentBatches": transformed_batches
+        "originalFileLocation": input_file["originalFileLocation"],
+        "fileMetadata": {
+            **input_file.get("fileMetadata", {}),
+            "processedDate": datetime.now(UTC).isoformat(),
+            "processorVersion": PROCESSOR_VERSION,
+        },
+        "contentBatches": [
+            transform_batch(batch["key"], bucket_name) for batch in input_file.get("contentBatches", [])
+        ],
     }
 
-def transform_content(content):
-    """Transform the actual JSON content."""
-    
-    # If content has text field, enhance it
-    if isinstance(content, dict) and 'text' in content:
-        original_text = content['text']
-        
-        # Add prefix to make content more searchable
-        enhanced_text = f"[PRODUCT DOCUMENTATION] {original_text}"
-        
-        # Create transformed content
-        transformed_content = content.copy()
-        transformed_content['text'] = enhanced_text
-        transformed_content['transformation_applied'] = True
-        transformed_content['transformation_timestamp'] = datetime.now(datetime.UTC).isoformat()
-        
-        return transformed_content
-    
-    # If it's a list, transform each item
-    elif isinstance(content, list):
-        return [transform_content(item) for item in content]
-    
-    # Return as-is if no transformation needed
-    return content
+
+def transform_batch(key: str, bucket_name: str) -> dict[str, str]:
+    """Write a transformed copy of the batch at `key`, next to it with `_transformed` added to the name,
+    and return the copy's batch entry."""
+    response = s3_client.get_object(Bucket=bucket_name, Key=key)
+    batch = json.loads(response["Body"].read().decode("utf-8"))
+
+    root, extension = posixpath.splitext(key)
+    transformed_key = f"{root}_transformed{extension}"
+    s3_client.put_object(
+        Bucket=bucket_name,
+        Key=transformed_key,
+        Body=json.dumps({**batch, "fileContents": [transform_content(content) for content in batch["fileContents"]]}),
+        ContentType="application/json",
+    )
+    return {"key": transformed_key}
+
+
+def transform_content(content: Mapping[str, Any]) -> dict[str, Any]:
+    """Prefix the body of a text chunk with the label. Other content is returned as is."""
+    if content.get("contentType") not in TEXT_CONTENT_TYPES:
+        return dict(content)
+    return {**content, "contentBody": f"{TEXT_LABEL} {content['contentBody']}"}

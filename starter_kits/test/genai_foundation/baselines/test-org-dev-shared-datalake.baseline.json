@@ -13,10 +13,6 @@
       "Type": "AWS::SSM::Parameter::Value<String>",
       "Default": "/test-org/shared/generated-role/data-user/id"
     },
-    "SsmParameterValuetestorgsharedgeneratedroleagentexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter": {
-      "Type": "AWS::SSM::Parameter::Value<String>",
-      "Default": "/test-org/shared/generated-role/agent-execution-role/id"
-    },
     "SsmParameterValuetestorgsharedgeneratedrolekbexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter": {
       "Type": "AWS::SSM::Parameter::Value<String>",
       "Default": "/test-org/shared/generated-role/kb-execution-role/id"
@@ -387,17 +383,6 @@
                         [
                           {
                             "Ref": "SsmParameterValuetestorgsharedgeneratedrolekbexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
-                          },
-                          ":*"
-                        ]
-                      ]
-                    },
-                    {
-                      "Fn::Join": [
-                        "",
-                        [
-                          {
-                            "Ref": "SsmParameterValuetestorgsharedgeneratedroleagentexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
                           },
                           ":*"
                         ]
@@ -1213,17 +1198,6 @@
                           ":*"
                         ]
                       ]
-                    },
-                    {
-                      "Fn::Join": [
-                        "",
-                        [
-                          {
-                            "Ref": "SsmParameterValuetestorgsharedgeneratedroleagentexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
-                          },
-                          ":*"
-                        ]
-                      ]
                     }
                   ]
                 }
@@ -1387,17 +1361,6 @@
                         "",
                         [
                           {
-                            "Ref": "SsmParameterValuetestorgsharedgeneratedroleagentexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
-                          },
-                          ":*"
-                        ]
-                      ]
-                    },
-                    {
-                      "Fn::Join": [
-                        "",
-                        [
-                          {
                             "Ref": "SsmParameterValuetestorgsharedgeneratedroleagentlambdaroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
                           },
                           ":*"
@@ -1475,17 +1438,6 @@
                         [
                           {
                             "Ref": "SsmParameterValuetestorgsharedgeneratedrolekbexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
-                          },
-                          ":*"
-                        ]
-                      ]
-                    },
-                    {
-                      "Fn::Join": [
-                        "",
-                        [
-                          {
-                            "Ref": "SsmParameterValuetestorgsharedgeneratedroleagentexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
                           },
                           ":*"
                         ]
@@ -1925,17 +1877,6 @@
                           ":*"
                         ]
                       ]
-                    },
-                    {
-                      "Fn::Join": [
-                        "",
-                        [
-                          {
-                            "Ref": "SsmParameterValuetestorgsharedgeneratedroleagentexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
-                          },
-                          ":*"
-                        ]
-                      ]
                     }
                   ]
                 }
@@ -2059,17 +2000,6 @@
                           ":*"
                         ]
                       ]
-                    },
-                    {
-                      "Fn::Join": [
-                        "",
-                        [
-                          {
-                            "Ref": "SsmParameterValuetestorgsharedgeneratedroleagentexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
-                          },
-                          ":*"
-                        ]
-                      ]
                     }
                   ]
                 }
@@ -2153,17 +2083,6 @@
                         [
                           {
                             "Ref": "SsmParameterValuetestorgsharedgeneratedrolekbexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
-                          },
-                          ":*"
-                        ]
-                      ]
-                    },
-                    {
-                      "Fn::Join": [
-                        "",
-                        [
-                          {
-                            "Ref": "SsmParameterValuetestorgsharedgeneratedroleagentexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
                           },
                           ":*"
                         ]
@@ -2587,17 +2506,6 @@
                           ":*"
                         ]
                       ]
-                    },
-                    {
-                      "Fn::Join": [
-                        "",
-                        [
-                          {
-                            "Ref": "SsmParameterValuetestorgsharedgeneratedroleagentexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
-                          },
-                          ":*"
-                        ]
-                      ]
                     }
                   ]
                 }
@@ -2721,17 +2629,6 @@
                           ":*"
                         ]
                       ]
-                    },
-                    {
-                      "Fn::Join": [
-                        "",
-                        [
-                          {
-                            "Ref": "SsmParameterValuetestorgsharedgeneratedroleagentexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
-                          },
-                          ":*"
-                        ]
-                      ]
                     }
                   ]
                 }
@@ -2815,17 +2712,6 @@
                         [
                           {
                             "Ref": "SsmParameterValuetestorgsharedgeneratedrolekbexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
-                          },
-                          ":*"
-                        ]
-                      ]
-                    },
-                    {
-                      "Fn::Join": [
-                        "",
-                        [
-                          {
-                            "Ref": "SsmParameterValuetestorgsharedgeneratedroleagentexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
                           },
                           ":*"
                         ]
@@ -3254,17 +3140,6 @@
                           ":*"
                         ]
                       ]
-                    },
-                    {
-                      "Fn::Join": [
-                        "",
-                        [
-                          {
-                            "Ref": "SsmParameterValuetestorgsharedgeneratedroleagentexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
-                          },
-                          ":*"
-                        ]
-                      ]
                     }
                   ]
                 }
@@ -3388,17 +3263,6 @@
                           ":*"
                         ]
                       ]
-                    },
-                    {
-                      "Fn::Join": [
-                        "",
-                        [
-                          {
-                            "Ref": "SsmParameterValuetestorgsharedgeneratedroleagentexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
-                          },
-                          ":*"
-                        ]
-                      ]
                     }
                   ]
                 }
@@ -3482,17 +3346,6 @@
                         [
                           {
                             "Ref": "SsmParameterValuetestorgsharedgeneratedrolekbexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
-                          },
-                          ":*"
-                        ]
-                      ]
-                    },
-                    {
-                      "Fn::Join": [
-                        "",
-                        [
-                          {
-                            "Ref": "SsmParameterValuetestorgsharedgeneratedroleagentexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter"
                           },
                           ":*"
                         ]

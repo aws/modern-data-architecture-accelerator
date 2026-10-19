@@ -2,6 +2,10 @@
 
 ## [NEXT_RELEASE_VERSION] - NEXT_RELEASE_DATE
 
+### Starter Kit Changes
+
+- Rebuilt `genai_foundation` kit on Amazon Bedrock AgentCore, since Bedrock Agents (now Agents Classic) closed to new customers on July 30, 2026. The Bedrock Agent is replaced by an AgentCore Harness that reaches the customer support tools and the knowledge base through an AgentCore Gateway. See the [kit README](starter_kits/genai_foundation/README.md) and [USAGE](starter_kits/genai_foundation/docs/USAGE.md).
+
 ### New Features
 
 #### DataOps Project and SageMaker Project Modules

@@ -2,7 +2,7 @@
 name = "genai-accelerator-tests"
 version = "0.1.0"
 description = "GenAI Accelerator Lambda Function Tests"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 dependencies = [
     "pytest>=7.4.0",
     "pytest-cov>=4.1.0",

@@ -1905,29 +1905,35 @@
           "Statement": [
             {
               "Action": [
-                "bedrock:CreateAgent",
-                "bedrock:DeleteAgent",
-                "bedrock:GetAgent",
-                "bedrock:ListAgents",
-                "bedrock:UpdateAgent",
-                "bedrock:CreateAgentAlias",
-                "bedrock:DeleteAgentAlias",
-                "bedrock:GetAgentAlias",
-                "bedrock:ListAgentAliases",
-                "bedrock:UpdateAgentAlias",
-                "bedrock:CreateAgentActionGroup",
-                "bedrock:DeleteAgentActionGroup",
-                "bedrock:GetAgentActionGroup",
-                "bedrock:ListAgentActionGroups",
-                "bedrock:UpdateAgentActionGroup",
-                "bedrock:PrepareAgent",
-                "bedrock:AssociateAgentKnowledgeBase",
-                "bedrock:DisassociateAgentKnowledgeBase",
-                "bedrock:ListAgentKnowledgeBases",
-                "bedrock:InvokeAgent"
+                "bedrock-agentcore:InvokeHarness",
+                "bedrock-agentcore:InvokeAgentRuntime",
+                "bedrock-agentcore:GetHarness",
+                "bedrock-agentcore:GetHarnessEndpoint"
               ],
               "Effect": "Allow",
-              "Resource": "arn:test-partition:bedrock:test-region:test-account:agent/*"
+              "Resource": "arn:test-partition:bedrock-agentcore:test-region:test-account:harness/*",
+              "Sid": "AgentCoreHarnessAccess"
+            },
+            {
+              "Action": [
+                "bedrock-agentcore:GetGateway",
+                "bedrock-agentcore:GetGatewayTarget",
+                "bedrock-agentcore:ListGatewayTargets"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:bedrock-agentcore:test-region:test-account:gateway/*",
+              "Sid": "AgentCoreGatewayAccess"
+            },
+            {
+              "Action": [
+                "bedrock-agentcore:ListHarnesses",
+                "bedrock-agentcore:ListHarnessEndpoints",
+                "bedrock-agentcore:ListHarnessVersions",
+                "bedrock-agentcore:ListGateways"
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "AgentCoreListAccess"
             },
             {
               "Action": [
@@ -1948,7 +1954,8 @@
                 "bedrock:RetrieveAndGenerate"
               ],
               "Effect": "Allow",
-              "Resource": "arn:test-partition:bedrock:test-region:test-account:knowledge-base/*"
+              "Resource": "arn:test-partition:bedrock:test-region:test-account:knowledge-base/*",
+              "Sid": "BedrockKnowledgeBaseAccess"
             },
             {
               "Action": [
@@ -1963,7 +1970,8 @@
                 "bedrock:ApplyGuardrail"
               ],
               "Effect": "Allow",
-              "Resource": "arn:test-partition:bedrock:test-region:test-account:guardrail/*"
+              "Resource": "arn:test-partition:bedrock:test-region:test-account:guardrail/*",
+              "Sid": "BedrockGuardrailAccess"
             },
             {
               "Action": [
@@ -1973,7 +1981,8 @@
                 "bedrock:ListFoundationModels"
               ],
               "Effect": "Allow",
-              "Resource": "arn:test-partition:bedrock:*::foundation-model/*"
+              "Resource": "arn:test-partition:bedrock:*::foundation-model/*",
+              "Sid": "BedrockModelAccess"
             },
             {
               "Action": [
@@ -1995,7 +2004,8 @@
               "Resource": [
                 "arn:test-partition:lambda:test-region:test-account:function:*",
                 "arn:test-partition:lambda:test-region:test-account:layer:*"
-              ]
+              ],
+              "Sid": "LambdaAccess"
             },
             {
               "Action": [
@@ -2010,7 +2020,8 @@
                 "s3:ListBucket"
               ],
               "Effect": "Allow",
-              "Resource": "arn:test-partition:s3:::*"
+              "Resource": "arn:test-partition:s3:::*",
+              "Sid": "S3Access"
             },
             {
               "Action": [
@@ -2025,7 +2036,8 @@
                 "iam:DetachRolePolicy"
               ],
               "Effect": "Allow",
-              "Resource": "arn:test-partition:iam::test-account:role/*"
+              "Resource": "arn:test-partition:iam::test-account:role/*",
+              "Sid": "IAMAccess"
             },
             {
               "Action": [
@@ -2046,7 +2058,8 @@
                 "kms:GetKeyPolicy"
               ],
               "Effect": "Allow",
-              "Resource": "arn:test-partition:kms:test-region:test-account:key/*"
+              "Resource": "arn:test-partition:kms:test-region:test-account:key/*",
+              "Sid": "KMSAccess"
             },
             {
               "Action": [
@@ -2067,7 +2080,8 @@
                 "arn:test-partition:rds:test-region:test-account:cluster:*",
                 "arn:test-partition:rds:test-region:test-account:db:*",
                 "arn:test-partition:rds:test-region:test-account:subgrp:*"
-              ]
+              ],
+              "Sid": "RDSAccess"
             },
             {
               "Action": [
@@ -2078,7 +2092,8 @@
                 "logs:DescribeLogStreams"
               ],
               "Effect": "Allow",
-              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:*"
+              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:*",
+              "Sid": "CloudWatchLogsAccess"
             },
             {
               "Action": [
@@ -2093,7 +2108,8 @@
                 "ec2:DescribeVpcs"
               ],
               "Effect": "Allow",
-              "Resource": "*"
+              "Resource": "*",
+              "Sid": "EC2Access"
             }
           ],
           "Version": "2012-10-17"
@@ -2109,7 +2125,7 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[CONFIG:\"/TEMP_DIR/genai_foundation/roles.yaml\"] Bedrock agent/*, knowledge-base/*, and guardrail/* use wildcard suffixes because resource IDs are generated at deployment time. Foundation model resource uses region wildcard (bedrock:*::foundation-model/*) to support cross-region inference profiles. EC2 Describe* and S3 bucket-level actions do not support resource-level permissions. IAM role/* is required because CDK-generated role names are not known at authoring time. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonbedrock.html",
+              "reason": "[CONFIG:\"/TEMP_DIR/genai_foundation/roles.yaml\"] AgentCore harness/* and gateway/*, and Bedrock knowledge-base/* and guardrail/*, use wildcard suffixes because resource IDs are generated at deployment time. AgentCore List* actions do not support resource-level permissions. Foundation model resource uses region wildcard (bedrock:*::foundation-model/*) to support cross-region inference profiles. EC2 Describe* and S3 bucket-level actions do not support resource-level permissions. IAM role/* is required because CDK-generated role names are not known at authoring time. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_bedrock-agentcore.html and https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonbedrock.html",
               "id": "AwsSolutions-IAM5"
             }
           ]
@@ -2139,7 +2155,7 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[CONFIG:\"/TEMP_DIR/genai_foundation/roles.yaml\"] Bedrock agent/*, knowledge-base/*, and guardrail/* use wildcard suffixes because resource IDs are generated at deployment time. Foundation model resource uses region wildcard (bedrock:*::foundation-model/*) to support cross-region inference profiles. EC2 Describe* and S3 bucket-level actions do not support resource-level permissions. IAM role/* is required because CDK-generated role names are not known at authoring time. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonbedrock.html",
+              "reason": "[CONFIG:\"/TEMP_DIR/genai_foundation/roles.yaml\"] AgentCore harness/* and gateway/*, and Bedrock knowledge-base/* and guardrail/*, use wildcard suffixes because resource IDs are generated at deployment time. AgentCore List* actions do not support resource-level permissions. Foundation model resource uses region wildcard (bedrock:*::foundation-model/*) to support cross-region inference profiles. EC2 Describe* and S3 bucket-level actions do not support resource-level permissions. IAM role/* is required because CDK-generated role names are not known at authoring time. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_bedrock-agentcore.html and https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonbedrock.html",
               "id": "AwsSolutions-IAM5"
             }
           ]
@@ -2189,170 +2205,7 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[CONFIG:\"/TEMP_DIR/genai_foundation/roles.yaml\"] Bedrock agent/*, knowledge-base/*, and guardrail/* use wildcard suffixes because resource IDs are generated at deployment time. Foundation model resource uses region wildcard (bedrock:*::foundation-model/*) to support cross-region inference profiles. EC2 Describe* and S3 bucket-level actions do not support resource-level permissions. IAM role/* is required because CDK-generated role names are not known at authoring time. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonbedrock.html",
-              "id": "AwsSolutions-IAM5"
-            }
-          ]
-        }
-      }
-    },
-    "policyBedrockAgentExecutionPolicy30D9B3CB": {
-      "Type": "AWS::IAM::ManagedPolicy",
-      "Properties": {
-        "Description": "",
-        "ManagedPolicyName": "test-org-dev-shared-roles-bedrockagentexecutionpolicy",
-        "Path": "/",
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": [
-                "bedrock:InvokeModel",
-                "bedrock:InvokeModelWithResponseStream"
-              ],
-              "Effect": "Allow",
-              "Resource": "arn:test-partition:bedrock:*::foundation-model/*"
-            },
-            {
-              "Action": "lambda:InvokeFunction",
-              "Effect": "Allow",
-              "Resource": "arn:test-partition:lambda:test-region:test-account:function:*"
-            },
-            {
-              "Action": [
-                "bedrock:RetrieveAndGenerate",
-                "bedrock:Retrieve"
-              ],
-              "Effect": "Allow",
-              "Resource": "arn:test-partition:bedrock:test-region:test-account:knowledge-base/*"
-            },
-            {
-              "Action": [
-                "s3:GetObject",
-                "s3:ListBucket"
-              ],
-              "Effect": "Allow",
-              "Resource": [
-                "arn:test-partition:s3:::test-org-*/*",
-                "arn:test-partition:s3:::test-org-*"
-              ]
-            },
-            {
-              "Action": [
-                "logs:CreateLogGroup",
-                "logs:CreateLogStream",
-                "logs:PutLogEvents"
-              ],
-              "Effect": "Allow",
-              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:/aws/bedrock/*"
-            },
-            {
-              "Action": "bedrock:ApplyGuardrail",
-              "Effect": "Allow",
-              "Resource": "arn:test-partition:bedrock:test-region:test-account:guardrail/enterprise-guardrail"
-            },
-            {
-              "Action": [
-                "kms:Decrypt",
-                "kms:GenerateDataKey"
-              ],
-              "Effect": "Allow",
-              "Resource": "arn:test-partition:kms:test-region:test-account:key/*"
-            }
-          ],
-          "Version": "2012-10-17"
-        },
-        "Roles": [
-          {
-            "Ref": "agentexecutionrole68450D62"
-          }
-        ]
-      },
-      "Metadata": {
-        "aws:cdk:path": "test-org-dev-shared-roles/policy-BedrockAgentExecutionPolicy/Resource",
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "reason": "[CONFIG:\"/TEMP_DIR/genai_foundation/roles.yaml\"] Bedrock InvokeModel and InvokeModelWithResponseStream use region wildcard (bedrock:*::foundation-model/*) to support cross-region inference profiles. Lambda function:* wildcard is required because action group function names are generated at deployment time. Knowledge-base/* wildcard is needed because KB IDs are dynamic. S3 uses org-prefixed wildcard (test-org-*) to limit scope. KMS key/* is required because key IDs are generated at deployment time.",
-              "id": "AwsSolutions-IAM5"
-            }
-          ]
-        }
-      }
-    },
-    "policyBedrockAgentExecutionPolicymanagedpolicyBedrockAgentExecutionPolicyarnssm4FF0379B": {
-      "Type": "AWS::SSM::Parameter",
-      "Properties": {
-        "Name": "/test-org/shared/roles/managed-policy/bedrockagentexecutionpolicy/arn",
-        "Tags": {
-          "costcentre": "123456",
-          "mdaa_cdk_app": "roles",
-          "mdaa_domain": "shared",
-          "mdaa_env": "dev",
-          "mdaa_module_name": "roles",
-          "mdaa_org": "test-org",
-          "project": "genai_foundation"
-        },
-        "Type": "String",
-        "Value": {
-          "Ref": "policyBedrockAgentExecutionPolicy30D9B3CB"
-        }
-      },
-      "Metadata": {
-        "aws:cdk:path": "test-org-dev-shared-roles/policy-BedrockAgentExecutionPolicy/managed-policy-BedrockAgentExecutionPolicy-arn/ssm/Resource",
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "reason": "[CONFIG:\"/TEMP_DIR/genai_foundation/roles.yaml\"] Bedrock InvokeModel and InvokeModelWithResponseStream use region wildcard (bedrock:*::foundation-model/*) to support cross-region inference profiles. Lambda function:* wildcard is required because action group function names are generated at deployment time. Knowledge-base/* wildcard is needed because KB IDs are dynamic. S3 uses org-prefixed wildcard (test-org-*) to limit scope. KMS key/* is required because key IDs are generated at deployment time.",
-              "id": "AwsSolutions-IAM5"
-            }
-          ]
-        }
-      }
-    },
-    "policyBedrockAgentExecutionPolicymanagedpolicyBedrockAgentExecutionPolicynamessmEC1015EC": {
-      "Type": "AWS::SSM::Parameter",
-      "Properties": {
-        "Name": "/test-org/shared/roles/managed-policy/bedrockagentexecutionpolicy/name",
-        "Tags": {
-          "costcentre": "123456",
-          "mdaa_cdk_app": "roles",
-          "mdaa_domain": "shared",
-          "mdaa_env": "dev",
-          "mdaa_module_name": "roles",
-          "mdaa_org": "test-org",
-          "project": "genai_foundation"
-        },
-        "Type": "String",
-        "Value": {
-          "Fn::Select": [
-            1,
-            {
-              "Fn::Split": [
-                "/",
-                {
-                  "Fn::Select": [
-                    5,
-                    {
-                      "Fn::Split": [
-                        ":",
-                        {
-                          "Ref": "policyBedrockAgentExecutionPolicy30D9B3CB"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      },
-      "Metadata": {
-        "aws:cdk:path": "test-org-dev-shared-roles/policy-BedrockAgentExecutionPolicy/managed-policy-BedrockAgentExecutionPolicy-name/ssm/Resource",
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "reason": "[CONFIG:\"/TEMP_DIR/genai_foundation/roles.yaml\"] Bedrock InvokeModel and InvokeModelWithResponseStream use region wildcard (bedrock:*::foundation-model/*) to support cross-region inference profiles. Lambda function:* wildcard is required because action group function names are generated at deployment time. Knowledge-base/* wildcard is needed because KB IDs are dynamic. S3 uses org-prefixed wildcard (test-org-*) to limit scope. KMS key/* is required because key IDs are generated at deployment time.",
+              "reason": "[CONFIG:\"/TEMP_DIR/genai_foundation/roles.yaml\"] AgentCore harness/* and gateway/*, and Bedrock knowledge-base/* and guardrail/*, use wildcard suffixes because resource IDs are generated at deployment time. AgentCore List* actions do not support resource-level permissions. Foundation model resource uses region wildcard (bedrock:*::foundation-model/*) to support cross-region inference profiles. EC2 Describe* and S3 bucket-level actions do not support resource-level permissions. IAM role/* is required because CDK-generated role names are not known at authoring time. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_bedrock-agentcore.html and https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonbedrock.html",
               "id": "AwsSolutions-IAM5"
             }
           ]
@@ -2377,7 +2230,8 @@
               "Resource": [
                 "arn:test-partition:s3:::test-org-*/*",
                 "arn:test-partition:s3:::test-org-*"
-              ]
+              ],
+              "Sid": "S3Access"
             },
             {
               "Action": [
@@ -2389,17 +2243,20 @@
               "Resource": [
                 "arn:test-partition:logs:test-region:test-account:log-group:/aws/bedrock/*",
                 "arn:test-partition:logs:test-region:test-account:log-group:/aws/lambda/*"
-              ]
+              ],
+              "Sid": "CloudWatchLogsAccess"
             },
             {
               "Action": "lambda:InvokeFunction",
               "Effect": "Allow",
-              "Resource": "arn:test-partition:lambda:test-region:test-account:function:*"
+              "Resource": "arn:test-partition:lambda:test-region:test-account:function:*",
+              "Sid": "LambdaAccess"
             },
             {
               "Action": "bedrock:InvokeModel",
               "Effect": "Allow",
-              "Resource": "arn:test-partition:bedrock:*::foundation-model/*"
+              "Resource": "arn:test-partition:bedrock:*::foundation-model/*",
+              "Sid": "BedrockModelAccess"
             },
             {
               "Action": [
@@ -2407,7 +2264,8 @@
                 "bedrock:GetDataAutomationStatus"
               ],
               "Effect": "Allow",
-              "Resource": "*"
+              "Resource": "*",
+              "Sid": "BedrockDataAutomationAccess"
             },
             {
               "Action": [
@@ -2416,7 +2274,8 @@
                 "bedrock:ListIngestionJobs"
               ],
               "Effect": "Allow",
-              "Resource": "arn:test-partition:bedrock:test-region:test-account:knowledge-base/*"
+              "Resource": "arn:test-partition:bedrock:test-region:test-account:knowledge-base/*",
+              "Sid": "BedrockIngestionAccess"
             },
             {
               "Action": [
@@ -2424,7 +2283,8 @@
                 "kms:GenerateDataKey"
               ],
               "Effect": "Allow",
-              "Resource": "arn:test-partition:kms:test-region:test-account:key/*"
+              "Resource": "arn:test-partition:kms:test-region:test-account:key/*",
+              "Sid": "KMSAccess"
             }
           ],
           "Version": "2012-10-17"
@@ -2542,7 +2402,8 @@
                 "logs:PutLogEvents"
               ],
               "Effect": "Allow",
-              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:/aws/lambda/*"
+              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:/aws/lambda/*",
+              "Sid": "CloudWatchLogsAccess"
             },
             {
               "Action": [
@@ -2554,7 +2415,8 @@
               "Resource": [
                 "arn:test-partition:s3:::test-org-*/*",
                 "arn:test-partition:s3:::test-org-*"
-              ]
+              ],
+              "Sid": "S3Access"
             },
             {
               "Action": [
@@ -2562,7 +2424,8 @@
                 "kms:GenerateDataKey"
               ],
               "Effect": "Allow",
-              "Resource": "arn:test-partition:kms:test-region:test-account:key/*"
+              "Resource": "arn:test-partition:kms:test-region:test-account:key/*",
+              "Sid": "KMSAccess"
             }
           ],
           "Version": "2012-10-17"
@@ -2680,7 +2543,8 @@
                 "logs:PutLogEvents"
               ],
               "Effect": "Allow",
-              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:/aws/lambda/*"
+              "Resource": "arn:test-partition:logs:test-region:test-account:log-group:/aws/lambda/*",
+              "Sid": "CloudWatchLogsAccess"
             },
             {
               "Action": [
@@ -2690,7 +2554,8 @@
                 "sqs:SendMessage"
               ],
               "Effect": "Allow",
-              "Resource": "arn:test-partition:sqs:test-region:test-account:test-org-*"
+              "Resource": "arn:test-partition:sqs:test-region:test-account:test-org-*",
+              "Sid": "SQSAccess"
             },
             {
               "Action": [
@@ -2702,7 +2567,8 @@
                 "bedrock:ListDataSources"
               ],
               "Effect": "Allow",
-              "Resource": "arn:test-partition:bedrock:test-region:test-account:knowledge-base/*"
+              "Resource": "arn:test-partition:bedrock:test-region:test-account:knowledge-base/*",
+              "Sid": "BedrockIngestionAccess"
             },
             {
               "Action": [
@@ -2715,12 +2581,14 @@
                 }
               },
               "Effect": "Allow",
-              "Resource": "arn:test-partition:kms:test-region:test-account:key/*"
+              "Resource": "arn:test-partition:kms:test-region:test-account:key/*",
+              "Sid": "KMSAccess"
             },
             {
               "Action": "cloudwatch:PutMetricData",
               "Effect": "Allow",
-              "Resource": "*"
+              "Resource": "*",
+              "Sid": "CloudWatchMetricsAccess"
             }
           ],
           "Version": "2012-10-17"
@@ -2881,7 +2749,7 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[CONFIG:\"/TEMP_DIR/genai_foundation/roles.yaml\"] AmazonBedrockFullAccess is required for Bedrock agents to invoke models, manage knowledge bases, and access guardrails. See https://docs.aws.amazon.com/bedrock/latest/userguide/security-iam-awsmanpol.html",
+              "reason": "[CONFIG:\"/TEMP_DIR/genai_foundation/roles.yaml\"] AmazonBedrockFullAccess is required for the data admin to invoke models, manage and sync knowledge bases, and test guardrails in the Bedrock console. See https://docs.aws.amazon.com/bedrock/latest/userguide/security-iam-awsmanpol.html",
               "id": "AwsSolutions-IAM4"
             }
           ]
@@ -2914,7 +2782,7 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[CONFIG:\"/TEMP_DIR/genai_foundation/roles.yaml\"] AmazonBedrockFullAccess is required for Bedrock agents to invoke models, manage knowledge bases, and access guardrails. See https://docs.aws.amazon.com/bedrock/latest/userguide/security-iam-awsmanpol.html",
+              "reason": "[CONFIG:\"/TEMP_DIR/genai_foundation/roles.yaml\"] AmazonBedrockFullAccess is required for the data admin to invoke models, manage and sync knowledge bases, and test guardrails in the Bedrock console. See https://docs.aws.amazon.com/bedrock/latest/userguide/security-iam-awsmanpol.html",
               "id": "AwsSolutions-IAM4"
             }
           ]
@@ -2947,7 +2815,7 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[CONFIG:\"/TEMP_DIR/genai_foundation/roles.yaml\"] AmazonBedrockFullAccess is required for Bedrock agents to invoke models, manage knowledge bases, and access guardrails. See https://docs.aws.amazon.com/bedrock/latest/userguide/security-iam-awsmanpol.html",
+              "reason": "[CONFIG:\"/TEMP_DIR/genai_foundation/roles.yaml\"] AmazonBedrockFullAccess is required for the data admin to invoke models, manage and sync knowledge bases, and test guardrails in the Bedrock console. See https://docs.aws.amazon.com/bedrock/latest/userguide/security-iam-awsmanpol.html",
               "id": "AwsSolutions-IAM4"
             }
           ]
@@ -2977,7 +2845,7 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[CONFIG:\"/TEMP_DIR/genai_foundation/roles.yaml\"] AmazonBedrockFullAccess is required for Bedrock agents to invoke models, manage knowledge bases, and access guardrails. See https://docs.aws.amazon.com/bedrock/latest/userguide/security-iam-awsmanpol.html",
+              "reason": "[CONFIG:\"/TEMP_DIR/genai_foundation/roles.yaml\"] AmazonBedrockFullAccess is required for the data admin to invoke models, manage and sync knowledge bases, and test guardrails in the Bedrock console. See https://docs.aws.amazon.com/bedrock/latest/userguide/security-iam-awsmanpol.html",
               "id": "AwsSolutions-IAM4"
             }
           ]
@@ -3207,22 +3075,30 @@
         "aws:cdk:path": "test-org-dev-shared-roles/data-user/data-user-ssm-generated-role-id/Resource"
       }
     },
-    "agentexecutionrole68450D62": {
+    "harnessexecutionrole8554C0DB": {
       "Type": "AWS::IAM::Role",
       "Properties": {
         "AssumeRolePolicyDocument": {
           "Statement": [
             {
               "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account"
+                },
+                "ArnLike": {
+                  "aws:SourceArn": "arn:test-partition:bedrock-agentcore:test-region:test-account:*"
+                }
+              },
               "Effect": "Allow",
               "Principal": {
-                "Service": "bedrock.amazonaws.com"
+                "Service": "bedrock-agentcore.amazonaws.com"
               }
             }
           ],
           "Version": "2012-10-17"
         },
-        "RoleName": "test-org-dev-shared-roles-agent-execution-role",
+        "RoleName": "test-org-dev-shared-roles-harness-execution-role",
         "Tags": [
           {
             "Key": "costcentre",
@@ -3255,13 +3131,13 @@
         ]
       },
       "Metadata": {
-        "aws:cdk:path": "test-org-dev-shared-roles/agent-execution-role/Resource"
+        "aws:cdk:path": "test-org-dev-shared-roles/harness-execution-role/Resource"
       }
     },
-    "agentexecutionroleroleagentexecutionrolearnssm212CE406": {
+    "harnessexecutionroleroleharnessexecutionrolearnssmE96637B2": {
       "Type": "AWS::SSM::Parameter",
       "Properties": {
-        "Name": "/test-org/shared/roles/role/agent-execution-role/arn",
+        "Name": "/test-org/shared/roles/role/harness-execution-role/arn",
         "Tags": {
           "costcentre": "123456",
           "mdaa_cdk_app": "roles",
@@ -3274,19 +3150,19 @@
         "Type": "String",
         "Value": {
           "Fn::GetAtt": [
-            "agentexecutionrole68450D62",
+            "harnessexecutionrole8554C0DB",
             "Arn"
           ]
         }
       },
       "Metadata": {
-        "aws:cdk:path": "test-org-dev-shared-roles/agent-execution-role/role-agent-execution-role-arn/ssm/Resource"
+        "aws:cdk:path": "test-org-dev-shared-roles/harness-execution-role/role-harness-execution-role-arn/ssm/Resource"
       }
     },
-    "agentexecutionroleroleagentexecutionroleidssm4AE6691F": {
+    "harnessexecutionroleroleharnessexecutionroleidssmEF2B6988": {
       "Type": "AWS::SSM::Parameter",
       "Properties": {
-        "Name": "/test-org/shared/roles/role/agent-execution-role/id",
+        "Name": "/test-org/shared/roles/role/harness-execution-role/id",
         "Tags": {
           "costcentre": "123456",
           "mdaa_cdk_app": "roles",
@@ -3299,19 +3175,19 @@
         "Type": "String",
         "Value": {
           "Fn::GetAtt": [
-            "agentexecutionrole68450D62",
+            "harnessexecutionrole8554C0DB",
             "RoleId"
           ]
         }
       },
       "Metadata": {
-        "aws:cdk:path": "test-org-dev-shared-roles/agent-execution-role/role-agent-execution-role-id/ssm/Resource"
+        "aws:cdk:path": "test-org-dev-shared-roles/harness-execution-role/role-harness-execution-role-id/ssm/Resource"
       }
     },
-    "agentexecutionroleroleagentexecutionrolenamessm7F5CA794": {
+    "harnessexecutionroleroleharnessexecutionrolenamessm3D83784D": {
       "Type": "AWS::SSM::Parameter",
       "Properties": {
-        "Name": "/test-org/shared/roles/role/agent-execution-role/name",
+        "Name": "/test-org/shared/roles/role/harness-execution-role/name",
         "Tags": {
           "costcentre": "123456",
           "mdaa_cdk_app": "roles",
@@ -3323,17 +3199,17 @@
         },
         "Type": "String",
         "Value": {
-          "Ref": "agentexecutionrole68450D62"
+          "Ref": "harnessexecutionrole8554C0DB"
         }
       },
       "Metadata": {
-        "aws:cdk:path": "test-org-dev-shared-roles/agent-execution-role/role-agent-execution-role-name/ssm/Resource"
+        "aws:cdk:path": "test-org-dev-shared-roles/harness-execution-role/role-harness-execution-role-name/ssm/Resource"
       }
     },
-    "agentexecutionroleagentexecutionrolessmgeneratedrolearn1F080A2D": {
+    "harnessexecutionroleharnessexecutionrolessmgeneratedrolearnC02C14F2": {
       "Type": "AWS::SSM::Parameter",
       "Properties": {
-        "Name": "/test-org/shared/generated-role/agent-execution-role/arn",
+        "Name": "/test-org/shared/generated-role/harness-execution-role/arn",
         "Tags": {
           "costcentre": "123456",
           "mdaa_cdk_app": "roles",
@@ -3346,19 +3222,19 @@
         "Type": "String",
         "Value": {
           "Fn::GetAtt": [
-            "agentexecutionrole68450D62",
+            "harnessexecutionrole8554C0DB",
             "Arn"
           ]
         }
       },
       "Metadata": {
-        "aws:cdk:path": "test-org-dev-shared-roles/agent-execution-role/agent-execution-role-ssm-generated-role-arn/Resource"
+        "aws:cdk:path": "test-org-dev-shared-roles/harness-execution-role/harness-execution-role-ssm-generated-role-arn/Resource"
       }
     },
-    "agentexecutionroleagentexecutionrolessmgeneratedroleid5AB85CE1": {
+    "harnessexecutionroleharnessexecutionrolessmgeneratedroleid88986385": {
       "Type": "AWS::SSM::Parameter",
       "Properties": {
-        "Name": "/test-org/shared/generated-role/agent-execution-role/id",
+        "Name": "/test-org/shared/generated-role/harness-execution-role/id",
         "Tags": {
           "costcentre": "123456",
           "mdaa_cdk_app": "roles",
@@ -3371,13 +3247,13 @@
         "Type": "String",
         "Value": {
           "Fn::GetAtt": [
-            "agentexecutionrole68450D62",
+            "harnessexecutionrole8554C0DB",
             "RoleId"
           ]
         }
       },
       "Metadata": {
-        "aws:cdk:path": "test-org-dev-shared-roles/agent-execution-role/agent-execution-role-ssm-generated-role-id/Resource"
+        "aws:cdk:path": "test-org-dev-shared-roles/harness-execution-role/harness-execution-role-ssm-generated-role-id/Resource"
       }
     },
     "kbexecutionroleAB8CD1AE": {
@@ -4582,42 +4458,6 @@
         "Name": "test-org:shared:roles:managed-policy:bedrockadminpolicy:name"
       }
     },
-    "policyBedrockAgentExecutionPolicymanagedpolicyBedrockAgentExecutionPolicyarnout41179C94": {
-      "Value": {
-        "Ref": "policyBedrockAgentExecutionPolicy30D9B3CB"
-      },
-      "Export": {
-        "Name": "test-org:shared:roles:managed-policy:bedrockagentexecutionpolicy:arn"
-      }
-    },
-    "policyBedrockAgentExecutionPolicymanagedpolicyBedrockAgentExecutionPolicynameout8EDD6A53": {
-      "Value": {
-        "Fn::Select": [
-          1,
-          {
-            "Fn::Split": [
-              "/",
-              {
-                "Fn::Select": [
-                  5,
-                  {
-                    "Fn::Split": [
-                      ":",
-                      {
-                        "Ref": "policyBedrockAgentExecutionPolicy30D9B3CB"
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      "Export": {
-        "Name": "test-org:shared:roles:managed-policy:bedrockagentexecutionpolicy:name"
-      }
-    },
     "policyKnowledgeBaseExecutionPolicymanagedpolicyKnowledgeBaseExecutionPolicyarnoutD576DD00": {
       "Value": {
         "Ref": "policyKnowledgeBaseExecutionPolicy18151D7C"
@@ -4786,34 +4626,34 @@
         "Name": "test-org:shared:roles:role:datauser:name"
       }
     },
-    "agentexecutionroleroleagentexecutionrolearnoutD6C00233": {
+    "harnessexecutionroleroleharnessexecutionrolearnoutE31C595D": {
       "Value": {
         "Fn::GetAtt": [
-          "agentexecutionrole68450D62",
+          "harnessexecutionrole8554C0DB",
           "Arn"
         ]
       },
       "Export": {
-        "Name": "test-org:shared:roles:role:agentexecutionrole:arn"
+        "Name": "test-org:shared:roles:role:harnessexecutionrole:arn"
       }
     },
-    "agentexecutionroleroleagentexecutionroleidout9EBBDC41": {
+    "harnessexecutionroleroleharnessexecutionroleidout2AA8B99A": {
       "Value": {
         "Fn::GetAtt": [
-          "agentexecutionrole68450D62",
+          "harnessexecutionrole8554C0DB",
           "RoleId"
         ]
       },
       "Export": {
-        "Name": "test-org:shared:roles:role:agentexecutionrole:id"
+        "Name": "test-org:shared:roles:role:harnessexecutionrole:id"
       }
     },
-    "agentexecutionroleroleagentexecutionrolenameoutA497ED16": {
+    "harnessexecutionroleroleharnessexecutionrolenameout5267FF36": {
       "Value": {
-        "Ref": "agentexecutionrole68450D62"
+        "Ref": "harnessexecutionrole8554C0DB"
       },
       "Export": {
-        "Name": "test-org:shared:roles:role:agentexecutionrole:name"
+        "Name": "test-org:shared:roles:role:harnessexecutionrole:name"
       }
     },
     "kbexecutionrolerolekbexecutionrolearnout8B1D1D29": {

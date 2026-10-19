@@ -37,7 +37,7 @@ Available kits:
 
 - [**Basic DataLake**](starter_kits/basic_datalake/README.md) — S3 data lake with Glue database and crawler
 - [**Data Science Platform**](starter_kits/basic_datascience_platform/README.md) — SageMaker Studio with integrated data lake
-- [**GenAI Foundation**](starter_kits/genai_foundation/README.md) — Enterprise-ready Bedrock Agent with RAG and knowledge bases
+- [**GenAI Foundation**](starter_kits/genai_foundation/README.md) — Enterprise-ready AgentCore agent with RAG, gateway tools, and guardrails
 - [**GenAI GAIA Chatbot**](starter_kits/genai_gaia_chatbot/README.md) — RAG chatbot backend with document search, auth, and streaming API
 - [**DataZone Governed Lakehouse**](starter_kits/datazone_governed_lakehouse/README.md) — DataZone-governed lakehouse with fine-grained access control
 - [**Health Data Accelerator**](starter_kits/health_data_accelerator/README.md) — Healthcare data lake with DMS integration
