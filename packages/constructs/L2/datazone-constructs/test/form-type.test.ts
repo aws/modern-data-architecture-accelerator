@@ -179,6 +179,20 @@ describe('MdaaDatazoneFormType', () => {
       expect(model).toContain('@amazon.datazone#glossaryterm("gloss123")');
     });
 
+    it('emits the @documentation trait for a field description', () => {
+      const model = MdaaDatazoneFormType.assembleStructure('F', {
+        name: { type: 'String', description: 'Unique identifier for the customer account' },
+      });
+      expect(model).toContain('@documentation("Unique identifier for the customer account")');
+    });
+
+    it('escapes quotes, newlines and backslashes in the @documentation trait', () => {
+      const model = MdaaDatazoneFormType.assembleStructure('F', {
+        name: { type: 'String', description: 'say "hi"\nnext \\ end' },
+      });
+      expect(model).toContain(String.raw`@documentation("say \"hi\"\nnext \\ end")`);
+    });
+
     it('maps each field type to its smithy prelude shape', () => {
       const model = MdaaDatazoneFormType.assembleStructure('F', {
         s: { type: 'String' },

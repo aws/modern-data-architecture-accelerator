@@ -9145,14 +9145,28 @@ Validation: Required; non-empty map of field name to FormFieldProps
 | **Additional properties** | Not allowed                  |
 | **Defined in**            | #/definitions/FormFieldProps |
 
-| Property                                                                                                      | Pattern | Type                      | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                      |
-| ------------------------------------------------------------------------------------------------------------- | ------- | ------------------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [glossaryId](#sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_glossaryId ) | No      | string                    | No         | -          | Glossary ID whose terms this field stores, annotated via<br />\`@amazon.datazone#glossaryterm("<id>")\`. Makes the field filterable via the<br />Search/SearchListings APIs.<br /><br />Validation: Optional; valid DataZone glossary ID                                                                               |
-| - [required](#sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_required )     | No      | boolean                   | No         | -          | When true, the field is annotated \`@required\` and must be populated when the<br />form is attached to an asset.<br /><br />Validation: Optional; boolean                                                                                                                                                             |
-| - [searchable](#sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_searchable ) | No      | array of enum (of string) | No         | -          | Search indexing modes for the field, annotated via \`@amazon.datazone#searchable\`.<br />LEXICAL enables stemmed/partial matches (disables semantic search); TECHNICAL<br />indexes for technical identifier search. Omit for no explicit indexing.<br /><br />Validation: Optional; array of 'LEXICAL' \| 'TECHNICAL' |
-| + [type](#sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_type )             | No      | enum (of string)          | No         | -          | Smithy prelude type for the field (e.g. String, Boolean, Integer).<br /><br />Validation: Required; one of String \| Boolean \| Integer \| Long \| Float \| Double \| Timestamp                                                                                                                                        |
+| Property                                                                                                        | Pattern | Type                      | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                      |
+| --------------------------------------------------------------------------------------------------------------- | ------- | ------------------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [description](#sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_description ) | No      | string                    | No         | -          | Human-readable description of the field, annotated via the Smithy \`@documentation\`<br />trait. Lets stewards see what the field means when the form is attached to an asset.<br /><br />Validation: Optional; string                                                                                                 |
+| - [glossaryId](#sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_glossaryId )   | No      | string                    | No         | -          | Glossary ID whose terms this field stores, annotated via<br />\`@amazon.datazone#glossaryterm("<id>")\`. Makes the field filterable via the<br />Search/SearchListings APIs.<br /><br />Validation: Optional; valid DataZone glossary ID                                                                               |
+| - [required](#sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_required )       | No      | boolean                   | No         | -          | When true, the field is annotated \`@required\` and must be populated when the<br />form is attached to an asset.<br /><br />Validation: Optional; boolean                                                                                                                                                             |
+| - [searchable](#sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_searchable )   | No      | array of enum (of string) | No         | -          | Search indexing modes for the field, annotated via \`@amazon.datazone#searchable\`.<br />LEXICAL enables stemmed/partial matches (disables semantic search); TECHNICAL<br />indexes for technical identifier search. Omit for no explicit indexing.<br /><br />Validation: Optional; array of 'LEXICAL' \| 'TECHNICAL' |
+| + [type](#sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_type )               | No      | enum (of string)          | No         | -          | Smithy prelude type for the field (e.g. String, Boolean, Integer).<br /><br />Validation: Required; one of String \| Boolean \| Integer \| Long \| Float \| Double \| Timestamp                                                                                                                                        |
 
-###### <a name="sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_glossaryId"></a>14.4.5.1.2.1.1. Property `root > sagemaker > project > metadataForms > additionalProperties > fields > additionalProperties > glossaryId`
+###### <a name="sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_description"></a>14.4.5.1.2.1.1. Property `root > sagemaker > project > metadataForms > additionalProperties > fields > additionalProperties > description`
+
+|              |                      |
+| ------------ | -------------------- |
+| **Type**     | `string`             |
+| **Required** | No                   |
+| **Default**  | `"- no description"` |
+
+**Description:** Human-readable description of the field, annotated via the Smithy `@documentation`
+trait. Lets stewards see what the field means when the form is attached to an asset.
+
+Validation: Optional; string
+
+###### <a name="sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_glossaryId"></a>14.4.5.1.2.1.2. Property `root > sagemaker > project > metadataForms > additionalProperties > fields > additionalProperties > glossaryId`
 
 |              |          |
 | ------------ | -------- |
@@ -9165,7 +9179,7 @@ Search/SearchListings APIs.
 
 Validation: Optional; valid DataZone glossary ID
 
-###### <a name="sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_required"></a>14.4.5.1.2.1.2. Property `root > sagemaker > project > metadataForms > additionalProperties > fields > additionalProperties > required`
+###### <a name="sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_required"></a>14.4.5.1.2.1.3. Property `root > sagemaker > project > metadataForms > additionalProperties > fields > additionalProperties > required`
 
 |              |           |
 | ------------ | --------- |
@@ -9178,7 +9192,7 @@ form is attached to an asset.
 
 Validation: Optional; boolean
 
-###### <a name="sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_searchable"></a>14.4.5.1.2.1.3. Property `root > sagemaker > project > metadataForms > additionalProperties > fields > additionalProperties > searchable`
+###### <a name="sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_searchable"></a>14.4.5.1.2.1.4. Property `root > sagemaker > project > metadataForms > additionalProperties > fields > additionalProperties > searchable`
 
 |              |                             |
 | ------------ | --------------------------- |
@@ -9203,7 +9217,7 @@ Validation: Optional; array of 'LEXICAL' | 'TECHNICAL'
 | ---------------------------------------------------------------------------------------------------------------------- | ----------- |
 | [searchable items](#sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_searchable_items) | -           |
 
-###### <a name="sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_searchable_items"></a>14.4.5.1.2.1.3.1. root > sagemaker > project > metadataForms > additionalProperties > fields > additionalProperties > searchable > searchable items
+###### <a name="sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_searchable_items"></a>14.4.5.1.2.1.4.1. root > sagemaker > project > metadataForms > additionalProperties > fields > additionalProperties > searchable > searchable items
 
 |              |                    |
 | ------------ | ------------------ |
@@ -9214,7 +9228,7 @@ Must be one of:
 * "LEXICAL"
 * "TECHNICAL"
 
-###### <a name="sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_type"></a>14.4.5.1.2.1.4. Property `root > sagemaker > project > metadataForms > additionalProperties > fields > additionalProperties > type`
+###### <a name="sagemaker_project_metadataForms_additionalProperties_fields_additionalProperties_type"></a>14.4.5.1.2.1.5. Property `root > sagemaker > project > metadataForms > additionalProperties > fields > additionalProperties > type`
 
 |              |                    |
 | ------------ | ------------------ |

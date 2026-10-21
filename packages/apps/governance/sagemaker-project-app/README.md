@@ -109,6 +109,15 @@ Covers both ON_CREATE and ON_DEMAND deployment modes, environment templates, pro
 --8<-- "target/docs/packages/apps/governance/sagemaker-project-app/sample_configs/sample-config-comprehensive.yaml"
 ```
 
+The comprehensive sample's `SimpleForm` metadata form is factored out into its own file and pulled in via `!includeYaml`. This file must sit next to the module config (i.e. in the same directory as `sagemaker-project.yaml`) for the reference to resolve.
+
+[simple-metadata-form.yaml](sample_configs/simple-metadata-form.yaml)
+
+```yaml
+# Contents available via above link
+--8<-- "target/docs/packages/apps/governance/sagemaker-project-app/sample_configs/simple-metadata-form.yaml"
+```
+
 ---
 
 [Config Schema Docs](SCHEMA.md)

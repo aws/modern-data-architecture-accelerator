@@ -8,14 +8,17 @@
 
 - Added an opt-in `nameOverride` attribute to SMUS / DataZone projects (`projects.<key>` in `@aws-mdaa/sagemaker-project`; `sagemaker.project` / `datazone.project` in `@aws-mdaa/dataops-project`), used verbatim as the project name so the title can be a free-form label like `Customer 360 Analytics`. Optional and additive; other resources keep MDAA naming. See the [SageMaker Project](packages/apps/governance/sagemaker-project-app/SCHEMA.md#projects_additionalProperties_nameOverride) and [DataOps Project](packages/apps/dataops/dataops-project-app/SCHEMA.md#sagemaker_project_nameOverride) schema docs for accepted values.
 - Added opt-in `subscriptionAuthorizedRoleGroups` to `sagemaker` and `datazone` in `@aws-mdaa/dataops-project`, so the listed `projectExecutionRoles`, `dataEngineerRoles`, or `dataAdminRoles` can read the tables the project subscribes to. See [Subscribed Asset Access for Project Roles](packages/apps/dataops/dataops-project-app/README.md#subscribed-asset-access-for-project-roles).
+- Added an optional `description` to metadata form fields (`metadataForms` in the SageMaker Project module; `sagemaker.project` in the DataOps Project module), rendered as a Smithy `@documentation` trait. Optional; existing configs are unchanged. See the [SageMaker Project module README](packages/apps/governance/sagemaker-project-app/README.md) for the config surface.
 
 #### Bedrock Builder Module
 
 - Added a `knowledgeBase` gateway target type that exposes a knowledge base to gateway clients, such as harnesses, as a `Retrieve` tool through a generated Lambda connector. Optional `networkConfiguration` runs the connector in your VPC through a `vpcEndpoints` set, which gains a `bedrockAgentRuntime` endpoint. Additive only - existing configs are unchanged. See the [module README](packages/apps/ai/bedrock-builder-app/README.md#knowledge-bases-through-a-gateway).
 
+
 ### General Changes
 
 - Updated dependencies to address CVEs (`js-yaml`, `axios`, `smol-toml`, `nx`, `@xmldom/xmldom`, `browserslist`, `baseline-browser-mapping`, `markdown-it`, `linkify-it`, `brace-expansion`, `stream-json`, `@babel/core`)
+- Added an `!includeYaml` tag for module config files that parses a referenced YAML file and splices it into the config tree. See [Including Other Files](CONFIGURATION.md#including-other-files).
 
 ## [1.9.0] - 2026-10-01
 

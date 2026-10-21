@@ -869,6 +869,35 @@ generateRoles:
     ...
 ```
 
+### Including Other Files
+
+Within a module config file, a value can be pulled in from another file using `!include` or `!includeYaml`:
+
+- `!include` reads the referenced file as raw text and uses it as a string value. This is useful for embedding things like SQL or scripts as a config value.
+- `!includeYaml` parses the referenced file as YAML and splices its structure into the config tree at that point, letting a subtree be factored out into its own file.
+
+```yaml
+# ./sagemaker-project.yaml
+projects:
+  myProject:
+    profileName: my-profile
+    metadataForms: !includeYaml ./metadata-forms.yaml
+```
+
+```yaml
+# ./metadata-forms.yaml
+CustomerMetadataForm:
+  fields:
+    customerName:
+      type: String
+      description: !include ./customer-name-description.txt
+      required: true
+```
+
+Paths are relative to the file containing the tag. A relative path inside a file pulled in via `!includeYaml` (including a nested `!include`/`!includeYaml`) resolves against that file's own directory, not the root config's directory. `!includeYaml` tags may be nested.
+
+Both tags are only available in module configs (`module_configs` files), not in the top-level MDAA CLI config (`mdaa.yaml`), which is parsed as plain YAML.
+
 ## Module Hooks
 
 MDAA supports predeploy and postdeploy hooks that allow you to execute custom commands before and after module deployment. This is useful for tasks like data preparation, validation, cleanup, or integration with external systems.

@@ -39,6 +39,14 @@ export interface FormFieldProps {
    */
   readonly type: 'String' | 'Boolean' | 'Integer' | 'Long' | 'Float' | 'Double' | 'Timestamp';
   /**
+   * Human-readable description of the field, annotated via the Smithy `@documentation`
+   * trait. Lets stewards see what the field means when the form is attached to an asset.
+   *
+   * Validation: Optional; string
+   * @default - no description
+   */
+  readonly description?: string;
+  /**
    * When true, the field is annotated `@required` and must be populated when the
    * form is attached to an asset.
    *
@@ -239,6 +247,9 @@ export class MdaaDatazoneFormType extends Construct {
   public static assembleStructure(formName: string, fields: { [fieldName: string]: FormFieldProps }): string {
     const members = Object.entries(fields).map(([fieldName, fieldProps]) => {
       const traits: string[] = [];
+      if (fieldProps.description) {
+        traits.push(`    @documentation(${JSON.stringify(fieldProps.description)})`);
+      }
       if (fieldProps.required) {
         traits.push('    @required');
       }

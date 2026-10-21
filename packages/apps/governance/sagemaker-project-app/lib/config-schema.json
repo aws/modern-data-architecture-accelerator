@@ -728,6 +728,11 @@
         "FormFieldProps": {
             "additionalProperties": false,
             "properties": {
+                "description": {
+                    "default": "- no description",
+                    "description": "Human-readable description of the field, annotated via the Smithy `@documentation`\ntrait. Lets stewards see what the field means when the form is attached to an asset.\n\nValidation: Optional; string",
+                    "type": "string"
+                },
                 "glossaryId": {
                     "description": "Glossary ID whose terms this field stores, annotated via\n`@amazon.datazone#glossaryterm(\"<id>\")`. Makes the field filterable via the\nSearch/SearchListings APIs.\n\nValidation: Optional; valid DataZone glossary ID",
                     "type": "string"

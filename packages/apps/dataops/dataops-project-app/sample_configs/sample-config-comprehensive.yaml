@@ -306,6 +306,8 @@ sagemaker:
             type: String
             # (Optional) Annotates @required
             required: true
+            # (Optional) Description of the field, annotated via @documentation
+            description: Team or individual accountable for this dataset
           reviewedOn:
             type: Timestamp
 

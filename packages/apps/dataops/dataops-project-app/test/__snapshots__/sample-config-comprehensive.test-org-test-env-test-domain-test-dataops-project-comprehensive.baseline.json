@@ -689,7 +689,7 @@
           ]
         },
         "formName": "DataOpsGovernanceForm",
-        "modelStructure": "structure DataOpsGovernanceForm {\n    @required\n    owner: smithy.api#String\n    reviewedOn: smithy.api#Timestamp\n}",
+        "modelStructure": "structure DataOpsGovernanceForm {\n    @documentation(\"Team or individual accountable for this dataset\")\n    @required\n    owner: smithy.api#String\n    reviewedOn: smithy.api#Timestamp\n}",
         "status": "ENABLED",
         "description": "Project governance metadata"
       },

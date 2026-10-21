@@ -546,44 +546,6 @@
         "Value": "Customer 360 Analytics"
       }
     },
-    "sagemakerprojectprojecttestprojectfullenvdeploymentmonitor46B25A8C": {
-      "Type": "Custom::EnvDeploymentMonitor",
-      "Properties": {
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "customEnvDeploymentMonitorproviderframeworkonEvent32E39E2B",
-            "Arn"
-          ]
-        },
-        "domainId": {
-          "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainidParameter178D8BA1"
-        },
-        "projectId": {
-          "Fn::GetAtt": [
-            "sagemakerprojectprojecttestprojectfullprojectC620150B",
-            "Id"
-          ]
-        },
-        "envName": "Tooling",
-        "connectionName": "LAKEHOUSE",
-        "kmsPolicyArn": {
-          "Fn::Join": [
-            "",
-            [
-              "arn:test-partition:iam::test-account:policy/",
-              {
-                "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainkmsusagepolicynameParameter2FABE028"
-              }
-            ]
-          ]
-        }
-      },
-      "DependsOn": [
-        "sagemakerprojectprojecttestprojectfullmonitorcrprojectmembershipDC417137"
-      ],
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
-    },
     "sagemakerprojectprojecttestprojectfulluserprofilemanagermonitorhandlerroleE38FC5DD": {
       "Type": "Custom::UserProfileManager",
       "Properties": {
@@ -633,6 +595,44 @@
           ]
         }
       }
+    },
+    "sagemakerprojectprojecttestprojectfullenvdeploymentmonitor46B25A8C": {
+      "Type": "Custom::EnvDeploymentMonitor",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customEnvDeploymentMonitorproviderframeworkonEvent32E39E2B",
+            "Arn"
+          ]
+        },
+        "domainId": {
+          "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainidParameter178D8BA1"
+        },
+        "projectId": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectfullprojectC620150B",
+            "Id"
+          ]
+        },
+        "envName": "Tooling",
+        "connectionName": "LAKEHOUSE",
+        "kmsPolicyArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:test-partition:iam::test-account:policy/",
+              {
+                "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainkmsusagepolicynameParameter2FABE028"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": [
+        "sagemakerprojectprojecttestprojectfullmonitorcrprojectmembershipDC417137"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
     },
     "sagemakerprojectprojecttestprojectfulltestsourcedatazonedatasource4A4BDFB2": {
       "Type": "AWS::DataZone::DataSource",
@@ -838,7 +838,7 @@
           ]
         },
         "formName": "CustomerMetadataForm",
-        "modelStructure": "structure CustomerMetadataForm {\n    @required\n    @amazon.datazone#searchable(modes:[\"TECHNICAL\"])\n    customerName: smithy.api#String\n    @amazon.datazone#searchable(modes:[\"LEXICAL\"])\n    @amazon.datazone#glossaryterm(\"test-glossary-id\")\n    tier: smithy.api#String\n    activeFlag: smithy.api#Boolean\n    recordCount: smithy.api#Integer\n    createdAt: smithy.api#Timestamp\n}",
+        "modelStructure": "structure CustomerMetadataForm {\n    @documentation(\"Unique identifier for the customer account\")\n    @required\n    @amazon.datazone#searchable(modes:[\"TECHNICAL\"])\n    customerName: smithy.api#String\n    @amazon.datazone#searchable(modes:[\"LEXICAL\"])\n    @amazon.datazone#glossaryterm(\"test-glossary-id\")\n    tier: smithy.api#String\n    activeFlag: smithy.api#Boolean\n    recordCount: smithy.api#Integer\n    createdAt: smithy.api#Timestamp\n}",
         "status": "ENABLED",
         "description": "Customer governance metadata"
       },
@@ -870,7 +870,7 @@
           ]
         },
         "formName": "SimpleForm",
-        "modelStructure": "structure SimpleForm {\n    note: smithy.api#String\n}",
+        "modelStructure": "structure SimpleForm {\n    @documentation(\"Free-form note about this asset\")\n    note: smithy.api#String\n    @required\n    priority: smithy.api#Integer\n    reviewedAt: smithy.api#Timestamp\n}",
         "status": "ENABLED"
       },
       "DependsOn": [
@@ -908,44 +908,6 @@
         "Type": "String",
         "Value": "test-org-test-env-test-domain-test-sagemaker-project-m--64d472d9"
       }
-    },
-    "sagemakerprojectprojecttestprojectminimalenvdeploymentmonitor9C3BE7BD": {
-      "Type": "Custom::EnvDeploymentMonitor",
-      "Properties": {
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "customEnvDeploymentMonitorproviderframeworkonEvent32E39E2B",
-            "Arn"
-          ]
-        },
-        "domainId": {
-          "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainidParameter178D8BA1"
-        },
-        "projectId": {
-          "Fn::GetAtt": [
-            "sagemakerprojectprojecttestprojectminimalproject110A53D8",
-            "Id"
-          ]
-        },
-        "envName": "Tooling",
-        "connectionName": "LAKEHOUSE",
-        "kmsPolicyArn": {
-          "Fn::Join": [
-            "",
-            [
-              "arn:test-partition:iam::test-account:policy/",
-              {
-                "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainkmsusagepolicynameParameter2FABE028"
-              }
-            ]
-          ]
-        }
-      },
-      "DependsOn": [
-        "sagemakerprojectprojecttestprojectminimalmonitorcrprojectmembership60FCFB34"
-      ],
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
     },
     "sagemakerprojectprojecttestprojectminimaluserprofilemanagermonitorhandlerroleC24A0F75": {
       "Type": "Custom::UserProfileManager",
@@ -996,6 +958,44 @@
           ]
         }
       }
+    },
+    "sagemakerprojectprojecttestprojectminimalenvdeploymentmonitor9C3BE7BD": {
+      "Type": "Custom::EnvDeploymentMonitor",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customEnvDeploymentMonitorproviderframeworkonEvent32E39E2B",
+            "Arn"
+          ]
+        },
+        "domainId": {
+          "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainidParameter178D8BA1"
+        },
+        "projectId": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectminimalproject110A53D8",
+            "Id"
+          ]
+        },
+        "envName": "Tooling",
+        "connectionName": "LAKEHOUSE",
+        "kmsPolicyArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:test-partition:iam::test-account:policy/",
+              {
+                "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainkmsusagepolicynameParameter2FABE028"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": [
+        "sagemakerprojectprojecttestprojectminimalmonitorcrprojectmembership60FCFB34"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
     },
     "customDomainConfighandlerrole74F440EA": {
       "Type": "AWS::IAM::Role",

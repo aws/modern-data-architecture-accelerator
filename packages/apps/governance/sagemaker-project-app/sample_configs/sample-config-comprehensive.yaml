@@ -133,6 +133,8 @@ projects:
           customerName:
             # (Required) Smithy prelude type
             type: String
+            # (Optional) Annotates @documentation, shown to stewards filling out the form
+            description: Unique identifier for the customer account
             # (Optional) Annotates @required
             required: true
             # (Optional) @amazon.datazone#searchable modes
@@ -152,11 +154,10 @@ projects:
             type: Integer
           createdAt:
             type: Timestamp
-      # Minimal form with a single field, defaulted ENABLED status
-      SimpleForm:
-        fields:
-          note:
-            type: String
+      # Minimal form with a few fields, defaulted ENABLED status.
+      # Factored into its own file via !includeYaml, parsed as YAML and spliced in
+      # directly (unlike !include, which inlines a referenced file as a raw string).
+      SimpleForm: !includeYaml ./simple-metadata-form.yaml
 
   # Minimal project with only required profileName
   test-project-minimal:

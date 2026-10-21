@@ -1,0 +1,17 @@
+# Metadata form definition included via !includeYaml from sample-config-comprehensive.yaml.
+# This file is a whole YAML document, but not a full module config - its content is
+# parsed as YAML and spliced in at the point of inclusion, so it is written exactly as
+# it would appear inline (a MetadataFormProps value).
+# (Required) Field name → FormFieldProps
+fields:
+  note:
+    # (Required) Smithy prelude type
+    type: String
+    # (Optional) Annotates @documentation, shown to stewards filling out the form
+    description: Free-form note about this asset
+  priority:
+    type: Integer
+    # (Optional) Annotates @required
+    required: true
+  reviewedAt:
+    type: Timestamp
