@@ -20,6 +20,7 @@ This starter kit deploys a SageMaker Unified Studio (SMUS) environment for organ
 - Lake Formation governance for fine-grained data access
 - Glue Catalog encryption for metadata security
 - IAM roles for domain and data administration
+- Onboarding of S3 data lake locations as SMUS data sources (two-phase setup: reading through the connection requires a post-deploy access grant and a second deploy — see [Troubleshooting](#troubleshooting) item 5)
 
 ## Architecture
 
@@ -85,6 +86,7 @@ See [USAGE](USAGE.md) for post-deployment instructions.
 | `@aws-mdaa/lakeformation-settings` | Lake Formation settings (account-level) |
 | `@aws-mdaa/audit` | Encrypted S3 bucket and KMS key for CloudTrail audit log storage |
 | `@aws-mdaa/audit-trail` | CloudTrail trail for S3 data events |
+| `@aws-mdaa/datalake` | S3 bucket for research data, onboarded as team1's SMUS data source |
 | `@aws-mdaa/sagemaker` | SMUS domain (DataZone V2) with SSO integration |
 | `@aws-mdaa/sagemaker-project` | SMUS project profiles and team projects |
 
@@ -97,3 +99,8 @@ See [USAGE](USAGE.md) for post-deployment instructions.
 3. **Domain creation fails with PolicyGrant errors**: Ensure you are authenticated with credentials derived from IAM Identity Center (not static IAM credentials). Use `aws configure sso` to set up SSO-based authentication.
 
 4. **Lake Formation permission errors**: Verify the Lake Formation admin roles are correctly configured in `shared/lakeformation-settings.yaml` and that the data-admin role has been granted LF admin permissions.
+
+5. **"Access Denied" opening the `research-data` connection in the SMUS data catalog**: The bucket's own `accessPolicies` in [`shared/datalake.yaml`](shared/datalake.yaml) (`ReadWriteSuperRoles: [DataAdmin]`) deny every other principal by default, including team1's SMUS environment role, which this data source relies on for read access. That role does not exist until after the `sagemaker-project` module has deployed, so granting it access takes a post-deploy step and a second deploy:
+   1. In the SMUS portal, open the `team1` project's **Project overview** and copy its environment user role ARN.
+   2. In [`shared/datalake.yaml`](shared/datalake.yaml), add that ARN under `roles` (e.g. `Team1Env: [{arn: <copied-arn>}]`) and add an `accessPolicies` entry granting it `ReadRoles` on the `raw/` prefix.
+   3. Redeploy the `datalake` module.

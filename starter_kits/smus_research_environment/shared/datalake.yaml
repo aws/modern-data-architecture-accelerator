@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../../schemas/@aws-mdaa/datalake.json
+# S3 bucket for research data. Referenced directly by the SMUS project's S3 data source
+# (see dataSources.research-data in sagemaker/projects.yaml) via its SSM-published name.
+roles:
+  DataAdmin:
+    - id: generated-role-id:data-admin
+
+accessPolicies:
+  Root:
+    rule:
+      prefix: /
+      ReadWriteSuperRoles:
+        - DataAdmin
+
+buckets:
+  research:
+    accessPolicies:
+      - Root

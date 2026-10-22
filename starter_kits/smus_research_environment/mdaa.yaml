@@ -68,6 +68,12 @@ domains:
             module_configs:
               - ./shared/audit-trail.yaml
 
+          # S3 bucket for research data, onboarded as a SMUS data source (see sagemaker/projects.yaml)
+          datalake:
+            module_path: '@aws-mdaa/datalake'
+            module_configs:
+              - ./shared/datalake.yaml
+
   # The name of the domain. In this case, we are building a 'sagemaker' domain.
   sagemaker:
     # One or more environments may be specified, typically along the lines of 'dev', 'test', and/or 'prod'

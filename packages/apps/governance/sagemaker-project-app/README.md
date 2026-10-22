@@ -16,7 +16,7 @@ This module deploys and integrates the following resources:
 
 **Projects** - SageMaker Unified Studio (DataZone V2) projects created within a domain.
 
-**Data Sources** - Allows importing of existing Glue databases as data sources into SageMaker projects for publishing.
+**Data Sources** - Allows importing of existing Glue databases, or raw S3 locations, as data sources into SageMaker projects for publishing.
 
 **Metadata Form Types** - Project-owned DataZone metadata form types, defined declaratively by their fields. MDAA assembles the Smithy model, so config authors do not write Smithy. See [Metadata Form Types](#metadata-form-types) below for naming rules and the domain-redeploy prerequisite.
 
@@ -41,7 +41,9 @@ This module is designed in alignment with MDAA security/compliance principles an
   - Projects inherit the domain-level customer-managed KMS encryption configuration
 - **Least Privilege**:
   - Projects are scoped to specific domain units and project profiles
-  - Data sources use Lake Formation access control grants for fine-grained permissions on imported Glue databases
+  - Glue-based data sources use Lake Formation access control grants for fine-grained permissions on imported Glue databases
+  - S3-based data sources grant the project's environment user role IAM read (list and get) on the registered bucket and prefix; the bucket policy and KMS key must also allow that role
+  - Registering an S3 Access Grants location (`registerS3AccessGrantLocation`) is optional and additive
 
 ---
 

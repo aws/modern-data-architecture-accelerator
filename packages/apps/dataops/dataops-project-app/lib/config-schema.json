@@ -799,15 +799,19 @@
         },
         "DataSourceProps": {
             "additionalProperties": false,
+            "description": "A project data source: either a Glue database or a raw S3 location.",
+            "maxProperties": 1,
+            "minProperties": 1,
             "properties": {
                 "databaseName": {
-                    "description": "Glue database name to use as the data source. The project's environment user\nwill be granted Lake Formation read permissions on this database and its tables.\n\nUse cases: Glue database import; Data asset registration\n\nAWS: Glue database referenced as a DataZone data source\n\nValidation: Required; valid Glue database name",
+                    "description": "Glue database name to use as the data source. The project's environment user\nwill be granted Lake Formation read permissions on this database and its tables.\nMutually exclusive with `s3`.\n\nUse cases: Glue database import; Data asset registration\n\nAWS: Glue database referenced as a DataZone data source\n\nValidation: Exactly one of databaseName or s3 is required; valid Glue database name",
                     "type": "string"
+                },
+                "s3": {
+                    "$ref": "#/definitions/S3DataSourceProps",
+                    "description": "S3 location to register as a data source. Mutually exclusive with `databaseName`.\n\nUse cases: Onboarding raw S3 data lake locations into a SMUS project's data catalog\n\nAWS: DataZone connection with S3 properties (AWS::DataZone::Connection)\n\nValidation: Exactly one of databaseName or s3 is required"
                 }
             },
-            "required": [
-                "databaseName"
-            ],
             "type": "object"
         },
         "DataZoneEnvironmentProps": {
@@ -3538,6 +3542,32 @@
             ],
             "type": "object"
         },
+        "S3DataSourceProps": {
+            "additionalProperties": false,
+            "properties": {
+                "bucketName": {
+                    "description": "Name of the S3 bucket to register as the data source. Accepts a literal bucket name or\nan MDAA `ssm-org:`/`ssm-domain:` reference to a bucket created by another module\n(e.g. `ssm-org:/shared/datalake/bucket/research/name`).\n\nAWS: AWS::DataZone::Connection S3Properties.S3Uri (bucket component)\n\nValidation: Required; valid S3 bucket name, or an `ssm-org:`/`ssm-domain:` reference",
+                    "type": "string"
+                },
+                "prefix": {
+                    "default": "''",
+                    "description": "Key prefix within the bucket to register, e.g. `raw/`. When omitted, registers the whole\nbucket and grants the project's environment user role IAM read over the whole bucket\nrather than a scoped prefix.\n\nAWS: AWS::DataZone::Connection S3Properties.S3Uri (prefix component)\n\nValidation: Optional; S3 key prefix",
+                    "type": "string"
+                },
+                "registerS3AccessGrantLocation": {
+                    "description": "Whether to register an S3 Access Grants location for the connection.\n\nAWS: AWS::DataZone::Connection S3Properties.RegisterS3AccessGrantLocation\n\nValidation: Optional; boolean",
+                    "type": "boolean"
+                },
+                "s3AccessGrantLocationId": {
+                    "description": "S3 Access Grants location ID to associate with the connection.\n\nAWS: AWS::DataZone::Connection S3Properties.S3AccessGrantLocationId\n\nValidation: Optional; valid S3 Access Grants location ID",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "bucketName"
+            ],
+            "type": "object"
+        },
         "SageMakerProjectProps": {
             "additionalProperties": false,
             "properties": {
@@ -3545,7 +3575,7 @@
                     "additionalProperties": {
                         "$ref": "#/definitions/DataSourceProps"
                     },
-                    "description": "Glue data sources to import into the project. Each data source references\na Glue database and creates Lake Formation read permissions for the project's\nenvironment user.\n\nUse cases: Importing existing Glue databases into SageMaker projects; Data asset discovery\n\nAWS: DataZone data sources with Glue run configuration\n\nValidation: Optional; map of data source name to DataSourceProps",
+                    "description": "Data sources to import into the project. Each entry is either a `databaseName`, which\nimports a Glue database and grants the project's environment user Lake Formation read\npermissions on it and its tables, or an `s3`, which creates a DataZone S3 connection and\ngrants the project's environment user role IAM read (list and get) on the registered\nbucket and prefix.\n\nUse cases: Importing existing Glue databases into SageMaker projects; Onboarding raw S3\ndata lake locations into a SMUS project's data catalog; Data asset discovery\n\nAWS: DataZone data sources with Glue run configuration; DataZone connections with S3\nproperties (AWS::DataZone::Connection)\n\nValidation: Optional; map of data source name to DataSourceProps",
                     "type": "object"
                 },
                 "domainUnit": {

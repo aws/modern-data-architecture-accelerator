@@ -5,7 +5,7 @@
 
 import { MdaaResourceType } from '@aws-mdaa/naming';
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
 import { DomainConfig } from '@aws-mdaa/datazone-constructs';
 import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
 import { SagemakerProjectL3Construct } from '../lib';
@@ -338,6 +338,193 @@ describe('SagemakerProjectL3Construct', () => {
     template.hasResourceProperties('AWS::DataZone::DataSource', {
       Name: expectedDataSourceName,
     });
+  });
+
+  it('creates a DataZone Connection with DATAZONE_CONNECTION resource type when project has an s3 dataSource', () => {
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-s3-datasources', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        's3-ds-profile': {
+          environments: {
+            DefaultDataLake: {},
+          },
+        },
+      },
+      projects: {
+        's3-ds-project': {
+          profileName: 's3-ds-profile',
+          dataSources: {
+            'test-s3-source': {
+              s3: {
+                bucketName: 'test-bucket',
+                prefix: 'test-prefix/',
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    const expectedConnectionName = testApp.naming
+      .withResourceType(MdaaResourceType.DATAZONE_CONNECTION)
+      .resourceName('test-s3-source');
+    template.hasResourceProperties('AWS::DataZone::Connection', {
+      Name: expectedConnectionName,
+      Props: {
+        S3Properties: {
+          S3Uri: 's3://test-bucket/test-prefix/',
+        },
+      },
+    });
+    // The project's environment user role must be granted read access on the registered
+    // S3 location, since DataZone does not grant Lake Formation permissions for a raw S3
+    // connection the way it does for the Glue data source path.
+    template.hasResourceProperties('AWS::IAM::Policy', {
+      PolicyDocument: {
+        Statement: [
+          Match.objectLike({
+            Action: 's3:GetObject*',
+            Resource: Match.objectLike({
+              'Fn::Join': ['', Match.arrayWith([':s3:::test-bucket/test-prefix/*'])],
+            }),
+          }),
+          Match.objectLike({
+            Action: 's3:GetBucketLocation',
+            Resource: Match.objectLike({
+              'Fn::Join': ['', Match.arrayWith([':s3:::test-bucket'])],
+            }),
+          }),
+          Match.objectLike({
+            Action: 's3:ListBucket',
+            Condition: { StringLike: { 's3:prefix': ['test-prefix/', 'test-prefix/*'] } },
+          }),
+        ],
+      },
+      Roles: Match.arrayWith([
+        Match.objectLike({
+          'Fn::Select': Match.arrayWith([
+            Match.objectLike({
+              'Fn::Split': Match.arrayWith([
+                Match.objectLike({
+                  'Fn::Select': Match.arrayWith([
+                    Match.objectLike({
+                      'Fn::Split': Match.arrayWith([
+                        Match.objectLike({
+                          'Fn::GetAtt': Match.arrayWith([
+                            Match.stringLikeRegexp('envdeploymentmonitor'),
+                            'userRoleArn',
+                          ]),
+                        }),
+                      ]),
+                    }),
+                  ]),
+                }),
+              ]),
+            }),
+          ]),
+        }),
+      ]),
+    });
+  });
+
+  it('forwards S3 Access Grants properties to the DataZone Connection', () => {
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-s3-access-grants', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        's3-ag-profile': {
+          environments: {
+            DefaultDataLake: {},
+          },
+        },
+      },
+      projects: {
+        's3-ag-project': {
+          profileName: 's3-ag-profile',
+          dataSources: {
+            'test-s3-source': {
+              s3: {
+                bucketName: 'test-bucket',
+                prefix: 'test-prefix/',
+                registerS3AccessGrantLocation: true,
+                s3AccessGrantLocationId: 'test-access-grant-location-id',
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    template.hasResourceProperties('AWS::DataZone::Connection', {
+      Props: {
+        S3Properties: {
+          S3Uri: 's3://test-bucket/test-prefix/',
+          RegisterS3AccessGrantLocation: true,
+          S3AccessGrantLocationId: 'test-access-grant-location-id',
+        },
+      },
+    });
+  });
+
+  it('throws when a dataSource specifies neither databaseName nor s3', () => {
+    expect(() => {
+      new SagemakerProjectL3Construct(testApp.testStack, 'test-missing-datasources', {
+        naming: testApp.naming,
+        roleHelper,
+        domainConfig,
+        projectProfiles: {
+          'missing-ds-profile': {
+            environments: {
+              DefaultDataLake: {},
+            },
+          },
+        },
+        projects: {
+          'missing-ds-project': {
+            profileName: 'missing-ds-profile',
+            dataSources: {
+              'test-missing-source': {},
+            },
+          },
+        },
+      });
+    }).toThrow(/specify exactly one of 'databaseName' or 's3'/);
+  });
+
+  it('throws when a dataSource specifies both databaseName and s3', () => {
+    expect(() => {
+      new SagemakerProjectL3Construct(testApp.testStack, 'test-invalid-datasources', {
+        naming: testApp.naming,
+        roleHelper,
+        domainConfig,
+        projectProfiles: {
+          'invalid-ds-profile': {
+            environments: {
+              DefaultDataLake: {},
+            },
+          },
+        },
+        projects: {
+          'invalid-ds-project': {
+            profileName: 'invalid-ds-profile',
+            dataSources: {
+              'test-invalid-source': {
+                databaseName: 'test_db',
+                s3: {
+                  bucketName: 'test-bucket',
+                  prefix: 'test-prefix/',
+                },
+              },
+            },
+          },
+        },
+      });
+    }).toThrow(/specify exactly one of 'databaseName' or 's3'/);
   });
 
   it('creates project-owned FormTypes when project has metadataForms', () => {

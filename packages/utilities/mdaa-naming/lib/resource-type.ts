@@ -65,6 +65,7 @@ export enum MdaaResourceType {
   DATAZONE_PROJECT = 'datazone-proj',
   DATAZONE_ENV = 'datazone-env',
   DATAZONE_DATASOURCE = 'datazone-ds',
+  DATAZONE_CONNECTION = 'datazone-conn',
   EVENTBRIDGE_BUS = 'eventbridge',
   EVENTBRIDGE_RULE = 'eventbridge-rule',
   QUICKSIGHT_DATASOURCE = 'quicksight',

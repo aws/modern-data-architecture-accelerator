@@ -293,6 +293,11 @@ sagemaker:
       test-source:
         # Glue database name to use as the data source
         databaseName: non-project-database
+      test-s3-source:
+        # S3 location to register as a data source, mutually exclusive with databaseName
+        s3:
+          bucketName: test-data-bucket
+          prefix: raw/
     # (Optional) Metadata form types owned by this project. MDAA assembles the
     # Smithy model; the form name is used verbatim as the structure name.
     metadataForms:

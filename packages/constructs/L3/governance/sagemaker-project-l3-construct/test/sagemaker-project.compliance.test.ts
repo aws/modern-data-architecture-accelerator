@@ -24,7 +24,8 @@ describe('MDAA Compliance Stack Tests', () => {
           },
         },
       },
-      // Exercise the createMetadataForm / MdaaDatazoneFormType code path under CDK Nag.
+      // Exercise the createMetadataForm / MdaaDatazoneFormType and createS3Connection /
+      // MdaaDatazoneS3Connection code paths under CDK Nag.
       projects: {
         'compliance-project': {
           profileName: 'compliance-profile',
@@ -33,6 +34,16 @@ describe('MDAA Compliance Stack Tests', () => {
               description: 'Customer metadata',
               fields: {
                 customerName: { type: 'String', required: true, searchable: ['TECHNICAL'] },
+              },
+            },
+          },
+          dataSources: {
+            'compliance-s3-source': {
+              s3: {
+                bucketName: 'compliance-test-bucket',
+                prefix: 'raw/',
+                registerS3AccessGrantLocation: true,
+                s3AccessGrantLocationId: 'compliance-access-grant-location-id',
               },
             },
           },

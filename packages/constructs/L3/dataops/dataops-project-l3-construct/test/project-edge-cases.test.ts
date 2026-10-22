@@ -310,15 +310,16 @@ describe('DataOps Project Edge Cases', () => {
   });
 
   test('should handle database with datazone datasource', () => {
-    const stack = new Stack(testApp, 'test-datazone-user-role-stack');
+    const app = new MdaaTestApp();
+    const stack = new Stack(app, 'test-datazone-user-role-stack');
     const roleHelper = new MdaaRoleHelper(
       stack,
-      testApp.naming,
+      app.naming,
       path.dirname(require.resolve('@aws-mdaa/iam-role-helper/package.json')),
     );
 
     const props: DataOpsProjectL3ConstructProps = {
-      naming: testApp.naming,
+      naming: app.naming,
       roleHelper,
       projectExecutionRoleRefs: [testGlueRoleRef],
       dataEngineerRoleRefs: [],
@@ -339,6 +340,17 @@ describe('DataOps Project Edge Cases', () => {
 
     const construct = new DataOpsProjectL3Construct(stack, 'test-construct', props);
     expect(construct).toBeDefined();
+
+    // The DataZone (V1) user role must not be granted Lake Formation permissions as a
+    // side effect of project creation. That grant is reserved for SMUS/SageMaker env
+    // user roles, which are provisioned differently and not exposed via this role.
+    const template = Template.fromStack(stack);
+    const lfGrants = template.findResources('AWS::LakeFormation::PrincipalPermissions');
+    const dzUserRoleGrants = Object.values(lfGrants).filter(resource => {
+      const getAttTarget = resource.Properties?.Principal?.DataLakePrincipalIdentifier?.['Fn::GetAtt']?.[0];
+      return typeof getAttTarget === 'string' && getAttTarget.toLowerCase().includes('dzuserrole');
+    });
+    expect(dzUserRoleGrants).toHaveLength(0);
   });
 
   test('forwards datazone project nameOverride verbatim to the DataZone project', () => {

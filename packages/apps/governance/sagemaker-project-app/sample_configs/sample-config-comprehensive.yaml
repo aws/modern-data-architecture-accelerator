@@ -102,10 +102,17 @@ projects:
     # (Optional) Data sources to import into the project
     dataSources:
       test-source:
-        # (Required) Glue database name for the data source
+        # (Required) Glue database name for the data source. Mutually exclusive with s3.
         databaseName: test-database-name
       second-source:
         databaseName: another-database
+      s3-source:
+        # (Required) S3 location to register as a data source. Mutually exclusive with databaseName.
+        s3:
+          # (Required) Bucket name, or an ssm-org:/ssm-domain: reference to a bucket created by another module
+          bucketName: test-data-bucket
+          # (Optional) Key prefix within the bucket to register; registers the whole bucket when omitted
+          prefix: raw/
     # (Optional) Owner users with PROJECT_OWNER designation
     ownerUsers:
       owner1: test-owner-user

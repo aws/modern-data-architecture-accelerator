@@ -16,6 +16,13 @@ sagemaker:
   domainConfigSSMParam: /test-org/test-domain/sagemaker/domain/test-domain/config
   project:
     profileName: test-profile
+    # Data sources for Glue databases or S3 locations not created by this DataOps Project
+    dataSources:
+      test-s3-source:
+        # S3 location to register as a data source, mutually exclusive with databaseName
+        s3:
+          bucketName: test-data-bucket
+          prefix: raw/
 
 databases:
   # SageMaker Project Data Source (comment if using datazone)

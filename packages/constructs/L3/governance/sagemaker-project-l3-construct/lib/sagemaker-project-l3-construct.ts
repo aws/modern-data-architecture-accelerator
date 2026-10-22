@@ -8,6 +8,8 @@ import {
   FormFieldProps,
   MdaaDatazoneFormType,
   MdaaDatazoneProjectProps,
+  MdaaDatazoneS3Connection,
+  MdaaDatazoneS3ConnectionProps,
   MdaaSageMakerProject,
   ProjectEnvironmentConfiguration,
 } from '@aws-mdaa/datazone-constructs';
@@ -126,13 +128,17 @@ export interface SageMakerProjectProps {
   readonly groups?: { [id: string]: string };
 
   /**
-   * Glue data sources to import into the project. Each data source references
-   * a Glue database and creates Lake Formation read permissions for the project's
-   * environment user.
+   * Data sources to import into the project. Each entry is either a `databaseName`, which
+   * imports a Glue database and grants the project's environment user Lake Formation read
+   * permissions on it and its tables, or an `s3`, which creates a DataZone S3 connection and
+   * grants the project's environment user role IAM read (list and get) on the registered
+   * bucket and prefix.
    *
-   * Use cases: Importing existing Glue databases into SageMaker projects; Data asset discovery
+   * Use cases: Importing existing Glue databases into SageMaker projects; Onboarding raw S3
+   * data lake locations into a SMUS project's data catalog; Data asset discovery
    *
-   * AWS: DataZone data sources with Glue run configuration
+   * AWS: DataZone data sources with Glue run configuration; DataZone connections with S3
+   * properties (AWS::DataZone::Connection)
    *
    * Validation: Optional; map of data source name to DataSourceProps
    */
@@ -189,18 +195,77 @@ export interface MetadataFormProps {
   readonly status?: 'ENABLED' | 'DISABLED';
 }
 
+/**
+ * A project data source: either a Glue database or a raw S3 location.
+ *
+ * @minProperties 1
+ * @maxProperties 1
+ */
 export interface DataSourceProps {
   /**
    * Glue database name to use as the data source. The project's environment user
    * will be granted Lake Formation read permissions on this database and its tables.
+   * Mutually exclusive with `s3`.
    *
    * Use cases: Glue database import; Data asset registration
    *
    * AWS: Glue database referenced as a DataZone data source
    *
-   * Validation: Required; valid Glue database name
+   * Validation: Exactly one of databaseName or s3 is required; valid Glue database name
    */
-  readonly databaseName: string;
+  readonly databaseName?: string;
+
+  /**
+   * S3 location to register as a data source. Mutually exclusive with `databaseName`.
+   *
+   * Use cases: Onboarding raw S3 data lake locations into a SMUS project's data catalog
+   *
+   * AWS: DataZone connection with S3 properties (AWS::DataZone::Connection)
+   *
+   * Validation: Exactly one of databaseName or s3 is required
+   */
+  readonly s3?: S3DataSourceProps;
+}
+
+export interface S3DataSourceProps {
+  /**
+   * Name of the S3 bucket to register as the data source. Accepts a literal bucket name or
+   * an MDAA `ssm-org:`/`ssm-domain:` reference to a bucket created by another module
+   * (e.g. `ssm-org:/shared/datalake/bucket/research/name`).
+   *
+   * AWS: AWS::DataZone::Connection S3Properties.S3Uri (bucket component)
+   *
+   * Validation: Required; valid S3 bucket name, or an `ssm-org:`/`ssm-domain:` reference
+   */
+  readonly bucketName: string;
+  /**
+   * Key prefix within the bucket to register, e.g. `raw/`. When omitted, registers the whole
+   * bucket and grants the project's environment user role IAM read over the whole bucket
+   * rather than a scoped prefix.
+   *
+   * AWS: AWS::DataZone::Connection S3Properties.S3Uri (prefix component)
+   *
+   * Validation: Optional; S3 key prefix
+   *
+   * @default ''
+   */
+  readonly prefix?: string;
+  /**
+   * Whether to register an S3 Access Grants location for the connection.
+   *
+   * AWS: AWS::DataZone::Connection S3Properties.RegisterS3AccessGrantLocation
+   *
+   * Validation: Optional; boolean
+   */
+  readonly registerS3AccessGrantLocation?: boolean;
+  /**
+   * S3 Access Grants location ID to associate with the connection.
+   *
+   * AWS: AWS::DataZone::Connection S3Properties.S3AccessGrantLocationId
+   *
+   * Validation: Optional; valid S3 Access Grants location ID
+   */
+  readonly s3AccessGrantLocationId?: string;
 }
 
 export interface SagemakerProjectL3ConstructProps extends MdaaL3ConstructProps {
@@ -545,6 +610,13 @@ export class SagemakerProjectL3Construct extends MdaaL3Construct {
     dataSourceName: string,
     dataSourceProps: DataSourceProps,
   ) {
+    if (!!dataSourceProps.s3 === !!dataSourceProps.databaseName) {
+      throw new Error(`Data source '${dataSourceName}': specify exactly one of 'databaseName' or 's3'`);
+    }
+    if (dataSourceProps.s3) {
+      return this.createS3Connection(project, dataSourceName, dataSourceProps.s3);
+    }
+    const databaseName = dataSourceProps.databaseName as string;
     const datasourceProps: CfnDataSourceProps = {
       domainIdentifier: project.project.attrDomainId,
       connectionIdentifier: project.glueConnectionId, //Need to pass glue connection id for SMUS projects
@@ -556,7 +628,7 @@ export class SagemakerProjectL3Construct extends MdaaL3Construct {
           autoImportDataQualityResult: true,
           relationalFilterConfigurations: [
             {
-              databaseName: dataSourceProps.databaseName,
+              databaseName: databaseName,
             },
           ],
         },
@@ -564,7 +636,7 @@ export class SagemakerProjectL3Construct extends MdaaL3Construct {
     };
     const datasource = new CfnDataSource(project, `${dataSourceName}-datazone-datasource`, datasourceProps);
     const grantProps: GrantProps = {
-      database: dataSourceProps.databaseName,
+      database: databaseName,
       databasePermissions: LakeFormationAccessControlL3Construct.DATABASE_READ_PERMISSIONS,
       databaseGrantablePermissions: LakeFormationAccessControlL3Construct.DATABASE_READ_PERMISSIONS,
       principals: {
@@ -584,6 +656,23 @@ export class SagemakerProjectL3Construct extends MdaaL3Construct {
     };
     new LakeFormationAccessControlL3Construct(datasource, 'lf-permissions', lakeFormationProps);
     return { dataSourceName: dataSourceName, dataSource: datasource, props: dataSourceProps };
+  }
+
+  private createS3Connection(project: MdaaSageMakerProject, dataSourceName: string, s3Props: S3DataSourceProps) {
+    const connectionProps: MdaaDatazoneS3ConnectionProps = {
+      naming: this.props.naming,
+      name: dataSourceName,
+      domainIdentifier: project.project.attrDomainId,
+      projectIdentifier: project.project.attrId,
+      environmentIdentifier: project.toolingEnvId,
+      bucketName: s3Props.bucketName,
+      prefix: s3Props.prefix,
+      registerS3AccessGrantLocation: s3Props.registerS3AccessGrantLocation,
+      s3AccessGrantLocationId: s3Props.s3AccessGrantLocationId,
+      grantReadRoleArn: project.envUserArn,
+    };
+    const connection = new MdaaDatazoneS3Connection(project, `${dataSourceName}-s3-connection`, connectionProps);
+    return { dataSourceName: dataSourceName, dataSource: connection.connection, props: { s3: s3Props } };
   }
 
   private createProjectProfile(

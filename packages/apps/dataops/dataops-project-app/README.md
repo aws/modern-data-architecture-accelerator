@@ -26,7 +26,7 @@ This module deploys and integrates the following resources:
 
 **Glue Custom Classifiers** - Classifiers (CSV, Grok, JSON, XML) for reuse across project crawlers.
 
-**DataZone/SageMaker Project** (Optional) - Registers DataOps project resources as DataZone/SageMaker project, data sources, and assets.
+**DataZone/SageMaker Project** (Optional) - Registers DataOps project resources as DataZone/SageMaker project, data sources, and assets. On the SageMaker path, raw S3 locations (outside the Glue catalog) can also be registered as data sources via `sagemaker.project.dataSources.<name>.s3`.
 
 **Subscription Role Authorization** (Optional) - Created when `subscriptionAuthorizedRoleGroups` is set: a Lambda-backed custom resource (`Custom::DataZoneProjectRoleTagger`, SageMaker path) that tags the listed roles with the project ID, and a managed policy (`subscription-catalog-key-access`) granting the listed roles decrypt on the domain's Glue catalog keys. On the DataZone path the roles are added to the project's subscription target instead of being tagged. See [Subscribed Asset Access for Project Roles](#subscribed-asset-access-for-project-roles).
 

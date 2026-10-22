@@ -15,6 +15,8 @@ Once deployed, you should see the following in your AWS account:
 | CloudTrail Trail | `<org>-dev-shared-audit-trail-s3-audit` | `trails.s3-audit` in [`shared/audit-trail.yaml`](shared/audit-trail.yaml) |
 | SMUS Domain | `<org>-dev-sagemaker-domain-domain1`<br>`/<org>/sagemaker/domain/domain/domain1/name` | `domains.domain1` in [`sagemaker/domain.yaml`](sagemaker/domain.yaml) |
 | SMUS Project Profile | `<org>-dev-sagemaker-projects`<br>`/<org>/sagemaker/projects/project/name` | configured in [`sagemaker/projects.yaml`](sagemaker/projects.yaml) |
+| Research Data S3 Bucket | `<org>-dev-shared-datalake-research`<br>`/<org>/shared/datalake/bucket/research/name` | `buckets.research` in [`shared/datalake.yaml`](shared/datalake.yaml) |
+| S3 Data Source Connection | `<org>-dev-sagemaker-projects-research-data` | `projects.team1.dataSources.research-data` in [`sagemaker/projects.yaml`](sagemaker/projects.yaml) |
 | IAM Role | `<org>-dev-shared-roles-data-admin`<br>`/<org>/shared/generated-role/data-admin/id` | `generateRoles.data-admin` in [`shared/roles.yaml`](shared/roles.yaml) |
 | Glue Catalog Encryption | Account-level setting | deployed by [`glue-catalog`](mdaa.yaml) module<br>*(not configurable)* |
 | LakeFormation Data Lake Settings | Account-level setting | deployed by [`shared/lakeformation-settings.yaml`](shared/lakeformation-settings.yaml)<br>*(not configurable)* |
@@ -46,6 +48,11 @@ Available capabilities in the portal:
 - **SQL queries** — Query data in Glue databases via Athena
 - **Data catalog** — Discover and subscribe to data assets
 - **MLflow** — Track experiments and model versions
+
+### 5. Verify the S3 Data Source
+
+1. In the SMUS portal, open the `team1` project and navigate to **Data** > **S3 buckets** (and **Connections**).
+2. The `research-data` connection (pointing at the `research` bucket from [`shared/datalake.yaml`](shared/datalake.yaml)) should appear as an available S3 data source. Reading objects under it requires a post-deploy access grant; see Troubleshooting in the [README](README.md) if you see an access error.
 
 ## Scaling Up
 

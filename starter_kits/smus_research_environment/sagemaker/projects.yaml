@@ -16,6 +16,14 @@ projects:
     profileName: profile1
     groups:
       team1: '{{context:team1-group-sso-id}}'
+    # Onboard the research-data S3 bucket (created by shared/datalake.yaml) as a data
+    # source, visible in team1's SMUS data catalog. Buckets created elsewhere via MDAA
+    # are referenced the same way any other module reference its resources: via SSM.
+    dataSources:
+      research-data:
+        s3:
+          bucketName: ssm-org:/shared/datalake/bucket/research/name
+          prefix: raw/
 
   team2:
     profileName: profile1
