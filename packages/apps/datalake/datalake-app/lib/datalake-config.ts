@@ -117,6 +117,26 @@ export interface BucketConfig {
    */
   readonly corsRules?: CorsRuleConfig[];
   /**
+   * Enable S3 Transfer Acceleration on this bucket, so distant clients upload through the
+   * CloudFront edge network instead of the bucket's regional endpoint. Helps long-distance
+   * transfers only; same-region traffic gains no latency. Accelerated transfers use the public
+   * `s3-accelerate` endpoint, do not traverse an S3 interface VPC endpoint, and are billed per GB.
+   * Supported in a subset of AWS regions only - an unsupported region synthesizes cleanly and fails
+   * at deploy.
+   *
+   * To disable, set this to false rather than removing it: removing the property leaves an
+   * already-accelerated bucket Enabled and still billing. See the module README.
+   *
+   * Use cases: Ingest from geographically distributed sources; Browser-based multipart uploads
+   * from remote sites; Cross-continent transfer into a central lake
+   *
+   * AWS: S3 AccelerateConfiguration
+   *
+   * Validation: Optional; boolean. No default - omit the property entirely unless the bucket needs
+   * acceleration, or needs an existing acceleration turned off.
+   */
+  readonly transferAcceleration?: boolean;
+  /**
    * Cross-account S3 replication into and/or out of this bucket. Set `outbound` when this
    * bucket sends objects to a bucket in another account, `inbound` when it receives them,
    * or both. MDAA only configures the side(s) it manages.

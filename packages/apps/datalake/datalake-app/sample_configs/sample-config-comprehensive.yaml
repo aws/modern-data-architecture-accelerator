@@ -177,6 +177,10 @@ buckets:
     # (Optional) Create folder placeholder objects for each access policy prefix.
     # (default: true)
     createFolderSkeleton: false
+    # (Optional) Accelerate long-distance uploads through the CloudFront edge network. Omit unless
+    # this bucket needs it; set false to suspend a bucket that is currently accelerated.
+    # (no default) See README.md for supported regions, cost and endpoint behaviour.
+    transferAcceleration: true
     # (Optional) S3 inventory configurations for automated bucket content reporting. Each entry
     # generates inventory data for the specified prefix.
     #Inventory data will be written for each listed name/prefix under /inventory/<name>

@@ -303,6 +303,7 @@ Validation: accessPolicies required; all policy names must exist in parent acces
 | - [lakeFormationLocations](#buckets_additionalProperties_lakeFormationLocations )                 | No      | object          | No         | -                                            | LakeFormation location registrations for fine-grained access control<br />at specific S3 prefixes within this bucket.<br /><br />Use cases: Table/column-level permissions; LakeFormation-governed data zones<br /><br />AWS: LakeFormation resource registration<br /><br />Validation: Optional; map of location name to LakeFormationLocationConfig                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | - [lifecycleConfiguration](#buckets_additionalProperties_lifecycleConfiguration )                 | No      | string          | No         | -                                            | Name of a lifecycle configuration from the top-level lifecycleConfigurations<br />to apply to this bucket.<br /><br />Use cases: Automated archival; Cost optimization; Data retention<br /><br />AWS: S3 lifecycle rules<br /><br />Validation: Optional; must match a key in lifecycleConfigurations if provided                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | - [replication](#buckets_additionalProperties_replication )                                       | No      | object          | No         | In #/definitions/BucketReplicationDefinition | Cross-account S3 replication into and/or out of this bucket. Set \`outbound\` when this<br />bucket sends objects to a bucket in another account, \`inbound\` when it receives them,<br />or both. MDAA only configures the side(s) it manages.<br /><br />Use cases: Cross-account DR copies; Sharing curated data with a consumer account; Data residency<br /><br />AWS: S3 ReplicationConfiguration, S3 bucket policy, IAM replication role, KMS key policy<br /><br />Validation: Optional; both sub-blocks default off                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| - [transferAcceleration](#buckets_additionalProperties_transferAcceleration )                     | No      | boolean         | No         | -                                            | Enable S3 Transfer Acceleration on this bucket, so distant clients upload through the<br />CloudFront edge network instead of the bucket's regional endpoint. Helps long-distance<br />transfers only; same-region traffic gains no latency. Accelerated transfers use the public<br />\`s3-accelerate\` endpoint, do not traverse an S3 interface VPC endpoint, and are billed per GB.<br />Supported in a subset of AWS regions only - an unsupported region synthesizes cleanly and fails<br />at deploy.<br /><br />To disable, set this to false rather than removing it: removing the property leaves an<br />already-accelerated bucket Enabled and still billing. See the module README.<br /><br />Use cases: Ingest from geographically distributed sources; Browser-based multipart uploads<br />from remote sites; Cross-continent transfer into a central lake<br /><br />AWS: S3 AccelerateConfiguration<br /><br />Validation: Optional; boolean. No default - omit the property entirely unless the bucket needs<br />acceleration, or needs an existing acceleration turned off.                    |
 
 #### <a name="buckets_additionalProperties_accessPolicies"></a>3.1.1. Property `root > buckets > additionalProperties > accessPolicies`
 
@@ -1224,6 +1225,31 @@ Use cases: AWS IAM Identity Center integration; SSO permission set role binding;
 AWS: Resolves role via AWS SSO/Identity Center auto-generated role naming convention
 
 Validation: Optional boolean; defaults to false
+
+#### <a name="buckets_additionalProperties_transferAcceleration"></a>3.1.11. Property `root > buckets > additionalProperties > transferAcceleration`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable S3 Transfer Acceleration on this bucket, so distant clients upload through the
+CloudFront edge network instead of the bucket's regional endpoint. Helps long-distance
+transfers only; same-region traffic gains no latency. Accelerated transfers use the public
+`s3-accelerate` endpoint, do not traverse an S3 interface VPC endpoint, and are billed per GB.
+Supported in a subset of AWS regions only - an unsupported region synthesizes cleanly and fails
+at deploy.
+
+To disable, set this to false rather than removing it: removing the property leaves an
+already-accelerated bucket Enabled and still billing. See the module README.
+
+Use cases: Ingest from geographically distributed sources; Browser-based multipart uploads
+from remote sites; Cross-continent transfer into a central lake
+
+AWS: S3 AccelerateConfiguration
+
+Validation: Optional; boolean. No default - omit the property entirely unless the bucket needs
+acceleration, or needs an existing acceleration turned off.
 
 ## <a name="lifecycleConfigurations"></a>4. Property `root > lifecycleConfigurations`
 

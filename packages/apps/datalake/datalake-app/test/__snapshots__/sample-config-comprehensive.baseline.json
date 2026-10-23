@@ -3562,6 +3562,9 @@
     "bucketrawE1DB2AD1": {
       "Type": "AWS::S3::Bucket",
       "Properties": {
+        "AccelerateConfiguration": {
+          "AccelerationStatus": "Enabled"
+        },
         "BucketEncryption": {
           "ServerSideEncryptionConfiguration": [
             {

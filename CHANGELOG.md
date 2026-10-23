@@ -16,6 +16,10 @@
 - Added a `knowledgeBase` gateway target type that exposes a knowledge base to gateway clients, such as harnesses, as a `Retrieve` tool through a generated Lambda connector. Optional `networkConfiguration` runs the connector in your VPC through a `vpcEndpoints` set, which gains a `bedrockAgentRuntime` endpoint. Additive only - existing configs are unchanged. See the [module README](packages/apps/ai/bedrock-builder-app/README.md#knowledge-bases-through-a-gateway).
 
 
+#### Data Lake Module
+
+- Added per-bucket `transferAcceleration`, enabling S3 Transfer Acceleration so distant clients upload through a CloudFront edge location instead of the bucket's regional endpoint. Optional - omit the property unless a bucket needs it, and existing configs synthesize unchanged. Accelerated transfers are billed per GB, acceleration is only available in some AWS regions, and turning it off requires setting `false` rather than removing the property. See the [module README](packages/apps/datalake/datalake-app/README.md#transfer-acceleration).
+
 ### General Changes
 
 - Updated dependencies to address CVEs (`js-yaml`, `axios`, `smol-toml`, `nx`, `@xmldom/xmldom`, `browserslist`, `baseline-browser-mapping`, `markdown-it`, `linkify-it`, `brace-expansion`, `stream-json`, `@babel/core`)

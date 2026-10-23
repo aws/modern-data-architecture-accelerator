@@ -666,3 +666,72 @@ describe('Parameter tier', () => {
     params.forEach(param => expect(param.Properties?.Tier).toBeUndefined());
   });
 });
+
+describe('Transfer Acceleration', () => {
+  // S3's acceleration state is Enabled or Suspended with no unset value, so an explicit opt-out
+  // has to render Suspended: CDK emits AccelerateConfiguration only for a truthy value, and
+  // CloudFormation does not translate a removed property into a Suspended call - a bucket that had
+  // been accelerated would stay Enabled. An omitted value must still render nothing, or every
+  // bucket in every module gains the property and every committed baseline churns.
+  const testApp = new MdaaTestApp();
+  const testKey = MdaaKmsKey.fromKeyArn(
+    testApp.testStack,
+    'accel-test-key',
+    'arn:test-partition:kms:test-region:test-account:key/test-key',
+  );
+
+  new MdaaBucket(testApp.testStack, 'accel-enabled', {
+    naming: testApp.naming,
+    bucketName: 'accel-enabled',
+    encryptionKey: testKey,
+    transferAcceleration: true,
+  });
+
+  new MdaaBucket(testApp.testStack, 'accel-suspended', {
+    naming: testApp.naming,
+    bucketName: 'accel-suspended',
+    encryptionKey: testKey,
+    transferAcceleration: false,
+  });
+
+  new MdaaBucket(testApp.testStack, 'accel-unset', {
+    naming: testApp.naming,
+    bucketName: 'accel-unset',
+    encryptionKey: testKey,
+  });
+
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('true renders AccelerationStatus Enabled', () => {
+    template.hasResourceProperties('AWS::S3::Bucket', {
+      BucketName: Match.stringLikeRegexp('accel-enabled'),
+      AccelerateConfiguration: { AccelerationStatus: 'Enabled' },
+    });
+  });
+
+  test('explicit false renders AccelerationStatus Suspended', () => {
+    template.hasResourceProperties('AWS::S3::Bucket', {
+      BucketName: Match.stringLikeRegexp('accel-suspended'),
+      AccelerateConfiguration: { AccelerationStatus: 'Suspended' },
+    });
+  });
+
+  test('omitted renders no AccelerateConfiguration', () => {
+    template.hasResourceProperties('AWS::S3::Bucket', {
+      BucketName: Match.stringLikeRegexp('accel-unset'),
+      AccelerateConfiguration: Match.absent(),
+    });
+  });
+
+  // Guards the strictness of the `=== false` check: a falsy test would suspend the unset bucket
+  // too, which this counts and the per-bucket assertions above would not catch.
+  test('exactly one bucket is Enabled and one Suspended', () => {
+    const buckets = Object.values(template.findResources('AWS::S3::Bucket'));
+    const status = (s: string) =>
+      buckets.filter(b => b.Properties?.AccelerateConfiguration?.AccelerationStatus === s).length;
+    expect(status('Enabled')).toBe(1);
+    expect(status('Suspended')).toBe(1);
+    expect(buckets.filter(b => b.Properties?.AccelerateConfiguration === undefined)).toHaveLength(1);
+  });
+});

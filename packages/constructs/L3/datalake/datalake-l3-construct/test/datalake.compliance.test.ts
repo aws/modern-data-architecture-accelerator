@@ -566,6 +566,81 @@ describe('CORS Configuration', () => {
   });
 });
 
+describe('Transfer Acceleration', () => {
+  const testApp = new MdaaTestApp();
+
+  const testAccessPolicy: AccessPolicyProps = {
+    name: 'test-policy',
+    s3Prefix: '/',
+    readRoleRefs: [{ id: 'test-read-role-id' }],
+  };
+
+  const acceleratedProps: BucketDefinition = {
+    bucketZone: 'accelerated-zone',
+    accessPolicies: [testAccessPolicy],
+    transferAcceleration: true,
+  };
+
+  // Explicit false and omitted are distinct states, not synonyms: false suspends a bucket that is
+  // accelerated, while omitting the property emits nothing. Asserted here to pin the config
+  // pass-through; the rendering itself is MdaaBucket's and is covered in its own suite.
+  const explicitlyDisabledProps: BucketDefinition = {
+    bucketZone: 'disabled-zone',
+    accessPolicies: [testAccessPolicy],
+    transferAcceleration: false,
+  };
+
+  const unsetProps: BucketDefinition = {
+    bucketZone: 'unset-zone',
+    accessPolicies: [testAccessPolicy],
+  };
+
+  const constructProps: DataLakeL3ConstructProps = {
+    buckets: [acceleratedProps, explicitlyDisabledProps, unsetProps],
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+  };
+
+  new S3DatalakeBucketL3Construct(testApp.testStack, 'test-acceleration-stack', constructProps);
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('Bucket with transferAcceleration enabled has AccelerateConfiguration', () => {
+    template.hasResourceProperties('AWS::S3::Bucket', {
+      BucketName: Match.stringLikeRegexp('accelerated-zone'),
+      AccelerateConfiguration: {
+        AccelerationStatus: 'Enabled',
+      },
+    });
+  });
+
+  test('Bucket with transferAcceleration explicitly false is Suspended', () => {
+    template.hasResourceProperties('AWS::S3::Bucket', {
+      BucketName: Match.stringLikeRegexp('disabled-zone'),
+      AccelerateConfiguration: {
+        AccelerationStatus: 'Suspended',
+      },
+    });
+  });
+
+  test('Bucket without transferAcceleration has no AccelerateConfiguration', () => {
+    template.hasResourceProperties('AWS::S3::Bucket', {
+      BucketName: Match.stringLikeRegexp('unset-zone'),
+      AccelerateConfiguration: Match.absent(),
+    });
+  });
+
+  // Several buckets are created from one module config, so confirm the property does not leak
+  // between them.
+  test('Only the bucket that opted in is Enabled', () => {
+    expect(
+      Object.values(template.findResources('AWS::S3::Bucket')).filter(
+        bucket => bucket.Properties?.AccelerateConfiguration?.AccelerationStatus === 'Enabled',
+      ),
+    ).toHaveLength(1);
+  });
+});
+
 describe('DataLake Outbound Replication', () => {
   const testApp = new MdaaTestApp();
 

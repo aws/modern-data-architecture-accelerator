@@ -65,6 +65,9 @@ This module is designed in alignment with MDAA security/compliance principles an
 - **Data Governance**:
   - Lake Formation location registrations for governed data access
   - Glue catalog databases for metadata management
+- **Transfer Acceleration**:
+  - Opt-in and default-off; no bucket is accelerated unless it declares it
+  - Accelerated transfers use a public endpoint and do not traverse an S3 interface VPC endpoint; bucket policy and IAM controls, including the TLS deny and KMS enforcement, apply unchanged
 - **Cross-Account Replication**:
   - Opt-in and default-off; no replication is configured unless a bucket declares it
   - Replication role permissions and cross-account grants scoped to the configured buckets and prefixes
@@ -218,6 +221,42 @@ Three things to know before setting them:
 - **Reading the objects needs a KMS grant this does not give.** Objects a Glue job writes are encrypted with the Security Configuration's key, not with the bucket's own key, so anything that reads them also needs `kms:Decrypt` on that key. A Data Lake module makes key users of the roles in its own `accessPolicies` only, so a role that reaches these buckets through this module holds no rights on the other module's key. Granting it there means adding it to that module's `accessPolicies`, which also grants it prefix access to that module's buckets.
 - **An SSM reference couples this module's deployment to the module that owns the key.** `ssm-domain:`, `ssm-org:` and `ssm:` all resolve through CloudFormation at stack-operation time, and CloudFormation fails the operation when the parameter does not exist - so this module cannot deploy until the module publishing the key has. A literal ARN carries no such dependency; use one when the two are deployed independently.
 - **A wildcard is caught only in a literal ARN.** MDAA refuses a `*` or `?` in these values at synth, because the bucket policy matches them with `StringNotLikeIfExists` - an operator that honours wildcards - so one value containing a wildcard would match every key ARN and switch the guard off for the whole bucket. An SSM reference is still an unresolved token at synth and cannot be checked, so whatever the parameter holds at stack-operation time is what lands in the policy. Anyone who can write that parameter can therefore disable the bucket's encryption enforcement: restrict write access to it as tightly as to the bucket policy, or name the key with a literal ARN.
+
+## Transfer Acceleration
+
+A bucket can serve uploads through [S3 Transfer Acceleration](https://docs.aws.amazon.com/AmazonS3/latest/userguide/transfer-acceleration.html), which routes data through Amazon CloudFront edge locations and on to S3 over an optimized network path. It is off unless a bucket asks for it:
+
+```yaml
+buckets:
+  raw:
+    accessPolicies: [Root]
+    transferAcceleration: true
+  curated:
+    accessPolicies: [Root]
+```
+
+It helps only where client-to-bucket distance is the bottleneck - distributed upload sites, remote offices, ingest crossing a continent. In-region traffic pays the per-GB premium for no gain.
+
+Before enabling:
+
+- **Region support.** Only [about fifteen regions](https://docs.aws.amazon.com/AmazonS3/latest/userguide/transfer-acceleration.html) support it. An unsupported region synthesizes cleanly and then fails at deploy, since S3 enforces the constraint rather than the template. MDAA does not check at synth: the supported set changes over time, and a config using `region: default` may have no resolved region at synth to check.
+- **Clients must opt in.** Enabling moves no traffic by itself. A caller is accelerated only by addressing the `s3-accelerate` name - `aws configure set default.s3.use_accelerate_endpoint true`, a per-command `--endpoint-url https://s3-accelerate.amazonaws.com` (with `s3.addressing_style virtual`), or the equivalent SDK flag. Every other caller keeps using the regional endpoint. Speeds can take up to 20 minutes to improve after enabling.
+- **Per-GB charge**, on top of normal S3 request and storage charges, for data that actually moves through the accelerated endpoint.
+- **No VPC endpoint on the accelerated path.** `<bucket>.s3-accelerate.amazonaws.com` is a public name, so interface-endpoint policies and VPC routing do not apply to it. Authorization is unchanged - the request is still SigV4-signed and evaluated against the whole bucket policy, so the TLS deny, block public access and `DenyAES`/`ForceKMS` all still apply. Keep workloads that require private connectivity on the regional endpoint.
+
+Which value to set:
+
+| To | Set |
+| --- | --- |
+| leave a bucket unaccelerated | nothing - omit the property |
+| accelerate a bucket | `transferAcceleration: true` |
+| stop accelerating a bucket that is accelerated | `transferAcceleration: false` |
+
+`false` is a transition rather than a steady state. S3's acceleration state is `Enabled` or `Suspended` with no unset value, so a bucket that has been accelerated cannot return to never-configured: `false` renders `Suspended`, which stops accelerated transfers, whereas simply removing the property leaves the bucket `Enabled` and still billing. Leave the `false` in place once set - it is harmless and records the decision.
+
+On a bucket that was never accelerated, `false` renders `Suspended` where omitting the property renders nothing. Both mean the bucket is not accelerated, so prefer omitting it; reach for `false` when you need to turn an accelerated bucket off.
+
+Suspending breaks callers that opted into acceleration, with no silent fallback, so move them to the regional endpoint first. Regional callers are unaffected, and objects already stored are untouched by enabling or suspending.
 
 ## Configuration
 

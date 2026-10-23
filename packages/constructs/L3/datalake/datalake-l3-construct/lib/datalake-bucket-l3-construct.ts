@@ -300,6 +300,13 @@ export interface BucketDefinition {
   readonly defaultDeny?: boolean;
   /** Cross-origin resource sharing rules for the bucket. */
   readonly corsRules?: CorsRule[];
+  /**
+   * Enable S3 Transfer Acceleration on this bucket. Opt-in: the accelerated `s3-accelerate`
+   * endpoint is public, does not traverse an S3 interface VPC endpoint, and is billed per GB
+   * transferred. Set `false` to suspend a bucket that is currently accelerated.
+   * @default - no AccelerateConfiguration is emitted
+   */
+  readonly transferAcceleration?: boolean;
   /** Cross-account replication into and/or out of this bucket. Both sides default off. */
   readonly replication?: BucketReplicationDefinition;
   /**
@@ -734,6 +741,7 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
       bucketName: bucketDefinition.bucketZone,
       naming: naming,
       corsRules: bucketDefinition.corsRules,
+      transferAcceleration: bucketDefinition.transferAcceleration,
       replicationRole: replicationRole?.role,
       replicationRules: outbound ? this.createReplicationRules(bucketDefinition.bucketZone, outbound) : undefined,
       additionalKmsKeyArns: this.resolveAdditionalKmsKeyArns(bucketDefinition),

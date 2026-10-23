@@ -13,6 +13,7 @@ import {
   Bucket,
   BucketEncryption,
   BucketProps,
+  CfnBucket,
   CorsRule,
   IBucket,
   IntelligentTieringConfiguration,
@@ -69,6 +70,11 @@ export interface MdaaBucketProps extends mdaa_construct.MdaaConstructProps {
   /** Array of inventory configurations for automated bucket content reporting and analysis */
   readonly inventories?: Inventory[];
 
+  /**
+   * Transfer acceleration state for this bucket. `true` renders AccelerationStatus=Enabled and an
+   * explicit `false` renders Suspended, so that disabling through config takes effect.
+   * @default - no AccelerateConfiguration is emitted
+   */
   readonly transferAcceleration?: boolean;
 
   readonly intelligentTieringConfigurations?: IntelligentTieringConfiguration[];
@@ -209,6 +215,24 @@ export class MdaaBucket extends Bucket implements IMdaaBucket {
   }
   constructor(scope: Construct, id: string, props: MdaaBucketProps) {
     super(scope, id, MdaaBucket.setProps(props, scope));
+
+    /**
+     * CDK renders AccelerateConfiguration only for a truthy transferAcceleration, and S3's
+     * acceleration state is Enabled or Suspended with no unset value. An explicit false would
+     * therefore just remove the property, which CloudFormation does not translate into a Suspended
+     * call - leaving an already-accelerated bucket Enabled and still billing. Render Suspended so
+     * disabling takes effect. This cannot help a bucket whose property is deleted outright, since
+     * the template then says nothing about acceleration and carries no history to act on.
+     *
+     * Strictly `=== false`: an omitted value must keep rendering nothing, or every bucket in every
+     * module gains the property and every committed baseline churns.
+     */
+    if (props.transferAcceleration === false) {
+      (this.node.defaultChild as CfnBucket).addPropertyOverride(
+        'AccelerateConfiguration.AccelerationStatus',
+        'Suspended',
+      );
+    }
 
     const publicAccessBlockManagedExternallyContext = scope.node.tryGetContext(
       MdaaBucket.PUBLIC_ACCESS_BLOCK_MANAGED_EXTERNALLY_CONTEXT_KEY,
