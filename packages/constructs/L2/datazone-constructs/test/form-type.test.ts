@@ -4,6 +4,7 @@
  */
 
 import { MdaaTestApp } from '@aws-mdaa/testing';
+import { Lazy } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import { Role } from 'aws-cdk-lib/aws-iam';
 import { FormFieldProps, MdaaDatazoneFormType, MdaaDatazoneFormTypeProps } from '../lib';
@@ -146,6 +147,18 @@ describe('MdaaDatazoneFormType', () => {
           baseProps({ tier: { type: 'String', glossaryId: 'bad")id' } }),
         ),
     ).toThrow(/glossaryId 'bad"\)id' on field 'CustomerForm.tier' is not a valid ID/);
+  });
+
+  it('should not validate glossaryId when it is an unresolved CDK token', () => {
+    const tokenGlossaryId = Lazy.string({ produce: () => 'resolved-at-deploy-time' });
+    expect(
+      () =>
+        new MdaaDatazoneFormType(
+          testApp.testStack,
+          'test-form',
+          baseProps({ tier: { type: 'String', glossaryId: tokenGlossaryId } }),
+        ),
+    ).not.toThrow();
   });
 
   describe('assembleStructure', () => {

@@ -1995,6 +1995,20 @@
               "Resource": "*"
             },
             {
+              "Action": [
+                "datazone:CreateGlossary",
+                "datazone:UpdateGlossary",
+                "datazone:DeleteGlossary",
+                "datazone:GetGlossary",
+                "datazone:CreateGlossaryTerm",
+                "datazone:UpdateGlossaryTerm",
+                "datazone:DeleteGlossaryTerm",
+                "datazone:GetGlossaryTerm"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
               "Action": "iam:GetRole",
               "Condition": {
                 "Bool": {
@@ -2031,7 +2045,7 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] datazone:Get*/List* do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html). The form type management actions (CreateFormType, DeleteFormType, GetFormType) also do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html; none carries a Resources entry in the machine-readable Service Reference for DataZone: https://servicereference.us-east-1.amazonaws.com/v1/datazone/datazone.json). iam:GetRole does not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html) and is further scoped via aws:ViaAWSService condition.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] datazone:Get*/List* do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html). The form type and glossary/glossary-term management actions (CreateFormType, DeleteFormType, GetFormType, CreateGlossary, UpdateGlossary, DeleteGlossary, GetGlossary, CreateGlossaryTerm, UpdateGlossaryTerm, DeleteGlossaryTerm, GetGlossaryTerm) also do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html; none carries a Resources entry in the machine-readable Service Reference for DataZone: https://servicereference.us-east-1.amazonaws.com/v1/datazone/datazone.json). iam:GetRole does not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html) and is further scoped via aws:ViaAWSService condition.",
               "id": "AwsSolutions-IAM5"
             }
           ]
@@ -2192,6 +2206,51 @@
       "Metadata": {
         "PolicyType": "CREATE_FORM_TYPE",
         "PolicyName": "custom-resource-role-create-form-type",
+        "PrincipalName": "project"
+      }
+    },
+    "datazonetestdomaindomaincustomresourcerolecreateglossarypolicygrantcustomresourcerolecreateglossaryA7776E40": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateGlossary": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomain4A18F0C4",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomain4A18F0C4",
+            "RootDomainUnitId"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_GLOSSARY",
+        "Principal": {
+          "Project": {
+            "ProjectDesignation": "OWNER",
+            "ProjectGrantFilter": {
+              "DomainUnitFilter": {
+                "DomainUnit": {
+                  "Fn::GetAtt": [
+                    "datazonetestdomaindomain4A18F0C4",
+                    "RootDomainUnitId"
+                  ]
+                },
+                "IncludeChildDomainUnits": true
+              }
+            }
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_GLOSSARY",
+        "PolicyName": "custom-resource-role-create-glossary",
         "PrincipalName": "project"
       }
     },

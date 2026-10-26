@@ -6,13 +6,16 @@
 import {
   DomainConfig,
   FormFieldProps,
+  GlossaryTermProps,
   MdaaDatazoneFormType,
+  MdaaDatazoneGlossary,
   MdaaDatazoneProjectProps,
   MdaaDatazoneS3Connection,
   MdaaDatazoneS3ConnectionProps,
   MdaaSageMakerProject,
   ProjectEnvironmentConfiguration,
 } from '@aws-mdaa/datazone-constructs';
+import { Annotations, CustomResource } from 'aws-cdk-lib';
 
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaResourceType } from '@aws-mdaa/naming';
@@ -149,7 +152,7 @@ export interface SageMakerProjectProps {
    * a set of fields; MDAA assembles the Smithy model (setting the namespace to the
    * domain ID and the structure name to the form name). Forms are usable across the
    * domain to attach standardized metadata to assets. The map key is used as the form's
-   * stable identifier; renaming a key replaces that form type (delete-then-create).
+   * stable identifier; renaming a key replaces that form type (create-then-delete).
    *
    * Use cases: Data governance metadata standards; Asset metadata enforcement; Searchable custom attributes
    *
@@ -158,6 +161,60 @@ export interface SageMakerProjectProps {
    * Validation: Optional; map of form name to MetadataFormProps; form name must be a valid Smithy structure name
    */
   readonly metadataForms?: { [formName: string]: MetadataFormProps };
+
+  /**
+   * Business glossaries to create, owned by this project. A metadata form field's
+   * `glossaryId` may reference a declared glossary here as `"<glossaryName>"`, or a
+   * declared term as `"<glossaryName>.<termName>"`, which MDAA resolves to the
+   * glossary's deploy-time ID and wires as a CDK dependency, or it may continue to
+   * use a literal, pre-existing glossary ID string, unchanged. The map key is used
+   * as the glossary's stable identifier; renaming a key replaces that glossary
+   * (create-then-delete).
+   *
+   * Use cases: Business glossary/terminology as code; Linking standardized terms to metadata forms
+   *
+   * AWS: DataZone business glossaries and terms, owned by the project
+   *
+   * Validation: Optional; map of glossary name to GlossaryProps
+   */
+  readonly glossaries?: { [glossaryName: string]: GlossaryProps };
+}
+
+export interface GlossaryProps {
+  /**
+   * Terms to create under this glossary. The map key is used as the term's stable
+   * identifier and is the name referenced by a form field's `glossaryId` as
+   * `"<glossaryName>.<termName>"`.
+   *
+   * Use cases: Standardized business terminology; Terms linked to metadata form fields
+   *
+   * AWS: DataZone business glossary terms
+   *
+   * Validation: Optional; map of term name to GlossaryTermProps
+   * @default - no terms are created
+   */
+  readonly terms?: { [termName: string]: GlossaryTermProps };
+  /**
+   * Human-readable description of the glossary.
+   *
+   * Use cases: Glossary documentation
+   *
+   * AWS: DataZone glossary description
+   *
+   * Validation: Optional; string
+   */
+  readonly description?: string;
+  /**
+   * Glossary status. DISABLED glossaries are retained but not attachable.
+   *
+   * Use cases: Staged glossary rollout; Temporarily retiring a glossary
+   *
+   * AWS: DataZone glossary status
+   *
+   * Validation: Optional; 'ENABLED' | 'DISABLED'
+   * @default ENABLED
+   */
+  readonly status?: 'ENABLED' | 'DISABLED';
 }
 
 export interface MetadataFormProps {
@@ -509,7 +566,40 @@ export class SagemakerProjectL3Construct extends MdaaL3Construct {
       new CfnResourceShare(scope, `profiles-config-ram-share`, configParamRamShareProps);
     }
 
-    this.projects = this.createProjects(domainConfig, projectProfilesConfig);
+    const glossaryKeyOwners = this.collectGlossaryKeyOwners(props.projects);
+    this.projects = this.createProjects(domainConfig, projectProfilesConfig, glossaryKeyOwners);
+  }
+
+  /**
+   * Collects the project owning each declared glossary key across all projects, throwing at
+   * synth if two projects declare the same key: glossary names are unique per domain, and a
+   * `glossaryId` reference only resolves within its declaring project, so a reused key would
+   * create two same-named glossaries and an ambiguous reference.
+   */
+  private collectGlossaryKeyOwners(
+    projects: { [projectName: string]: SageMakerProjectProps } | undefined,
+  ): Map<string, string> {
+    const owners = new Map<string, string>();
+    const duplicates: string[] = [];
+    Object.entries(projects || {}).forEach(([projectName, projectProps]) => {
+      Object.keys(projectProps.glossaries || {}).forEach(glossaryKey => {
+        const existingOwner = owners.get(glossaryKey);
+        if (existingOwner) {
+          duplicates.push(`'${glossaryKey}' (declared by both '${existingOwner}' and '${projectName}')`);
+        } else {
+          owners.set(glossaryKey, projectName);
+        }
+      });
+    });
+    if (duplicates.length > 0) {
+      throw new Error(
+        `Duplicate glossary key(s) declared across projects: ${duplicates.join(', ')}. Glossary names ` +
+          'must be unique within a domain, and a glossaryId reference only resolves within its ' +
+          'declaring project, so reusing a key across projects would create two same-named glossaries ' +
+          'and an ambiguous reference.',
+      );
+    }
+    return owners;
   }
 
   private createProjectProfiles(domainConfig: DomainConfig): { [key: string]: string } {
@@ -530,6 +620,7 @@ export class SagemakerProjectL3Construct extends MdaaL3Construct {
   private createProjects(
     domainConfig: DomainConfig,
     projectProfilesConfig: ProjectProfilesConfig,
+    glossaryKeyOwners: Map<string, string>,
   ): { [name: string]: MdaaSageMakerProject } {
     return Object.fromEntries(
       Object.entries(this.props.projects || {}).map(([projectName, projectProps]) => {
@@ -539,6 +630,7 @@ export class SagemakerProjectL3Construct extends MdaaL3Construct {
           projectProps,
           domainConfig,
           projectProfilesConfig,
+          glossaryKeyOwners,
         );
         return [projectName, projectAndDataSources];
       }),
@@ -551,6 +643,7 @@ export class SagemakerProjectL3Construct extends MdaaL3Construct {
     projectProps: SageMakerProjectProps,
     domainConfig: DomainConfig,
     projectProfilesConfig: ProjectProfilesConfig,
+    glossaryKeyOwners: Map<string, string>,
   ): MdaaSageMakerProject {
     const projectProfileId = projectProfilesConfig.getProjectProfileId(projectProps.profileName);
 
@@ -576,18 +669,66 @@ export class SagemakerProjectL3Construct extends MdaaL3Construct {
     );
     console.debug(`Created ${createdDataSources.length} datasources`);
 
+    const createdGlossaries = Object.fromEntries(
+      Object.entries(projectProps.glossaries || {}).map(([glossaryName, glossaryProps]) => {
+        return [glossaryName, this.createGlossary(project, glossaryName, glossaryProps)];
+      }),
+    );
+
     Object.entries(projectProps.metadataForms || {}).forEach(([formName, formProps]) => {
-      this.createMetadataForm(project, formName, formProps);
+      this.createMetadataForm(project, projectName, formName, formProps, createdGlossaries, glossaryKeyOwners);
     });
 
     return project;
   }
 
+  private createGlossary(
+    project: MdaaSageMakerProject,
+    glossaryName: string,
+    glossaryProps: GlossaryProps,
+  ): MdaaDatazoneGlossary {
+    // Created via the domain custom-resource role, so wait for its PROJECT_OWNER membership. The map
+    // key is the construct ID, so renaming a glossary key replaces the glossary.
+    const glossary = new MdaaDatazoneGlossary(project, `glossary-${glossaryName}`, {
+      naming: this.props.naming,
+      domainIdentifier: project.project.attrDomainId,
+      owningProjectIdentifier: project.project.attrId,
+      glossaryName: glossaryName,
+      terms: glossaryProps.terms || {},
+      description: glossaryProps.description,
+      status: glossaryProps.status,
+      handlerRole: project.customResourceRole,
+    });
+    glossary.node.addDependency(project.crRoleProjectMembership);
+    return glossary;
+  }
+
   private createMetadataForm(
     project: MdaaSageMakerProject,
+    projectName: string,
     formName: string,
     formProps: MetadataFormProps,
+    glossaries: { [glossaryName: string]: MdaaDatazoneGlossary },
+    glossaryKeyOwners: Map<string, string>,
   ): MdaaDatazoneFormType {
+    const termDependencies: CustomResource[] = [];
+    const fields = Object.fromEntries(
+      Object.entries(formProps.fields).map(([fieldName, fieldProps]) => {
+        const { fieldProps: resolvedFieldProps, termDependency } = this.resolveFieldGlossaryId(
+          projectName,
+          formName,
+          fieldName,
+          fieldProps,
+          glossaries,
+          glossaryKeyOwners,
+        );
+        if (termDependency) {
+          termDependencies.push(termDependency);
+        }
+        return [fieldName, resolvedFieldProps];
+      }),
+    );
+
     // Created via the domain custom-resource role, so wait for its PROJECT_OWNER membership. The map
     // key is the construct ID, so renaming a form key replaces the form type.
     const form = new MdaaDatazoneFormType(project, `form-${formName}`, {
@@ -595,13 +736,96 @@ export class SagemakerProjectL3Construct extends MdaaL3Construct {
       domainIdentifier: project.project.attrDomainId,
       owningProjectIdentifier: project.project.attrId,
       formName: formName,
-      fields: formProps.fields,
+      fields: fields,
       description: formProps.description,
       status: formProps.status,
       handlerRole: project.customResourceRole,
     });
     form.node.addDependency(project.crRoleProjectMembership);
+    // Any field referencing a declared glossary term must wait for that term to exist, since
+    // CreateFormType embeds the glossary's deploy-time-resolved ID in the Smithy model it
+    // submits, and the named term is required to exist for that reference to be valid.
+    termDependencies.forEach(term => form.node.addDependency(term));
     return form;
+  }
+
+  /**
+   * Resolves a field's `glossaryId` when it references a declared glossary as
+   * `"<glossaryName>"`, or a declared glossary term as `"<glossaryName>.<termName>"`, to
+   * that glossary's deploy-time ID. DataZone's `@amazon.datazone#glossaryterm("<id>")`
+   * trait takes the glossary's ID (the field accepts any term from that glossary as its
+   * value), not a specific term's ID. When a term name is given, that term is still
+   * required to exist and is depended on, so the field isn't usable before it's created.
+   * A plain ID matching no declared glossary (no literal '.', which DataZone IDs never
+   * contain, and which declared glossary/term names may not contain either, enforced by
+   * `MdaaDatazoneGlossary.validate`) is passed through unchanged, for backward compatibility
+   * with pre-existing, manually-created glossaries - unless it matches a key declared by a
+   * *different* project, which is rejected: a glossaryId reference only resolves within its
+   * declaring project, so that would otherwise silently fall through as if it were a literal,
+   * pre-existing ID.
+   */
+  private resolveFieldGlossaryId(
+    projectName: string,
+    formName: string,
+    fieldName: string,
+    fieldProps: FormFieldProps,
+    glossaries: { [glossaryName: string]: MdaaDatazoneGlossary },
+    glossaryKeyOwners: Map<string, string>,
+  ): { fieldProps: FormFieldProps; termDependency?: CustomResource } {
+    const glossaryId = fieldProps.glossaryId;
+    if (glossaryId === undefined) {
+      return { fieldProps };
+    }
+
+    const dotIndex = glossaryId.indexOf('.');
+    if (dotIndex === -1) {
+      if (!Object.prototype.hasOwnProperty.call(glossaries, glossaryId)) {
+        const otherOwner = glossaryKeyOwners.get(glossaryId);
+        if (otherOwner && otherOwner !== projectName) {
+          throw new Error(
+            `glossaryId '${glossaryId}' on field '${formName}.${fieldName}' in project '${projectName}' ` +
+              `references a glossary declared by project '${otherOwner}'. A glossaryId reference only ` +
+              `resolves within its declaring project; declare '${glossaryId}' under this project's ` +
+              'glossaries, or use a literal, pre-existing glossary ID (which may not contain a period).',
+          );
+        }
+        if (Object.keys(glossaries).length > 0) {
+          // This project declares glossaries, but this bare value matches none of them (and
+          // none declared elsewhere): likely a typo, though it could also be a literal,
+          // pre-existing glossary ID, so warn instead of failing synth.
+          Annotations.of(this).addWarning(
+            `glossaryId '${glossaryId}' on field '${formName}.${fieldName}' in project '${projectName}' ` +
+              "does not match any glossary declared under this project's glossaries. If this is meant to " +
+              'reference one of them, check for a typo; otherwise it is treated as a literal, ' +
+              'pre-existing glossary ID.',
+          );
+        }
+        // A literal, pre-existing glossary ID; nothing declared to resolve or depend on.
+        return { fieldProps };
+      }
+      return {
+        fieldProps: { ...fieldProps, glossaryId: glossaries[glossaryId].glossary.getAttString('glossaryId') },
+      };
+    }
+
+    const glossaryName = glossaryId.slice(0, dotIndex);
+    const termName = glossaryId.slice(dotIndex + 1);
+    const glossary = Object.prototype.hasOwnProperty.call(glossaries, glossaryName)
+      ? glossaries[glossaryName]
+      : undefined;
+    const term =
+      glossary && Object.prototype.hasOwnProperty.call(glossary.terms, termName) ? glossary.terms[termName] : undefined;
+    if (!glossary || !term) {
+      throw new Error(
+        `glossaryId '${glossaryId}' on field '${formName}.${fieldName}' references an undeclared ` +
+          `glossary term. Declare it under glossaries.${glossaryName}.terms.${termName}, or use a literal, ` +
+          'pre-existing glossary ID (which may not contain a period).',
+      );
+    }
+    return {
+      fieldProps: { ...fieldProps, glossaryId: glossary.glossary.getAttString('glossaryId') },
+      termDependency: term,
+    };
   }
 
   private createDataSource(

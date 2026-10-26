@@ -298,6 +298,19 @@ sagemaker:
         s3:
           bucketName: test-data-bucket
           prefix: raw/
+    # (Optional) Business glossaries owned by this project. A metadata form field's
+    # glossaryId may reference a declared glossary here as "<glossaryName>", or a
+    # declared term as "<glossaryName>.<termName>", resolved by MDAA to the
+    # glossary's deploy-time ID.
+    glossaries:
+      GovernanceGlossary:
+        description: Governance terminology for DataOps projects
+        status: ENABLED
+        terms:
+          DataOwner:
+            shortDescription: The team accountable for this project's data
+            longDescription: The team or individual responsible for this project's data quality and access
+            status: ENABLED
     # (Optional) Metadata form types owned by this project. MDAA assembles the
     # Smithy model; the form name is used verbatim as the structure name.
     metadataForms:
@@ -313,6 +326,8 @@ sagemaker:
             required: true
             # (Optional) Description of the field, annotated via @documentation
             description: Team or individual accountable for this dataset
+            # (Optional) "<glossaryName>.<termName>" resolves to the glossary's deploy-time ID
+            glossaryId: GovernanceGlossary.DataOwner
           reviewedOn:
             type: Timestamp
 

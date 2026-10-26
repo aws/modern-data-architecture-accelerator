@@ -144,10 +144,6 @@
                     "$ref": "#/definitions/AuthorizationIdentities",
                     "description": "Identities allowed to create environments within this scope.\nGrants the CREATE_ENVIRONMENT authorization policy.\n\nUse cases: Self-service environment provisioning; Team environment management\n\nAWS: DataZone CREATE_ENVIRONMENT authorization policy\n\nValidation: Optional; AuthorizationIdentities object"
                 },
-                "glossaryCreators": {
-                    "$ref": "#/definitions/AuthorizationIdentities",
-                    "description": "Identities allowed to create business glossaries within this scope.\nGrants the CREATE_GLOSSARY authorization policy.\n\nUse cases: Data steward glossary management; Business term definition\n\nAWS: DataZone CREATE_GLOSSARY authorization policy\n\nValidation: Optional; AuthorizationIdentities object"
-                },
                 "projectCreators": {
                     "$ref": "#/definitions/AuthorizationIdentities",
                     "description": "Identities allowed to create projects. Grants CREATE_PROJECT on DataZone (V1)\ndomains and CREATE_PROJECT_FROM_PROJECT_PROFILE on SageMaker Unified Studio (V2)\ndomains.\n\nUse cases: Project creation for team leads; Self-service project provisioning\n\nAWS: DataZone CREATE_PROJECT or CREATE_PROJECT_FROM_PROJECT_PROFILE authorization policy\n\nValidation: Optional; AuthorizationIdentities object"
@@ -904,7 +900,7 @@
                 },
                 "authorizations": {
                     "$ref": "#/definitions/Authorizations",
-                    "description": "Simplified authorizations for this domain unit. Provides a concise way to\ngrant common permissions by specifying users and groups directly, without\nconstructing full AuthorizationPolicy objects.\n\nSupported fields: projectCreators, projectFromProfileCreators,\neligibleProjectMembers, domainUnitCreators, glossaryCreators, environmentCreators.\n\nUse cases: Quick project creation grants; Simple membership pool configuration;\nDelegated domain unit management; Glossary and environment provisioning\n\nAWS: DataZone authorization policies (CREATE_PROJECT,\nCREATE_PROJECT_FROM_PROJECT_PROFILE, ADD_TO_PROJECT_MEMBER_POOL,\nCREATE_DOMAIN_UNIT, CREATE_GLOSSARY, CREATE_ENVIRONMENT)\n\nValidation: Optional; Authorizations object"
+                    "description": "Simplified authorizations for this domain unit. Provides a concise way to\ngrant common permissions by specifying users and groups directly, without\nconstructing full AuthorizationPolicy objects.\n\nSupported fields: projectCreators, projectFromProfileCreators,\neligibleProjectMembers, domainUnitCreators, environmentCreators.\n\nUse cases: Quick project creation grants; Simple membership pool configuration;\nDelegated domain unit management; Environment provisioning\n\nAWS: DataZone authorization policies (CREATE_PROJECT,\nCREATE_PROJECT_FROM_PROJECT_PROFILE, ADD_TO_PROJECT_MEMBER_POOL,\nCREATE_DOMAIN_UNIT, CREATE_ENVIRONMENT)\n\nValidation: Optional; Authorizations object"
                 },
                 "description": {
                     "description": "Human-readable description of this domain unit's purpose and scope.\n\nUse cases: Organizational documentation; Domain unit identification\n\nAWS: DataZone domain unit description\n\nValidation: Optional; string",
@@ -2909,7 +2905,7 @@
                 },
                 "authorizations": {
                     "$ref": "#/definitions/Authorizations",
-                    "description": "Simplified authorizations for the root domain unit. Provides a concise way to\ngrant common permissions by specifying users and groups directly, without\nconstructing full AuthorizationPolicy objects.\n\nSupported fields: projectCreators, projectFromProfileCreators,\neligibleProjectMembers, domainUnitCreators, glossaryCreators, environmentCreators.\n\nUse cases: Quick project creation grants; Simple membership pool configuration;\nDelegated domain unit management; Glossary and environment provisioning\n\nAWS: DataZone authorization policies (CREATE_PROJECT,\nCREATE_PROJECT_FROM_PROJECT_PROFILE, ADD_TO_PROJECT_MEMBER_POOL,\nCREATE_DOMAIN_UNIT, CREATE_GLOSSARY, CREATE_ENVIRONMENT)\n\nValidation: Optional; Authorizations object"
+                    "description": "Simplified authorizations for the root domain unit. Provides a concise way to\ngrant common permissions by specifying users and groups directly, without\nconstructing full AuthorizationPolicy objects.\n\nSupported fields: projectCreators, projectFromProfileCreators,\neligibleProjectMembers, domainUnitCreators, environmentCreators.\n\nUse cases: Quick project creation grants; Simple membership pool configuration;\nDelegated domain unit management; Environment provisioning\n\nAWS: DataZone authorization policies (CREATE_PROJECT,\nCREATE_PROJECT_FROM_PROJECT_PROFILE, ADD_TO_PROJECT_MEMBER_POOL,\nCREATE_DOMAIN_UNIT, CREATE_ENVIRONMENT)\n\nValidation: Optional; Authorizations object"
                 },
                 "blueprintProvisioningRoles": {
                     "description": "Externally-defined IAM roles for blueprint provisioning. A base blueprint\nprovisioning policy is attached; blueprint-specific permissions must be\nattached directly to the role.\n\nUse cases: Custom blueprint provisioning roles; External role integration\n\nAWS: IAM roles for DataZone blueprint provisioning\n\nValidation: Optional; array of valid MdaaRoleRef",

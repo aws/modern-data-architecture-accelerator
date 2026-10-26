@@ -83,13 +83,6 @@ domains:
       domainUnitCreators:
         users:
           - sso-user-name
-      # (Optional) Users/groups allowed to create glossaries
-      # (CREATE_GLOSSARY policy)
-      glossaryCreators:
-        users:
-          - sso-user-name
-        groups:
-          - test-sso-group1
       # (Optional) Users/groups allowed to create environments
       # (CREATE_ENVIRONMENT policy)
       environmentCreators:
@@ -142,11 +135,6 @@ domains:
           domainUnitCreators:
             users:
               - sso-user-name
-          # (Optional) Users/groups allowed to create glossaries
-          # (CREATE_GLOSSARY policy)
-          glossaryCreators:
-            groups:
-              - test-sso-group1
 
         # (Optional) Fine-grained authorization policies
         authorizationPolicies:
@@ -170,20 +158,6 @@ domains:
               includeChildDomainUnits: true
               # projectDesignation (enum: CONTRIBUTOR | OWNER)
               projectDesignation: OWNER
-          # PolicyType: CREATE_GLOSSARY
-          create-glossary-policy:
-            policyType: 'CREATE_GLOSSARY'
-            principals:
-              # userIdentifier with name and identifier
-              - userIdentifier:
-                  name: sso-user-name
-                  identifier: sso-user-id
-              # groupIdentifier with name and identifier
-              - groupIdentifier:
-                  name: test-sso-group1
-                  identifier: test-group-id
-            # (Optional) Specific domain unit ID to scope the policy
-            domainUnitId: test-domain-unit-id
           # PolicyType: CREATE_ASSET_TYPE
           create-asset-type-policy:
             policyType: 'CREATE_ASSET_TYPE'

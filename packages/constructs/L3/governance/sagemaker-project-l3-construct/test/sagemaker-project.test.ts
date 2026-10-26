@@ -577,4 +577,388 @@ describe('SagemakerProjectL3Construct', () => {
       status: 'DISABLED',
     });
   });
+
+  it('creates project-owned Glossaries and Terms when project has glossaries', () => {
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-glossaries', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        'glossary-profile': {
+          environments: {
+            DefaultDataLake: {},
+          },
+        },
+      },
+      projects: {
+        'glossary-project': {
+          profileName: 'glossary-profile',
+          glossaries: {
+            CustomerGlossary: {
+              description: 'Standard business terms',
+              terms: {
+                CustomerLifetimeValue: { shortDescription: 'CLV' },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    template.resourceCountIs('Custom::DataZoneGlossary', 1);
+    template.resourceCountIs('Custom::DataZoneGlossaryTerm', 1);
+    template.hasResourceProperties('Custom::DataZoneGlossary', {
+      glossaryName: 'CustomerGlossary',
+      description: 'Standard business terms',
+    });
+    template.hasResourceProperties('Custom::DataZoneGlossaryTerm', {
+      termName: 'CustomerLifetimeValue',
+      shortDescription: 'CLV',
+    });
+    // CreateGlossary needs the custom-resource role's PROJECT_OWNER membership to succeed,
+    // so the glossary must wait for it.
+    const membershipLogicalId = Object.keys(template.findResources('AWS::DataZone::ProjectMembership'))[0];
+    const glossaryResource = Object.values(template.findResources('Custom::DataZoneGlossary'))[0];
+    expect(glossaryResource.DependsOn).toContain(membershipLogicalId);
+  });
+
+  it('passes an explicit glossary status through to the custom resource', () => {
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-glossary-status', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        'glossary-status-profile': {
+          environments: {
+            DefaultDataLake: {},
+          },
+        },
+      },
+      projects: {
+        'glossary-status-project': {
+          profileName: 'glossary-status-profile',
+          glossaries: {
+            RetiredGlossary: {
+              status: 'DISABLED',
+              terms: {
+                LegacyTerm: { shortDescription: 'No longer used' },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    template.hasResourceProperties('Custom::DataZoneGlossary', {
+      glossaryName: 'RetiredGlossary',
+      status: 'DISABLED',
+    });
+  });
+
+  it("resolves a form field's glossaryId referencing a declared glossary term", () => {
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-glossary-form-link', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        'linked-profile': {
+          environments: {
+            DefaultDataLake: {},
+          },
+        },
+      },
+      projects: {
+        'linked-project': {
+          profileName: 'linked-profile',
+          glossaries: {
+            CustomerGlossary: {
+              terms: { Tier: { shortDescription: 'Customer tier' } },
+            },
+          },
+          metadataForms: {
+            CustomerForm: {
+              fields: {
+                tier: { type: 'String', glossaryId: 'CustomerGlossary.Tier' },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    const forms = template.findResources('Custom::DataZoneFormType');
+    const formResource = Object.values(forms)[0];
+    const modelStructure = JSON.stringify(formResource.Properties.modelStructure);
+    // It must resolve to the GLOSSARY's id, not the term's: DataZone's
+    // @amazon.datazone#glossaryterm("<id>") trait takes the glossary's id (the field accepts
+    // any term from that glossary), and rejects a term id with "Glossary <id> not found".
+    const glossaryLogicalId = Object.keys(template.findResources('Custom::DataZoneGlossary'))[0];
+    const termLogicalId = Object.keys(template.findResources('Custom::DataZoneGlossaryTerm'))[0];
+    expect(modelStructure).toContain(JSON.stringify({ 'Fn::GetAtt': [glossaryLogicalId, 'glossaryId'] }).slice(1, -1));
+    expect(modelStructure).not.toContain(termLogicalId);
+    // The form must still depend on the term custom resource, so the field isn't usable
+    // before at least the named term exists.
+    expect(formResource.DependsOn).toEqual(expect.arrayContaining([termLogicalId]));
+  });
+
+  it("throws when a form field's glossaryId references an undeclared glossary term", () => {
+    expect(
+      () =>
+        new SagemakerProjectL3Construct(testApp.testStack, 'test-glossary-form-link-missing', {
+          naming: testApp.naming,
+          roleHelper,
+          domainConfig,
+          projectProfiles: {
+            'missing-profile': {
+              environments: {
+                DefaultDataLake: {},
+              },
+            },
+          },
+          projects: {
+            'missing-project': {
+              profileName: 'missing-profile',
+              metadataForms: {
+                CustomerForm: {
+                  fields: {
+                    tier: { type: 'String', glossaryId: 'UndeclaredGlossary.Tier' },
+                  },
+                },
+              },
+            },
+          },
+        }),
+    ).toThrow(/references an undeclared glossary term/);
+  });
+
+  it("throws when a form field's glossaryId references an undeclared term on a declared glossary", () => {
+    expect(
+      () =>
+        new SagemakerProjectL3Construct(testApp.testStack, 'test-glossary-form-link-missing-term', {
+          naming: testApp.naming,
+          roleHelper,
+          domainConfig,
+          projectProfiles: {
+            'missing-term-profile': {
+              environments: {
+                DefaultDataLake: {},
+              },
+            },
+          },
+          projects: {
+            'missing-term-project': {
+              profileName: 'missing-term-profile',
+              glossaries: {
+                CustomerGlossary: {
+                  terms: { Segment: { shortDescription: 'Customer segment' } },
+                },
+              },
+              metadataForms: {
+                CustomerForm: {
+                  fields: {
+                    // Glossary is declared, but 'Tier' is not one of its terms.
+                    tier: { type: 'String', glossaryId: 'CustomerGlossary.Tier' },
+                  },
+                },
+              },
+            },
+          },
+        }),
+    ).toThrow(/references an undeclared glossary term/);
+  });
+
+  it("throws when a form field's glossaryId contains more than one period", () => {
+    expect(
+      () =>
+        new SagemakerProjectL3Construct(testApp.testStack, 'test-glossary-form-link-multi-period', {
+          naming: testApp.naming,
+          roleHelper,
+          domainConfig,
+          projectProfiles: {
+            'multi-period-profile': {
+              environments: {
+                DefaultDataLake: {},
+              },
+            },
+          },
+          projects: {
+            'multi-period-project': {
+              profileName: 'multi-period-profile',
+              glossaries: {
+                CustomerGlossary: {
+                  terms: { Tier: { shortDescription: 'Customer tier' } },
+                },
+              },
+              metadataForms: {
+                CustomerForm: {
+                  fields: {
+                    // Only the first period splits glossary from term, so this looks up term
+                    // 'Tier.Extra' on the declared 'CustomerGlossary' glossary, which doesn't
+                    // exist (its only term is 'Tier') and so still reports as undeclared.
+                    tier: { type: 'String', glossaryId: 'CustomerGlossary.Tier.Extra' },
+                  },
+                },
+              },
+            },
+          },
+        }),
+    ).toThrow(/references an undeclared glossary term/);
+  });
+
+  it("resolves a form field's glossaryId referencing a declared glossary with no term suffix", () => {
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-glossary-form-link-bare', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        'bare-profile': {
+          environments: {
+            DefaultDataLake: {},
+          },
+        },
+      },
+      projects: {
+        'bare-project': {
+          profileName: 'bare-profile',
+          glossaries: {
+            // A glossary can be referenced directly by name even when it has terms: the field
+            // accepts any term from the glossary, not just this one.
+            ProductGlossary: {
+              terms: { Sku: { shortDescription: 'Product SKU' } },
+            },
+          },
+          metadataForms: {
+            CustomerForm: {
+              fields: {
+                tier: { type: 'String', glossaryId: 'ProductGlossary' },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    const forms = template.findResources('Custom::DataZoneFormType');
+    const formResource = Object.values(forms)[0];
+    const modelStructure = JSON.stringify(formResource.Properties.modelStructure);
+    const glossaryLogicalId = Object.keys(template.findResources('Custom::DataZoneGlossary'))[0];
+    const termLogicalId = Object.keys(template.findResources('Custom::DataZoneGlossaryTerm'))[0];
+    expect(modelStructure).toContain(JSON.stringify({ 'Fn::GetAtt': [glossaryLogicalId, 'glossaryId'] }).slice(1, -1));
+    // No term was named, so the reference resolves to the glossary itself, not one of its terms.
+    expect(modelStructure).not.toContain(termLogicalId);
+    // No term dependency was added: the field didn't name a specific term, so there's nothing
+    // beyond the glossary's own (unnamed, since no term is required to exist for this field).
+    expect(formResource.DependsOn).not.toEqual(expect.arrayContaining([termLogicalId]));
+  });
+
+  it('does not mistake an inherited Object property for a declared glossary or term', () => {
+    expect(
+      () =>
+        new SagemakerProjectL3Construct(testApp.testStack, 'test-glossary-form-link-prototype', {
+          naming: testApp.naming,
+          roleHelper,
+          domainConfig,
+          projectProfiles: {
+            'prototype-profile': {
+              environments: {
+                DefaultDataLake: {},
+              },
+            },
+          },
+          projects: {
+            'prototype-project': {
+              profileName: 'prototype-profile',
+              glossaries: {
+                CustomerGlossary: {
+                  terms: { Tier: { shortDescription: 'Customer tier' } },
+                },
+              },
+              metadataForms: {
+                CustomerForm: {
+                  fields: {
+                    // 'constructor' is inherited from Object.prototype on a plain object; a
+                    // lookup without an own-property guard would resolve it to a function
+                    // instead of undefined, crashing instead of reporting it as undeclared.
+                    tier: { type: 'String', glossaryId: 'constructor.Tier' },
+                  },
+                },
+              },
+            },
+          },
+        }),
+    ).toThrow(/references an undeclared glossary term/);
+  });
+
+  it('throws when two projects declare the same glossary key', () => {
+    expect(
+      () =>
+        new SagemakerProjectL3Construct(testApp.testStack, 'test-glossary-duplicate-key', {
+          naming: testApp.naming,
+          roleHelper,
+          domainConfig,
+          projectProfiles: {
+            'dup-profile': {
+              environments: {
+                DefaultDataLake: {},
+              },
+            },
+          },
+          projects: {
+            'dup-project-a': {
+              profileName: 'dup-profile',
+              glossaries: {
+                SharedGlossary: { terms: { Tier: { shortDescription: 'Tier' } } },
+              },
+            },
+            'dup-project-b': {
+              profileName: 'dup-profile',
+              glossaries: {
+                SharedGlossary: { terms: { Tier: { shortDescription: 'Tier' } } },
+              },
+            },
+          },
+        }),
+    ).toThrow(/Duplicate glossary key.*SharedGlossary.*dup-project-a.*dup-project-b/);
+  });
+
+  it("throws when a form field's bare glossaryId references a glossary declared by a different project", () => {
+    expect(
+      () =>
+        new SagemakerProjectL3Construct(testApp.testStack, 'test-glossary-cross-project', {
+          naming: testApp.naming,
+          roleHelper,
+          domainConfig,
+          projectProfiles: {
+            'cross-profile': {
+              environments: {
+                DefaultDataLake: {},
+              },
+            },
+          },
+          projects: {
+            'owning-project': {
+              profileName: 'cross-profile',
+              glossaries: {
+                CustomerGlossary: {},
+              },
+            },
+            'referencing-project': {
+              profileName: 'cross-profile',
+              metadataForms: {
+                CustomerForm: {
+                  fields: {
+                    // 'CustomerGlossary' is declared, but by a different project.
+                    tier: { type: 'String', glossaryId: 'CustomerGlossary' },
+                  },
+                },
+              },
+            },
+          },
+        }),
+    ).toThrow(/references a glossary declared by project 'owning-project'/);
+  });
 });

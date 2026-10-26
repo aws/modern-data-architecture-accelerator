@@ -20,6 +20,8 @@ This module deploys and integrates the following resources:
 
 **Metadata Form Types** - Project-owned DataZone metadata form types, defined declaratively by their fields. MDAA assembles the Smithy model, so config authors do not write Smithy. See [Metadata Form Types](#metadata-form-types) below for naming rules and the domain-redeploy prerequisite.
 
+**Glossaries** - Project-owned DataZone business glossaries and terms, defined declaratively. A metadata form field's `glossaryId` can reference a declared glossary or term, resolved to the glossary's deploy-time ID. See [Glossaries](#glossaries) below for the config surface and the domain-redeploy prerequisite.
+
 ![datazone](../../../constructs/L3/governance/sagemaker-project-l3-construct/docs/SageMaker-Project.png)
 
 ---
@@ -84,6 +86,10 @@ sagemaker-project: # Module Name can be customized
 ### Metadata Form Types
 
 Form and field names must be valid Smithy identifiers (letter or underscore first, then letters, digits, or underscores), and form names must be unique across the domain. Deleting a form type on stack teardown is best-effort: if DataZone rejects the delete (for example, because the form is still attached to assets), the form type is left in place. Existing deployments must redeploy the DataZone/SageMaker domain module before deploying a project with `metadataForms`, so that the domain grants form-type creation to the custom-resource role.
+
+### Glossaries
+
+The glossary key is used verbatim as the DataZone glossary name, which must be unique across the domain, not just the project. A field's `glossaryId` may reference a declared glossary under the project's `glossaries` as `"<glossaryName>"`, or a declared term as `"<glossaryName>.<termName>"`, resolved to that glossary's deploy-time ID; or a literal, pre-existing glossary ID string, unchanged. On teardown, MDAA deletes the declared terms, then disables and deletes the glossary. Both deletes are best-effort: if DataZone rejects one, the resource is left in place and the stack update still succeeds. If a leftover glossary later blocks recreating one with the same name, delete the existing glossary directly in DataZone, or, if you are moving a glossary between projects, remove it from `glossaries` and deploy, then add it back. A glossary or term can't move between projects or domains: Update detects this and fails clearly rather than attempting an unsupported move. Existing deployments must redeploy the DataZone/SageMaker domain module before deploying a project with `glossaries`, so that the domain grants glossary creation to project owners.
 
 ### Module Config Samples and Variants
 

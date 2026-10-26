@@ -1316,7 +1316,7 @@
                     "type": "string"
                 },
                 "glossaryId": {
-                    "description": "Glossary ID whose terms this field stores, annotated via\n`@amazon.datazone#glossaryterm(\"<id>\")`. Makes the field filterable via the\nSearch/SearchListings APIs.\n\nValidation: Optional; valid DataZone glossary ID",
+                    "description": "Glossary ID this field is linked to, annotated via\n`@amazon.datazone#glossaryterm(\"<id>\")`. Makes the field filterable via the\nSearch/SearchListings APIs. May be a literal, pre-existing glossary ID, or a\ndeploy-time-resolved value from a declared `glossaries` reference; deploy-time\nvalues are not synth-time validated since their resolved value isn't known\nuntil deploy.\n\nValidation: Optional; valid DataZone glossary ID (unless resolved from a\ndeploy-time `glossaries` reference)",
                     "type": "string"
                 },
                 "required": {
@@ -1371,6 +1371,56 @@
                 "functionArn",
                 "functionName"
             ],
+            "type": "object"
+        },
+        "GlossaryProps": {
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "description": "Human-readable description of the glossary.\n\nUse cases: Glossary documentation\n\nAWS: DataZone glossary description\n\nValidation: Optional; string",
+                    "type": "string"
+                },
+                "status": {
+                    "default": "ENABLED",
+                    "description": "Glossary status. DISABLED glossaries are retained but not attachable.\n\nUse cases: Staged glossary rollout; Temporarily retiring a glossary\n\nAWS: DataZone glossary status\n\nValidation: Optional; 'ENABLED' | 'DISABLED'",
+                    "enum": [
+                        "DISABLED",
+                        "ENABLED"
+                    ],
+                    "type": "string"
+                },
+                "terms": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/GlossaryTermProps"
+                    },
+                    "default": "- no terms are created",
+                    "description": "Terms to create under this glossary. The map key is used as the term's stable\nidentifier and is the name referenced by a form field's `glossaryId` as\n`\"<glossaryName>.<termName>\"`.\n\nUse cases: Standardized business terminology; Terms linked to metadata form fields\n\nAWS: DataZone business glossary terms\n\nValidation: Optional; map of term name to GlossaryTermProps",
+                    "type": "object"
+                }
+            },
+            "type": "object"
+        },
+        "GlossaryTermProps": {
+            "additionalProperties": false,
+            "properties": {
+                "longDescription": {
+                    "description": "Longer-form definition of the term, with more context than shortDescription.\n\nValidation: Optional; string; max 4096 chars",
+                    "type": "string"
+                },
+                "shortDescription": {
+                    "description": "Short, business-facing definition of the term.\n\nValidation: Optional; string; max 1024 chars",
+                    "type": "string"
+                },
+                "status": {
+                    "default": "ENABLED",
+                    "description": "Term status. DISABLED terms are retained but not attachable to assets or fields.\n\nValidation: Optional; 'ENABLED' | 'DISABLED'",
+                    "enum": [
+                        "DISABLED",
+                        "ENABLED"
+                    ],
+                    "type": "string"
+                }
+            },
             "type": "object"
         },
         "IArrayBox<ILayerVersion>": {
@@ -3589,6 +3639,13 @@
                     "description": "Per-environment configuration overrides for this project's environments.\n\nUse cases: Project-specific environment customization\n\nAWS: DataZone project environment configurations\n\nValidation: Optional; map of environment name to ProjectEnvironmentConfiguration",
                     "type": "object"
                 },
+                "glossaries": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/GlossaryProps"
+                    },
+                    "description": "Business glossaries to create, owned by this project. A metadata form field's\n`glossaryId` may reference a declared glossary here as `\"<glossaryName>\"`, or a\ndeclared term as `\"<glossaryName>.<termName>\"`, which MDAA resolves to the\nglossary's deploy-time ID and wires as a CDK dependency, or it may continue to\nuse a literal, pre-existing glossary ID string, unchanged. The map key is used\nas the glossary's stable identifier; renaming a key replaces that glossary\n(create-then-delete).\n\nUse cases: Business glossary/terminology as code; Linking standardized terms to metadata forms\n\nAWS: DataZone business glossaries and terms, owned by the project\n\nValidation: Optional; map of glossary name to GlossaryProps",
+                    "type": "object"
+                },
                 "groups": {
                     "additionalProperties": {
                         "type": "string"
@@ -3600,7 +3657,7 @@
                     "additionalProperties": {
                         "$ref": "#/definitions/MetadataFormProps"
                     },
-                    "description": "Metadata form types to create, owned by this project. Each form is defined by\na set of fields; MDAA assembles the Smithy model (setting the namespace to the\ndomain ID and the structure name to the form name). Forms are usable across the\ndomain to attach standardized metadata to assets. The map key is used as the form's\nstable identifier; renaming a key replaces that form type (delete-then-create).\n\nUse cases: Data governance metadata standards; Asset metadata enforcement; Searchable custom attributes\n\nAWS: DataZone metadata form types (AWS::DataZone::FormType) owned by the project\n\nValidation: Optional; map of form name to MetadataFormProps; form name must be a valid Smithy structure name",
+                    "description": "Metadata form types to create, owned by this project. Each form is defined by\na set of fields; MDAA assembles the Smithy model (setting the namespace to the\ndomain ID and the structure name to the form name). Forms are usable across the\ndomain to attach standardized metadata to assets. The map key is used as the form's\nstable identifier; renaming a key replaces that form type (create-then-delete).\n\nUse cases: Data governance metadata standards; Asset metadata enforcement; Searchable custom attributes\n\nAWS: DataZone metadata form types (AWS::DataZone::FormType) owned by the project\n\nValidation: Optional; map of form name to MetadataFormProps; form name must be a valid Smithy structure name",
                     "type": "object"
                 },
                 "nameOverride": {

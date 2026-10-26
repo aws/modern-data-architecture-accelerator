@@ -125,6 +125,30 @@ projects:
     # (Optional) Contributor groups with PROJECT_CONTRIBUTOR designation
     groups:
       grp1: test-contributor-group
+    # (Optional) Business glossaries owned by this project. A metadata form field's
+    # glossaryId may reference a declared glossary here as "<glossaryName>", or a
+    # declared term as "<glossaryName>.<termName>", resolved by MDAA to the glossary's
+    # deploy-time ID, or continue to use a literal, pre-existing glossary ID string
+    # (see tier.glossaryId below).
+    glossaries:
+      # Glossary exercising all term options
+      CustomerGlossary:
+        # (Optional) Description of the glossary
+        description: Standard customer business terms
+        # (Optional) Status enum: ENABLED | DISABLED
+        status: ENABLED
+        # (Optional) Term name to GlossaryTermProps
+        terms:
+          Segment:
+            # (Optional) Short, business-facing definition
+            shortDescription: Customer segment classification
+            # (Optional) Longer-form definition with more context
+            longDescription: The marketing segment a customer has been classified into
+            status: ENABLED
+          ChurnRisk:
+            shortDescription: Likelihood a customer churns
+      # Minimal glossary with no terms declared yet
+      ProductGlossary: {}
     # (Optional) Metadata form types owned by this project. MDAA assembles the
     # Smithy model; the form name is used verbatim as the structure name.
     metadataForms:
@@ -147,13 +171,18 @@ projects:
             # (Optional) @amazon.datazone#searchable modes
             searchable:
               - TECHNICAL
-          # Lexical searchable string tied to a glossary
+          # Lexical searchable string tied to a pre-existing, manually-created glossary
           tier:
             type: String
             searchable:
               - LEXICAL
-            # (Optional) @amazon.datazone#glossaryterm(<id>)
+            # (Optional) @amazon.datazone#glossaryterm(<id>); a literal, pre-existing glossary ID
             glossaryId: test-glossary-id
+          # String field linked to CustomerGlossary, referenced through its declared Segment term
+          customerSegment:
+            type: String
+            # (Optional) "<glossaryName>.<termName>" resolves to the glossary's deploy-time ID
+            glossaryId: CustomerGlossary.Segment
           # Non-string field types
           activeFlag:
             type: Boolean

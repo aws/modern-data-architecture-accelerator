@@ -15,14 +15,21 @@
 - Added opt-in `subscriptionAuthorizedRoleGroups` to `sagemaker` and `datazone` in `@aws-mdaa/dataops-project`, so the listed `projectExecutionRoles`, `dataEngineerRoles`, or `dataAdminRoles` can read the tables the project subscribes to. See [Subscribed Asset Access for Project Roles](packages/apps/dataops/dataops-project-app/README.md#subscribed-asset-access-for-project-roles).
 - Added an optional `description` to metadata form fields (`metadataForms` in the SageMaker Project module; `sagemaker.project` in the DataOps Project module), rendered as a Smithy `@documentation` trait. Optional; existing configs are unchanged. See the [SageMaker Project module README](packages/apps/governance/sagemaker-project-app/README.md) for the config surface.
 
+- Every project owner in the domain can now create glossaries and terms, mirroring the existing form-type-creation grant. The existing domain deployments will see an IAM policy and policy-grant diff on the next deploy even when no project sets `glossaries`.
+
 #### Bedrock Builder Module
 
 - Added a `knowledgeBase` gateway target type that exposes a knowledge base to gateway clients, such as harnesses, as a `Retrieve` tool through a generated Lambda connector. Optional `networkConfiguration` runs the connector in your VPC through a `vpcEndpoints` set, which gains a `bedrockAgentRuntime` endpoint. Additive only - existing configs are unchanged. See the [module README](packages/apps/ai/bedrock-builder-app/README.md#knowledge-bases-through-a-gateway).
 
+- Added **declarative business glossaries** via a new `glossaries` property on each SageMaker project (`sagemaker.project` in the DataOps Project module), alongside `metadataForms`. Glossaries and their terms are created via the DataZone API, so a `metadataForms` field's `glossaryId` can name a declared glossary (`"<glossaryName>"` or `"<glossaryName>.<termName>"`) instead of a glossary ID created out-of-band; a literal, pre-existing glossary ID string continues to work unchanged. Glossaries/terms are created only when the property is set, but redeploy the DataZone/SageMaker domain module first (see DataZone/SMUS Modules below), or the domain won't yet have granted glossary creation to project owners. See the [SageMaker Project module README](packages/apps/governance/sagemaker-project-app/README.md) for the config surface.
 
 #### Data Lake Module
 
 - Added per-bucket `transferAcceleration`, enabling S3 Transfer Acceleration so distant clients upload through a CloudFront edge location instead of the bucket's regional endpoint. Optional - omit the property unless a bucket needs it, and existing configs synthesize unchanged. Accelerated transfers are billed per GB, acceleration is only available in some AWS regions, and turning it off requires setting `false` rather than removing the property. See the [module README](packages/apps/datalake/datalake-app/README.md#transfer-acceleration).
+
+### Removed
+
+- **`glossaryCreators` removed** from `authorizations` in `@aws-mdaa/datazone-l3-construct` (DataZone and SageMaker domain modules). DataZone's `CREATE_GLOSSARY` policy never accepts a user/group principal, so this field always failed at deploy; every project owner in the domain can create glossaries unconditionally instead (see above). **Breaking change** for any config setting `authorizations.glossaryCreators`, which must be removed.
 
 ### General Changes
 

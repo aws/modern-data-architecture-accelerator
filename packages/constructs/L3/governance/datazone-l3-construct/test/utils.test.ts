@@ -66,12 +66,6 @@ describe('convertAuthorizationsToNamedPolicies', () => {
     expect(result!['simple-create-domain-unit'].policyType).toBe('CREATE_DOMAIN_UNIT');
   });
 
-  test('glossaryCreators maps to CREATE_GLOSSARY', () => {
-    const result = convertAuthorizationsToNamedPolicies({ glossaryCreators: { groups: ['group1'] } }, 'V2');
-    expect(result).toBeDefined();
-    expect(result!['simple-create-glossary'].policyType).toBe('CREATE_GLOSSARY');
-  });
-
   test('environmentCreators maps to CREATE_ENVIRONMENT', () => {
     const result = convertAuthorizationsToNamedPolicies({ environmentCreators: { users: ['user1'] } }, 'V1');
     expect(result).toBeDefined();
@@ -111,7 +105,7 @@ describe('convertAuthorizationsToNamedPolicies', () => {
       {
         projectCreators: { users: ['user1'] },
         eligibleProjectMembers: { groups: ['group1'] },
-        glossaryCreators: { users: ['user2'] },
+        domainUnitCreators: { users: ['user2'] },
       },
       'V1',
     );
@@ -119,6 +113,6 @@ describe('convertAuthorizationsToNamedPolicies', () => {
     expect(Object.keys(result!)).toHaveLength(3);
     expect(result!['simple-create-project']).toBeDefined();
     expect(result!['simple-project-membership']).toBeDefined();
-    expect(result!['simple-create-glossary']).toBeDefined();
+    expect(result!['simple-create-domain-unit']).toBeDefined();
   });
 });

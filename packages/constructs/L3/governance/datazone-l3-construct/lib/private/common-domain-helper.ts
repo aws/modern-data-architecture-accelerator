@@ -677,6 +677,24 @@ export class CommonDomainHelper {
         resources: ['*'],
         actions: ['datazone:CreateFormType', 'datazone:DeleteFormType', 'datazone:GetFormType'],
       }),
+      // Glossary/glossary-term management. These actions don't support resource-level
+      // permissions either (see the AwsSolutions-IAM5 suppression below). GetGlossary/
+      // GetGlossaryTerm are needed by create_glossary.py/create_glossary_term.py to compare
+      // an Update's target state against the live resource, rather than the stale
+      // OldResourceProperties a CloudFormation rollback redelivers with properties reversed.
+      new PolicyStatement({
+        resources: ['*'],
+        actions: [
+          'datazone:CreateGlossary',
+          'datazone:UpdateGlossary',
+          'datazone:DeleteGlossary',
+          'datazone:GetGlossary',
+          'datazone:CreateGlossaryTerm',
+          'datazone:UpdateGlossaryTerm',
+          'datazone:DeleteGlossaryTerm',
+          'datazone:GetGlossaryTerm',
+        ],
+      }),
       // iam:GetRole needed by DataZone API calls (aws:ViaAWSService used instead of
       // aws:CalledVia as IAM global endpoint calls don't reliably propagate CalledVia)
       new PolicyStatement({
@@ -719,8 +737,10 @@ export class CommonDomainHelper {
         reason:
           'datazone:Get*/List* do not support resource-level permissions ' +
           '(https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html). ' +
-          'The form type management actions (CreateFormType, DeleteFormType, GetFormType) also do not ' +
-          'support resource-level permissions ' +
+          'The form type and glossary/glossary-term management actions (CreateFormType, DeleteFormType, ' +
+          'GetFormType, CreateGlossary, UpdateGlossary, DeleteGlossary, GetGlossary, CreateGlossaryTerm, ' +
+          'UpdateGlossaryTerm, DeleteGlossaryTerm, GetGlossaryTerm) also do not support resource-level ' +
+          'permissions ' +
           '(https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html; ' +
           'none carries a Resources entry in the machine-readable Service Reference for DataZone: ' +
           'https://servicereference.us-east-1.amazonaws.com/v1/datazone/datazone.json). ' +
@@ -1578,6 +1598,27 @@ export class CommonDomainHelper {
       {
         'custom-resource-role-create-form-type': DataZoneAuthorizationConstruct.createProjectAuthorizationPolicy(
           'CREATE_FORM_TYPE',
+          domain.attrRootDomainUnitId,
+          ProjectDesignation.OWNER,
+          true,
+        ),
+      },
+      domainProps,
+    );
+
+    // CreateGlossary/CreateGlossaryTerm are likewise gated on a CREATE_GLOSSARY grant. DataZone
+    // only accepts a project-grant-filter principal for this policy type (the same as
+    // CREATE_FORM_TYPE), not a specific user/group; a user-principal grant is rejected by
+    // AddPolicyGrant with a ValidationException. Grant it to project owners (this role is made
+    // one per project), including child domain units since SMUS places projects there.
+    this.createAuthorizationPolicies(
+      'custom-resource-role-create-glossary',
+      scope,
+      domain.attrId,
+      domain.attrRootDomainUnitId,
+      {
+        'custom-resource-role-create-glossary': DataZoneAuthorizationConstruct.createProjectAuthorizationPolicy(
+          'CREATE_GLOSSARY',
           domain.attrRootDomainUnitId,
           ProjectDesignation.OWNER,
           true,

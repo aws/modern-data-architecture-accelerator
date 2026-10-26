@@ -6769,8 +6769,9 @@ Validation: Optional; valid NamedSageMakerProjects
 | - [dataSources](#projects_additionalProperties_dataSources )               | No      | object | No         | -          | Data sources to import into the project. Each entry is either a \`databaseName\`, which<br />imports a Glue database and grants the project's environment user Lake Formation read<br />permissions on it and its tables, or an \`s3\`, which creates a DataZone S3 connection and<br />grants the project's environment user role IAM read (list and get) on the registered<br />bucket and prefix.<br /><br />Use cases: Importing existing Glue databases into SageMaker projects; Onboarding raw S3<br />data lake locations into a SMUS project's data catalog; Data asset discovery<br /><br />AWS: DataZone data sources with Glue run configuration; DataZone connections with S3<br />properties (AWS::DataZone::Connection)<br /><br />Validation: Optional; map of data source name to DataSourceProps |
 | - [domainUnit](#projects_additionalProperties_domainUnit )                 | No      | string | No         | -          | Domain unit path where the project will be created (e.g., /some/domain/unit).<br /><br />Use cases: Project organizational placement; Governance scope targeting<br /><br />AWS: DataZone domain unit for project placement<br /><br />Validation: Optional; slash-delimited domain unit path                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | - [environmentConfigs](#projects_additionalProperties_environmentConfigs ) | No      | object | No         | -          | Per-environment configuration overrides for this project's environments.<br /><br />Use cases: Project-specific environment customization<br /><br />AWS: DataZone project environment configurations<br /><br />Validation: Optional; map of environment name to ProjectEnvironmentConfiguration                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [glossaries](#projects_additionalProperties_glossaries )                 | No      | object | No         | -          | Business glossaries to create, owned by this project. A metadata form field's<br />\`glossaryId\` may reference a declared glossary here as \`"<glossaryName>"\`, or a<br />declared term as \`"<glossaryName>.<termName>"\`, which MDAA resolves to the<br />glossary's deploy-time ID and wires as a CDK dependency, or it may continue to<br />use a literal, pre-existing glossary ID string, unchanged. The map key is used<br />as the glossary's stable identifier; renaming a key replaces that glossary<br />(create-then-delete).<br /><br />Use cases: Business glossary/terminology as code; Linking standardized terms to metadata forms<br /><br />AWS: DataZone business glossaries and terms, owned by the project<br /><br />Validation: Optional; map of glossary name to GlossaryProps         |
 | - [groups](#projects_additionalProperties_groups )                         | No      | object | No         | -          | MDAA group configuration names that receive PROJECT_CONTRIBUTOR designation<br />with contributor-level access to the project.<br /><br />Use cases: Team-based project contribution; Group standard access<br /><br />AWS: DataZone project membership with PROJECT_CONTRIBUTOR role<br /><br />Validation: Optional; map of ID to group config name; names must exist in module groups config                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| - [metadataForms](#projects_additionalProperties_metadataForms )           | No      | object | No         | -          | Metadata form types to create, owned by this project. Each form is defined by<br />a set of fields; MDAA assembles the Smithy model (setting the namespace to the<br />domain ID and the structure name to the form name). Forms are usable across the<br />domain to attach standardized metadata to assets. The map key is used as the form's<br />stable identifier; renaming a key replaces that form type (delete-then-create).<br /><br />Use cases: Data governance metadata standards; Asset metadata enforcement; Searchable custom attributes<br /><br />AWS: DataZone metadata form types (AWS::DataZone::FormType) owned by the project<br /><br />Validation: Optional; map of form name to MetadataFormProps; form name must be a valid Smithy structure name                                       |
+| - [metadataForms](#projects_additionalProperties_metadataForms )           | No      | object | No         | -          | Metadata form types to create, owned by this project. Each form is defined by<br />a set of fields; MDAA assembles the Smithy model (setting the namespace to the<br />domain ID and the structure name to the form name). Forms are usable across the<br />domain to attach standardized metadata to assets. The map key is used as the form's<br />stable identifier; renaming a key replaces that form type (create-then-delete).<br /><br />Use cases: Data governance metadata standards; Asset metadata enforcement; Searchable custom attributes<br /><br />AWS: DataZone metadata form types (AWS::DataZone::FormType) owned by the project<br /><br />Validation: Optional; map of form name to MetadataFormProps; form name must be a valid Smithy structure name                                       |
 | - [nameOverride](#projects_additionalProperties_nameOverride )             | No      | string | No         | -          | Exact DataZone project name, used verbatim and bypassing MDAA naming conventions.<br />Intended for the user-facing SMUS project title, which is a free-form label chosen<br />by the business and is not derivable from org/env/domain/module metadata. All other<br />resources created by the module keep MDAA naming.<br /><br />AWS: AWS::DataZone::Project Name<br /><br />Validation: Optional; 1-64 chars matching \`^[\w -]+$\` (spaces and mixed case<br />allowed); must be unique within the DataZone domain.                                                                                                                                                                                                                                                                                         |
 | - [ownerGroups](#projects_additionalProperties_ownerGroups )               | No      | object | No         | -          | MDAA group configuration names (from the SageMaker module groups section) that<br />receive PROJECT_OWNER designation with full administrative access to the project.<br />These are not DataZone group names or Identity Center group identifiers.<br /><br />Use cases: Team-based project ownership; Group admin access<br /><br />AWS: DataZone project membership with PROJECT_OWNER role<br /><br />Validation: Optional; map of ID to group config name; names must exist in module groups config                                                                                                                                                                                                                                                                                                          |
 | - [ownerUsers](#projects_additionalProperties_ownerUsers )                 | No      | object | No         | -          | MDAA user configuration names (from the SageMaker module users section) that<br />receive PROJECT_OWNER designation with full administrative access to the project.<br />These are not DataZone usernames or Identity Center identifiers.<br /><br />Use cases: User-based project ownership; Full project admin access<br /><br />AWS: DataZone project membership with PROJECT_OWNER role<br /><br />Validation: Optional; map of ID to user config name; names must exist in module users config                                                                                                                                                                                                                                                                                                               |
@@ -6984,7 +6985,159 @@ Validation: Optional; map of environment name to ProjectEnvironmentConfiguration
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="projects_additionalProperties_groups"></a>6.1.4. Property `root > projects > additionalProperties > groups`
+#### <a name="projects_additionalProperties_glossaries"></a>6.1.4. Property `root > projects > additionalProperties > glossaries`
+
+|                           |                                                                                                                       |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                              |
+| **Required**              | No                                                                                                                    |
+| **Additional properties** | [Each additional property must conform to the schema](#projects_additionalProperties_glossaries_additionalProperties) |
+
+**Description:** Business glossaries to create, owned by this project. A metadata form field's
+`glossaryId` may reference a declared glossary here as `"<glossaryName>"`, or a
+declared term as `"<glossaryName>.<termName>"`, which MDAA resolves to the
+glossary's deploy-time ID and wires as a CDK dependency, or it may continue to
+use a literal, pre-existing glossary ID string, unchanged. The map key is used
+as the glossary's stable identifier; renaming a key replaces that glossary
+(create-then-delete).
+
+Use cases: Business glossary/terminology as code; Linking standardized terms to metadata forms
+
+AWS: DataZone business glossaries and terms, owned by the project
+
+Validation: Optional; map of glossary name to GlossaryProps
+
+| Property                                                              | Pattern | Type   | Deprecated | Definition                     | Title/Description |
+| --------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------ | ----------------- |
+| - [](#projects_additionalProperties_glossaries_additionalProperties ) | No      | object | No         | In #/definitions/GlossaryProps | -                 |
+
+##### <a name="projects_additionalProperties_glossaries_additionalProperties"></a>6.1.4.1. Property `root > projects > additionalProperties > glossaries > GlossaryProps`
+
+|                           |                             |
+| ------------------------- | --------------------------- |
+| **Type**                  | `object`                    |
+| **Required**              | No                          |
+| **Additional properties** | Not allowed                 |
+| **Defined in**            | #/definitions/GlossaryProps |
+
+| Property                                                                                     | Pattern | Type             | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                        |
+| -------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [description](#projects_additionalProperties_glossaries_additionalProperties_description ) | No      | string           | No         | -          | Human-readable description of the glossary.<br /><br />Use cases: Glossary documentation<br /><br />AWS: DataZone glossary description<br /><br />Validation: Optional; string                                                                                                                                                                                                                                           |
+| - [status](#projects_additionalProperties_glossaries_additionalProperties_status )           | No      | enum (of string) | No         | -          | Glossary status. DISABLED glossaries are retained but not attachable.<br /><br />Use cases: Staged glossary rollout; Temporarily retiring a glossary<br /><br />AWS: DataZone glossary status<br /><br />Validation: Optional; 'ENABLED' \| 'DISABLED'                                                                                                                                                                   |
+| - [terms](#projects_additionalProperties_glossaries_additionalProperties_terms )             | No      | object           | No         | -          | Terms to create under this glossary. The map key is used as the term's stable<br />identifier and is the name referenced by a form field's \`glossaryId\` as<br />\`"<glossaryName>.<termName>"\`.<br /><br />Use cases: Standardized business terminology; Terms linked to metadata form fields<br /><br />AWS: DataZone business glossary terms<br /><br />Validation: Optional; map of term name to GlossaryTermProps |
+
+###### <a name="projects_additionalProperties_glossaries_additionalProperties_description"></a>6.1.4.1.1. Property `root > projects > additionalProperties > glossaries > additionalProperties > description`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Human-readable description of the glossary.
+
+Use cases: Glossary documentation
+
+AWS: DataZone glossary description
+
+Validation: Optional; string
+
+###### <a name="projects_additionalProperties_glossaries_additionalProperties_status"></a>6.1.4.1.2. Property `root > projects > additionalProperties > glossaries > additionalProperties > status`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+| **Default**  | `"ENABLED"`        |
+
+**Description:** Glossary status. DISABLED glossaries are retained but not attachable.
+
+Use cases: Staged glossary rollout; Temporarily retiring a glossary
+
+AWS: DataZone glossary status
+
+Validation: Optional; 'ENABLED' | 'DISABLED'
+
+Must be one of:
+* "DISABLED"
+* "ENABLED"
+
+###### <a name="projects_additionalProperties_glossaries_additionalProperties_terms"></a>6.1.4.1.3. Property `root > projects > additionalProperties > glossaries > additionalProperties > terms`
+
+|                           |                                                                                                                                                  |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Type**                  | `object`                                                                                                                                         |
+| **Required**              | No                                                                                                                                               |
+| **Additional properties** | [Each additional property must conform to the schema](#projects_additionalProperties_glossaries_additionalProperties_terms_additionalProperties) |
+| **Default**               | `"- no terms are created"`                                                                                                                       |
+
+**Description:** Terms to create under this glossary. The map key is used as the term's stable
+identifier and is the name referenced by a form field's `glossaryId` as
+`"<glossaryName>.<termName>"`.
+
+Use cases: Standardized business terminology; Terms linked to metadata form fields
+
+AWS: DataZone business glossary terms
+
+Validation: Optional; map of term name to GlossaryTermProps
+
+| Property                                                                                         | Pattern | Type   | Deprecated | Definition                         | Title/Description |
+| ------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------------------------------- | ----------------- |
+| - [](#projects_additionalProperties_glossaries_additionalProperties_terms_additionalProperties ) | No      | object | No         | In #/definitions/GlossaryTermProps | -                 |
+
+###### <a name="projects_additionalProperties_glossaries_additionalProperties_terms_additionalProperties"></a>6.1.4.1.3.1. Property `root > projects > additionalProperties > glossaries > additionalProperties > terms > GlossaryTermProps`
+
+|                           |                                 |
+| ------------------------- | ------------------------------- |
+| **Type**                  | `object`                        |
+| **Required**              | No                              |
+| **Additional properties** | Not allowed                     |
+| **Defined in**            | #/definitions/GlossaryTermProps |
+
+| Property                                                                                                                          | Pattern | Type             | Deprecated | Definition | Title/Description                                                                                                                         |
+| --------------------------------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| - [longDescription](#projects_additionalProperties_glossaries_additionalProperties_terms_additionalProperties_longDescription )   | No      | string           | No         | -          | Longer-form definition of the term, with more context than shortDescription.<br /><br />Validation: Optional; string; max 4096 chars      |
+| - [shortDescription](#projects_additionalProperties_glossaries_additionalProperties_terms_additionalProperties_shortDescription ) | No      | string           | No         | -          | Short, business-facing definition of the term.<br /><br />Validation: Optional; string; max 1024 chars                                    |
+| - [status](#projects_additionalProperties_glossaries_additionalProperties_terms_additionalProperties_status )                     | No      | enum (of string) | No         | -          | Term status. DISABLED terms are retained but not attachable to assets or fields.<br /><br />Validation: Optional; 'ENABLED' \| 'DISABLED' |
+
+###### <a name="projects_additionalProperties_glossaries_additionalProperties_terms_additionalProperties_longDescription"></a>6.1.4.1.3.1.1. Property `root > projects > additionalProperties > glossaries > additionalProperties > terms > additionalProperties > longDescription`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Longer-form definition of the term, with more context than shortDescription.
+
+Validation: Optional; string; max 4096 chars
+
+###### <a name="projects_additionalProperties_glossaries_additionalProperties_terms_additionalProperties_shortDescription"></a>6.1.4.1.3.1.2. Property `root > projects > additionalProperties > glossaries > additionalProperties > terms > additionalProperties > shortDescription`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Short, business-facing definition of the term.
+
+Validation: Optional; string; max 1024 chars
+
+###### <a name="projects_additionalProperties_glossaries_additionalProperties_terms_additionalProperties_status"></a>6.1.4.1.3.1.3. Property `root > projects > additionalProperties > glossaries > additionalProperties > terms > additionalProperties > status`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+| **Default**  | `"ENABLED"`        |
+
+**Description:** Term status. DISABLED terms are retained but not attachable to assets or fields.
+
+Validation: Optional; 'ENABLED' | 'DISABLED'
+
+Must be one of:
+* "DISABLED"
+* "ENABLED"
+
+#### <a name="projects_additionalProperties_groups"></a>6.1.5. Property `root > projects > additionalProperties > groups`
 
 |                           |                                                                                                                   |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------- |
@@ -7005,14 +7158,14 @@ Validation: Optional; map of ID to group config name; names must exist in module
 | ----------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#projects_additionalProperties_groups_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="projects_additionalProperties_groups_additionalProperties"></a>6.1.4.1. Property `root > projects > additionalProperties > groups > additionalProperties`
+##### <a name="projects_additionalProperties_groups_additionalProperties"></a>6.1.5.1. Property `root > projects > additionalProperties > groups > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="projects_additionalProperties_metadataForms"></a>6.1.5. Property `root > projects > additionalProperties > metadataForms`
+#### <a name="projects_additionalProperties_metadataForms"></a>6.1.6. Property `root > projects > additionalProperties > metadataForms`
 
 |                           |                                                                                                                          |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
@@ -7024,7 +7177,7 @@ Validation: Optional; map of ID to group config name; names must exist in module
 a set of fields; MDAA assembles the Smithy model (setting the namespace to the
 domain ID and the structure name to the form name). Forms are usable across the
 domain to attach standardized metadata to assets. The map key is used as the form's
-stable identifier; renaming a key replaces that form type (delete-then-create).
+stable identifier; renaming a key replaces that form type (create-then-delete).
 
 Use cases: Data governance metadata standards; Asset metadata enforcement; Searchable custom attributes
 
@@ -7036,7 +7189,7 @@ Validation: Optional; map of form name to MetadataFormProps; form name must be a
 | ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------------------------------- | ----------------- |
 | - [](#projects_additionalProperties_metadataForms_additionalProperties ) | No      | object | No         | In #/definitions/MetadataFormProps | -                 |
 
-##### <a name="projects_additionalProperties_metadataForms_additionalProperties"></a>6.1.5.1. Property `root > projects > additionalProperties > metadataForms > MetadataFormProps`
+##### <a name="projects_additionalProperties_metadataForms_additionalProperties"></a>6.1.6.1. Property `root > projects > additionalProperties > metadataForms > MetadataFormProps`
 
 |                           |                                 |
 | ------------------------- | ------------------------------- |
@@ -7051,7 +7204,7 @@ Validation: Optional; map of form name to MetadataFormProps; form name must be a
 | + [fields](#projects_additionalProperties_metadataForms_additionalProperties_fields )           | No      | object           | No         | -          | Field definitions for the form. Each entry becomes a member of the generated<br />Smithy structure; declaration order is preserved.<br /><br />Use cases: Custom metadata attributes; Required governance fields; Searchable attributes<br /><br />AWS: Smithy structure members in a DataZone form type model<br /><br />Validation: Required; non-empty map of field name to FormFieldProps |
 | - [status](#projects_additionalProperties_metadataForms_additionalProperties_status )           | No      | enum (of string) | No         | -          | Form type status. DISABLED form types are retained but not attachable.<br /><br />Use cases: Staged form rollout; Temporarily retiring a form<br /><br />AWS: DataZone form type status<br /><br />Validation: Optional; 'ENABLED' \| 'DISABLED'                                                                                                                                              |
 
-###### <a name="projects_additionalProperties_metadataForms_additionalProperties_description"></a>6.1.5.1.1. Property `root > projects > additionalProperties > metadataForms > additionalProperties > description`
+###### <a name="projects_additionalProperties_metadataForms_additionalProperties_description"></a>6.1.6.1.1. Property `root > projects > additionalProperties > metadataForms > additionalProperties > description`
 
 |              |          |
 | ------------ | -------- |
@@ -7066,7 +7219,7 @@ AWS: DataZone form type description
 
 Validation: Optional; string
 
-###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields"></a>6.1.5.1.2. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields`
+###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields"></a>6.1.6.1.2. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields`
 
 |                           |                                                                                                                                                      |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -7087,7 +7240,7 @@ Validation: Required; non-empty map of field name to FormFieldProps
 | ---------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------- | ----------------- |
 | - [](#projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties ) | No      | object | No         | In #/definitions/FormFieldProps | -                 |
 
-###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties"></a>6.1.5.1.2.1. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields > FormFieldProps`
+###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties"></a>6.1.6.1.2.1. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields > FormFieldProps`
 
 |                           |                              |
 | ------------------------- | ---------------------------- |
@@ -7096,15 +7249,15 @@ Validation: Required; non-empty map of field name to FormFieldProps
 | **Additional properties** | Not allowed                  |
 | **Defined in**            | #/definitions/FormFieldProps |
 
-| Property                                                                                                                    | Pattern | Type                      | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                      |
-| --------------------------------------------------------------------------------------------------------------------------- | ------- | ------------------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [description](#projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_description ) | No      | string                    | No         | -          | Human-readable description of the field, annotated via the Smithy \`@documentation\`<br />trait. Lets stewards see what the field means when the form is attached to an asset.<br /><br />Validation: Optional; string                                                                                                 |
-| - [glossaryId](#projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_glossaryId )   | No      | string                    | No         | -          | Glossary ID whose terms this field stores, annotated via<br />\`@amazon.datazone#glossaryterm("<id>")\`. Makes the field filterable via the<br />Search/SearchListings APIs.<br /><br />Validation: Optional; valid DataZone glossary ID                                                                               |
-| - [required](#projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_required )       | No      | boolean                   | No         | -          | When true, the field is annotated \`@required\` and must be populated when the<br />form is attached to an asset.<br /><br />Validation: Optional; boolean                                                                                                                                                             |
-| - [searchable](#projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_searchable )   | No      | array of enum (of string) | No         | -          | Search indexing modes for the field, annotated via \`@amazon.datazone#searchable\`.<br />LEXICAL enables stemmed/partial matches (disables semantic search); TECHNICAL<br />indexes for technical identifier search. Omit for no explicit indexing.<br /><br />Validation: Optional; array of 'LEXICAL' \| 'TECHNICAL' |
-| + [type](#projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_type )               | No      | enum (of string)          | No         | -          | Smithy prelude type for the field (e.g. String, Boolean, Integer).<br /><br />Validation: Required; one of String \| Boolean \| Integer \| Long \| Float \| Double \| Timestamp                                                                                                                                        |
+| Property                                                                                                                    | Pattern | Type                      | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| --------------------------------------------------------------------------------------------------------------------------- | ------- | ------------------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [description](#projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_description ) | No      | string                    | No         | -          | Human-readable description of the field, annotated via the Smithy \`@documentation\`<br />trait. Lets stewards see what the field means when the form is attached to an asset.<br /><br />Validation: Optional; string                                                                                                                                                                                                                                                                                                                          |
+| - [glossaryId](#projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_glossaryId )   | No      | string                    | No         | -          | Glossary ID this field is linked to, annotated via<br />\`@amazon.datazone#glossaryterm("<id>")\`. Makes the field filterable via the<br />Search/SearchListings APIs. May be a literal, pre-existing glossary ID, or a<br />deploy-time-resolved value from a declared \`glossaries\` reference; deploy-time<br />values are not synth-time validated since their resolved value isn't known<br />until deploy.<br /><br />Validation: Optional; valid DataZone glossary ID (unless resolved from a<br />deploy-time \`glossaries\` reference) |
+| - [required](#projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_required )       | No      | boolean                   | No         | -          | When true, the field is annotated \`@required\` and must be populated when the<br />form is attached to an asset.<br /><br />Validation: Optional; boolean                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [searchable](#projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_searchable )   | No      | array of enum (of string) | No         | -          | Search indexing modes for the field, annotated via \`@amazon.datazone#searchable\`.<br />LEXICAL enables stemmed/partial matches (disables semantic search); TECHNICAL<br />indexes for technical identifier search. Omit for no explicit indexing.<br /><br />Validation: Optional; array of 'LEXICAL' \| 'TECHNICAL'                                                                                                                                                                                                                          |
+| + [type](#projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_type )               | No      | enum (of string)          | No         | -          | Smithy prelude type for the field (e.g. String, Boolean, Integer).<br /><br />Validation: Required; one of String \| Boolean \| Integer \| Long \| Float \| Double \| Timestamp                                                                                                                                                                                                                                                                                                                                                                 |
 
-###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_description"></a>6.1.5.1.2.1.1. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields > additionalProperties > description`
+###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_description"></a>6.1.6.1.2.1.1. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields > additionalProperties > description`
 
 |              |                      |
 | ------------ | -------------------- |
@@ -7117,20 +7270,24 @@ trait. Lets stewards see what the field means when the form is attached to an as
 
 Validation: Optional; string
 
-###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_glossaryId"></a>6.1.5.1.2.1.2. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields > additionalProperties > glossaryId`
+###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_glossaryId"></a>6.1.6.1.2.1.2. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields > additionalProperties > glossaryId`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Glossary ID whose terms this field stores, annotated via
+**Description:** Glossary ID this field is linked to, annotated via
 `@amazon.datazone#glossaryterm("<id>")`. Makes the field filterable via the
-Search/SearchListings APIs.
+Search/SearchListings APIs. May be a literal, pre-existing glossary ID, or a
+deploy-time-resolved value from a declared `glossaries` reference; deploy-time
+values are not synth-time validated since their resolved value isn't known
+until deploy.
 
-Validation: Optional; valid DataZone glossary ID
+Validation: Optional; valid DataZone glossary ID (unless resolved from a
+deploy-time `glossaries` reference)
 
-###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_required"></a>6.1.5.1.2.1.3. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields > additionalProperties > required`
+###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_required"></a>6.1.6.1.2.1.3. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields > additionalProperties > required`
 
 |              |           |
 | ------------ | --------- |
@@ -7143,7 +7300,7 @@ form is attached to an asset.
 
 Validation: Optional; boolean
 
-###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_searchable"></a>6.1.5.1.2.1.4. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields > additionalProperties > searchable`
+###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_searchable"></a>6.1.6.1.2.1.4. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields > additionalProperties > searchable`
 
 |              |                             |
 | ------------ | --------------------------- |
@@ -7168,7 +7325,7 @@ Validation: Optional; array of 'LEXICAL' | 'TECHNICAL'
 | ---------------------------------------------------------------------------------------------------------------------------------- | ----------- |
 | [searchable items](#projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_searchable_items) | -           |
 
-###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_searchable_items"></a>6.1.5.1.2.1.4.1. root > projects > additionalProperties > metadataForms > additionalProperties > fields > additionalProperties > searchable > searchable items
+###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_searchable_items"></a>6.1.6.1.2.1.4.1. root > projects > additionalProperties > metadataForms > additionalProperties > fields > additionalProperties > searchable > searchable items
 
 |              |                    |
 | ------------ | ------------------ |
@@ -7179,7 +7336,7 @@ Must be one of:
 * "LEXICAL"
 * "TECHNICAL"
 
-###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_type"></a>6.1.5.1.2.1.5. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields > additionalProperties > type`
+###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_type"></a>6.1.6.1.2.1.5. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields > additionalProperties > type`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -7199,7 +7356,7 @@ Must be one of:
 * "String"
 * "Timestamp"
 
-###### <a name="projects_additionalProperties_metadataForms_additionalProperties_status"></a>6.1.5.1.3. Property `root > projects > additionalProperties > metadataForms > additionalProperties > status`
+###### <a name="projects_additionalProperties_metadataForms_additionalProperties_status"></a>6.1.6.1.3. Property `root > projects > additionalProperties > metadataForms > additionalProperties > status`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -7219,7 +7376,7 @@ Must be one of:
 * "DISABLED"
 * "ENABLED"
 
-#### <a name="projects_additionalProperties_nameOverride"></a>6.1.6. Property `root > projects > additionalProperties > nameOverride`
+#### <a name="projects_additionalProperties_nameOverride"></a>6.1.7. Property `root > projects > additionalProperties > nameOverride`
 
 |              |          |
 | ------------ | -------- |
@@ -7236,7 +7393,7 @@ AWS: AWS::DataZone::Project Name
 Validation: Optional; 1-64 chars matching `^[\w -]+$` (spaces and mixed case
 allowed); must be unique within the DataZone domain.
 
-#### <a name="projects_additionalProperties_ownerGroups"></a>6.1.7. Property `root > projects > additionalProperties > ownerGroups`
+#### <a name="projects_additionalProperties_ownerGroups"></a>6.1.8. Property `root > projects > additionalProperties > ownerGroups`
 
 |                           |                                                                                                                        |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
@@ -7258,14 +7415,14 @@ Validation: Optional; map of ID to group config name; names must exist in module
 | ---------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#projects_additionalProperties_ownerGroups_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="projects_additionalProperties_ownerGroups_additionalProperties"></a>6.1.7.1. Property `root > projects > additionalProperties > ownerGroups > additionalProperties`
+##### <a name="projects_additionalProperties_ownerGroups_additionalProperties"></a>6.1.8.1. Property `root > projects > additionalProperties > ownerGroups > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="projects_additionalProperties_ownerUsers"></a>6.1.8. Property `root > projects > additionalProperties > ownerUsers`
+#### <a name="projects_additionalProperties_ownerUsers"></a>6.1.9. Property `root > projects > additionalProperties > ownerUsers`
 
 |                           |                                                                                                                       |
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------- |
@@ -7287,14 +7444,14 @@ Validation: Optional; map of ID to user config name; names must exist in module 
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#projects_additionalProperties_ownerUsers_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="projects_additionalProperties_ownerUsers_additionalProperties"></a>6.1.8.1. Property `root > projects > additionalProperties > ownerUsers > additionalProperties`
+##### <a name="projects_additionalProperties_ownerUsers_additionalProperties"></a>6.1.9.1. Property `root > projects > additionalProperties > ownerUsers > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="projects_additionalProperties_profileName"></a>6.1.9. Property `root > projects > additionalProperties > profileName`
+#### <a name="projects_additionalProperties_profileName"></a>6.1.10. Property `root > projects > additionalProperties > profileName`
 
 |              |          |
 | ------------ | -------- |
@@ -7310,7 +7467,7 @@ AWS: DataZone project profile reference
 
 Validation: Required; string; must match a key in projectProfiles config
 
-#### <a name="projects_additionalProperties_users"></a>6.1.10. Property `root > projects > additionalProperties > users`
+#### <a name="projects_additionalProperties_users"></a>6.1.11. Property `root > projects > additionalProperties > users`
 
 |                           |                                                                                                                  |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------- |
@@ -7331,7 +7488,7 @@ Validation: Optional; map of ID to user config name; names must exist in module 
 | ---------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#projects_additionalProperties_users_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="projects_additionalProperties_users_additionalProperties"></a>6.1.10.1. Property `root > projects > additionalProperties > users > additionalProperties`
+##### <a name="projects_additionalProperties_users_additionalProperties"></a>6.1.11.1. Property `root > projects > additionalProperties > users > additionalProperties`
 
 |              |          |
 | ------------ | -------- |

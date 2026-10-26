@@ -284,14 +284,14 @@ export interface DomainUnit {
    * constructing full AuthorizationPolicy objects.
    *
    * Supported fields: projectCreators, projectFromProfileCreators,
-   * eligibleProjectMembers, domainUnitCreators, glossaryCreators, environmentCreators.
+   * eligibleProjectMembers, domainUnitCreators, environmentCreators.
    *
    * Use cases: Quick project creation grants; Simple membership pool configuration;
-   * Delegated domain unit management; Glossary and environment provisioning
+   * Delegated domain unit management; Environment provisioning
    *
    * AWS: DataZone authorization policies (CREATE_PROJECT,
    * CREATE_PROJECT_FROM_PROJECT_PROFILE, ADD_TO_PROJECT_MEMBER_POOL,
-   * CREATE_DOMAIN_UNIT, CREATE_GLOSSARY, CREATE_ENVIRONMENT)
+   * CREATE_DOMAIN_UNIT, CREATE_ENVIRONMENT)
    *
    * Validation: Optional; Authorizations object
    */
@@ -482,14 +482,14 @@ export interface BaseDomainProps {
    * constructing full AuthorizationPolicy objects.
    *
    * Supported fields: projectCreators, projectFromProfileCreators,
-   * eligibleProjectMembers, domainUnitCreators, glossaryCreators, environmentCreators.
+   * eligibleProjectMembers, domainUnitCreators, environmentCreators.
    *
    * Use cases: Quick project creation grants; Simple membership pool configuration;
-   * Delegated domain unit management; Glossary and environment provisioning
+   * Delegated domain unit management; Environment provisioning
    *
    * AWS: DataZone authorization policies (CREATE_PROJECT,
    * CREATE_PROJECT_FROM_PROJECT_PROFILE, ADD_TO_PROJECT_MEMBER_POOL,
-   * CREATE_DOMAIN_UNIT, CREATE_GLOSSARY, CREATE_ENVIRONMENT)
+   * CREATE_DOMAIN_UNIT, CREATE_ENVIRONMENT)
    *
    * Validation: Optional; Authorizations object
    */
@@ -606,17 +606,6 @@ export interface Authorizations {
    * Validation: Optional; AuthorizationIdentities object
    */
   readonly domainUnitCreators?: AuthorizationIdentities;
-  /**
-   * Identities allowed to create business glossaries within this scope.
-   * Grants the CREATE_GLOSSARY authorization policy.
-   *
-   * Use cases: Data steward glossary management; Business term definition
-   *
-   * AWS: DataZone CREATE_GLOSSARY authorization policy
-   *
-   * Validation: Optional; AuthorizationIdentities object
-   */
-  readonly glossaryCreators?: AuthorizationIdentities;
   /**
    * Identities allowed to create environments within this scope.
    * Grants the CREATE_ENVIRONMENT authorization policy.

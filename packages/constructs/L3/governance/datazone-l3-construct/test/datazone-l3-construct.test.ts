@@ -724,8 +724,8 @@ describe('DataZone L3 Construct Tests', () => {
       expect(template).toBeDefined();
 
       // Verify that authorization policies are created
-      // 2 from the domain unit policy + 3 from cfn-exec (1) and data-admin (2) root auths
-      template.resourceCountIs('AWS::DataZone::PolicyGrant', 6);
+      // 2 from the domain unit policy + 3 from cfn-exec (1) and data-admin (2) root auths + 1 custom-resource-role-create-form-type + 1 custom-resource-role-create-glossary
+      template.resourceCountIs('AWS::DataZone::PolicyGrant', 7);
       template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
         PolicyType: 'CREATE_PROJECT',
       });
@@ -837,8 +837,8 @@ describe('DataZone L3 Construct Tests', () => {
       expect(template).toBeDefined();
 
       // Verify that nested authorization policies are created
-      // 2 from the child domain unit policy + 3 from cfn-exec (1) and data-admin (2) root auths
-      template.resourceCountIs('AWS::DataZone::PolicyGrant', 6);
+      // 2 from the child domain unit policy + 3 from cfn-exec (1) and data-admin (2) root auths + 1 custom-resource-role-create-form-type + 1 custom-resource-role-create-glossary
+      template.resourceCountIs('AWS::DataZone::PolicyGrant', 7);
       template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
         PolicyType: 'CREATE_ASSET_TYPE',
       });
@@ -946,8 +946,8 @@ describe('DataZone L3 Construct Tests', () => {
 
       // Verify group profile and policy are created
       template.resourceCountIs('AWS::DataZone::GroupProfile', 1);
-      // 2 from the domain unit policy + 3 from cfn-exec (1) and data-admin (2) root auths
-      template.resourceCountIs('AWS::DataZone::PolicyGrant', 6);
+      // 2 from the domain unit policy + 3 from cfn-exec (1) and data-admin (2) root auths + 1 custom-resource-role-create-form-type + 1 custom-resource-role-create-glossary
+      template.resourceCountIs('AWS::DataZone::PolicyGrant', 7);
     });
 
     test('should create associated account CDK users and owners', () => {
@@ -1251,35 +1251,6 @@ describe('DataZone L3 Construct Tests', () => {
       });
     });
 
-    test('authorizations.glossaryCreators creates CREATE_GLOSSARY policy', () => {
-      const props: DataZoneL3ConstructProps = {
-        roleHelper,
-        naming: testApp.naming,
-        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
-        dataZoneDomains: {
-          'test-domain': {
-            description: 'Domain with glossaryCreators',
-            dataAdminRole: { name: 'admin' },
-            singleSignOnType: 'DISABLED',
-            userAssignment: 'MANUAL',
-            users: { 'test-user': { iamRole: { name: 'test-user-role' } } },
-            authorizations: {
-              glossaryCreators: {
-                users: ['test-user'],
-              },
-            },
-          },
-        },
-      };
-
-      new DataZoneL3Construct(stack, 'test', props);
-      const template = Template.fromStack(stack);
-
-      template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
-        PolicyType: 'CREATE_GLOSSARY',
-      });
-    });
-
     test('authorizations.environmentCreators creates CREATE_ENVIRONMENT policy', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
@@ -1326,7 +1297,6 @@ describe('DataZone L3 Construct Tests', () => {
               projectCreators: { users: ['test-user'] },
               eligibleProjectMembers: { all: true },
               domainUnitCreators: { groups: ['test-group'] },
-              glossaryCreators: { users: ['test-user'] },
               environmentCreators: { groups: ['test-group'] },
             },
           },
@@ -1336,12 +1306,11 @@ describe('DataZone L3 Construct Tests', () => {
       new DataZoneL3Construct(stack, 'test', props);
       const template = Template.fromStack(stack);
 
-      // 5 from authorizations + 3 from cfn-exec (1) and data-admin (2) root auths + 1 from custom-resource-role-auth
+      // 4 from authorizations + 3 from cfn-exec (1) and data-admin (2) root auths + 1 from custom-resource-role-auth + 1 custom-resource-role-create-form-type + 1 custom-resource-role-create-glossary
       template.resourceCountIs('AWS::DataZone::PolicyGrant', 10);
       template.hasResourceProperties('AWS::DataZone::PolicyGrant', { PolicyType: 'CREATE_PROJECT' });
       template.hasResourceProperties('AWS::DataZone::PolicyGrant', { PolicyType: 'ADD_TO_PROJECT_MEMBER_POOL' });
       template.hasResourceProperties('AWS::DataZone::PolicyGrant', { PolicyType: 'CREATE_DOMAIN_UNIT' });
-      template.hasResourceProperties('AWS::DataZone::PolicyGrant', { PolicyType: 'CREATE_GLOSSARY' });
       template.hasResourceProperties('AWS::DataZone::PolicyGrant', { PolicyType: 'CREATE_ENVIRONMENT' });
     });
 
@@ -1417,6 +1386,86 @@ describe('DataZone L3 Construct Tests', () => {
       });
     });
 
+    test('custom-resource role is granted datazone glossary management actions', () => {
+      const props: DataZoneL3ConstructProps = {
+        roleHelper,
+        naming: testApp.naming,
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
+        dataZoneDomains: {
+          'test-domain': {
+            description: 'Domain for glossary authorization',
+            dataAdminRole: { name: 'admin' },
+            singleSignOnType: 'DISABLED',
+            userAssignment: 'MANUAL',
+          },
+        },
+      };
+
+      new DataZoneL3Construct(stack, 'test', props);
+      const template = Template.fromStack(stack);
+
+      // The custom-resource role's managed policy must allow the DataZone glossary/glossary-term
+      // management actions used by the create_glossary and create_glossary_term custom resources.
+      // These actions do not support resource-level permissions, so the statement is scoped to '*'.
+      // GetGlossary/GetGlossaryTerm are included: both lambdas use them to compare an Update's
+      // target state against the live resource instead of the stale OldResourceProperties a
+      // CloudFormation rollback redelivers with properties reversed.
+      const managedPolicy = Object.values(template.findResources('AWS::IAM::ManagedPolicy'))[0];
+      const glossaryStatement = managedPolicy.Properties.PolicyDocument.Statement.find(
+        (statement: { Action?: string[] }) => (statement.Action ?? []).includes('datazone:CreateGlossary'),
+      );
+      expect(glossaryStatement.Action).toEqual([
+        'datazone:CreateGlossary',
+        'datazone:UpdateGlossary',
+        'datazone:DeleteGlossary',
+        'datazone:GetGlossary',
+        'datazone:CreateGlossaryTerm',
+        'datazone:UpdateGlossaryTerm',
+        'datazone:DeleteGlossaryTerm',
+        'datazone:GetGlossaryTerm',
+      ]);
+      expect(glossaryStatement.Resource).toEqual('*');
+    });
+
+    test('custom-resource role gets a CREATE_GLOSSARY grant scoped to project owners', () => {
+      const props: DataZoneL3ConstructProps = {
+        roleHelper,
+        naming: testApp.naming,
+        lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::123456789012:role/test-role' },
+        dataZoneDomains: {
+          'test-domain': {
+            description: 'Domain for glossary authorization',
+            dataAdminRole: { name: 'admin' },
+            singleSignOnType: 'DISABLED',
+            userAssignment: 'MANUAL',
+          },
+        },
+      };
+
+      new DataZoneL3Construct(stack, 'test', props);
+      const template = Template.fromStack(stack);
+
+      // DataZone gates CreateGlossary/CreateGlossaryTerm on a CREATE_GLOSSARY domain-unit grant
+      // whose principal is a project grant filter (project OWNERs), not a specific user/group,
+      // mirroring CREATE_FORM_TYPE. includeChildDomainUnits is true so projects in child domain
+      // units can create glossaries.
+      template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
+        PolicyType: 'CREATE_GLOSSARY',
+        EntityType: 'DOMAIN_UNIT',
+        Principal: {
+          Project: {
+            ProjectDesignation: 'OWNER',
+            ProjectGrantFilter: {
+              DomainUnitFilter: Match.objectLike({ IncludeChildDomainUnits: true }),
+            },
+          },
+        },
+        Detail: {
+          CreateGlossary: { IncludeChildDomainUnits: true },
+        },
+      });
+    });
+
     test('authorizations on domain unit creates policies on that unit', () => {
       const props: DataZoneL3ConstructProps = {
         roleHelper,
@@ -1468,7 +1517,7 @@ describe('DataZone L3 Construct Tests', () => {
                   child: {
                     description: 'Child unit with authorizations',
                     authorizations: {
-                      glossaryCreators: { users: ['test-user'] },
+                      domainUnitCreators: { users: ['test-user'] },
                     },
                   },
                 },
@@ -1481,7 +1530,10 @@ describe('DataZone L3 Construct Tests', () => {
       new DataZoneL3Construct(stack, 'test', props);
       const template = Template.fromStack(stack);
 
-      template.hasResourceProperties('AWS::DataZone::PolicyGrant', { PolicyType: 'CREATE_GLOSSARY' });
+      // CREATE_DOMAIN_UNIT has no unconditional baseline grant (unlike CREATE_GLOSSARY/
+      // CREATE_FORM_TYPE), so this single grant can only come from the nested unit's
+      // domainUnitCreators setting, confirming nested domain-unit authorization wiring works.
+      template.resourcePropertiesCountIs('AWS::DataZone::PolicyGrant', { PolicyType: 'CREATE_DOMAIN_UNIT' }, 1);
     });
 
     test('empty authorizations object does not create extra policies', () => {
@@ -1503,8 +1555,8 @@ describe('DataZone L3 Construct Tests', () => {
       new DataZoneL3Construct(stack, 'test', props);
       const template = Template.fromStack(stack);
 
-      // Only cfn-exec (1) + data-admin (2) + custom-resource-role-auth (1) = 4
-      template.resourceCountIs('AWS::DataZone::PolicyGrant', 5);
+      // Only cfn-exec (1) + data-admin (2) + custom-resource-role-auth (1) = 4 + 1 custom-resource-role-create-form-type + 1 custom-resource-role-create-glossary
+      template.resourceCountIs('AWS::DataZone::PolicyGrant', 6);
     });
 
     test('cdkRoleArn overrides the default cfn-exec role ARN in authorization policies', () => {
@@ -2312,8 +2364,8 @@ describe('DataZone L3 Construct Tests', () => {
       expect(template).toBeDefined();
 
       // Verify that authorization policies are created
-      // 2 from the domain unit policy + 2 from data-admin (2) root auths + 1 custom-resource-role-auth + 1 Tooling blueprint auth
-      template.resourceCountIs('AWS::DataZone::PolicyGrant', 7);
+      // 2 from the domain unit policy + 2 from data-admin (2) root auths + 1 custom-resource-role-auth + 1 Tooling blueprint auth + 1 custom-resource-role-create-form-type + 1 custom-resource-role-create-glossary
+      template.resourceCountIs('AWS::DataZone::PolicyGrant', 8);
       template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
         PolicyType: 'CREATE_PROJECT',
       });
@@ -2450,8 +2502,8 @@ describe('DataZone L3 Construct Tests', () => {
       expect(template).toBeDefined();
 
       // Verify that nested authorization policies are created
-      // 2 from the child domain unit policy + 2 from data-admin (2) root auths + 1 custom-resource-role-auth + 1 Tooling blueprint auth
-      template.resourceCountIs('AWS::DataZone::PolicyGrant', 7);
+      // 2 from the child domain unit policy + 2 from data-admin (2) root auths + 1 custom-resource-role-auth + 1 Tooling blueprint auth + 1 custom-resource-role-create-form-type + 1 custom-resource-role-create-glossary
+      template.resourceCountIs('AWS::DataZone::PolicyGrant', 8);
       template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
         PolicyType: 'CREATE_ASSET_TYPE',
       });
@@ -2574,8 +2626,8 @@ describe('DataZone L3 Construct Tests', () => {
 
       // Verify group profile and policy are created
       template.resourceCountIs('AWS::DataZone::GroupProfile', 1);
-      // 2 from the domain unit policy + 2 from data-admin (2) root auths + 1 custom-resource-role-auth + 1 Tooling blueprint auth
-      template.resourceCountIs('AWS::DataZone::PolicyGrant', 7);
+      // 2 from the domain unit policy + 2 from data-admin (2) root auths + 1 custom-resource-role-auth + 1 Tooling blueprint auth + 1 custom-resource-role-create-form-type + 1 custom-resource-role-create-glossary
+      template.resourceCountIs('AWS::DataZone::PolicyGrant', 8);
     });
 
     test('should create associated account CDK users and owners', () => {
@@ -2964,7 +3016,6 @@ describe('DataZone L3 Construct Tests', () => {
               projectCreators: { users: ['test-user'] },
               eligibleProjectMembers: { all: true },
               domainUnitCreators: { groups: ['test-group'] },
-              glossaryCreators: { users: ['test-user'] },
               environmentCreators: { groups: ['test-group'] },
             },
           },
@@ -2974,14 +3025,13 @@ describe('DataZone L3 Construct Tests', () => {
       new DataZoneL3Construct(stack, 'test', props);
       const template = Template.fromStack(stack);
 
-      // 5 from authorizations + 2 from data-admin (2) + 2 Tooling/DataLake blueprint auths + 1 custom-resource-role-auth
+      // 4 from authorizations + 2 from data-admin (2) + 2 Tooling/DataLake blueprint auths + 1 custom-resource-role-auth + 1 custom-resource-role-create-form-type + 1 custom-resource-role-create-glossary
       template.resourceCountIs('AWS::DataZone::PolicyGrant', 11);
       template.hasResourceProperties('AWS::DataZone::PolicyGrant', {
         PolicyType: 'CREATE_PROJECT_FROM_PROJECT_PROFILE',
       });
       template.hasResourceProperties('AWS::DataZone::PolicyGrant', { PolicyType: 'ADD_TO_PROJECT_MEMBER_POOL' });
       template.hasResourceProperties('AWS::DataZone::PolicyGrant', { PolicyType: 'CREATE_DOMAIN_UNIT' });
-      template.hasResourceProperties('AWS::DataZone::PolicyGrant', { PolicyType: 'CREATE_GLOSSARY' });
       template.hasResourceProperties('AWS::DataZone::PolicyGrant', { PolicyType: 'CREATE_ENVIRONMENT' });
     });
 
@@ -3038,8 +3088,8 @@ describe('DataZone L3 Construct Tests', () => {
       new DataZoneL3Construct(stack, 'test', props);
       const template = Template.fromStack(stack);
 
-      // data-admin (2) + Tooling/DataLake blueprint auths (2) + custom-resource-role-auth (1) = 5
-      template.resourceCountIs('AWS::DataZone::PolicyGrant', 6);
+      // data-admin (2) + Tooling/DataLake blueprint auths (2) + custom-resource-role-auth (1) = 5 + 1 custom-resource-role-create-form-type + 1 custom-resource-role-create-glossary
+      template.resourceCountIs('AWS::DataZone::PolicyGrant', 7);
     });
 
     test('AOSS encryption policy is pre-created with broad collection/bedrock-ide-* pattern and CMK', () => {

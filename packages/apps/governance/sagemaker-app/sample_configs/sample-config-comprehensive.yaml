@@ -206,13 +206,6 @@ domains:
       domainUnitCreators:
         users:
           - sso-user-name
-      # (Optional) Users/groups allowed to create glossaries
-      # (CREATE_GLOSSARY policy)
-      glossaryCreators:
-        users:
-          - sso-user-name
-        groups:
-          - test-sso-group1
       # (Optional) Users/groups allowed to create environments
       # (CREATE_ENVIRONMENT policy)
       environmentCreators:
@@ -265,11 +258,6 @@ domains:
           domainUnitCreators:
             users:
               - sso-user-name
-          # (Optional) Users/groups allowed to create glossaries
-          # (CREATE_GLOSSARY policy)
-          glossaryCreators:
-            groups:
-              - test-sso-group1
         # (Optional) Fine-grained authorization policies for this domain unit
         authorizationPolicies:
           # ── Policy: CREATE_DOMAIN_UNIT ──
@@ -291,17 +279,6 @@ domains:
               includeChildDomainUnits: true
               # (enum: CONTRIBUTOR | OWNER)
               projectDesignation: OWNER
-          # ── Policy: CREATE_GLOSSARY with user/group identifiers ──
-          create-glossary-policy:
-            policyType: 'CREATE_GLOSSARY'
-            principals:
-              - userIdentifier:
-                  name: sso-user-name
-                  identifier: sso-user-id
-              - groupIdentifier:
-                  name: test-sso-group1
-                  identifier: test-group-id
-            domainUnitId: test-domain-unit-id
           # ── Policy: CREATE_ENVIRONMENT ──
           create-environment-policy:
             policyType: 'CREATE_ENVIRONMENT'

@@ -35,6 +35,12 @@ create_form_type_src_path = os.path.join(
 tag_project_roles_src_path = os.path.join(
     os.path.dirname(__file__), '..', 'src', 'lambda', 'tag_project_roles'
 )
+create_glossary_src_path = os.path.join(
+    os.path.dirname(__file__), '..', 'src', 'lambda', 'create_glossary'
+)
+create_glossary_term_src_path = os.path.join(
+    os.path.dirname(__file__), '..', 'src', 'lambda', 'create_glossary_term'
+)
 sys.path.insert(0, check_user_profiles_src_path)
 sys.path.insert(0, create_project_membership_src_path)
 sys.path.insert(0, domain_config_src_path)
@@ -42,6 +48,8 @@ sys.path.insert(0, environment_blueprint_src_path)
 sys.path.insert(0, monitor_env_deployment_src_path)
 sys.path.insert(0, create_form_type_src_path)
 sys.path.insert(0, tag_project_roles_src_path)
+sys.path.insert(0, create_glossary_src_path)
+sys.path.insert(0, create_glossary_term_src_path)
 
 
 @pytest.fixture
@@ -75,6 +83,9 @@ def mock_datazone_client():
     client.exceptions = MagicMock()
     client.exceptions.ResourceNotFoundException = type(
         'ResourceNotFoundException', (Exception,), {}
+    )
+    client.exceptions.ConflictException = type(
+        'ConflictException', (Exception,), {}
     )
     return client
 

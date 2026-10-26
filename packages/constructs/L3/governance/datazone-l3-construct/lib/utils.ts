@@ -55,7 +55,6 @@ function identitiesToPrincipals(identities: AuthorizationIdentities): PolicyPrin
  * - projectCreators → CREATE_PROJECT (V1) or CREATE_PROJECT_FROM_PROJECT_PROFILE (V2)
  * - eligibleProjectMembers → ADD_TO_PROJECT_MEMBER_POOL policy
  * - domainUnitCreators → CREATE_DOMAIN_UNIT policy
- * - glossaryCreators → CREATE_GLOSSARY policy
  * - environmentCreators → CREATE_ENVIRONMENT policy
  *
  * Returns undefined when no authorizations produce any policies.
@@ -79,7 +78,6 @@ export function convertAuthorizationsToNamedPolicies(
       policyType: 'ADD_TO_PROJECT_MEMBER_POOL',
     },
     { field: 'domainUnitCreators', policyName: 'simple-create-domain-unit', policyType: 'CREATE_DOMAIN_UNIT' },
-    { field: 'glossaryCreators', policyName: 'simple-create-glossary', policyType: 'CREATE_GLOSSARY' },
     { field: 'environmentCreators', policyName: 'simple-create-environment', policyType: 'CREATE_ENVIRONMENT' },
   ];
 

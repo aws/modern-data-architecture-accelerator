@@ -24,16 +24,23 @@ describe('MDAA Compliance Stack Tests', () => {
           },
         },
       },
-      // Exercise the createMetadataForm / MdaaDatazoneFormType and createS3Connection /
-      // MdaaDatazoneS3Connection code paths under CDK Nag.
       projects: {
         'compliance-project': {
           profileName: 'compliance-profile',
+          glossaries: {
+            CustomerGlossary: {
+              description: 'Standard business terms',
+              terms: {
+                Segment: { shortDescription: 'Customer segment classification' },
+              },
+            },
+          },
           metadataForms: {
             CustomerForm: {
               description: 'Customer metadata',
               fields: {
                 customerName: { type: 'String', required: true, searchable: ['TECHNICAL'] },
+                customerSegment: { type: 'String', glossaryId: 'CustomerGlossary.Segment' },
               },
             },
           },

@@ -3533,162 +3533,6 @@
         }
       }
     },
-    "datazonetestdomaindomainrootauthorizationpoliciespolicygrantsimplecreateglossaryssousername7DD12FC0": {
-      "Type": "AWS::DataZone::PolicyGrant",
-      "Properties": {
-        "Detail": {
-          "CreateGlossary": {
-            "IncludeChildDomainUnits": true
-          }
-        },
-        "DomainIdentifier": {
-          "Fn::GetAtt": [
-            "datazonetestdomaindomain4A18F0C4",
-            "Id"
-          ]
-        },
-        "EntityIdentifier": {
-          "Fn::GetAtt": [
-            "datazonetestdomaindomain4A18F0C4",
-            "RootDomainUnitId"
-          ]
-        },
-        "EntityType": "DOMAIN_UNIT",
-        "PolicyType": "CREATE_GLOSSARY",
-        "Principal": {
-          "User": {
-            "UserIdentifier": "sso-user-id"
-          }
-        }
-      },
-      "Metadata": {
-        "PolicyType": "CREATE_GLOSSARY",
-        "PolicyName": "simple-create-glossary",
-        "PrincipalName": "sso-user-name",
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment.",
-              "id": "AwsSolutions-L1"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment.",
-              "id": "NIST.800.53.R5-LambdaConcurrency"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
-              "id": "NIST.800.53.R5-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
-              "id": "NIST.800.53.R5-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment.",
-              "id": "HIPAA.Security-LambdaConcurrency"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment.",
-              "id": "PCI.DSS.321-LambdaConcurrency"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
-              "id": "HIPAA.Security-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
-              "id": "PCI.DSS.321-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
-              "id": "HIPAA.Security-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
-              "id": "PCI.DSS.321-LambdaDLQ"
-            }
-          ]
-        }
-      }
-    },
-    "datazonetestdomaindomainrootauthorizationpoliciespolicygrantsimplecreateglossarytestssogroup1087CEDFF": {
-      "Type": "AWS::DataZone::PolicyGrant",
-      "Properties": {
-        "Detail": {
-          "CreateGlossary": {
-            "IncludeChildDomainUnits": true
-          }
-        },
-        "DomainIdentifier": {
-          "Fn::GetAtt": [
-            "datazonetestdomaindomain4A18F0C4",
-            "Id"
-          ]
-        },
-        "EntityIdentifier": {
-          "Fn::GetAtt": [
-            "datazonetestdomaindomain4A18F0C4",
-            "RootDomainUnitId"
-          ]
-        },
-        "EntityType": "DOMAIN_UNIT",
-        "PolicyType": "CREATE_GLOSSARY",
-        "Principal": {
-          "Group": {
-            "GroupIdentifier": "test"
-          }
-        }
-      },
-      "Metadata": {
-        "PolicyType": "CREATE_GLOSSARY",
-        "PolicyName": "simple-create-glossary",
-        "PrincipalName": "test-sso-group1",
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment.",
-              "id": "AwsSolutions-L1"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment.",
-              "id": "NIST.800.53.R5-LambdaConcurrency"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
-              "id": "NIST.800.53.R5-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
-              "id": "NIST.800.53.R5-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment.",
-              "id": "HIPAA.Security-LambdaConcurrency"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment.",
-              "id": "PCI.DSS.321-LambdaConcurrency"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
-              "id": "HIPAA.Security-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
-              "id": "PCI.DSS.321-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
-              "id": "HIPAA.Security-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
-              "id": "PCI.DSS.321-LambdaDLQ"
-            }
-          ]
-        }
-      }
-    },
     "datazonetestdomaindomainrootauthorizationpoliciespolicygrantsimplecreateenvironmenttestssogroup14E2785FA": {
       "Type": "AWS::DataZone::PolicyGrant",
       "Properties": {
@@ -6121,84 +5965,6 @@
         }
       }
     },
-    "datazonetestdomaindomaindomainunittestunit1authorizationpoliciespolicygrantsimplecreateglossarytestssogroup1846637B1": {
-      "Type": "AWS::DataZone::PolicyGrant",
-      "Properties": {
-        "Detail": {
-          "CreateGlossary": {
-            "IncludeChildDomainUnits": true
-          }
-        },
-        "DomainIdentifier": {
-          "Fn::GetAtt": [
-            "datazonetestdomaindomain4A18F0C4",
-            "Id"
-          ]
-        },
-        "EntityIdentifier": {
-          "Fn::GetAtt": [
-            "datazonetestdomaindomaindomainunittestunit1domainunit7D6301BF",
-            "Id"
-          ]
-        },
-        "EntityType": "DOMAIN_UNIT",
-        "PolicyType": "CREATE_GLOSSARY",
-        "Principal": {
-          "Group": {
-            "GroupIdentifier": "test"
-          }
-        }
-      },
-      "Metadata": {
-        "PolicyType": "CREATE_GLOSSARY",
-        "PolicyName": "simple-create-glossary",
-        "PrincipalName": "test-sso-group1",
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment.",
-              "id": "AwsSolutions-L1"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment.",
-              "id": "NIST.800.53.R5-LambdaConcurrency"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
-              "id": "NIST.800.53.R5-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
-              "id": "NIST.800.53.R5-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment.",
-              "id": "HIPAA.Security-LambdaConcurrency"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment.",
-              "id": "PCI.DSS.321-LambdaConcurrency"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
-              "id": "HIPAA.Security-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
-              "id": "PCI.DSS.321-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
-              "id": "HIPAA.Security-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
-              "id": "PCI.DSS.321-LambdaDLQ"
-            }
-          ]
-        }
-      }
-    },
     "datazonetestdomaindomaindomainunittestunit1authorizationpoliciespolicygrantcreatedomainunitpolicyssousernameD1AC52BF": {
       "Type": "AWS::DataZone::PolicyGrant",
       "Properties": {
@@ -6545,162 +6311,6 @@
         "PolicyType": "CREATE_PROJECT",
         "PolicyName": "create-project-policy",
         "PrincipalName": "all-users",
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment.",
-              "id": "AwsSolutions-L1"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment.",
-              "id": "NIST.800.53.R5-LambdaConcurrency"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
-              "id": "NIST.800.53.R5-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
-              "id": "NIST.800.53.R5-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment.",
-              "id": "HIPAA.Security-LambdaConcurrency"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment.",
-              "id": "PCI.DSS.321-LambdaConcurrency"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
-              "id": "HIPAA.Security-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
-              "id": "PCI.DSS.321-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
-              "id": "HIPAA.Security-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
-              "id": "PCI.DSS.321-LambdaDLQ"
-            }
-          ]
-        }
-      }
-    },
-    "datazonetestdomaindomaindomainunittestunit1authorizationpoliciespolicygrantcreateglossarypolicyssousernameF7FD9741": {
-      "Type": "AWS::DataZone::PolicyGrant",
-      "Properties": {
-        "Detail": {
-          "CreateGlossary": {
-            "IncludeChildDomainUnits": false
-          }
-        },
-        "DomainIdentifier": {
-          "Fn::GetAtt": [
-            "datazonetestdomaindomain4A18F0C4",
-            "Id"
-          ]
-        },
-        "EntityIdentifier": {
-          "Fn::GetAtt": [
-            "datazonetestdomaindomaindomainunittestunit1domainunit7D6301BF",
-            "Id"
-          ]
-        },
-        "EntityType": "DOMAIN_UNIT",
-        "PolicyType": "CREATE_GLOSSARY",
-        "Principal": {
-          "User": {
-            "UserIdentifier": "sso-user-id"
-          }
-        }
-      },
-      "Metadata": {
-        "PolicyType": "CREATE_GLOSSARY",
-        "PolicyName": "create-glossary-policy",
-        "PrincipalName": "sso-user-name",
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment.",
-              "id": "AwsSolutions-L1"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment.",
-              "id": "NIST.800.53.R5-LambdaConcurrency"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
-              "id": "NIST.800.53.R5-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
-              "id": "NIST.800.53.R5-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment.",
-              "id": "HIPAA.Security-LambdaConcurrency"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment.",
-              "id": "PCI.DSS.321-LambdaConcurrency"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
-              "id": "HIPAA.Security-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment and interacts only with S3.",
-              "id": "PCI.DSS.321-LambdaInsideVPC"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
-              "id": "HIPAA.Security-LambdaDLQ"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/datazone-constructs/lib/custom-blueprint.ts] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
-              "id": "PCI.DSS.321-LambdaDLQ"
-            }
-          ]
-        }
-      }
-    },
-    "datazonetestdomaindomaindomainunittestunit1authorizationpoliciespolicygrantcreateglossarypolicytestssogroup143D77FAE": {
-      "Type": "AWS::DataZone::PolicyGrant",
-      "Properties": {
-        "Detail": {
-          "CreateGlossary": {
-            "IncludeChildDomainUnits": false
-          }
-        },
-        "DomainIdentifier": {
-          "Fn::GetAtt": [
-            "datazonetestdomaindomain4A18F0C4",
-            "Id"
-          ]
-        },
-        "EntityIdentifier": {
-          "Fn::GetAtt": [
-            "datazonetestdomaindomaindomainunittestunit1domainunit7D6301BF",
-            "Id"
-          ]
-        },
-        "EntityType": "DOMAIN_UNIT",
-        "PolicyType": "CREATE_GLOSSARY",
-        "Principal": {
-          "Group": {
-            "GroupIdentifier": "test-group-id"
-          }
-        }
-      },
-      "Metadata": {
-        "PolicyType": "CREATE_GLOSSARY",
-        "PolicyName": "create-glossary-policy",
-        "PrincipalName": "test-sso-group1",
         "cdk_nag": {
           "rules_to_suppress": [
             {
@@ -8757,6 +8367,20 @@
               "Resource": "*"
             },
             {
+              "Action": [
+                "datazone:CreateGlossary",
+                "datazone:UpdateGlossary",
+                "datazone:DeleteGlossary",
+                "datazone:GetGlossary",
+                "datazone:CreateGlossaryTerm",
+                "datazone:UpdateGlossaryTerm",
+                "datazone:DeleteGlossaryTerm",
+                "datazone:GetGlossaryTerm"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
               "Action": "iam:GetRole",
               "Condition": {
                 "Bool": {
@@ -8793,7 +8417,7 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] datazone:Get*/List* do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html). The form type management actions (CreateFormType, DeleteFormType, GetFormType) also do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html; none carries a Resources entry in the machine-readable Service Reference for DataZone: https://servicereference.us-east-1.amazonaws.com/v1/datazone/datazone.json). iam:GetRole does not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html) and is further scoped via aws:ViaAWSService condition.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/private/common-domain-helper.ts] datazone:Get*/List* do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html). The form type and glossary/glossary-term management actions (CreateFormType, DeleteFormType, GetFormType, CreateGlossary, UpdateGlossary, DeleteGlossary, GetGlossary, CreateGlossaryTerm, UpdateGlossaryTerm, DeleteGlossaryTerm, GetGlossaryTerm) also do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html; none carries a Resources entry in the machine-readable Service Reference for DataZone: https://servicereference.us-east-1.amazonaws.com/v1/datazone/datazone.json). iam:GetRole does not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_iam.html) and is further scoped via aws:ViaAWSService condition.",
               "id": "AwsSolutions-IAM5"
             }
           ]
@@ -8954,6 +8578,51 @@
       "Metadata": {
         "PolicyType": "CREATE_FORM_TYPE",
         "PolicyName": "custom-resource-role-create-form-type",
+        "PrincipalName": "project"
+      }
+    },
+    "datazonetestdomaindomaincustomresourcerolecreateglossarypolicygrantcustomresourcerolecreateglossaryA7776E40": {
+      "Type": "AWS::DataZone::PolicyGrant",
+      "Properties": {
+        "Detail": {
+          "CreateGlossary": {
+            "IncludeChildDomainUnits": true
+          }
+        },
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomain4A18F0C4",
+            "Id"
+          ]
+        },
+        "EntityIdentifier": {
+          "Fn::GetAtt": [
+            "datazonetestdomaindomain4A18F0C4",
+            "RootDomainUnitId"
+          ]
+        },
+        "EntityType": "DOMAIN_UNIT",
+        "PolicyType": "CREATE_GLOSSARY",
+        "Principal": {
+          "Project": {
+            "ProjectDesignation": "OWNER",
+            "ProjectGrantFilter": {
+              "DomainUnitFilter": {
+                "DomainUnit": {
+                  "Fn::GetAtt": [
+                    "datazonetestdomaindomain4A18F0C4",
+                    "RootDomainUnitId"
+                  ]
+                },
+                "IncludeChildDomainUnits": true
+              }
+            }
+          }
+        }
+      },
+      "Metadata": {
+        "PolicyType": "CREATE_GLOSSARY",
+        "PolicyName": "custom-resource-role-create-glossary",
         "PrincipalName": "project"
       }
     },
