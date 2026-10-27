@@ -308,6 +308,26 @@ feature_validate_dependencies:
   script:
     - ./scripts/quality/validate_dependencies.sh
 
+# Build and test installer/, which is outside the nx graph so feature_merge_build_test skips it.
+# Same script as step 7 of validate_release_commit.sh, so installer failures surface on the MR
+# instead of at release.
+feature_merge_installer_test:
+  extends:
+    - .size_medium
+    - .retry_on_infra_failure
+  interruptible: true
+  tags:
+    - arch:amd64
+  only:
+    - merge_requests
+  stage: build
+  dependencies: []
+  needs:
+    - feature_merge_base_image
+  allow_failure: false
+  script:
+    - ./scripts/test/test_installer.sh
+
 # Build and run TypeScript/JavaScript tests
 feature_merge_build_test:
   extends:

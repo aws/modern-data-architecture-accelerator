@@ -537,6 +537,7 @@ The CI pipeline runs tests at multiple stages:
 | prebuild | `feature_merge_lint_python`  | Ruff on Python tools |
 | prebuild | `feature_validate_packages`  | Package structure validation |
 | build    | `feature_merge_build_test`   | Build + unit tests + diff tests (incl. CLI command baselines) with coverage |
+| build    | `feature_merge_installer_test` | Installer `npm ci` + build + tests (`installer/` is outside the Nx graph) |
 | test     | `feature_merge_python_test`  | Python tests (reuses build cache) |
 | test     | `feature_merge_starter_kit_generate` | Generates a child pipeline with one job per starter kit |
 | test     | `sk_{kit}` (child pipeline)  | Per-kit CLI command baseline + affected module synth baselines |

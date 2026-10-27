@@ -190,16 +190,11 @@ echo "--- Removing any pre-existing node_modules and nx state for a clean instal
 find . -name node_modules -type d -prune -exec rm -rf {} +
 rm -rf .nx
 
-# 7. installer/ is outside the workspaces and the nx graph, so no other job builds or tests it
-#    before the publish. Its jest snapshot pins the release/v<version> branch default derived
-#    from the root package.json, which is how a missed bump surfaces here.
+# 7. installer/ is outside the workspaces and the nx graph, so build:all/test:all skip it. Its
+#    jest snapshot pins the release/v<version> branch default derived from the root
+#    package.json, which is how a missed bump surfaces here.
 echo "--- Validating the installer (strict npm ci, build, test) ---"
-(
-  cd installer
-  npm ci
-  npm run build
-  npm test
-)
+./scripts/test/test_installer.sh
 
 # 8. `npm ci` fails, unlike `npm install`, when package.json and the lockfile disagree.
 echo "--- Running strict npm ci from the committed package-lock.json ---"
