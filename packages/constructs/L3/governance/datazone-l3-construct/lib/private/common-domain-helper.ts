@@ -120,7 +120,7 @@ export class CommonDomainHelper {
       // Stable, name-derived ordering so reordering the config is a no-op.
       group.sort((a, b) => a.node.id.localeCompare(b.node.id));
       for (let i = 1; i < group.length; i++) {
-        group[i].addDependency(group[i - 1]);
+        group[i].addResourceDependency(group[i - 1]);
       }
     }
   }

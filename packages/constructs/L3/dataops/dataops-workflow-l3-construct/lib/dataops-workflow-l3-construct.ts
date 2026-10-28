@@ -206,12 +206,12 @@ export class GlueWorkflowL3Construct extends MdaaL3Construct {
       if (trigger.type == 'SCHEDULED') {
         trigger.schedule = triggerDetails.Schedule as string;
       }
-      trigger.addDependency(workflow);
+      trigger.addResourceDependency(workflow);
 
       // Force sequential deployment of Triggers by workflow, otherwise large number
       // of triggers on a single workflow will cause ConcurrentModificationExceptions.
       if (previousTriggers[workflowName]) {
-        trigger.addDependency(previousTriggers[workflowName]);
+        trigger.addResourceDependency(previousTriggers[workflowName]);
       }
       previousTriggers[workflowName] = trigger;
     });

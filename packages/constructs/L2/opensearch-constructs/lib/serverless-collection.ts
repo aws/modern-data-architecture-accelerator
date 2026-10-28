@@ -188,10 +188,10 @@ export class MdaaOpensearchServerlessCollection extends Construct {
       type: props.collectionType,
     });
 
-    this.collection.addDependency(encryptionPolicy);
-    this.collection.addDependency(networkPolicy);
+    this.collection.addResourceDependency(encryptionPolicy);
+    this.collection.addResourceDependency(networkPolicy);
     if (dataAccessPolicy) {
-      this.collection.addDependency(dataAccessPolicy);
+      this.collection.addResourceDependency(dataAccessPolicy);
     }
 
     new MdaaParamAndOutput(this, {

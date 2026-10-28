@@ -333,7 +333,7 @@ export class LakeFormationAccessControlL3Construct extends MdaaL3Construct {
               permissionsWithGrantOption: [],
             },
           );
-          crossAccountResourceLinkGrant.addDependency(createdResourceLinkDatabase);
+          crossAccountResourceLinkGrant.addResourceDependency(createdResourceLinkDatabase);
           this.addToAccountGrants(
             fromAccount,
             crossAccountResourceLinkGrant,
@@ -348,9 +348,9 @@ export class LakeFormationAccessControlL3Construct extends MdaaL3Construct {
   //This ensures that each grant is deployed in sequence, avoiding LF API rate limits.
   private addToAccountGrants(account: string, grant: CfnPrincipalPermissions, externalDependency?: CfnDatabase) {
     if (this.accountGrants[account]) {
-      grant.addDependency(this.accountGrants[account]);
+      grant.addResourceDependency(this.accountGrants[account]);
     } else if (externalDependency) {
-      grant.addDependency(externalDependency);
+      grant.addResourceDependency(externalDependency);
     }
     this.accountGrants[account] = grant;
   }

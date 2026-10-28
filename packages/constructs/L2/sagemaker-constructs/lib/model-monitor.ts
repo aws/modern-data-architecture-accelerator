@@ -198,7 +198,7 @@ export class MdaaModelMonitor extends Construct {
         },
       },
     });
-    schedule.addDependency(jobDefinition);
+    schedule.addResourceDependency(jobDefinition);
 
     new MdaaParamAndOutput(
       this,

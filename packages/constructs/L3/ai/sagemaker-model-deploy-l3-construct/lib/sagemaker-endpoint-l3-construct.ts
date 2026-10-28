@@ -277,7 +277,7 @@ export class SageMakerEndpointL3Construct extends MdaaL3Construct {
         },
       ],
     });
-    this.endpointConfig.addDependency(this.model);
+    this.endpointConfig.addResourceDependency(this.model);
 
     // Ensure IAM policies are created before SageMaker validates model S3 access.
     // Without this, CloudFormation may create the CfnModel before the managed policy
@@ -292,7 +292,7 @@ export class SageMakerEndpointL3Construct extends MdaaL3Construct {
       endpointConfigName: this.endpointConfig.attrEndpointConfigName,
       endpointName,
     });
-    this.endpoint.addDependency(this.endpointConfig);
+    this.endpoint.addResourceDependency(this.endpointConfig);
 
     // CDK Nag suppressions
     MdaaNagSuppressions.addCodeResourceSuppressions(

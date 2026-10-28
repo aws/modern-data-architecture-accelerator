@@ -186,7 +186,7 @@ export class BedrockAgentL3Construct extends MdaaL3Construct {
     });
 
     // Ensure the agent is created only after the managed policy is fully deployed
-    agent.addDependency(agentManagedPolicy.node.defaultChild as CfnResource);
+    agent.addResourceDependency(agentManagedPolicy.node.defaultChild as CfnResource);
 
     new MdaaParamAndOutput(this, {
       ...this.props,

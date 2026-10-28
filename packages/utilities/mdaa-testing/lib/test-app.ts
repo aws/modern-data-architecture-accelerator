@@ -30,6 +30,9 @@ export class MdaaTestApp extends App {
       context: MdaaTestApp.createContext(testContext),
     });
 
+    // Match MdaaCdkApp: CDK's built-in template validation stays disabled until its findings are triaged.
+    process.env.CDK_VALIDATION ??= 'false';
+
     Aspects.of(this).add(new AwsSolutionsChecks({ verbose: true, logIgnores: false }));
     Aspects.of(this).add(new NIST80053R5Checks({ verbose: true, logIgnores: false }));
     Aspects.of(this).add(new HIPAASecurityChecks({ verbose: true, logIgnores: false }));

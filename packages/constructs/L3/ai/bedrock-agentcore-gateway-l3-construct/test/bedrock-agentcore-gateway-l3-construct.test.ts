@@ -748,7 +748,7 @@ describe('BedrockAgentcoreGatewayL3Construct', () => {
 
     test('delivery is ordered after the delivery source via an explicit DependsOn', () => {
       // CfnDelivery references the source by NAME (a string), not by resource, so CDK adds no implicit
-      // ordering — the construct wires delivery.addDependency(deliverySource) explicitly. Pin that so
+      // ordering — the construct wires delivery.addResourceDependency(deliverySource) explicitly. Pin that so
       // a regression dropping it (letting CloudFormation create the delivery before its source) is caught.
       new BedrockAgentcoreGatewayL3Construct(testApp.testStack, 'gw', baseProps(testApp, roleHelper));
       const template = Template.fromStack(testApp.testStack);

@@ -1418,13 +1418,13 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
 
     // Add CloudFormation-level dependency on VPC endpoint resource if available to ensure the endpoint
     // is fully operational before the custom resource Lambda tries to access the OpenSearch collection.
-    // Using CfnResource.addDependency() ensures the dependency appears in the CloudFormation template's
+    // Using CfnResource.addResourceDependency() ensures the dependency appears in the CloudFormation template's
     // DependsOn clause, not just in the CDK construct tree.
     const vectorStoreConfig = this.props.vectorStoreConfig as OpensearchServerlessProps;
     const sharedVpcEndpoint = this.props.sharedVpcEndpoints?.[vectorStoreConfig.vpcId];
     if (sharedVpcEndpoint?.vpcEndpointResource) {
       const cfnCustomResource = createVectorIndex.node.defaultChild as CfnResource;
-      cfnCustomResource.addDependency(sharedVpcEndpoint.vpcEndpointResource);
+      cfnCustomResource.addResourceDependency(sharedVpcEndpoint.vpcEndpointResource);
     }
 
     return createVectorIndex;

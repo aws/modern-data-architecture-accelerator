@@ -185,7 +185,7 @@ export class DataBrewL3Construct extends MdaaL3Construct {
       const job = this.createJob(jobName, roleName, jobProps);
 
       if (jobProps.schedule) {
-        this.createSchedule([job.name], jobProps.schedule).addDependency(job);
+        this.createSchedule([job.name], jobProps.schedule).addResourceDependency(job);
       }
     });
   }
@@ -218,7 +218,7 @@ export class DataBrewL3Construct extends MdaaL3Construct {
     const job = new MdaaDataBrewJob(this, jobName, props);
 
     // put dependecy on project if it is project based job
-    if (project) job.addDependency(project);
+    if (project) job.addResourceDependency(project);
 
     // put depdency on dataset and recipes if not project based
     if (!project) this.addDependency(params, job);
@@ -228,11 +228,11 @@ export class DataBrewL3Construct extends MdaaL3Construct {
   private addDependency(params: DataBrewJobProps, dependent: CfnJob | CfnProject) {
     if (params.dataset?.generated) {
       const defaultDataset: MdaaDataBrewDataset = this.datasets.get(params.dataset.generated);
-      dependent.addDependency(defaultDataset);
+      dependent.addResourceDependency(defaultDataset);
     }
     if (params.recipe?.generated) {
       const defaultRecipe: MdaaDataBrewRecipe = this.recipes.get(params.recipe.generated);
-      dependent.addDependency(defaultRecipe);
+      dependent.addResourceDependency(defaultRecipe);
     }
   }
 

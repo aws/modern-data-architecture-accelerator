@@ -118,7 +118,7 @@ describe('createMdaaVendedLogDelivery', () => {
 
   test('orders the delivery after the delivery source via an explicit DependsOn', () => {
     // CfnDelivery references the source by NAME (a string), not by resource, so CDK adds no implicit
-    // ordering — the helper wires delivery.addDependency(deliverySource). Pin that so a regression
+    // ordering — the helper wires delivery.addResourceDependency(deliverySource). Pin that so a regression
     // dropping it (letting CloudFormation create the delivery before its source) is caught.
     const key = new Key(testApp.testStack, 'Key');
     createMdaaVendedLogDelivery(testApp.testStack, {

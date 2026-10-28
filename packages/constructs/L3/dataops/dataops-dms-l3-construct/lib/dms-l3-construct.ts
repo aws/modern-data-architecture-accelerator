@@ -419,7 +419,7 @@ export class DMSL3Construct extends MdaaL3Construct {
       };
       const task = new CfnReplicationTask(this, `replication-task-${taskName}`, cfnTaskProps);
       if (logRole) {
-        task.addDependency(logRole);
+        task.addResourceDependency(logRole);
       }
     });
   }
@@ -571,7 +571,7 @@ export class DMSL3Construct extends MdaaL3Construct {
           subnetGroupProps,
         );
         if (vpcDmsRole) {
-          subnetGroup.addDependency(vpcDmsRole);
+          subnetGroup.addResourceDependency(vpcDmsRole);
         }
 
         const vpc = Vpc.fromVpcAttributes(this, 'vpc of' + instanceName, {
@@ -611,7 +611,7 @@ export class DMSL3Construct extends MdaaL3Construct {
           `replication-instance-${instanceName}`,
           constructProps,
         );
-        replicationInstance.addDependency(subnetGroup);
+        replicationInstance.addResourceDependency(subnetGroup);
         return [instanceName, replicationInstance];
       }),
     );

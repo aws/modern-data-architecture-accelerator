@@ -34,6 +34,7 @@
 ### General Changes
 
 - Updated dependencies to address CVEs (`js-yaml`, `axios`, `smol-toml`, `nx`, `@xmldom/xmldom`, `browserslist`, `baseline-browser-mapping`, `markdown-it`, `linkify-it`, `brace-expansion`, `stream-json`, `@babel/core`)
+- Updated `aws-cdk-lib` to 2.263.0. CDK's new built-in CloudFormation template validation is disabled by default in MDAA apps; set `CDK_VALIDATION=true` to enable it.
 - Added an `!includeYaml` tag for module config files that parses a referenced YAML file and splices it into the config tree. See [Including Other Files](CONFIGURATION.md#including-other-files).
 
 ## [1.9.0] - 2026-10-01

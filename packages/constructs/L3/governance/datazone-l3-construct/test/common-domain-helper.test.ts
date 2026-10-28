@@ -97,7 +97,7 @@ describe('CommonDomainHelper.chainOwnersSequentially', () => {
     const owner2 = makeOwner(stack, 'Owner2', 'user2');
     // Pre-existing dependency that is NOT part of the chain
     const unrelated = makeOwner(stack, 'Unrelated', 'userX');
-    owner2.addDependency(unrelated);
+    owner2.addResourceDependency(unrelated);
 
     CommonDomainHelper.chainOwnersSequentially([owner1, owner2]);
 

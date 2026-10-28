@@ -167,6 +167,97 @@
             },
             "type": "object"
         },
+        "CfnAutoScalingInstanceRefresh": {
+            "additionalProperties": false,
+            "description": "To specify how AWS CloudFormation handles instance refresh for an Auto Scaling group, use the\nAutoScalingInstanceRefresh update policy. When properties that trigger an instance refresh change\n(such as LaunchTemplate or MixedInstancesPolicy), CloudFormation starts an instance refresh to\nreplace instances gradually.\n\nThis policy is mutually exclusive with AutoScalingRollingUpdate.",
+            "properties": {
+                "preferences": {
+                    "$ref": "#/definitions/CfnAutoScalingInstanceRefreshPreferences",
+                    "description": "The preferences for the instance refresh."
+                },
+                "strategy": {
+                    "description": "The strategy to use for the instance refresh.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "strategy"
+            ],
+            "type": "object"
+        },
+        "CfnAutoScalingInstanceRefreshAlarmSpecification": {
+            "additionalProperties": false,
+            "description": "Alarm specification for the AutoScalingInstanceRefresh update policy.",
+            "properties": {
+                "alarms": {
+                    "description": "The names of the CloudWatch alarms to monitor.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "CfnAutoScalingInstanceRefreshPreferences": {
+            "additionalProperties": false,
+            "description": "Preferences for the AutoScalingInstanceRefresh update policy.",
+            "properties": {
+                "alarmSpecification": {
+                    "$ref": "#/definitions/CfnAutoScalingInstanceRefreshAlarmSpecification",
+                    "description": "The CloudWatch alarms to monitor during the instance refresh. If any alarm goes into\nALARM state, the instance refresh fails."
+                },
+                "bakeTime": {
+                    "default": 0,
+                    "description": "The number of seconds after an instance refresh completes successfully before\nCloudFormation considers the update successful.",
+                    "type": "number"
+                },
+                "checkpointDelay": {
+                    "default": "- 3600 seconds (1 hour), applied only when checkpointPercentages is set",
+                    "description": "The number of seconds to wait after a checkpoint is reached before continuing.",
+                    "type": "number"
+                },
+                "checkpointPercentages": {
+                    "default": "- no checkpoints",
+                    "description": "Threshold values for each checkpoint in ascending order. Each number is a percentage of\nthe total number of instances in the group. When the percentage of instances that have\nbeen replaced reaches a checkpoint, the refresh waits for the configured checkpoint delay\nbefore continuing.",
+                    "items": {
+                        "type": "number"
+                    },
+                    "type": "array"
+                },
+                "instanceWarmup": {
+                    "default": "- the group's DefaultInstanceWarmup if defined; otherwise the group's HealthCheckGracePeriod",
+                    "description": "The number of seconds to wait after a new instance enters the InService state before\nmoving on to replacing the next instance.",
+                    "type": "number"
+                },
+                "maxHealthyPercentage": {
+                    "default": "- the value set in the Auto Scaling group's instance maintenance policy, if defined; otherwise 110 when the strategy is Rolling, or 100 when the strategy is ReplaceRootVolume",
+                    "description": "The maximum percentage of the group that can be in service and healthy, or pending,\nto support your workload during the instance refresh. Used to control batch size.",
+                    "type": "number"
+                },
+                "minHealthyPercentage": {
+                    "default": "- the value set in the Auto Scaling group's instance maintenance policy, if defined; otherwise 100 when the strategy is Rolling, or 90 when the strategy is ReplaceRootVolume",
+                    "description": "The minimum percentage of the group to keep in service, healthy, and ready to use\nto support your workload during the instance refresh.",
+                    "type": "number"
+                },
+                "scaleInProtectedInstances": {
+                    "default": "'Wait'",
+                    "description": "Specifies the behavior of instances that are protected from scale in during an instance refresh.",
+                    "type": "string"
+                },
+                "skipMatching": {
+                    "default": true,
+                    "description": "Indicates whether skip matching is enabled. If true, instances that already match the\ndesired configuration are not replaced.",
+                    "type": "boolean"
+                },
+                "standbyInstances": {
+                    "default": "'Wait'",
+                    "description": "Specifies the behavior of instances in standby during an instance refresh.",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
         "CfnAutoScalingReplacingUpdate": {
             "additionalProperties": false,
             "description": "Specifies whether an Auto Scaling group and the instances it contains are replaced during an update. During replacement,\nAWS CloudFormation retains the old group until it finishes creating the new one. If the update fails, AWS CloudFormation\ncan roll back to the old Auto Scaling group and delete the new Auto Scaling group.\n\nWhile AWS CloudFormation creates the new group, it doesn't detach or attach any instances. After successfully creating\nthe new Auto Scaling group, AWS CloudFormation deletes the old Auto Scaling group during the cleanup process.\n\nWhen you set the WillReplace parameter, remember to specify a matching CreationPolicy. If the minimum number of\ninstances (specified by the MinSuccessfulInstancesPercent property) don't signal success within the Timeout period\n(specified in the CreationPolicy policy), the replacement update fails and AWS CloudFormation rolls back to the old\nAuto Scaling group.",
@@ -517,6 +608,10 @@
             "additionalProperties": false,
             "description": "Use the UpdatePolicy attribute to specify how AWS CloudFormation handles updates to the AWS::AutoScaling::AutoScalingGroup\nresource. AWS CloudFormation invokes one of three update policies depending on the type of change you make or whether a\nscheduled action is associated with the Auto Scaling group.",
             "properties": {
+                "autoScalingInstanceRefresh": {
+                    "$ref": "#/definitions/CfnAutoScalingInstanceRefresh",
+                    "description": "To specify how AWS CloudFormation handles instance refresh for an Auto Scaling group, use the\nAutoScalingInstanceRefresh policy. This policy triggers an instance refresh when certain properties\nof the Auto Scaling group change (such as launch template or mixed instances policy), replacing\ninstances gradually while maintaining availability."
+                },
                 "autoScalingReplacingUpdate": {
                     "$ref": "#/definitions/CfnAutoScalingReplacingUpdate",
                     "description": "Specifies whether an Auto Scaling group and the instances it contains are replaced during an update. During replacement,\nAWS CloudFormation retains the old group until it finishes creating the new one. If the update fails, AWS CloudFormation\ncan roll back to the old Auto Scaling group and delete the new Auto Scaling group."

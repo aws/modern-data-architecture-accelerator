@@ -114,6 +114,10 @@ export abstract class MdaaCdkApp extends App {
   constructor(props: MdaaAppProps, packageNameVersion?: MdaaPackageMetadata) {
     super(props);
 
+    // Disable CDK's built-in CloudFormation template validation (aws-cdk-lib >= 2.262) until its findings are triaged.
+    // Set CDK_VALIDATION=true to opt in.
+    process.env.CDK_VALIDATION ??= 'false';
+
     this.node.setContext('aws-cdk:enableDiffNoFail', true);
     this.node.setContext('@aws-cdk/core:enablePartitionLiterals', true);
 
@@ -219,7 +223,7 @@ export abstract class MdaaCdkApp extends App {
         };
         const additionalAccountStack = new Stack(this, stackName, stackProps);
         if (addDependencyMainStack) {
-          additionalAccountStack.addDependency(this.stack);
+          additionalAccountStack.addStackDependency(this.stack);
         }
         return [account, Object.fromEntries([[region, additionalAccountStack]])];
       }) || [],

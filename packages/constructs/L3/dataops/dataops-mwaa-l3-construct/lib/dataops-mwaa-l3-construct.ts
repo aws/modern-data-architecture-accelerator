@@ -449,7 +449,7 @@ export class DataopsMwaaL3Construct extends MdaaL3Construct {
     for (const [envName, envProps] of Object.entries(props.environments)) {
       const mwaaEnv = this.createMwaaEnvironment(envName, envProps);
       if (previousEnvironment) {
-        mwaaEnv.environment.addDependency(previousEnvironment.environment);
+        mwaaEnv.environment.addResourceDependency(previousEnvironment.environment);
       }
       this.mwaaEnvironments[envName] = mwaaEnv;
       previousEnvironment = mwaaEnv;

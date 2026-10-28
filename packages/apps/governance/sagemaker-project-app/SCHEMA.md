@@ -1843,16 +1843,230 @@ using construct.addMetadata(), but would not appear in the CloudFormation templa
 resource. AWS CloudFormation invokes one of three update policies depending on the type of change you make or whether a
 scheduled action is associated with the Auto Scaling group.
 
-| Property                                                                                                                                                                                       | Pattern | Type    | Deprecated | Definition                                      | Title/Description                                                                                                                                                                                                                                                                                                                              |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [autoScalingReplacingUpdate](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingReplacingUpdate )   | No      | object  | No         | In #/definitions/CfnAutoScalingReplacingUpdate  | Specifies whether an Auto Scaling group and the instances it contains are replaced during an update. During replacement,<br />AWS CloudFormation retains the old group until it finishes creating the new one. If the update fails, AWS CloudFormation<br />can roll back to the old Auto Scaling group and delete the new Auto Scaling group. |
-| - [autoScalingRollingUpdate](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingRollingUpdate )       | No      | object  | No         | In #/definitions/CfnAutoScalingRollingUpdate    | To specify how AWS CloudFormation handles rolling updates for an Auto Scaling group, use the AutoScalingRollingUpdate<br />policy. Rolling updates enable you to specify whether AWS CloudFormation updates instances that are in an Auto Scaling<br />group in batches or all at once.                                                        |
-| - [autoScalingScheduledAction](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingScheduledAction )   | No      | object  | No         | In #/definitions/CfnAutoScalingScheduledAction  | To specify how AWS CloudFormation handles updates for the MinSize, MaxSize, and DesiredCapacity properties when<br />the AWS::AutoScaling::AutoScalingGroup resource has an associated scheduled action, use the AutoScalingScheduledAction<br />policy.                                                                                       |
-| - [codeDeployLambdaAliasUpdate](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_codeDeployLambdaAliasUpdate ) | No      | object  | No         | In #/definitions/CfnCodeDeployLambdaAliasUpdate | To perform an AWS CodeDeploy deployment when the version changes on an AWS::Lambda::Alias resource,<br />use the CodeDeployLambdaAliasUpdate update policy.                                                                                                                                                                                    |
-| - [enableVersionUpgrade](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_enableVersionUpgrade )               | No      | boolean | No         | -                                               | To upgrade an Amazon ES domain to a new version of Elasticsearch rather than replacing the entire<br />AWS::Elasticsearch::Domain resource, use the EnableVersionUpgrade update policy.                                                                                                                                                        |
-| - [useOnlineResharding](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_useOnlineResharding )                 | No      | boolean | No         | -                                               | To modify a replication group's shards by adding or removing shards, rather than replacing the entire<br />AWS::ElastiCache::ReplicationGroup resource, use the UseOnlineResharding update policy.                                                                                                                                             |
+| Property                                                                                                                                                                                       | Pattern | Type    | Deprecated | Definition                                      | Title/Description                                                                                                                                                                                                                                                                                                                                                    |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [autoScalingInstanceRefresh](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh )   | No      | object  | No         | In #/definitions/CfnAutoScalingInstanceRefresh  | To specify how AWS CloudFormation handles instance refresh for an Auto Scaling group, use the<br />AutoScalingInstanceRefresh policy. This policy triggers an instance refresh when certain properties<br />of the Auto Scaling group change (such as launch template or mixed instances policy), replacing<br />instances gradually while maintaining availability. |
+| - [autoScalingReplacingUpdate](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingReplacingUpdate )   | No      | object  | No         | In #/definitions/CfnAutoScalingReplacingUpdate  | Specifies whether an Auto Scaling group and the instances it contains are replaced during an update. During replacement,<br />AWS CloudFormation retains the old group until it finishes creating the new one. If the update fails, AWS CloudFormation<br />can roll back to the old Auto Scaling group and delete the new Auto Scaling group.                       |
+| - [autoScalingRollingUpdate](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingRollingUpdate )       | No      | object  | No         | In #/definitions/CfnAutoScalingRollingUpdate    | To specify how AWS CloudFormation handles rolling updates for an Auto Scaling group, use the AutoScalingRollingUpdate<br />policy. Rolling updates enable you to specify whether AWS CloudFormation updates instances that are in an Auto Scaling<br />group in batches or all at once.                                                                              |
+| - [autoScalingScheduledAction](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingScheduledAction )   | No      | object  | No         | In #/definitions/CfnAutoScalingScheduledAction  | To specify how AWS CloudFormation handles updates for the MinSize, MaxSize, and DesiredCapacity properties when<br />the AWS::AutoScaling::AutoScalingGroup resource has an associated scheduled action, use the AutoScalingScheduledAction<br />policy.                                                                                                             |
+| - [codeDeployLambdaAliasUpdate](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_codeDeployLambdaAliasUpdate ) | No      | object  | No         | In #/definitions/CfnCodeDeployLambdaAliasUpdate | To perform an AWS CodeDeploy deployment when the version changes on an AWS::Lambda::Alias resource,<br />use the CodeDeployLambdaAliasUpdate update policy.                                                                                                                                                                                                          |
+| - [enableVersionUpgrade](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_enableVersionUpgrade )               | No      | boolean | No         | -                                               | To upgrade an Amazon ES domain to a new version of Elasticsearch rather than replacing the entire<br />AWS::Elasticsearch::Domain resource, use the EnableVersionUpgrade update policy.                                                                                                                                                                              |
+| - [useOnlineResharding](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_useOnlineResharding )                 | No      | boolean | No         | -                                               | To modify a replication group's shards by adding or removing shards, rather than replacing the entire<br />AWS::ElastiCache::ReplicationGroup resource, use the UseOnlineResharding update policy.                                                                                                                                                                   |
 
-###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingReplacingUpdate"></a>1.7.8.3.6.1.8.24.6.6.1. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingReplacingUpdate`
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh"></a>1.7.8.3.6.1.8.24.6.6.1. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingInstanceRefresh`
+
+|                           |                                             |
+| ------------------------- | ------------------------------------------- |
+| **Type**                  | `object`                                    |
+| **Required**              | No                                          |
+| **Additional properties** | Not allowed                                 |
+| **Defined in**            | #/definitions/CfnAutoScalingInstanceRefresh |
+
+**Description:** To specify how AWS CloudFormation handles instance refresh for an Auto Scaling group, use the
+AutoScalingInstanceRefresh policy. This policy triggers an instance refresh when certain properties
+of the Auto Scaling group change (such as launch template or mixed instances policy), replacing
+instances gradually while maintaining availability.
+
+| Property                                                                                                                                                                                  | Pattern | Type   | Deprecated | Definition                                                | Title/Description                             |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | --------------------------------------------------------- | --------------------------------------------- |
+| - [preferences](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences ) | No      | object | No         | In #/definitions/CfnAutoScalingInstanceRefreshPreferences | The preferences for the instance refresh.     |
+| + [strategy](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_strategy )       | No      | string | No         | -                                                         | The strategy to use for the instance refresh. |
+
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences"></a>1.7.8.3.6.1.8.24.6.6.1.1. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingInstanceRefresh > preferences`
+
+|                           |                                                        |
+| ------------------------- | ------------------------------------------------------ |
+| **Type**                  | `object`                                               |
+| **Required**              | No                                                     |
+| **Additional properties** | Not allowed                                            |
+| **Defined in**            | #/definitions/CfnAutoScalingInstanceRefreshPreferences |
+
+**Description:** The preferences for the instance refresh.
+
+| Property                                                                                                                                                                                                                          | Pattern | Type            | Deprecated | Definition                                                       | Title/Description                                                                                                                                                                                                                                                                                          |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [alarmSpecification](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences_alarmSpecification )               | No      | object          | No         | In #/definitions/CfnAutoScalingInstanceRefreshAlarmSpecification | The CloudWatch alarms to monitor during the instance refresh. If any alarm goes into<br />ALARM state, the instance refresh fails.                                                                                                                                                                         |
+| - [bakeTime](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences_bakeTime )                                   | No      | number          | No         | -                                                                | The number of seconds after an instance refresh completes successfully before<br />CloudFormation considers the update successful.                                                                                                                                                                         |
+| - [checkpointDelay](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences_checkpointDelay )                     | No      | number          | No         | -                                                                | The number of seconds to wait after a checkpoint is reached before continuing.                                                                                                                                                                                                                             |
+| - [checkpointPercentages](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences_checkpointPercentages )         | No      | array of number | No         | -                                                                | Threshold values for each checkpoint in ascending order. Each number is a percentage of<br />the total number of instances in the group. When the percentage of instances that have<br />been replaced reaches a checkpoint, the refresh waits for the configured checkpoint delay<br />before continuing. |
+| - [instanceWarmup](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences_instanceWarmup )                       | No      | number          | No         | -                                                                | The number of seconds to wait after a new instance enters the InService state before<br />moving on to replacing the next instance.                                                                                                                                                                        |
+| - [maxHealthyPercentage](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences_maxHealthyPercentage )           | No      | number          | No         | -                                                                | The maximum percentage of the group that can be in service and healthy, or pending,<br />to support your workload during the instance refresh. Used to control batch size.                                                                                                                                 |
+| - [minHealthyPercentage](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences_minHealthyPercentage )           | No      | number          | No         | -                                                                | The minimum percentage of the group to keep in service, healthy, and ready to use<br />to support your workload during the instance refresh.                                                                                                                                                               |
+| - [scaleInProtectedInstances](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences_scaleInProtectedInstances ) | No      | string          | No         | -                                                                | Specifies the behavior of instances that are protected from scale in during an instance refresh.                                                                                                                                                                                                           |
+| - [skipMatching](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences_skipMatching )                           | No      | boolean         | No         | -                                                                | Indicates whether skip matching is enabled. If true, instances that already match the<br />desired configuration are not replaced.                                                                                                                                                                         |
+| - [standbyInstances](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences_standbyInstances )                   | No      | string          | No         | -                                                                | Specifies the behavior of instances in standby during an instance refresh.                                                                                                                                                                                                                                 |
+
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences_alarmSpecification"></a>1.7.8.3.6.1.8.24.6.6.1.1.1. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingInstanceRefresh > preferences > alarmSpecification`
+
+|                           |                                                               |
+| ------------------------- | ------------------------------------------------------------- |
+| **Type**                  | `object`                                                      |
+| **Required**              | No                                                            |
+| **Additional properties** | Not allowed                                                   |
+| **Defined in**            | #/definitions/CfnAutoScalingInstanceRefreshAlarmSpecification |
+
+**Description:** The CloudWatch alarms to monitor during the instance refresh. If any alarm goes into
+ALARM state, the instance refresh fails.
+
+| Property                                                                                                                                                                                                       | Pattern | Type            | Deprecated | Definition | Title/Description                              |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------- |
+| - [alarms](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences_alarmSpecification_alarms ) | No      | array of string | No         | -          | The names of the CloudWatch alarms to monitor. |
+
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences_alarmSpecification_alarms"></a>1.7.8.3.6.1.8.24.6.6.1.1.1.1. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingInstanceRefresh > preferences > alarmSpecification > alarms`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+**Description:** The names of the CloudWatch alarms to monitor.
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                                                                                                                                         | Description |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| [alarms items](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences_alarmSpecification_alarms_items) | -           |
+
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences_alarmSpecification_alarms_items"></a>1.7.8.3.6.1.8.24.6.6.1.1.1.1.1. root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingInstanceRefresh > preferences > alarmSpecification > alarms > alarms items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences_bakeTime"></a>1.7.8.3.6.1.8.24.6.6.1.1.2. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingInstanceRefresh > preferences > bakeTime`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0`      |
+
+**Description:** The number of seconds after an instance refresh completes successfully before
+CloudFormation considers the update successful.
+
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences_checkpointDelay"></a>1.7.8.3.6.1.8.24.6.6.1.1.3. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingInstanceRefresh > preferences > checkpointDelay`
+
+|              |                                                                             |
+| ------------ | --------------------------------------------------------------------------- |
+| **Type**     | `number`                                                                    |
+| **Required** | No                                                                          |
+| **Default**  | `"- 3600 seconds (1 hour), applied only when checkpointPercentages is set"` |
+
+**Description:** The number of seconds to wait after a checkpoint is reached before continuing.
+
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences_checkpointPercentages"></a>1.7.8.3.6.1.8.24.6.6.1.1.4. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingInstanceRefresh > preferences > checkpointPercentages`
+
+|              |                      |
+| ------------ | -------------------- |
+| **Type**     | `array of number`    |
+| **Required** | No                   |
+| **Default**  | `"- no checkpoints"` |
+
+**Description:** Threshold values for each checkpoint in ascending order. Each number is a percentage of
+the total number of instances in the group. When the percentage of instances that have
+been replaced reaches a checkpoint, the refresh waits for the configured checkpoint delay
+before continuing.
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                                                                                                                                                    | Description |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| [checkpointPercentages items](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences_checkpointPercentages_items) | -           |
+
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences_checkpointPercentages_items"></a>1.7.8.3.6.1.8.24.6.6.1.1.4.1. root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingInstanceRefresh > preferences > checkpointPercentages > checkpointPercentages items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences_instanceWarmup"></a>1.7.8.3.6.1.8.24.6.6.1.1.5. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingInstanceRefresh > preferences > instanceWarmup`
+
+|              |                                                                                                  |
+| ------------ | ------------------------------------------------------------------------------------------------ |
+| **Type**     | `number`                                                                                         |
+| **Required** | No                                                                                               |
+| **Default**  | `"- the group's DefaultInstanceWarmup if defined; otherwise the group's HealthCheckGracePeriod"` |
+
+**Description:** The number of seconds to wait after a new instance enters the InService state before
+moving on to replacing the next instance.
+
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences_maxHealthyPercentage"></a>1.7.8.3.6.1.8.24.6.6.1.1.6. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingInstanceRefresh > preferences > maxHealthyPercentage`
+
+|              |                                                                                                                                                                                    |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**     | `number`                                                                                                                                                                           |
+| **Required** | No                                                                                                                                                                                 |
+| **Default**  | `"- the value set in the Auto Scaling group's instance maintenance policy, if defined; otherwise 110 when the strategy is Rolling, or 100 when the strategy is ReplaceRootVolume"` |
+
+**Description:** The maximum percentage of the group that can be in service and healthy, or pending,
+to support your workload during the instance refresh. Used to control batch size.
+
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences_minHealthyPercentage"></a>1.7.8.3.6.1.8.24.6.6.1.1.7. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingInstanceRefresh > preferences > minHealthyPercentage`
+
+|              |                                                                                                                                                                                   |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**     | `number`                                                                                                                                                                          |
+| **Required** | No                                                                                                                                                                                |
+| **Default**  | `"- the value set in the Auto Scaling group's instance maintenance policy, if defined; otherwise 100 when the strategy is Rolling, or 90 when the strategy is ReplaceRootVolume"` |
+
+**Description:** The minimum percentage of the group to keep in service, healthy, and ready to use
+to support your workload during the instance refresh.
+
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences_scaleInProtectedInstances"></a>1.7.8.3.6.1.8.24.6.6.1.1.8. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingInstanceRefresh > preferences > scaleInProtectedInstances`
+
+|              |            |
+| ------------ | ---------- |
+| **Type**     | `string`   |
+| **Required** | No         |
+| **Default**  | `"'Wait'"` |
+
+**Description:** Specifies the behavior of instances that are protected from scale in during an instance refresh.
+
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences_skipMatching"></a>1.7.8.3.6.1.8.24.6.6.1.1.9. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingInstanceRefresh > preferences > skipMatching`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+**Description:** Indicates whether skip matching is enabled. If true, instances that already match the
+desired configuration are not replaced.
+
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_preferences_standbyInstances"></a>1.7.8.3.6.1.8.24.6.6.1.1.10. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingInstanceRefresh > preferences > standbyInstances`
+
+|              |            |
+| ------------ | ---------- |
+| **Type**     | `string`   |
+| **Required** | No         |
+| **Default**  | `"'Wait'"` |
+
+**Description:** Specifies the behavior of instances in standby during an instance refresh.
+
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingInstanceRefresh_strategy"></a>1.7.8.3.6.1.8.24.6.6.1.2. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingInstanceRefresh > strategy`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** The strategy to use for the instance refresh.
+
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingReplacingUpdate"></a>1.7.8.3.6.1.8.24.6.6.2. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingReplacingUpdate`
 
 |                           |                                             |
 | ------------------------- | ------------------------------------------- |
@@ -1869,14 +2083,14 @@ can roll back to the old Auto Scaling group and delete the new Auto Scaling grou
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
 | - [willReplace](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingReplacingUpdate_willReplace ) | No      | boolean | No         | -          | -                 |
 
-###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingReplacingUpdate_willReplace"></a>1.7.8.3.6.1.8.24.6.6.1.1. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingReplacingUpdate > willReplace`
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingReplacingUpdate_willReplace"></a>1.7.8.3.6.1.8.24.6.6.2.1. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingReplacingUpdate > willReplace`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingRollingUpdate"></a>1.7.8.3.6.1.8.24.6.6.2. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingRollingUpdate`
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingRollingUpdate"></a>1.7.8.3.6.1.8.24.6.6.3. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingRollingUpdate`
 
 |                           |                                           |
 | ------------------------- | ----------------------------------------- |
@@ -1899,7 +2113,7 @@ group in batches or all at once.
 | - [suspendProcesses](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingRollingUpdate_suspendProcesses )                           | No      | array of string | No         | -          | Specifies the Auto Scaling processes to suspend during a stack update. Suspending processes prevents Auto Scaling from<br />interfering with a stack update. For example, you can suspend alarming so that Auto Scaling doesn't execute scaling<br />policies associated with an alarm. For valid values, see the ScalingProcesses.member.N parameter for the SuspendProcesses<br />action in the Auto Scaling API Reference.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | - [waitOnResourceSignals](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingRollingUpdate_waitOnResourceSignals )                 | No      | boolean         | No         | -          | Specifies whether the Auto Scaling group waits on signals from new instances during an update. Use this property to<br />ensure that instances have completed installing and configuring applications before the Auto Scaling group update proceeds.<br />AWS CloudFormation suspends the update of an Auto Scaling group after new EC2 instances are launched into the group.<br />AWS CloudFormation must receive a signal from each new instance within the specified PauseTime before continuing the update.<br />To signal the Auto Scaling group, use the cfn-signal helper script or SignalResource API.<br /><br />To have instances wait for an Elastic Load Balancing health check before they signal success, add a health-check<br />verification by using the cfn-init helper script. For an example, see the verify_instance_health command in the Auto Scaling<br />rolling updates sample template.                                                                                                                                                                           |
 
-###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingRollingUpdate_maxBatchSize"></a>1.7.8.3.6.1.8.24.6.6.2.1. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingRollingUpdate > maxBatchSize`
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingRollingUpdate_maxBatchSize"></a>1.7.8.3.6.1.8.24.6.6.3.1. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingRollingUpdate > maxBatchSize`
 
 |              |          |
 | ------------ | -------- |
@@ -1908,7 +2122,7 @@ group in batches or all at once.
 
 **Description:** Specifies the maximum number of instances that AWS CloudFormation updates.
 
-###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingRollingUpdate_minActiveInstancesPercent"></a>1.7.8.3.6.1.8.24.6.6.2.2. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingRollingUpdate > minActiveInstancesPercent`
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingRollingUpdate_minActiveInstancesPercent"></a>1.7.8.3.6.1.8.24.6.6.3.2. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingRollingUpdate > minActiveInstancesPercent`
 
 |              |          |
 | ------------ | -------- |
@@ -1919,7 +2133,7 @@ group in batches or all at once.
 updates old instances. You can specify a value from 0 to 100. AWS CloudFormation rounds to the nearest tenth of a percent.
 For example, if you update five instances with a minimum active percentage of 50, three instances must remain in service.
 
-###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingRollingUpdate_minInstancesInService"></a>1.7.8.3.6.1.8.24.6.6.2.3. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingRollingUpdate > minInstancesInService`
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingRollingUpdate_minInstancesInService"></a>1.7.8.3.6.1.8.24.6.6.3.3. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingRollingUpdate > minInstancesInService`
 
 |              |          |
 | ------------ | -------- |
@@ -1929,7 +2143,7 @@ For example, if you update five instances with a minimum active percentage of 50
 **Description:** Specifies the minimum number of instances that must be in service within the Auto Scaling group while AWS
 CloudFormation updates old instances.
 
-###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingRollingUpdate_minSuccessfulInstancesPercent"></a>1.7.8.3.6.1.8.24.6.6.2.4. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingRollingUpdate > minSuccessfulInstancesPercent`
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingRollingUpdate_minSuccessfulInstancesPercent"></a>1.7.8.3.6.1.8.24.6.6.3.4. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingRollingUpdate > minSuccessfulInstancesPercent`
 
 |              |          |
 | ------------ | -------- |
@@ -1945,7 +2159,7 @@ that the instance wasn't updated.
 
 If you specify this property, you must also enable the WaitOnResourceSignals and PauseTime properties.
 
-###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingRollingUpdate_pauseTime"></a>1.7.8.3.6.1.8.24.6.6.2.5. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingRollingUpdate > pauseTime`
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingRollingUpdate_pauseTime"></a>1.7.8.3.6.1.8.24.6.6.3.5. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingRollingUpdate > pauseTime`
 
 |              |          |
 | ------------ | -------- |
@@ -1965,7 +2179,7 @@ rolled back, a short PauseTime can cause the rollback to fail.
 Specify PauseTime in the ISO8601 duration format (in the format PT#H#M#S, where each # is the number of hours, minutes,
 and seconds, respectively). The maximum PauseTime is one hour (PT1H).
 
-###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingRollingUpdate_suspendProcesses"></a>1.7.8.3.6.1.8.24.6.6.2.6. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingRollingUpdate > suspendProcesses`
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingRollingUpdate_suspendProcesses"></a>1.7.8.3.6.1.8.24.6.6.3.6. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingRollingUpdate > suspendProcesses`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1989,14 +2203,14 @@ action in the Auto Scaling API Reference.
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
 | [suspendProcesses items](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingRollingUpdate_suspendProcesses_items) | -           |
 
-###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingRollingUpdate_suspendProcesses_items"></a>1.7.8.3.6.1.8.24.6.6.2.6.1. root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingRollingUpdate > suspendProcesses > suspendProcesses items
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingRollingUpdate_suspendProcesses_items"></a>1.7.8.3.6.1.8.24.6.6.3.6.1. root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingRollingUpdate > suspendProcesses > suspendProcesses items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingRollingUpdate_waitOnResourceSignals"></a>1.7.8.3.6.1.8.24.6.6.2.7. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingRollingUpdate > waitOnResourceSignals`
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingRollingUpdate_waitOnResourceSignals"></a>1.7.8.3.6.1.8.24.6.6.3.7. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingRollingUpdate > waitOnResourceSignals`
 
 |              |           |
 | ------------ | --------- |
@@ -2013,7 +2227,7 @@ To have instances wait for an Elastic Load Balancing health check before they si
 verification by using the cfn-init helper script. For an example, see the verify_instance_health command in the Auto Scaling
 rolling updates sample template.
 
-###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingScheduledAction"></a>1.7.8.3.6.1.8.24.6.6.3. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingScheduledAction`
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingScheduledAction"></a>1.7.8.3.6.1.8.24.6.6.4. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingScheduledAction`
 
 |                           |                                             |
 | ------------------------- | ------------------------------------------- |
@@ -2030,14 +2244,14 @@ policy.
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
 | - [ignoreUnmodifiedGroupSizeProperties](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingScheduledAction_ignoreUnmodifiedGroupSizeProperties ) | No      | boolean | No         | -          | -                 |
 
-###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingScheduledAction_ignoreUnmodifiedGroupSizeProperties"></a>1.7.8.3.6.1.8.24.6.6.3.1. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingScheduledAction > ignoreUnmodifiedGroupSizeProperties`
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_autoScalingScheduledAction_ignoreUnmodifiedGroupSizeProperties"></a>1.7.8.3.6.1.8.24.6.6.4.1. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > autoScalingScheduledAction > ignoreUnmodifiedGroupSizeProperties`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_codeDeployLambdaAliasUpdate"></a>1.7.8.3.6.1.8.24.6.6.4. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > codeDeployLambdaAliasUpdate`
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_codeDeployLambdaAliasUpdate"></a>1.7.8.3.6.1.8.24.6.6.5. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > codeDeployLambdaAliasUpdate`
 
 |                           |                                              |
 | ------------------------- | -------------------------------------------- |
@@ -2056,7 +2270,7 @@ use the CodeDeployLambdaAliasUpdate update policy.
 | - [beforeAllowTrafficHook](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_codeDeployLambdaAliasUpdate_beforeAllowTrafficHook ) | No      | string | No         | -          | The name of the Lambda function to run before traffic routing starts.                              |
 | + [deploymentGroupName](#domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_codeDeployLambdaAliasUpdate_deploymentGroupName )       | No      | string | No         | -          | The name of the AWS CodeDeploy deployment group. This is where the traffic-shifting policy is set. |
 
-###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_codeDeployLambdaAliasUpdate_afterAllowTrafficHook"></a>1.7.8.3.6.1.8.24.6.6.4.1. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > codeDeployLambdaAliasUpdate > afterAllowTrafficHook`
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_codeDeployLambdaAliasUpdate_afterAllowTrafficHook"></a>1.7.8.3.6.1.8.24.6.6.5.1. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > codeDeployLambdaAliasUpdate > afterAllowTrafficHook`
 
 |              |          |
 | ------------ | -------- |
@@ -2065,7 +2279,7 @@ use the CodeDeployLambdaAliasUpdate update policy.
 
 **Description:** The name of the Lambda function to run after traffic routing completes.
 
-###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_codeDeployLambdaAliasUpdate_applicationName"></a>1.7.8.3.6.1.8.24.6.6.4.2. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > codeDeployLambdaAliasUpdate > applicationName`
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_codeDeployLambdaAliasUpdate_applicationName"></a>1.7.8.3.6.1.8.24.6.6.5.2. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > codeDeployLambdaAliasUpdate > applicationName`
 
 |              |          |
 | ------------ | -------- |
@@ -2074,7 +2288,7 @@ use the CodeDeployLambdaAliasUpdate update policy.
 
 **Description:** The name of the AWS CodeDeploy application.
 
-###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_codeDeployLambdaAliasUpdate_beforeAllowTrafficHook"></a>1.7.8.3.6.1.8.24.6.6.4.3. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > codeDeployLambdaAliasUpdate > beforeAllowTrafficHook`
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_codeDeployLambdaAliasUpdate_beforeAllowTrafficHook"></a>1.7.8.3.6.1.8.24.6.6.5.3. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > codeDeployLambdaAliasUpdate > beforeAllowTrafficHook`
 
 |              |          |
 | ------------ | -------- |
@@ -2083,7 +2297,7 @@ use the CodeDeployLambdaAliasUpdate update policy.
 
 **Description:** The name of the Lambda function to run before traffic routing starts.
 
-###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_codeDeployLambdaAliasUpdate_deploymentGroupName"></a>1.7.8.3.6.1.8.24.6.6.4.4. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > codeDeployLambdaAliasUpdate > deploymentGroupName`
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_codeDeployLambdaAliasUpdate_deploymentGroupName"></a>1.7.8.3.6.1.8.24.6.6.5.4. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > codeDeployLambdaAliasUpdate > deploymentGroupName`
 
 |              |          |
 | ------------ | -------- |
@@ -2092,7 +2306,7 @@ use the CodeDeployLambdaAliasUpdate update policy.
 
 **Description:** The name of the AWS CodeDeploy deployment group. This is where the traffic-shifting policy is set.
 
-###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_enableVersionUpgrade"></a>1.7.8.3.6.1.8.24.6.6.5. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > enableVersionUpgrade`
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_enableVersionUpgrade"></a>1.7.8.3.6.1.8.24.6.6.6. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > enableVersionUpgrade`
 
 |              |           |
 | ------------ | --------- |
@@ -2102,7 +2316,7 @@ use the CodeDeployLambdaAliasUpdate update policy.
 **Description:** To upgrade an Amazon ES domain to a new version of Elasticsearch rather than replacing the entire
 AWS::Elasticsearch::Domain resource, use the EnableVersionUpgrade update policy.
 
-###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_useOnlineResharding"></a>1.7.8.3.6.1.8.24.6.6.6. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > useOnlineResharding`
+###### <a name="domainConfig_domainConfigCr_handlerFunction__connections_securityGroups_items_stack_nestedStackResource_cfnOptions_updatePolicy_useOnlineResharding"></a>1.7.8.3.6.1.8.24.6.6.7. Property `root > domainConfig > domainConfigCr > handlerFunction > _connections > securityGroups > securityGroups items > stack > nestedStackResource > cfnOptions > updatePolicy > useOnlineResharding`
 
 |              |           |
 | ------------ | --------- |

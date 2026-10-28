@@ -613,7 +613,7 @@ export class SageMakerModelMonitoringL3Construct extends MdaaL3Construct {
           },
         },
       });
-      monSchedule.addDependency(createdJobDef);
+      monSchedule.addResourceDependency(createdJobDef);
       monSchedule.node.addDependency(this.monitoringRole);
       scheduleArns.push(monSchedule.attrMonitoringScheduleArn);
     }

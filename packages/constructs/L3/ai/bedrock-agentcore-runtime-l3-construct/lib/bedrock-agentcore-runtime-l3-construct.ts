@@ -1224,7 +1224,7 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
         resourceArn: runtimeArn,
         vpcId: props.networkConfiguration.vpcId,
       });
-      resourcePolicy.addDependency(this.runtime);
+      resourcePolicy.addResourceDependency(this.runtime);
     }
 
     // Create the AgentCore interface VPC endpoint if requested

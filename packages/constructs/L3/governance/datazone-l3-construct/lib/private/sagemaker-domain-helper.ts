@@ -810,7 +810,7 @@ export class SageMakerDomainHelper extends CommonDomainHelper {
         `Cross account stack not defined for associated account ${accountName}/${accountProps.account} on domain ${domainName}. Cross account association will not work.`,
       );
     }
-    secondStageStack.addDependency(crossAccountStack);
+    secondStageStack.addStackDependency(crossAccountStack);
 
     // Parse domain config from SSM parameters in cross-account
     const crossAccountDomainConfig = this.parseCrossAccountDomainConfig(

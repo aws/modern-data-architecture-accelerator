@@ -1735,7 +1735,7 @@ export class BedrockAgentcoreHarnessL3Construct extends MdaaL3Construct {
       },
     });
 
-    endpoint.addDependency(this.harness);
+    endpoint.addResourceDependency(this.harness);
 
     return endpoint;
   }

@@ -126,7 +126,7 @@ export function createMdaaVendedLogDelivery(
     deliverySourceName: deliverySource.name,
   });
   // The delivery references the source by name (a string), not by resource — order it explicitly.
-  delivery.addDependency(deliverySource);
+  delivery.addResourceDependency(deliverySource);
 
   return { logGroup, deliverySource, deliveryDestination, delivery };
 }

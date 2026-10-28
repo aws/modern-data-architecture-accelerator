@@ -1401,7 +1401,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       },
     };
     const datasource = new CfnDataSource(this, `${databaseName}-datazone-datasource`, datasourceProps);
-    datasource.addDependency(database);
+    datasource.addResourceDependency(database);
   }
 
   /**
@@ -1454,7 +1454,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
           permissions: ['DATA_LOCATION_ACCESS'],
           permissionsWithGrantOption: [],
         });
-        grant.addDependency(database);
+        grant.addResourceDependency(database);
       });
     }
 
