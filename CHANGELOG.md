@@ -30,6 +30,7 @@
 ### Removed
 
 - **`glossaryCreators` removed** from `authorizations` in `@aws-mdaa/datazone-l3-construct` (DataZone and SageMaker domain modules). DataZone's `CREATE_GLOSSARY` policy never accepts a user/group principal, so this field always failed at deploy; every project owner in the domain can create glossaries unconditionally instead (see above). **Breaking change** for any config setting `authorizations.glossaryCreators`, which must be removed.
+- **Bedrock Agent module removed** (deprecated in 1.7.0): the `@aws-mdaa/bedrock-agent-l3-construct` package has been deleted, along with the Bedrock Builder module's `agents` and unused `agentBucketArn` properties, which now fail at synth. Move agents to AgentCore Harnesses (`harnesses`) and AgentCore Gateways: an agent's `foundationModel` becomes the harness `modelId`, `instruction` becomes `systemPrompt`, action groups become Lambda gateway targets (`lambdaArn`), knowledge base associations become `knowledgeBase` gateway targets, and the agent guardrail becomes the harness `guardrail`. The rebuilt [`genai_foundation` kit](starter_kits/genai_foundation/README.md) is a worked example; see also the [module README](packages/apps/ai/bedrock-builder-app/README.md). `Upgrade impact:` removing `agents` from a deployed config deletes those agents on the next deploy, along with their SSM parameters and stack outputs (`agent/<name>/id`, `arn`, `alias-id`); anything that reads them must move to the harness and gateway equivalents. **Breaking change.**
 
 ### General Changes
 

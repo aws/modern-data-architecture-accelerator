@@ -1,27 +1,30 @@
 # Sample config for the Bedrock Builder module.
-# Deploys Bedrock agents with action groups, knowledge bases backed by
-# Aurora and OpenSearch vector stores, Lambda functions, guardrails
-# with content and sensitive information filters, and S3/SharePoint
-# data sources with multiple parsing and chunking strategies.
+# Deploys a customer support agent end to end: knowledge bases backed
+# by Aurora and OpenSearch vector stores, with S3/SharePoint data
+# sources and multiple parsing and chunking strategies; Lambda
+# functions; a guardrail; an AgentCore Gateway serving a Lambda tool
+# and a knowledge base; shared VPC endpoints; and an AgentCore Harness
+# with production settings (JWT auth, guardrail, tool allowlist,
+# private networking, PII masking, log retention, pinned endpoint).
+#
+# Alternatives to choices made here are shown elsewhere: an
+# existing kmsKeyArn (sample-config-kb-only.yaml); a
+# bring-your-own harness role, a literal guardrail id, and the
+# sliding_window truncation strategy (construct unit tests); and
+# gateway variants (sample-config-gateway-iam.yaml,
+# sample-config-gateway-jwt.yaml).
 
 # See CONFIGURATION.md for role reference options (name, arn, id).
-# Admin roles granted access to Bedrock agent resources including
-# KMS keys and S3 buckets. Roles can be referenced by name, arn,
-# or id.
+# Admin roles granted key-admin access to the KMS key the module
+# creates (unused when kmsKeyArn supplies an existing key).
+# Roles can be referenced by name, arn, or id.
 dataAdminRoles:
   - name: 'Admin'
   - arn: 'arn:{{partition}}:iam::{{account}}:role/ReadOnlyAdmin'
-# (Optional) Existing S3 bucket ARN for agent data storage. If
-# omitted, a dedicated bucket is created automatically.
-agentBucketArn: 'arn:{{partition}}:s3:::test-agent-bucket'
-# (Optional) Existing KMS key ARN for encrypting Bedrock agent
-# resources. If omitted, a customer-managed key is created
-# automatically.
-kmsKeyArn: 'arn:{{partition}}:kms:{{region}}:{{account}}:key/test-key-id'
 
-# (Optional) Lambda functions and layers for Bedrock agent action
-# groups. Enables custom business logic, API integrations, and
-# business process automation within agents.
+# (Optional) Lambda functions and layers, referenced from gateway
+# targets, gateway interceptors, and knowledge base custom
+# transformations via `generated-function:<name>`.
 lambdaFunctions:
   # (Optional) List of Lambda layers to create
   layers:
@@ -38,9 +41,9 @@ lambdaFunctions:
   # (Optional) List of Lambda function definitions
   functions:
     # Lambda function name
-    - functionName: test-action-group
+    - functionName: test-function
       # (Optional) Optional function description
-      description: 'Lambda function for Bedrock Agent Action group'
+      description: 'Lambda function exercising the optional function settings'
       # Source code directory path containing Lambda function code
       srcDir: ./src/function
       # Lambda function handler (e.g., 'index.handler')
@@ -359,157 +362,13 @@ lambdaFunctions:
       runtime: python3.14
       roleArn: 'arn:{{partition}}:iam::{{account}}:role/test-lambda-role'
       description: For custom parsing and chunking logic
-    - functionName: test-custom-router1
+    - functionName: test-gateway-interceptor
       srcDir: ./src/function
       handler: test.lambda_handler
       runtime: python3.14
       roleArn: 'arn:{{partition}}:iam::{{account}}:role/test-lambda-role'
-      description: For custom chat routing logic
+      description: Gateway REQUEST interceptor
       grantInvoke: 'arn:{{partition}}:iam::{{account}}:role/role-in-another-account'
-
-# (Optional) Bedrock agent configurations with foundation models,
-# action groups, knowledge base integration, and guardrails.
-agents:
-  test-agent:
-    # (Optional) Agent alias name for version management
-    agentAliasName: test-alias
-    # Reference to role used as execution role on all agent(s).
-    # The role must have assume-role trust with
-    # bedrock.amazonaws.com.
-    role:
-      id: generated-role-id:agent-execution-role
-    # Foundation model identifier for agent reasoning
-    foundationModel: 'anthropic.claude-3-sonnet-20240229-v1:0'
-    # (Optional) Agent description
-    description: 'This is a Test Agent'
-    # (Optional) Auto-prepare DRAFT version after changes
-    autoPrepare: true
-    # Agent instructions defining behavior and interaction patterns
-    instruction: |
-      You are a helpful assistant
-      You are allowed to use associated Knowledge Base to answer questions
-      Provide responses in markdown format with source citations
-    # (Optional) Idle session timeout in seconds
-    idleSessionTtlInSeconds: 400
-    # (Optional) Knowledge base associations for RAG capabilities
-    knowledgeBases:
-      # Knowledge base association description
-      - description: 'This is a Test Knowledge Base'
-        # Knowledge base identifier
-        id: '<kb-id>'
-        # (Optional) Knowledge base state (controls usage during
-        # invocation)
-        knowledgeBaseState: ENABLED
-    # (Optional) Guardrail association for safety and content
-    # filtering
-    guardrail:
-      # Guardrail identifier
-      id: 'arn:{{partition}}:bedrock:{{region}}:{{account}}:guardrail/test-guardrail'
-      # (Optional) Guardrail version
-      version: '1'
-    # (Optional) Action groups for task execution and API
-    # integration
-    actionGroups:
-      - # Action group name
-        actionGroupName: 'test-action-group'
-        # (Optional) Action group description
-        description: 'This is a Test Action Group'
-        # (Optional) Action group state (ENABLED or DISABLED)
-        actionGroupState: ENABLED
-        # Action group executor (e.g. Lambda function)
-        actionGroupExecutor:
-          # The ARN of the Lambda function containing the business
-          # logic that is carried out upon invoking the action
-          lambda: arn:{{partition}}:lambda:{{region}}:{{account}}:function:existing-lambda-function
-        # (Optional) API schema for external API integration
-        apiSchema:
-          # (Optional) Relative path to JSON/YAML OpenAPI schema
-          # file
-          openApiSchemaPath: ./api-schema/test-schema.yaml
-          # (Optional) The JSON or YAML-formatted payload defining
-          # the OpenAPI schema for the action group
-          payload: |
-            openapi: "3.0.0"
-            info:
-              title: "Test API"
-              version: "1.0.0"
-          # (Optional) S3 location containing the OpenAPI schema
-          s3:
-            # (Optional) The name of the S3 bucket
-            s3BucketName: test-schema-bucket
-            # (Optional) The S3 object key for the schema resource
-            s3ObjectKey: schemas/test-schema.yaml
-      # Action group using functionSchema and customControl
-      - actionGroupName: 'test-function-action-group'
-        description: 'Action group using function schema'
-        actionGroupExecutor:
-          # (Optional) To return the action group invocation results
-          # directly in the InvokeInlineAgent response, specify
-          # RETURN_CONTROL
-          customControl: RETURN_CONTROL
-        # (Optional) Function schema for structured function
-        # invocation (alternative to apiSchema)
-        functionSchema:
-          # A list of functions that each define an action in the
-          # action group
-          functions:
-            # A name for the function
-            - name: testFunction
-              # (Optional) A description of the function and its
-              # purpose
-              description: 'A test function'
-              # (Optional) Contains information if user confirmation
-              # is required to invoke the function
-              requireConfirmation: 'ENABLED'
-    # (Optional) Prompt override configuration for advanced prompt
-    # engineering
-    promptOverrideConfiguration:
-      # Prompt configurations for overriding agent sequence steps
-      promptConfigurations:
-        # (Optional) The step in the agent sequence that this
-        # prompt configuration applies to
-        - promptType: ORCHESTRATION
-          # (Optional) Specifies whether to override the default
-          # prompt template. Set to OVERRIDDEN to use custom
-          # basePromptTemplate.
-          promptCreationMode: DEFAULT
-          # (Optional) Specifies whether to allow the agent to
-          # carry out the step (ENABLED or DISABLED)
-          promptState: ENABLED
-          # (Optional) The agent's foundation model
-          foundationModel: 'anthropic.claude-3-sonnet-20240229-v1:0'
-          # (Optional) Defines the prompt template with which to
-          # replace the default prompt template
-          basePromptTemplate: 'You are a helpful assistant. $instruction$'
-          # (Optional) Specifies whether to override the default
-          # parser Lambda function (DEFAULT or OVERRIDDEN)
-          parserMode: DEFAULT
-          # (Optional) Additional inference parameters beyond the
-          # base set, passed via Converse or ConverseStream
-          # operations
-          additionalModelRequestFields:
-            top_k: 50
-          # (Optional) Contains inference parameters to use when
-          # the agent invokes a foundation model
-          inferenceConfiguration:
-            # (Optional) The maximum number of tokens allowed in
-            # the generated response
-            maximumLength: 2048
-            # (Optional) The likelihood of the model selecting
-            # higher-probability options (0.0-1.0)
-            temperature: 0.7
-            # (Optional) The percentage of most-likely candidates
-            # the model considers (0.0-1.0)
-            topP: 0.9
-            # (Optional) The number of most-likely candidates from
-            # which the model chooses the next token
-            topK: 50
-            # (Optional) A list of stop sequences
-            stopSequences:
-              - '\n\nHuman:'
-      # (Optional) The ARN of the Lambda function to use when
-      # parsing the raw foundation model output
-      overrideLambda: 'arn:{{partition}}:lambda:{{region}}:{{account}}:function:parser-lambda'
 
 # (Optional) Vector store configurations for knowledge bases
 # (OpenSearch Serverless or Aurora). Provides vector database
@@ -683,9 +542,9 @@ knowledgeBases:
             intermediateStorageBucket: 'custom-transform-intermediate-bucket'
             # S3 prefix for intermediate storage
             intermediateStoragePrefix: 'path/to/data/objects'
-            # Lambda ARNs for custom transformation
+            # Lambda for custom transformation (exactly one). A plain
+            # Lambda ARN or `generated-function:<name>`.
             transformLambdaArns:
-              - 'arn:{{partition}}:lambda:{{region}}:{{account}}:function:test-custom-transformer'
               - generated-function:test-custom-transformer
     # (Optional) SharePoint data sources for enterprise document
     # integration
@@ -761,7 +620,6 @@ knowledgeBases:
             intermediateStorageBucket: 'custom-transform-intermediate-bucket'
             intermediateStoragePrefix: 'path/to/data/objects'
             transformLambdaArns:
-              - 'arn:{{partition}}:lambda:{{region}}:{{account}}:function:test-custom-transformer'
               - generated-function:test-custom-transformer
   test-knowledge-base2:
     embeddingModel: 'amazon.titan-embed-text-v2:0'
@@ -771,7 +629,8 @@ knowledgeBases:
       id: generated-role-id:kb-execution-role
     supplementalBucketName: 'supplemental-image-storage-bucket'
     s3DataSources:
-      test-ds-default-parsing:
+      # Data source names must be unique across knowledge bases
+      test-ds-kb2-default-parsing:
         bucketName: 'customer-docs-bucket'
         prefix: 'support-documents/'
         enableSync: true
@@ -870,3 +729,264 @@ guardrails:
           # (Optional) Specifies whether to enable guardrail
           # evaluation on the output
           outputEnabled: true
+
+# (Optional) AgentCore Gateway target definitions (MCP tool
+# sources), keyed by target name. A gateway attaches a target by
+# naming it in its `targets` list; each target may be referenced by
+# at most one gateway.
+gatewayTargets:
+  support-tools:
+    # (Optional) Target description (1-200 chars)
+    description: 'Order support tools backed by a Lambda function'
+    targetConfiguration:
+      # Lambda tool source. `generated-function:<name>` references a
+      # function from lambdaFunctions above; a plain Lambda ARN also
+      # works (see sample-config-gateway-iam.yaml).
+      lambda:
+        lambdaArn: generated-function:test-function
+        # Tool schema advertised to gateway clients. An inline
+        # payload here; an S3 document is the alternative.
+        toolSchema:
+          inlinePayload:
+            - name: getOrderStatus
+              description: 'Returns the current status of a customer order'
+              inputSchema:
+                type: object
+                description: 'Order status request'
+                properties:
+                  orderId:
+                    type: string
+                    description: 'The order identifier'
+                  filters:
+                    type: object
+                    description: 'Optional result filters'
+                    properties:
+                      includeHistory:
+                        type: boolean
+                        description: 'Include the status history'
+                required:
+                  - orderId
+              outputSchema:
+                type: object
+                description: 'Order status response'
+                properties:
+                  status:
+                    type: string
+                    description: 'Current order status'
+                  events:
+                    type: array
+                    description: 'Status history, newest first'
+                    items:
+                      type: string
+                required:
+                  - status
+    # (Optional) Outbound credential provider. GATEWAY_IAM_ROLE (the
+    # default) invokes the tool with the gateway's execution role.
+    credentialProvider:
+      type: GATEWAY_IAM_ROLE
+  support-kb:
+    description: 'Customer support knowledge base'
+    targetConfiguration:
+      # (Optional) Knowledge base tool source: generates a Lambda
+      # connector that serves one Retrieve tool.
+      knowledgeBase:
+        # Knowledge base from the knowledgeBases map above
+        id: 'config:test-knowledge-base'
+        # Tool description the model sees
+        description: 'Search customer support and product documentation.'
+        # (Optional) Results per query, 1-100
+        numberOfResults: 5
+        # (Optional) Search type (enum: HYBRID, SEMANTIC)
+        overrideSearchType: HYBRID
+        # (Optional) Runs the connector in your subnets, reaching
+        # Retrieve through the vpcEndpoints set below. The module
+        # creates the connector's security group.
+        networkConfiguration:
+          subnets:
+            - 'subnet-0123456789abcdef0'
+            - 'subnet-0123456789abcdef1'
+          vpcEndpoints: 'agentcore-private'
+
+# (Optional) AgentCore Gateway configurations (MCP servers), keyed by
+# gateway name.
+gateways:
+  support-gateway:
+    # (Optional) Gateway description (1-200 chars)
+    description: 'Customer support tools and documentation search'
+    # authorizerConfiguration is omitted, so callers authenticate with
+    # AWS IAM (SigV4) - the only inbound auth a harness can call. See
+    # sample-config-gateway-jwt.yaml for CUSTOM_JWT.
+    #
+    # (Optional) MCP protocol configuration. searchType SEMANTIC
+    # enables natural-language tool discovery and cannot be changed
+    # after creation.
+    protocolConfiguration:
+      instructions: 'Use these tools to look up orders and search support documentation.'
+      searchType: SEMANTIC
+      supportedVersions:
+        - '2025-03-26'
+    # Targets registered on this gateway, by name from gatewayTargets
+    targets:
+      - support-tools
+      - support-kb
+    # (Optional) Lambda interceptors, at most one REQUEST and one
+    # RESPONSE. This one comes from the lambdaFunctions pool.
+    interceptors:
+      - interceptionPoints:
+          - REQUEST
+        lambdaArn: generated-function:test-gateway-interceptor
+    # (Optional) Audit log delivery is on by default; this sets a
+    # finite retention instead of the indefinite default.
+    logDelivery:
+      logRetentionDays: 365
+
+# (Optional) VPC endpoint sets, keyed by set name, one per VPC. Both
+# the harness and the support-kb connector reference this set and
+# share its endpoints. Which endpoints exist is derived from them;
+# the set only says how each is reached.
+vpcEndpoints:
+  agentcore-private:
+    # VPC the endpoints are created in
+    vpcId: 'vpc-0123456789abcdef0'
+    # ENI placement for created interface endpoints, at most one
+    # subnet per availability zone
+    subnetIds:
+      - 'subnet-0123456789abcdef0'
+      - 'subnet-0123456789abcdef1'
+    # (Optional) Route tables receiving the S3 gateway endpoint for
+    # container image layers. It carries all S3 traffic on these
+    # tables; see the module README if other workloads share them.
+    routeTableIds:
+      - 'rtb-0123456789abcdef0'
+    # Each endpoint below is optional and has three states: created
+    # (omitted), brought (securityGroupId), or external.
+    #
+    # (Optional) Created, but in one availability zone only
+    ecrApi:
+      subnetIds:
+        - 'subnet-0123456789abcdef0'
+    # (Optional) Brought: already provisioned by a central networking
+    # team. Name the endpoint's own security group.
+    sts:
+      securityGroupId: 'sg-0fedcba9876543210'
+    # (Optional) External: reached over NAT or an endpoint this set
+    # does not manage
+    logs:
+      external: true
+    # bedrockRuntime, ecrDocker, agentCoreGateway and
+    # bedrockAgentRuntime are omitted, so they are created.
+
+# (Optional) AgentCore Harness configurations - declarative agent
+# loops (model + system prompt + tools) - keyed by harness name.
+harnesses:
+  support-harness:
+    # Foundation model identifier (on-demand id, inference profile id,
+    # or ARN)
+    modelId: 'us.anthropic.claude-sonnet-4-5-20250929-v1:0'
+    # System prompt defining the agent's behavior
+    systemPrompt: 'You are a customer support assistant. Search the knowledge base and use the order tools before answering.'
+    # (Optional) Model sampling; every field is independently optional
+    modelConfig:
+      temperature: 0.2
+      topP: 0.9
+      # Max tokens per model call
+      maxTokens: 2048
+    # (Optional) Global generation cap across one invocation
+    maxTokens: 16384
+    # (Optional) Max agent-loop iterations per invocation
+    maxIterations: 10
+    # (Optional) Max agent-loop duration per invocation, in seconds
+    timeoutSeconds: 300
+    # (Optional) Runtime session lifecycle, 60-28800 seconds each
+    lifecycleConfiguration:
+      idleRuntimeSessionTimeout: 900
+      maxLifetime: 3600
+    # (Optional) Inbound JWT (OIDC) authorization. Omit for AWS IAM
+    # (SigV4), as in sample-config-minimal.yaml.
+    authorizerConfiguration:
+      customJwt:
+        # Must end with /.well-known/openid-configuration
+        discoveryUrl: 'https://example.com/.well-known/openid-configuration'
+        allowedAudience:
+          - 'support-clients'
+        allowedClients:
+          - 'support-app'
+    # (Optional) Guardrail by `config:<name>` from the guardrails map
+    # above, which supplies the version. A literal guardrail id needs
+    # an explicit `version`.
+    guardrail:
+      id: 'config:enterprise-guardrail'
+      # (Optional) Assessment trace (enum: enabled, disabled,
+      # enabled_full)
+      trace: 'enabled'
+    # (Optional) Tools keyed by tool name; each sets exactly one of
+    # inlineFunction / agentCoreGateway.
+    tools:
+      # Executed by the harness invoker, not AWS
+      escalate_to_human:
+        inlineFunction:
+          description: 'Hands the conversation to a human support agent'
+          inputSchema:
+            type: object
+            properties:
+              reason:
+                type: string
+                description: 'Why the customer needs a human agent'
+            required:
+              - reason
+      # Every tool on the gateway above, by `config:<name>`
+      support_tools:
+        agentCoreGateway:
+          gatewayArn: 'config:support-gateway'
+    # (Optional) Tool allowlist. List every tool above, or the model
+    # can never select it; `@support_tools` allows every tool on that
+    # gateway. Built-in shell and file tools stay disallowed.
+    allowedTools:
+      - 'escalate_to_human'
+      - '@support_tools'
+    # (Optional) Skills baked into the container image, by path
+    skills:
+      - path: '/opt/skills/support-playbook'
+    # (Optional) Pre-built container image from ECR, pinned by digest.
+    # Omit to use the AWS-managed harness container.
+    container:
+      containerUri: '{{account}}.dkr.ecr.{{region}}.amazonaws.com/support-harness@sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef'
+    # Required: subnets and security groups running the harness's
+    # sessions. MDAA enforces VPC network mode.
+    networkConfiguration:
+      securityGroups:
+        - 'sg-0123456789abcdef0'
+      subnets:
+        - 'subnet-0123456789abcdef0'
+        - 'subnet-0123456789abcdef1'
+      # (Optional) VPC endpoint set from vpcEndpoints above, for a
+      # private (no-NAT) outbound path
+      vpcEndpoints: 'agentcore-private'
+    # (Optional) Environment variables for the harness runtime
+    environmentVariables:
+      LOG_LEVEL: 'INFO'
+      SUPPORT_QUEUE: 'tier-1'
+    # (Optional) PII identifiers masked in the harness log groups, on
+    # top of the built-in set
+    dataProtection:
+      additionalIdentifiers:
+        - 'DriversLicense-US'
+        - 'PassportNumber-US'
+    # (Optional) Log retention in days. Omit for indefinite retention.
+    logRetentionDays: 365
+    # (Optional) Context truncation (enum: sliding_window,
+    # summarization, none). Tuning fields apply to their strategy
+    # only; `messagesCount` is sliding_window-only.
+    truncation:
+      strategy: 'summarization'
+      # Newest turns kept verbatim
+      preserveRecentMessages: 5
+      # Ratio of older content to summarize, 0 < r <= 1
+      summaryRatio: 0.5
+      summarizationSystemPrompt: 'Summarize the earlier conversation, preserving order identifiers, customer decisions, and any unresolved issues.'
+    # (Optional) Named invocation endpoint. targetVersion pins callers
+    # to a released version; omit it to follow every redeploy.
+    endpoint:
+      name: 'prod'
+      description: 'Production endpoint pinned to a released harness version'
+      targetVersion: '1'

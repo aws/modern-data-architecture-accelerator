@@ -75,7 +75,6 @@ export enum MdaaResourceType {
   LOGS_DELIVERY_SOURCE = 'logs-src',
   LOGS_DELIVERY_DESTINATION = 'logs-dest',
   CUSTOM_RESOURCE = 'custom',
-  BEDROCK_AGENT = 'bedrock-agent',
   BEDROCK_AGENTCORE_RUNTIME = 'agentcore-runtime',
   BEDROCK_AGENTCORE_ENDPOINT = 'agentcore-ep',
   BEDROCK_AGENTCORE_GATEWAY = 'agentcore-gw',

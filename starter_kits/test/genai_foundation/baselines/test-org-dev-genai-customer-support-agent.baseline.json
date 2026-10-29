@@ -10,10 +10,6 @@
       "Type": "AWS::SSM::Parameter::Value<String>",
       "Default": "/test-org/shared/generated-role/data-admin/id"
     },
-    "SsmParameterValuetestorgsharedgeneratedroleagentlambdarolearnC96584B6F00A464EAD1953AFF4B05118Parameter": {
-      "Type": "AWS::SSM::Parameter::Value<String>",
-      "Default": "/test-org/shared/generated-role/agent-lambda-role/arn"
-    },
     "SsmParameterValuetestorgsharedgeneratedroleharnessexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter": {
       "Type": "AWS::SSM::Parameter::Value<String>",
       "Default": "/test-org/shared/generated-role/harness-execution-role/id"
@@ -45,6 +41,10 @@
     "SsmParameterValuetestorgshareddatalakebucketcustomtransformintermediatenameC96584B6F00A464EAD1953AFF4B05118Parameter": {
       "Type": "AWS::SSM::Parameter::Value<String>",
       "Default": "/test-org/shared/datalake/bucket/custom-transform-intermediate/name"
+    },
+    "SsmParameterValuetestorgsharedgeneratedroleagentlambdarolearnC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/test-org/shared/generated-role/agent-lambda-role/arn"
     },
     "BootstrapVersion": {
       "Type": "AWS::SSM::Parameter::Value<String>",
@@ -8421,12 +8421,17 @@
                 "kms:Decrypt",
                 "kms:DescribeKey"
               ],
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account"
+                }
+              },
               "Effect": "Allow",
               "Principal": {
                 "Service": "bedrock.amazonaws.com"
               },
               "Resource": "*",
-              "Sid": "AllowBedrockServiceForAgents"
+              "Sid": "AllowBedrockServiceForKnowledgeBases"
             },
             {
               "Action": [

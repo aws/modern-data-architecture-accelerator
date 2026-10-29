@@ -32,7 +32,6 @@ import { ILogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 
 import { Construct } from 'constructs';
 import { MdaaSecurityGroup } from '@aws-mdaa/ec2-constructs';
-import { BedrockAgentL3Construct, NamedAgentProps, BedrockAgentProps } from '@aws-mdaa/bedrock-agent-l3-construct';
 import {
   BedrockKnowledgeBaseL3Construct,
   BedrockKnowledgeBaseProps,
@@ -41,6 +40,7 @@ import {
   NamedVectorStoreProps,
   OpensearchServerlessProps,
   SharedVpcEndpointDetails,
+  VectorIngestionConfiguration,
 } from '@aws-mdaa/bedrock-knowledge-base-l3-construct';
 import { BedrockGuardrailL3Construct, NamedGuardrailProps } from '@aws-mdaa/bedrock-guardrail-l3-construct';
 import {
@@ -97,18 +97,19 @@ const LAMBDA_VPC_ACCESS_ACTIONS = [
 ];
 
 /**
- * Lambda function and layer configuration for Bedrock agent action groups.
- * Defines Lambda functions and shared layers for implementing custom business logic in agent action groups.
+ * Lambda function and layer configuration for the module's shared Lambda pool.
+ * Defines Lambda functions and shared layers for gateway tools, gateway interceptors, and knowledge base
+ * custom transformations.
  *
- * Use cases: Custom action group logic, shared code libraries, external API integration, business process automation
+ * Use cases: Gateway tool logic, custom document transformation, shared code libraries, external API integration
  *
- * AWS: Lambda functions and layers for Bedrock agent action groups
+ * AWS: Lambda functions and layers
  *
  * Validation: At least one of layers or functions should be provided
  */
 export interface LambdaFunctionProps {
   /**
-   * Lambda layer definitions for shared code and dependencies used by action group functions.
+   * Lambda layer definitions for shared code and dependencies used by the module's functions.
    *
    * Use cases: Shared code libraries, runtime dependencies, common utilities
    *
@@ -118,12 +119,12 @@ export interface LambdaFunctionProps {
    **/
   readonly layers?: LayerProps[];
   /**
-   * Lambda function definitions for Bedrock agent action groups.
-   * Referenced by agents via 'generated-function:' prefix in action group executor config.
+   * Lambda function definitions, referenced from gateway targets, gateway interceptors, and knowledge
+   * base custom transformations via the 'generated-function:<name>' prefix.
    *
-   * Use cases: Custom business logic, external API integration, action group implementation
+   * Use cases: Custom business logic, external API integration, gateway tool implementation
    *
-   * AWS: Lambda functions for Bedrock agent action groups
+   * AWS: Lambda functions
    *
    * Validation: Optional; FunctionProps[]
    **/
@@ -131,7 +132,7 @@ export interface LambdaFunctionProps {
 }
 
 // Re-export the Named types for backward compatibility
-export { NamedAgentProps, NamedKnowledgeBaseProps, NamedVectorStoreProps, NamedGuardrailProps };
+export { NamedKnowledgeBaseProps, NamedVectorStoreProps, NamedGuardrailProps };
 
 // Re-export the gateway config surface so the app config (and downstream consumers) can import the
 // gateway/target types from the builder package rather than reaching into the gateway L3 directly.
@@ -144,7 +145,7 @@ export { GatewayConfigProps, GatewayInterceptorConfigurationsProperty, GatewayTa
  * `generated-function:<name>` form to reference a function defined once under `lambdaFunctions`.
  *
  * Use cases: exposing a compliant MCP gateway (and its tools) from the same module that owns the
- * agents/knowledge bases/Lambdas it fronts
+ * knowledge bases/Lambdas it fronts
  *
  * AWS: Amazon Bedrock AgentCore Gateway (+ GatewayTargets)
  *
@@ -219,7 +220,8 @@ export interface NamedHarnessProps {
 
 export interface BedrockBuilderL3ConstructProps extends MdaaL3ConstructProps {
   /**
-   * Admin roles granted access to Bedrock agent resources including KMS keys and S3 buckets.
+   * Admin roles granted key-admin access to the KMS key the module creates. Unused when `kmsKeyArn`
+   * supplies an existing key.
    *
    * Use cases: Administrative access, resource management, security control
    *
@@ -229,18 +231,8 @@ export interface BedrockBuilderL3ConstructProps extends MdaaL3ConstructProps {
    **/
   readonly dataAdminRoles: MdaaRoleRef[];
   /**
-   * Bedrock agent configurations with foundation models, action groups, knowledge base integration, and guardrails.
-   *
-   * Use cases: AI agent deployment, conversational AI, intelligent automation
-   *
-   * AWS: Amazon Bedrock Agents
-   *
-   * Validation: Optional; NamedAgentProps (map of agent name to config)
-   **/
-  readonly agents?: NamedAgentProps;
-  /**
-   * Existing KMS key ARN for encrypting all Bedrock resources in this module — agents, knowledge
-   * bases, guardrails, and the shared Lambda pool all use this single key.
+   * Existing KMS key ARN for encrypting all Bedrock resources in this module — knowledge bases,
+   * guardrails, the shared Lambda pool, and AgentCore gateways and harnesses all use this single key.
    * If omitted, one customer-managed key is created automatically and shared across them.
    *
    * When an existing key is provided, its key policy must already grant the required service and
@@ -254,23 +246,12 @@ export interface BedrockBuilderL3ConstructProps extends MdaaL3ConstructProps {
    **/
   readonly kmsKeyArn?: string;
   /**
-   * Existing S3 bucket ARN for agent data storage.
-   * If omitted, a dedicated bucket is created automatically.
+   * Lambda functions and layers for gateway tools, gateway interceptors, and knowledge base custom
+   * transformations. Enables custom business logic and external API integrations.
    *
-   * Use cases: Agent artifact storage, data management, bucket reuse
+   * Use cases: Gateway tool logic, external integrations, function deployment
    *
-   * AWS: S3 bucket for Bedrock agent storage
-   *
-   * Validation: Optional; String; must be valid S3 bucket ARN
-   **/
-  readonly agentBucketArn?: string;
-  /**
-   * Lambda functions and layers for Bedrock agent action groups.
-   * Enables custom business logic and external API integrations.
-   *
-   * Use cases: Custom action group logic, external integrations, function deployment
-   *
-   * AWS: Lambda functions/layers for Bedrock agent action groups
+   * AWS: Lambda functions/layers
    *
    * Validation: Optional; LambdaFunctionProps
    **/
@@ -312,7 +293,7 @@ export interface BedrockBuilderL3ConstructProps extends MdaaL3ConstructProps {
    * references its tool targets by name from the sibling `gatewayTargets` map.
    *
    * Use cases: exposing a unified MCP tool surface with per-tool authorization from the same module
-   * that owns the agents/Lambdas it fronts
+   * that owns the Lambdas it fronts
    *
    * AWS: Amazon Bedrock AgentCore Gateway
    *
@@ -470,24 +451,6 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
       guardrails[guardrailName] = guardrailConstruct.guardrail;
     });
 
-    // Only create agents and resolve roles if agents are defined
-    if (props.agents && Object.keys(props.agents).length > 0) {
-      // Create Bedrock Agent(s)
-      Object.entries(props.agents).forEach(([agentName, agentConfig]) => {
-        // Resolve Lambda function references in action groups
-        const resolvedAgentConfig = this.resolveAgentLambdaReferences(agentConfig);
-
-        new BedrockAgentL3Construct(this, `bedrock-agent-${agentName}`, {
-          ...props,
-          agentName,
-          agentConfig: resolvedAgentConfig,
-          kmsKey,
-          knowledgeBases,
-          guardrails,
-        });
-      });
-    }
-
     // Create the VPC endpoint sets, before their consumers: the harnesses and the knowledge base
     // connectors wire themselves to the endpoints. Reconciled even with no consumers at all, because
     // reconciliation is what rejects a set nothing references. Runs after the knowledge bases, whose
@@ -498,7 +461,7 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
     // Create AgentCore gateways (+ their referenced targets). Runs after createLambdaFunctions so
     // gateway target/interceptor `generated-function:<name>` references resolve against the shared
     // pool, and after the knowledge bases so `knowledgeBase` targets resolve `config:<name>` against
-    // them. Gateways reuse the same module CMK as agents/KBs/guardrails.
+    // them. Gateways reuse the same module CMK as KBs/guardrails.
     const gatewayArns = this.createGateways(props, kmsKey, agentcoreContext);
 
     // Create AgentCore Harnesses. Runs after gateways/guardrails so `config:<name>` references in a
@@ -1191,7 +1154,7 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
    * of the matching function created from `lambdaFunctions` (throwing if the name is unknown); any
    * other value (a plain ARN) is returned unchanged. Single source of the `generated-function:`
    * resolution logic, shared by the gateway resolvers as well as
-   * {@link resolveAgentLambdaReferences} and {@link resolveKnowledgeBaseLambdaReferences}.
+   * {@link resolveKnowledgeBaseLambdaReferences}.
    *
    * @param value - the configured Lambda reference (may be a generated-function ref or a plain ARN)
    * @param context - human-readable context for the error message (e.g. the target/interceptor name)
@@ -1320,7 +1283,7 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
   }
 
   /**
-   * Creates Lambda functions and layers for use by Bedrock agents and knowledge bases.
+   * Creates Lambda functions and layers for use by gateways and knowledge bases.
    * This method creates Lambda functions and layers based on the provided configuration,
    * then builds a mapping of function names to their ARNs for later reference resolution.
    * @param props - The construct properties containing Lambda function configurations
@@ -1332,7 +1295,7 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
     const generatedFunctions: { [name: string]: string } = {};
 
     if (props.lambdaFunctions) {
-      const agentLambdas = new LambdaFunctionL3Construct(this, 'bedrock-builder-lambda-functions', {
+      const lambdaPool = new LambdaFunctionL3Construct(this, 'bedrock-builder-lambda-functions', {
         kmsArn: kmsKey.keyArn,
         roleHelper: props.roleHelper,
         naming: props.naming,
@@ -1342,7 +1305,7 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
       });
 
       // Create a map of function-name to function-arn for easy lookup
-      Object.entries(agentLambdas.functionsMap).forEach(([name, lambda]) => {
+      Object.entries(lambdaPool.functionsMap).forEach(([name, lambda]) => {
         generatedFunctions[name] = lambda.functionArn;
       });
     }
@@ -1377,20 +1340,23 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
     });
     kmsKey.addToResourcePolicy(cloudwatchStatement);
 
-    // References:
-    // https://docs.aws.amazon.com/bedrock/latest/userguide/encryption-bda.html#encryption-bda-key-policies.title
-    // https://docs.aws.amazon.com/bedrock/latest/userguide/cmk-agent-resources.html#attach-policy-agent
-    // https://docs.aws.amazon.com/bedrock/latest/userguide/encryption-kb.html
+    // Reference:
+    // https://docs.aws.amazon.com/bedrock/latest/userguide/encryption-kb.html#encryption-kb-runtime
 
-    // Allow Bedrock service to encrypt/decrypt agent resources
-    const bedrockAgentServiceStatement = new PolicyStatement({
-      sid: 'AllowBedrockServiceForAgents',
+    // Allow the Bedrock service to encrypt/decrypt knowledge base retrieval sessions with this key
+    const bedrockKnowledgeBaseServiceStatement = new PolicyStatement({
+      sid: 'AllowBedrockServiceForKnowledgeBases',
       effect: Effect.ALLOW,
       actions: ['kms:GenerateDataKey*', 'kms:Decrypt', 'kms:DescribeKey'],
       principals: [new ServicePrincipal('bedrock.amazonaws.com')],
       resources: ['*'],
+      conditions: {
+        StringEquals: {
+          'aws:SourceAccount': this.account,
+        },
+      },
     });
-    kmsKey.addToResourcePolicy(bedrockAgentServiceStatement);
+    kmsKey.addToResourcePolicy(bedrockKnowledgeBaseServiceStatement);
 
     // Allow Bedrock service to create/list/revoke grants
     const bedrockGrantStatement = new PolicyStatement({
@@ -1413,18 +1379,6 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
 
     // Collect execution roles
     const executionRoleArnsSet = new Set<string>();
-
-    if (props.agents) {
-      for (const [agentName, agentConfig] of Object.entries(props.agents)) {
-        if (agentConfig.role) {
-          const roleResolved = props.roleHelper.resolveRoleRefWithRefId(
-            agentConfig.role,
-            `agent-execution-role-${agentName}`,
-          );
-          executionRoleArnsSet.add(roleResolved.arn());
-        }
-      }
-    }
 
     if (props.knowledgeBases) {
       for (const [kbName, kbConfig] of Object.entries(props.knowledgeBases)) {
@@ -1477,63 +1431,38 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
   }
 
   /**
-   * Resolves Lambda function references in agent action groups.
-   * This method processes agent configuration and replaces any Lambda function references
-   * that use the 'generated-function:' prefix with the actual ARN of the generated function
+   * Resolves Lambda function references in knowledge base data source configurations.
+   * This method processes knowledge base configuration and replaces any Lambda function references
+   * in custom transformation configurations (S3 and SharePoint data sources) that use the
+   * 'generated-function:' prefix with the actual ARN of the generated function
    * (via {@link resolveGeneratedFunctionRef}).
    */
-  private resolveAgentLambdaReferences(agentConfig: BedrockAgentProps): BedrockAgentProps {
-    if (!agentConfig.actionGroups) {
-      return agentConfig;
-    }
-
-    const resolvedActionGroups = agentConfig.actionGroups.map(actionGroup => {
-      const lambdaRef = actionGroup.actionGroupExecutor?.lambda;
-      if (!lambdaRef) {
-        return actionGroup;
-      }
-
-      const resolvedLambda = this.resolveGeneratedFunctionRef(
-        lambdaRef,
-        `agent action group "${actionGroup.actionGroupName}"`,
-      );
-      if (resolvedLambda === lambdaRef) {
-        return actionGroup;
-      }
-
-      return {
-        ...actionGroup,
-        actionGroupExecutor: {
-          ...actionGroup.actionGroupExecutor,
-          lambda: resolvedLambda,
-        },
-      };
-    });
-
+  private resolveKnowledgeBaseLambdaReferences(kbConfig: BedrockKnowledgeBaseProps): BedrockKnowledgeBaseProps {
     return {
-      ...agentConfig,
-      actionGroups: resolvedActionGroups,
+      ...kbConfig,
+      ...(kbConfig.s3DataSources && {
+        s3DataSources: this.resolveDataSourceLambdaReferences(kbConfig.s3DataSources),
+      }),
+      ...(kbConfig.sharepointDataSources && {
+        sharepointDataSources: this.resolveDataSourceLambdaReferences(kbConfig.sharepointDataSources),
+      }),
     };
   }
 
   /**
-   * Resolves Lambda function references in knowledge base data source configurations.
-   * This method processes knowledge base configuration and replaces any Lambda function references
-   * in custom transformation configurations that use the 'generated-function:' prefix with the
-   * actual ARN of the generated function (via {@link resolveGeneratedFunctionRef}).
+   * Resolves 'generated-function:' references in each data source's custom transformation Lambda ARNs.
+   * Data sources without a custom transformation configuration are returned unchanged.
    */
-  private resolveKnowledgeBaseLambdaReferences(kbConfig: BedrockKnowledgeBaseProps): BedrockKnowledgeBaseProps {
-    if (!kbConfig.s3DataSources) {
-      return kbConfig;
-    }
-
-    const resolvedDataSources = Object.fromEntries(
-      Object.entries(kbConfig.s3DataSources).map(([dsName, dsConfig]) => {
-        if (!dsConfig.vectorIngestionConfiguration?.customTransformationConfiguration) {
+  private resolveDataSourceLambdaReferences<
+    T extends { readonly vectorIngestionConfiguration?: VectorIngestionConfiguration },
+  >(dataSources: { [dsName: string]: T }): { [dsName: string]: T } {
+    return Object.fromEntries(
+      Object.entries(dataSources).map(([dsName, dsConfig]) => {
+        const transformConfig = dsConfig.vectorIngestionConfiguration?.customTransformationConfiguration;
+        if (!transformConfig) {
           return [dsName, dsConfig];
         }
 
-        const transformConfig = dsConfig.vectorIngestionConfiguration.customTransformationConfiguration;
         const resolvedLambdaArns = transformConfig.transformLambdaArns.map(lambdaArn =>
           this.resolveGeneratedFunctionRef(lambdaArn, `knowledge base data source "${dsName}"`),
         );
@@ -1553,11 +1482,6 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
         ];
       }),
     );
-
-    return {
-      ...kbConfig,
-      s3DataSources: resolvedDataSources,
-    };
   }
 
   // ---------------------------------------------

@@ -10,12 +10,12 @@ const BEDROCK_MODEL_ARN_PATTERN =
   /^arn:[a-zA-Z\d-]+:bedrock:[a-zA-Z\d-]+:(([a-zA-Z\d-]+:custom-model\/[a-z\d-]{1,63}\.[a-z\d-]{1,63}(:[a-z\d-]{1,63}){0,2}\/[a-z\d]{12})|(:foundation-model\/[a-z\d-]{1,63}\.[a-z\d-]{1,63}\.?[a-z\d-]{1,63}(:[a-z\d-]{1,63}){0,2})|([a-zA-Z\d-]+:(inference-profile|application-inference-profile)\/[a-zA-Z\d-:.]+))$/; // NOSONAR
 
 /**
- * Validates that a model ARN matches the expected CloudFormation pattern.
+ * Validates that a model ARN is a well-formed Bedrock foundation model, custom model, or inference profile ARN.
  */
 function validateModelArn(arn: string): string {
   if (!isException(arn) && !BEDROCK_MODEL_ARN_PATTERN.test(arn)) {
     throw new Error(
-      `Invalid Bedrock model ARN format: ${arn}. ARN must match CloudFormation validation pattern for AWS::Bedrock::Agent foundationModel property.`,
+      `Invalid Bedrock model ARN format: ${arn}. Expected a foundation model, custom model, or inference profile ARN.`,
     );
   }
   return arn;

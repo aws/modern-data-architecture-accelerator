@@ -2,31 +2,6 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "additionalProperties": false,
     "definitions": {
-        "APISchemaProperty": {
-            "additionalProperties": false,
-            "properties": {
-                "openApiSchemaPath": {
-                    "description": "Relative path to JSON/YAML OpenAPI schema file",
-                    "type": "string"
-                },
-                "payload": {
-                    "description": "The JSON or YAML-formatted payload defining the OpenAPI schema for the action group.",
-                    "type": "string"
-                },
-                "s3": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/definitions/IResolvable"
-                        },
-                        {
-                            "$ref": "#/definitions/CfnAgent.S3IdentifierProperty"
-                        }
-                    ],
-                    "description": "Contains details about the S3 object containing the OpenAPI schema for the action group."
-                }
-            },
-            "type": "object"
-        },
         "AdditionalBlueprintAccount": {
             "additionalProperties": false,
             "properties": {
@@ -85,79 +60,6 @@
             "required": [
                 "action",
                 "principal"
-            ],
-            "type": "object"
-        },
-        "AgentActionGroupProperty": {
-            "additionalProperties": false,
-            "properties": {
-                "actionGroupExecutor": {
-                    "$ref": "#/definitions/CfnAgent.ActionGroupExecutorProperty",
-                    "description": "Action group executor (e.g. Lambda function)"
-                },
-                "actionGroupName": {
-                    "description": "Action group name",
-                    "type": "string"
-                },
-                "actionGroupState": {
-                    "description": "Action group state (ENABLED or DISABLED)",
-                    "type": "string"
-                },
-                "apiSchema": {
-                    "$ref": "#/definitions/APISchemaProperty",
-                    "description": "API schema for external API integration"
-                },
-                "description": {
-                    "description": "Action group description",
-                    "type": "string"
-                },
-                "functionSchema": {
-                    "$ref": "#/definitions/CfnAgent.FunctionSchemaProperty",
-                    "description": "Function schema for structured function invocation"
-                }
-            },
-            "required": [
-                "actionGroupExecutor",
-                "actionGroupName"
-            ],
-            "type": "object"
-        },
-        "AgentGuardrailAssociation": {
-            "additionalProperties": false,
-            "properties": {
-                "id": {
-                    "description": "Guardrail identifier",
-                    "type": "string"
-                },
-                "version": {
-                    "description": "Guardrail version",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "id"
-            ],
-            "type": "object"
-        },
-        "AgentKnowledgeBaseAssociation": {
-            "additionalProperties": false,
-            "properties": {
-                "description": {
-                    "description": "Knowledge base association description",
-                    "type": "string"
-                },
-                "id": {
-                    "description": "Knowledge base identifier",
-                    "type": "string"
-                },
-                "knowledgeBaseState": {
-                    "description": "Knowledge base state (controls usage during invocation)",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "description",
-                "id"
             ],
             "type": "object"
         },
@@ -362,67 +264,6 @@
             ],
             "type": "object"
         },
-        "BedrockAgentProps": {
-            "additionalProperties": false,
-            "properties": {
-                "actionGroups": {
-                    "description": "Action groups for task execution and API integration",
-                    "items": {
-                        "$ref": "#/definitions/AgentActionGroupProperty"
-                    },
-                    "type": "array"
-                },
-                "agentAliasName": {
-                    "description": "Agent alias name for version management",
-                    "type": "string"
-                },
-                "autoPrepare": {
-                    "description": "Auto-prepare DRAFT version after changes",
-                    "type": "boolean"
-                },
-                "description": {
-                    "description": "Agent description",
-                    "type": "string"
-                },
-                "foundationModel": {
-                    "description": "Foundation model identifier for agent reasoning",
-                    "type": "string"
-                },
-                "guardrail": {
-                    "$ref": "#/definitions/AgentGuardrailAssociation",
-                    "description": "Guardrail association for safety and content filtering"
-                },
-                "idleSessionTtlInSeconds": {
-                    "description": "Idle session timeout in seconds",
-                    "type": "number"
-                },
-                "instruction": {
-                    "description": "Agent instructions defining behavior and interaction patterns",
-                    "type": "string"
-                },
-                "knowledgeBases": {
-                    "description": "Knowledge base associations for RAG capabilities",
-                    "items": {
-                        "$ref": "#/definitions/AgentKnowledgeBaseAssociation"
-                    },
-                    "type": "array"
-                },
-                "promptOverrideConfiguration": {
-                    "$ref": "#/definitions/CfnAgent.PromptOverrideConfigurationProperty",
-                    "description": "Prompt override configuration for advanced prompt engineering"
-                },
-                "role": {
-                    "$ref": "#/definitions/MdaaRoleRef",
-                    "description": "Reference to role which will be used as execution role on all agent(s).\nThe role must have assume-role trust with bedrock.amazonaws.com."
-                }
-            },
-            "required": [
-                "foundationModel",
-                "instruction",
-                "role"
-            ],
-            "type": "object"
-        },
         "BedrockDataAutomationConfig": {
             "additionalProperties": false,
             "properties": {
@@ -530,7 +371,7 @@
         },
         "BuilderGatewayProps": {
             "additionalProperties": false,
-            "description": "Configuration for a Bedrock AgentCore Gateway, keyed by gateway name in {@link NamedGatewayProps}.\nThe name-less {@link GatewayConfigProps} plus a flat `targets` list of references into the\ntop-level `gatewayTargets` map. A target's `lambdaArn` and an interceptor's `lambdaArn` may use the\n`generated-function:<name>` form to reference a function defined once under `lambdaFunctions`.\n\nUse cases: exposing a compliant MCP gateway (and its tools) from the same module that owns the\nagents/knowledge bases/Lambdas it fronts\n\nAWS: Amazon Bedrock AgentCore Gateway (+ GatewayTargets)\n\nValidation: each `targets` entry must name a key in the top-level `gatewayTargets` map",
+            "description": "Configuration for a Bedrock AgentCore Gateway, keyed by gateway name in {@link NamedGatewayProps}.\nThe name-less {@link GatewayConfigProps} plus a flat `targets` list of references into the\ntop-level `gatewayTargets` map. A target's `lambdaArn` and an interceptor's `lambdaArn` may use the\n`generated-function:<name>` form to reference a function defined once under `lambdaFunctions`.\n\nUse cases: exposing a compliant MCP gateway (and its tools) from the same module that owns the\nknowledge bases/Lambdas it fronts\n\nAWS: Amazon Bedrock AgentCore Gateway (+ GatewayTargets)\n\nValidation: each `targets` entry must name a key in the top-level `gatewayTargets` map",
             "properties": {
                 "authorizerConfiguration": {
                     "$ref": "#/definitions/AgentcoreAuthorizerConfigProperty",
@@ -629,210 +470,6 @@
             "required": [
                 "targetConfiguration"
             ],
-            "type": "object"
-        },
-        "CfnAgent.ActionGroupExecutorProperty": {
-            "additionalProperties": false,
-            "description": "Contains details about the Lambda function containing the business logic that is carried out upon invoking the action or the custom control method for handling the information elicited from the user.",
-            "properties": {
-                "customControl": {
-                    "description": "To return the action group invocation results directly in the `InvokeInlineAgent` response, specify `RETURN_CONTROL` .",
-                    "type": "string"
-                },
-                "lambda": {
-                    "description": "The Amazon Resource Name (ARN) of the Lambda function containing the business logic that is carried out upon invoking the action.",
-                    "type": "string"
-                }
-            },
-            "type": "object"
-        },
-        "CfnAgent.FunctionProperty": {
-            "additionalProperties": false,
-            "description": "Defines parameters that the agent needs to invoke from the user to complete the function.\n\nCorresponds to an action in an action group.\n\nThis data type is used in the following API operations:\n\n- [CreateAgentActionGroup request](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent_CreateAgentActionGroup.html#API_agent_CreateAgentActionGroup_RequestSyntax)\n- [CreateAgentActionGroup response](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent_CreateAgentActionGroup.html#API_agent_CreateAgentActionGroup_ResponseSyntax)\n- [UpdateAgentActionGroup request](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent_UpdateAgentActionGroup.html#API_agent_UpdateAgentActionGroup_RequestSyntax)\n- [UpdateAgentActionGroup response](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent_UpdateAgentActionGroup.html#API_agent_UpdateAgentActionGroup_ResponseSyntax)\n- [GetAgentActionGroup response](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent_GetAgentActionGroup.html#API_agent_GetAgentActionGroup_ResponseSyntax)",
-            "properties": {
-                "description": {
-                    "description": "A description of the function and its purpose.",
-                    "type": "string"
-                },
-                "name": {
-                    "description": "A name for the function.",
-                    "type": "string"
-                },
-                "parameters": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/definitions/IResolvable"
-                        },
-                        {
-                            "$ref": "#/definitions/Record%3Cstring%2CIResolvable%7CCfnAgent.ParameterDetailProperty%3E"
-                        }
-                    ],
-                    "description": "The parameters that the agent elicits from the user to fulfill the function."
-                },
-                "requireConfirmation": {
-                    "description": "Contains information if user confirmation is required to invoke the function.",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name"
-            ],
-            "type": "object"
-        },
-        "CfnAgent.FunctionSchemaProperty": {
-            "additionalProperties": false,
-            "description": "Contains details about the function schema for the action group or the JSON or YAML-formatted payload defining the schema.",
-            "properties": {
-                "functions": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/definitions/IResolvable"
-                        },
-                        {
-                            "items": {
-                                "anyOf": [
-                                    {
-                                        "$ref": "#/definitions/IResolvable"
-                                    },
-                                    {
-                                        "$ref": "#/definitions/CfnAgent.FunctionProperty"
-                                    }
-                                ]
-                            },
-                            "type": "array"
-                        }
-                    ],
-                    "description": "A list of functions that each define an action in the action group."
-                }
-            },
-            "required": [
-                "functions"
-            ],
-            "type": "object"
-        },
-        "CfnAgent.InferenceConfigurationProperty": {
-            "additionalProperties": false,
-            "description": "Base inference parameters to pass to a model in a call to [Converse](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html) or [ConverseStream](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_ConverseStream.html) . For more information, see [Inference parameters for foundation models](https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html) .\n\nIf you need to pass additional parameters that the model supports, use the `additionalModelRequestFields` request field in the call to `Converse` or `ConverseStream` . For more information, see [Model parameters](https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html) .",
-            "properties": {
-                "maximumLength": {
-                    "description": "The maximum number of tokens allowed in the generated response.",
-                    "type": "number"
-                },
-                "stopSequences": {
-                    "description": "A list of stop sequences.\n\nA stop sequence is a sequence of characters that causes the model to stop generating the response.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "temperature": {
-                    "description": "The likelihood of the model selecting higher-probability options while generating a response.\n\nA lower value makes the model more likely to choose higher-probability options, while a higher value makes the model more likely to choose lower-probability options.\n\nThe default value is the default value for the model that you are using. For more information, see [Inference parameters for foundation models](https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html) .",
-                    "type": "number"
-                },
-                "topK": {
-                    "description": "While generating a response, the model determines the probability of the following token at each point of generation.\n\nThe value that you set for `topK` is the number of most-likely candidates from which the model chooses the next token in the sequence. For example, if you set `topK` to 50, the model selects the next token from among the top 50 most likely choices.",
-                    "type": "number"
-                },
-                "topP": {
-                    "description": "The percentage of most-likely candidates that the model considers for the next token.\n\nFor example, if you choose a value of 0.8 for `topP` , the model selects from the top 80% of the probability distribution of tokens that could be next in the sequence.\n\nThe default value is the default value for the model that you are using. For more information, see [Inference parameters for foundation models](https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html) .",
-                    "type": "number"
-                }
-            },
-            "type": "object"
-        },
-        "CfnAgent.PromptConfigurationProperty": {
-            "additionalProperties": false,
-            "description": "Contains configurations to override a prompt template in one part of an agent sequence.\n\nFor more information, see [Advanced prompts](https://docs.aws.amazon.com/bedrock/latest/userguide/advanced-prompts.html) .",
-            "properties": {
-                "additionalModelRequestFields": {
-                    "description": "If the Converse or ConverseStream operations support the model, `additionalModelRequestFields` contains additional inference parameters, beyond the base set of inference parameters in the `inferenceConfiguration` field.\n\nFor more information, see [Inference request parameters and response fields for foundation models](https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html) ."
-                },
-                "basePromptTemplate": {
-                    "description": "Defines the prompt template with which to replace the default prompt template.\n\nYou can use placeholder variables in the base prompt template to customize the prompt. For more information, see [Prompt template placeholder variables](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-placeholders.html) . For more information, see [Configure the prompt templates](https://docs.aws.amazon.com/bedrock/latest/userguide/advanced-prompts-configure.html) .",
-                    "type": "string"
-                },
-                "foundationModel": {
-                    "description": "The agent's foundation model.",
-                    "type": "string"
-                },
-                "inferenceConfiguration": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/definitions/IResolvable"
-                        },
-                        {
-                            "$ref": "#/definitions/CfnAgent.InferenceConfigurationProperty"
-                        }
-                    ],
-                    "description": "Contains inference parameters to use when the agent invokes a foundation model in the part of the agent sequence defined by the `promptType` .\n\nFor more information, see [Inference parameters for foundation models](https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html) ."
-                },
-                "parserMode": {
-                    "description": "Specifies whether to override the default parser Lambda function when parsing the raw foundation model output in the part of the agent sequence defined by the `promptType` .\n\nIf you set the field as `OVERRIDDEN` , the `overrideLambda` field in the [PromptOverrideConfiguration](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent_PromptOverrideConfiguration.html) must be specified with the ARN of a Lambda function.",
-                    "type": "string"
-                },
-                "promptCreationMode": {
-                    "description": "Specifies whether to override the default prompt template for this `promptType` .\n\nSet this value to `OVERRIDDEN` to use the prompt that you provide in the `basePromptTemplate` . If you leave it as `DEFAULT` , the agent uses a default prompt template.",
-                    "type": "string"
-                },
-                "promptState": {
-                    "description": "Specifies whether to allow the inline agent to carry out the step specified in the `promptType` .\n\nIf you set this value to `DISABLED` , the agent skips that step. The default state for each `promptType` is as follows.\n\n- `PRE_PROCESSING` – `ENABLED`\n- `ORCHESTRATION` – `ENABLED`\n- `KNOWLEDGE_BASE_RESPONSE_GENERATION` – `ENABLED`\n- `POST_PROCESSING` – `DISABLED`",
-                    "type": "string"
-                },
-                "promptType": {
-                    "description": "The step in the agent sequence that this prompt configuration applies to.",
-                    "type": "string"
-                }
-            },
-            "type": "object"
-        },
-        "CfnAgent.PromptOverrideConfigurationProperty": {
-            "additionalProperties": false,
-            "description": "Contains configurations to override prompts in different parts of an agent sequence.\n\nFor more information, see [Advanced prompts](https://docs.aws.amazon.com/bedrock/latest/userguide/advanced-prompts.html) .",
-            "properties": {
-                "overrideLambda": {
-                    "description": "The ARN of the Lambda function to use when parsing the raw foundation model output in parts of the agent sequence.\n\nIf you specify this field, at least one of the `promptConfigurations` must contain a `parserMode` value that is set to `OVERRIDDEN` . For more information, see [Parser Lambda function in Amazon Bedrock Agents](https://docs.aws.amazon.com/bedrock/latest/userguide/lambda-parser.html) .",
-                    "type": "string"
-                },
-                "promptConfigurations": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/definitions/IResolvable"
-                        },
-                        {
-                            "items": {
-                                "anyOf": [
-                                    {
-                                        "$ref": "#/definitions/IResolvable"
-                                    },
-                                    {
-                                        "$ref": "#/definitions/CfnAgent.PromptConfigurationProperty"
-                                    }
-                                ]
-                            },
-                            "type": "array"
-                        }
-                    ],
-                    "description": "Contains configurations to override a prompt template in one part of an agent sequence.\n\nFor more information, see [Advanced prompts](https://docs.aws.amazon.com/bedrock/latest/userguide/advanced-prompts.html) ."
-                }
-            },
-            "required": [
-                "promptConfigurations"
-            ],
-            "type": "object"
-        },
-        "CfnAgent.S3IdentifierProperty": {
-            "additionalProperties": false,
-            "description": "The identifier information for an Amazon S3 bucket.",
-            "properties": {
-                "s3BucketName": {
-                    "description": "The name of the S3 bucket.",
-                    "type": "string"
-                },
-                "s3ObjectKey": {
-                    "description": "The S3 object key for the S3 resource.",
-                    "type": "string"
-                }
-            },
             "type": "object"
         },
         "CfnAutoScalingInstanceRefresh": {
@@ -1584,10 +1221,12 @@
                     "type": "string"
                 },
                 "transformLambdaArns": {
-                    "description": "Lambda function ARNs for custom document transformation",
+                    "description": "Lambda function ARN for custom document transformation. Bedrock accepts exactly one\ntransformation per data source.",
                     "items": {
                         "type": "string"
                     },
+                    "maxItems": 1,
+                    "minItems": 1,
                     "type": "array"
                 }
             },
@@ -3620,17 +3259,17 @@
         },
         "LambdaFunctionProps": {
             "additionalProperties": false,
-            "description": "Lambda function and layer configuration for Bedrock agent action groups.\nDefines Lambda functions and shared layers for implementing custom business logic in agent action groups.\n\nUse cases: Custom action group logic, shared code libraries, external API integration, business process automation\n\nAWS: Lambda functions and layers for Bedrock agent action groups\n\nValidation: At least one of layers or functions should be provided",
+            "description": "Lambda function and layer configuration for the module's shared Lambda pool.\nDefines Lambda functions and shared layers for gateway tools, gateway interceptors, and knowledge base\ncustom transformations.\n\nUse cases: Gateway tool logic, custom document transformation, shared code libraries, external API integration\n\nAWS: Lambda functions and layers\n\nValidation: At least one of layers or functions should be provided",
             "properties": {
                 "functions": {
-                    "description": "Lambda function definitions for Bedrock agent action groups.\nReferenced by agents via 'generated-function:' prefix in action group executor config.\n\nUse cases: Custom business logic, external API integration, action group implementation\n\nAWS: Lambda functions for Bedrock agent action groups\n\nValidation: Optional; FunctionProps[]",
+                    "description": "Lambda function definitions, referenced from gateway targets, gateway interceptors, and knowledge\nbase custom transformations via the 'generated-function:<name>' prefix.\n\nUse cases: Custom business logic, external API integration, gateway tool implementation\n\nAWS: Lambda functions\n\nValidation: Optional; FunctionProps[]",
                     "items": {
                         "$ref": "#/definitions/FunctionProps"
                     },
                     "type": "array"
                 },
                 "layers": {
-                    "description": "Lambda layer definitions for shared code and dependencies used by action group functions.\n\nUse cases: Shared code libraries, runtime dependencies, common utilities\n\nAWS: Lambda layers\n\nValidation: Optional; LayerProps[]",
+                    "description": "Lambda layer definitions for shared code and dependencies used by the module's functions.\n\nUse cases: Shared code libraries, runtime dependencies, common utilities\n\nAWS: Lambda layers\n\nValidation: Optional; LayerProps[]",
                     "items": {
                         "$ref": "#/definitions/LayerProps"
                     },
@@ -4712,12 +4351,6 @@
             ],
             "description": "A granular suppression"
         },
-        "NamedAgentProps": {
-            "additionalProperties": {
-                "$ref": "#/definitions/BedrockAgentProps"
-            },
-            "type": "object"
-        },
         "NamedEventBridgeRuleProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/EventBridgeRuleProps"
@@ -5053,10 +4686,6 @@
             "type": "object"
         },
         "Record<string,Grant>": {
-            "additionalProperties": false,
-            "type": "object"
-        },
-        "Record<string,IResolvable|CfnAgent.ParameterDetailProperty>": {
             "additionalProperties": false,
             "type": "object"
         },
@@ -6034,16 +5663,8 @@
         }
     },
     "properties": {
-        "agentBucketArn": {
-            "description": "Existing S3 bucket ARN for agent data storage.\nIf omitted, a dedicated bucket is created automatically.\n\nUse cases: Agent artifact storage, data management, bucket reuse\n\nAWS: S3 bucket for Bedrock agent storage\n\nValidation: Optional; String; must be valid S3 bucket ARN",
-            "type": "string"
-        },
-        "agents": {
-            "$ref": "#/definitions/NamedAgentProps",
-            "description": "Bedrock agent configurations with foundation models, action groups, knowledge base integration, and guardrails.\n\nUse cases: AI agent deployment, conversational AI, task automation, intelligent workflows\n\nAWS: Amazon Bedrock Agents\n\nValidation: Optional; NamedAgentProps (map of agent name to config)"
-        },
         "dataAdminRoles": {
-            "description": "Admin roles granted access to Bedrock agent resources including KMS keys and S3 buckets.\n\nUse cases: Administrative access, role-based security, Bedrock resource management\n\nAWS: IAM roles for Bedrock resource administration\n\nValidation: Required; MdaaRoleRef[]",
+            "description": "Admin roles granted key-admin access to the KMS key the module creates. Unused when `kmsKeyArn`\nsupplies an existing key.\n\nUse cases: Administrative access, role-based security, Bedrock resource management\n\nAWS: IAM roles for Bedrock resource administration\n\nValidation: Required; MdaaRoleRef[]",
             "items": {
                 "$ref": "#/definitions/MdaaRoleRef"
             },
@@ -6066,7 +5687,7 @@
             "description": "Bedrock AgentCore Harness configurations - a declarative agent loop (model + system prompt +\ntools) - keyed by harness name. A harness's `guardrail.id` and\n`tools[].agentCoreGateway.gatewayArn` may use a `config:<name>` reference into the sibling\n`guardrails` / `gateways` maps, resolved to the live resource.\n\nUse cases: declarative tool-using/RAG agents\n\nAWS: AWS::BedrockAgentCore::Harness\n\nValidation: Optional; NamedHarnessProps (map of harness name to config)"
         },
         "kmsKeyArn": {
-            "description": "Existing KMS key ARN for encrypting all Bedrock resources in this module — agents, knowledge\nbases, guardrails, the shared Lambda pool, and AgentCore gateways all use this single key.\nIf omitted, one customer-managed key is created automatically and shared across them.\n\nWhen an existing key is provided, its key policy must already grant the required service and\nexecution-role use (the module cannot mutate an imported key's policy) — including the AgentCore\ngateway grants when gateways are configured.\n\nUse cases: Customer-controlled encryption, security compliance, key reuse\n\nAWS: KMS key for Bedrock resource encryption\n\nValidation: Optional; String; must be valid KMS key ARN",
+            "description": "Existing KMS key ARN for encrypting all Bedrock resources in this module — knowledge bases,\nguardrails, the shared Lambda pool, and AgentCore gateways and harnesses all use this single key.\nIf omitted, one customer-managed key is created automatically and shared across them.\n\nWhen an existing key is provided, its key policy must already grant the required service and\nexecution-role use (the module cannot mutate an imported key's policy) — including the AgentCore\ngateway grants when gateways are configured.\n\nUse cases: Customer-controlled encryption, security compliance, key reuse\n\nAWS: KMS key for Bedrock resource encryption\n\nValidation: Optional; String; must be valid KMS key ARN",
             "type": "string"
         },
         "knowledgeBases": {
@@ -6075,7 +5696,7 @@
         },
         "lambdaFunctions": {
             "$ref": "#/definitions/LambdaFunctionProps",
-            "description": "Lambda functions and layers for Bedrock agent action groups.\nEnables custom business logic, API integrations, and business process automation within agents.\n\nUse cases: Custom action group logic, external API integration, business process automation\n\nAWS: Lambda functions/layers for Bedrock agent action groups\n\nValidation: Optional; LambdaFunctionProps"
+            "description": "Lambda functions and layers for gateway tools, gateway interceptors, and knowledge base custom\ntransformations, referenced via `generated-function:<name>`.\n\nUse cases: Gateway tool logic, external API integration, custom document transformation\n\nAWS: Lambda functions/layers\n\nValidation: Optional; LambdaFunctionProps"
         },
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",

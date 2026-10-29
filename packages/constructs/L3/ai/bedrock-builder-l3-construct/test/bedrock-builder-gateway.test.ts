@@ -119,7 +119,7 @@ describe('BedrockBuilderL3Construct AgentCore gateway wiring', () => {
   });
 
   test('gateways reuse the single shared module CMK (no per-gateway key)', () => {
-    // The module provisions ONE shared CMK (getOrCreateKmsKey) for agents/KBs/guardrails/Lambdas and
+    // The module provisions ONE shared CMK (getOrCreateKmsKey) for KBs/guardrails/Lambdas and
     // gateways alike. A gateway must not create its own key — expect exactly one KMS::Key, and the
     // gateway wired to a key ARN.
     const t = template({ gateways: { 'gw-a': { authorizerConfiguration: customJwt } } });

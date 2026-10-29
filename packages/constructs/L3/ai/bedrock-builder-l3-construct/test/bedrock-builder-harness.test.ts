@@ -76,7 +76,7 @@ describe('BedrockBuilderL3Construct AgentCore harness wiring', () => {
   });
 
   test('the single module CMK is shared with the harness (harness provisions no key of its own)', () => {
-    // The module provisions exactly one shared CMK (getOrCreateKmsKey) for agents/KBs/guardrails/
+    // The module provisions exactly one shared CMK (getOrCreateKmsKey) for KBs/guardrails/
     // gateways/Lambdas, and passes it into each harness. The harness is a pure key consumer - it
     // creates no key of its own - so one harness with no other resources configured yields exactly
     // one KMS key.

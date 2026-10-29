@@ -76,28 +76,6 @@ describe('Bedrock Builder Baseline Diff Tests', () => {
   );
 
   baselineDiffTestApp(
-    'Bedrock Builder Gateway',
-    Create.appProvider(
-      context => {
-        const moduleApp = new BedrockBuilderApp({
-          context: {
-            ...context,
-            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-gateway.yaml'),
-          },
-        });
-        moduleApp.generateStack();
-        return moduleApp;
-      },
-      {
-        module_name: 'test-bedrock-builder-gateway',
-        org: 'test-org',
-        env: 'test-env',
-        domain: 'test-domain',
-      },
-    ),
-  );
-
-  baselineDiffTestApp(
     'Bedrock Builder Gateway IAM',
     Create.appProvider(
       context => {
@@ -120,20 +98,20 @@ describe('Bedrock Builder Baseline Diff Tests', () => {
   );
 
   baselineDiffTestApp(
-    'Bedrock Builder Gateway Log Delivery',
+    'Bedrock Builder Gateway JWT',
     Create.appProvider(
       context => {
         const moduleApp = new BedrockBuilderApp({
           context: {
             ...context,
-            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-gateway-logdelivery.yaml'),
+            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-gateway-jwt.yaml'),
           },
         });
         moduleApp.generateStack();
         return moduleApp;
       },
       {
-        module_name: 'test-bedrock-builder-gateway-logdelivery',
+        module_name: 'test-bedrock-builder-gateway-jwt',
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',
@@ -156,50 +134,6 @@ describe('Bedrock Builder Baseline Diff Tests', () => {
       },
       {
         module_name: 'test-bedrock-builder-gateway-kb',
-        org: 'test-org',
-        env: 'test-env',
-        domain: 'test-domain',
-      },
-    ),
-  );
-
-  baselineDiffTestApp(
-    'Bedrock Builder Harness Minimal',
-    Create.appProvider(
-      context => {
-        const moduleApp = new BedrockBuilderApp({
-          context: {
-            ...context,
-            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-harness-minimal.yaml'),
-          },
-        });
-        moduleApp.generateStack();
-        return moduleApp;
-      },
-      {
-        module_name: 'test-bedrock-builder-harness-minimal',
-        org: 'test-org',
-        env: 'test-env',
-        domain: 'test-domain',
-      },
-    ),
-  );
-
-  baselineDiffTestApp(
-    'Bedrock Builder Harness Comprehensive',
-    Create.appProvider(
-      context => {
-        const moduleApp = new BedrockBuilderApp({
-          context: {
-            ...context,
-            module_configs: path.join(__dirname, '..', 'sample_configs', 'sample-config-harness-comprehensive.yaml'),
-          },
-        });
-        moduleApp.generateStack();
-        return moduleApp;
-      },
-      {
-        module_name: 'test-bedrock-builder-harness-comprehensive',
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',

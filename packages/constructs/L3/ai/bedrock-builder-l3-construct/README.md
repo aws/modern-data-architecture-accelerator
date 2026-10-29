@@ -18,9 +18,9 @@ The Bedrock Builder CDK L3 construct is used to configure and deploy a secure Be
 
 - **Bedrock Execution Role**: Execution policies are attached to the KB execution role. This role should have Bedrock Service as a Trusted Principal.
 - **Bedrock KMS Key**: Encrypt Bedrock resources with the KMS Key. One will be generated if a KMS key is not provided as part of Configuration
-- **Lambdas**: (Optional) Allows you to generate Lambda Layer, Lambda Function or both, which can be associated with Agent Action Group. (_Refer: [MDAA DataOps-LambdaFunctions](../../dataops/dataops-lambda-l3-construct/README.md)_)
+- **Lambdas**: (Optional) Allows you to generate Lambda Layer, Lambda Function or both, which gateway targets, gateway interceptors, and knowledge base custom transformations reference with the `generated-function:<name>` prefix. (_Refer: [MDAA DataOps-LambdaFunctions](../../dataops/dataops-lambda-l3-construct/README.md)_)
   - **Lambda Layers** - Lambda layers which can be used in Lambda functions (inside or outside of this config).
-  - **Lambda Functions** - Lambda function(s) for Agent Action Group(s)
+  - **Lambda Functions** - Lambda function(s) for gateway tools, interceptors, and knowledge base transformations
     - May be optionally VPC bound with configurable VPC, Subnet, and Security Group Parameters
 
     - Can use an existing security group (from Project, for instance), or create a new security group per function
@@ -28,15 +28,11 @@ The Bedrock Builder CDK L3 construct is used to configure and deploy a secure Be
       - All egress allowed by default (configurable)
       - No ingress allowed (not configurable)
 
-- **Action Group(s)**: Create Agent Action group for Bedrock Agent. It allows you to either use an existing Lambda function (by providing its ARN directly) or create a new one as part of the agent configuration. The `generated-function:` prefix tells the system to use the Lambda that was created from the configuration rather than looking for an existing function ARN
-
-- **Bedrock Guardrail**: (Optional) If Bedrock Guardrail is mentioned in the configuration, the Agent will be associated with Bedrock Guardrail.
-
-  _Bedrock execution policy will also be updated to allow `ApplyGuardrail` permission on the provided `GuardrailID`_
+- **Bedrock Guardrail**: (Optional) Deploys Bedrock Guardrails, which a harness can reference by `config:<name>`.
 
 - **OpenSearch Serverless VPC Endpoints**: For OpenSearch Serverless vector stores, the construct automatically creates VPC endpoints for secure connectivity. If you already have an existing VPC endpoint for OpenSearch Serverless in your VPC, you can provide the endpoint ID and security group ID in the vector store configuration to reuse it instead of creating a new one. This prevents deployment failures when a VPC endpoint already exists.
 
-- **AgentCore Harness(es)**: (Optional) Deploys one or more [`AWS::BedrockAgentCore::Harness`](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/harness.html) resources - a declarative agent loop (model + system prompt + tools). Configured via the top-level `harnesses` map, independently of `agents`.
+- **AgentCore Harness(es)**: (Optional) Deploys one or more [`AWS::BedrockAgentCore::Harness`](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/harness.html) resources - a declarative agent loop (model + system prompt + tools). Configured via the top-level `harnesses` map.
   - A harness's `guardrail.id` and `tools[].agentCoreGateway.gatewayArn` may reference a guardrail or gateway defined elsewhere in the same module via a `config:<name>` reference (resolved to the live guardrail id/version or gateway ARN), or a literal id/ARN.
   - Covers model and sampling config, execution role, guardrails, session lifecycle and cost caps, `inline_function` and `agentcore_gateway` tools, VPC networking, and context truncation - see [`@aws-mdaa/bedrock-agentcore-harness-l3-construct`](../bedrock-agentcore-harness-l3-construct/README.md) for the full configuration surface.
 

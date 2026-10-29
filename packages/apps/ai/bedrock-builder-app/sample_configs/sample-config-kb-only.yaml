@@ -1,11 +1,15 @@
-# Knowledge-base-only Bedrock Builder configuration: vector stores and knowledge bases, with no agents,
-# gateways, harnesses, guardrails or shared Lambda functions. `kmsKeyArn` is omitted, so the module
-# creates its own KMS key.
+# Knowledge-base-only Bedrock Builder configuration: vector stores and knowledge bases, with no
+# gateways, harnesses, guardrails or shared Lambda functions, encrypted with an existing KMS key.
 
 # See CONFIGURATION.md for role reference options (name, arn, id).
-# Admin roles granted key-admin rights on the module's KMS key.
+# Key-admin roles for a module-created KMS key; unused here because kmsKeyArn is set.
 dataAdminRoles:
   - name: 'Admin'
+
+# (Optional) Existing KMS key for the module's resources. Omit to have the module create one. The
+# module cannot change an existing key's policy, so it must already grant use of the key to Bedrock,
+# the execution roles, and CloudWatch Logs (logs.<region>.amazonaws.com) for the KB log groups.
+kmsKeyArn: 'arn:{{partition}}:kms:{{region}}:{{account}}:key/test-key-id'
 
 # (Optional) Vector stores backing the knowledge bases below, keyed by store name.
 vectorStores:

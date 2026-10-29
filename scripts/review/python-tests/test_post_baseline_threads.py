@@ -195,6 +195,32 @@ class TestFormatSummaryBody:
         body = format_summary_body(entries)
         assert "<details><summary><b>Baseline Details</b></summary>" in body
 
+    def test_small_diffs_not_truncated(self):
+        from review.baseline.post_baseline_threads import DIFF_TRUNCATION_NOTICE, format_summary_body
+
+        entries = [_make_entry("app", "config", risk_level="LOW")]
+        entries[0]["cdk_diff"] = "+ small change"
+        body = format_summary_body(entries)
+        assert "+ small change" in body
+        assert DIFF_TRUNCATION_NOTICE not in body
+
+    def test_large_diffs_truncated_to_fit_budget(self):
+        from review.baseline.post_baseline_threads import DIFF_TRUNCATION_NOTICE, format_summary_body
+
+        entries = [
+            _make_entry("app-a", "config", risk_level="HIGH"),
+            _make_entry("app-b", "config", risk_level="LOW"),
+            _make_entry("app-c", "config", risk_level="LOW"),
+        ]
+        entries[0]["cdk_diff"] = "+ é" * 400_000
+        entries[1]["cdk_diff"] = "+ " + "x" * 600_000
+        entries[2]["cdk_diff"] = "+ keep me whole"
+        body = format_summary_body(entries, max_bytes=100_000)
+        assert len(body.encode("utf-8")) <= 100_000
+        assert body.count(DIFF_TRUNCATION_NOTICE) == 2
+        assert "+ keep me whole" in body
+        assert "`app-a/config`" in body and "`app-b/config`" in body
+
 
 class TestFindExistingRootCauseThread:
     """Tests for finding baseline threads via shared find_thread_by_marker."""

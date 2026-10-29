@@ -2694,12 +2694,17 @@
                 "kms:Decrypt",
                 "kms:DescribeKey"
               ],
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account"
+                }
+              },
               "Effect": "Allow",
               "Principal": {
                 "Service": "bedrock.amazonaws.com"
               },
               "Resource": "*",
-              "Sid": "AllowBedrockServiceForAgents"
+              "Sid": "AllowBedrockServiceForKnowledgeBases"
             },
             {
               "Action": [

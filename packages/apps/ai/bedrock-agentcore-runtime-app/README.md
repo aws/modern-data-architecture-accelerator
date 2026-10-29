@@ -30,7 +30,7 @@ This module deploys and integrates the following resources:
 
 ## Related Modules
 
-- [Bedrock Builder](../bedrock-builder-app/README.md) — Deploy managed Bedrock Agents as an alternative to custom AgentCore runtimes
+- [Bedrock Builder](../bedrock-builder-app/README.md) — Deploy declarative AgentCore Harnesses as an alternative to custom AgentCore runtimes
 - [Bedrock Settings](../bedrock-settings-app/README.md) — Configure Bedrock model invocation audit logging for runtime model calls
 - [Roles](../../governance/roles-app/README.md) — Create IAM execution roles for AgentCore runtimes
 

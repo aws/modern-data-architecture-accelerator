@@ -2,7 +2,7 @@
 
 > **Note:** This documentation is also available in a rendered format [here](https://aws.github.io/modern-data-architecture-accelerator/packages/apps/ai/bedrock-builder-app/index.html).
 
-Deploys a secure Bedrock Agent with Knowledge Bases, Action Groups, Vector Stores, Lambda functions, and Guardrails for building AI-powered conversational workflows. Common scenarios include building Q&A chatbots over internal documents, automating business workflows with AI agents, or adding retrieval-augmented generation to your applications.
+Deploys secure AgentCore Harnesses and Gateways with Knowledge Bases, Vector Stores, Lambda functions, and Guardrails for building AI-powered conversational workflows. Common scenarios include building Q&A chatbots over internal documents, automating business workflows with AI agents, or adding retrieval-augmented generation to your applications.
 
 ---
 
@@ -10,16 +10,14 @@ Deploys a secure Bedrock Agent with Knowledge Bases, Action Groups, Vector Store
 
 This module deploys and integrates the following resources:
 
-- **Bedrock Agent** — Amazon Bedrock Agent(s) for automating workflows using Foundation Models. Includes Agent Alias for versioned access.
-- **Agent Execution Role** — IAM role with Bedrock Execution Policy for accessing Knowledge Bases, Foundation Models, and Guardrails.
-- **Agent KMS Key** — Encrypts Agent resources. Auto-generated if not provided in config.
-- **Lambda Functions** (Optional) — Functions for Agent Action Groups and Knowledge Base custom transformations. May be VPC-bound with configurable security groups.
+- **KMS Key** — Encrypts the module's Bedrock resources. Auto-generated if not provided in config.
+- **Lambda Functions** (Optional) — Functions for gateway tools, gateway interceptors, and Knowledge Base custom transformations, referenced via `generated-function:`. May be VPC-bound with configurable security groups.
 - **Lambda Layers** (Optional) — Shared code layers for Lambda functions.
-- **Action Group(s)** — Agent Action Groups linking Lambda functions or API schemas to the Agent. Supports existing Lambda ARNs or `generated-function:` references.
 - **Knowledge Base(s)** (Optional) — Bedrock Knowledge Bases with S3 and SharePoint data sources, multiple parsing strategies (default, BDA, Foundation Model, custom), and chunking configurations.
 - **Vector Store(s)** (Optional) — OpenSearch Serverless collections or Aurora Serverless clusters for Knowledge Base vector storage.
 - **Bedrock Guardrail** (Optional) — Content filters, contextual grounding, PII entity detection, and regex-based sensitive information filtering.
-- **AgentCore Harness(es)** (Optional) - Declarative agent loops (model + system prompt + tools) on AgentCore.
+- **AgentCore Harness(es)** (Optional) — Declarative agent loops (model + system prompt + tools) on AgentCore.
+- **AgentCore Gateway(s)** (Optional) — MCP servers exposing Lambda functions and knowledge bases to harnesses and other gateway clients as tools.
 - **Knowledge Base Gateway Connector(s)** (Optional) — A Lambda connector per `knowledgeBase` gateway target, exposing a knowledge base to gateway clients as a `Retrieve` tool. See [Knowledge bases through a gateway](#knowledge-bases-through-a-gateway).
 
 ![bedrock-builder](../../../constructs/L3/ai/bedrock-builder-l3-construct/docs/bedrock-builder.png)
@@ -29,9 +27,9 @@ This module deploys and integrates the following resources:
 ## Related Modules
 
 - [Bedrock Settings](../bedrock-settings-app/README.md) — Configure Bedrock model invocation audit logging before deploying agents
-- [Bedrock AgentCore Runtime](../bedrock-agentcore-runtime-app/README.md) — Deploy custom agent runtimes as an alternative to managed Bedrock Agents
-- [DataOps Lambda](../../dataops/dataops-lambda-app/README.md) — Deploy Lambda functions independently that can be referenced as Action Group handlers via ARN
-- [Roles](../../governance/roles-app/README.md) — Create IAM roles for agent execution or Lambda function access
+- [Bedrock AgentCore Runtime](../bedrock-agentcore-runtime-app/README.md) — Deploy custom agent runtimes as an alternative to declarative AgentCore Harnesses
+- [DataOps Lambda](../../dataops/dataops-lambda-app/README.md) — Deploy Lambda functions independently that can be referenced as gateway targets via ARN
+- [Roles](../../governance/roles-app/README.md) — Create IAM roles for harness, knowledge base, or Lambda function execution
 
 ---
 
@@ -40,7 +38,7 @@ This module deploys and integrates the following resources:
 This module is designed in alignment with MDAA security/compliance principles and CDK nag rulesets. Additional review is recommended prior to production deployment, ensuring organization-specific compliance requirements are met.
 
 - **Encryption at Rest**:
-  - Agent resources encrypted with customer-managed KMS keys (auto-generated if not provided)
+  - Bedrock resources encrypted with customer-managed KMS keys (auto-generated if not provided)
   - OpenSearch Serverless collections use encryption-at-rest security policies
   - Aurora Serverless clusters encrypted with KMS
   - AgentCore Harness log groups encrypted with a customer-managed KMS key
@@ -49,7 +47,6 @@ This module is designed in alignment with MDAA security/compliance principles an
   - All Bedrock API communications use TLS
   - OpenSearch and Aurora connections encrypted in transit
 - **Least Privilege**:
-  - Agent execution role scoped to specific Knowledge Bases, Foundation Models, and Guardrails
   - Lambda execution roles scoped to required services only
   - OpenSearch Serverless uses data access policies for fine-grained control
   - AgentCore Harness execution role scoped to its resolved model, guardrail, gateway, and image grants, with an `sts:AssumeRole` deny and a configurable tool allowlist
@@ -87,7 +84,7 @@ VPC-bound resources in this module may need VPC endpoints where public AWS servi
 | Needed by                                   | Endpoint service                                                | Type                |
 | ------------------------------------------- | --------------------------------------------------------------- | ------------------- |
 | Aurora vector store admin-password rotation | `secretsmanager`                                                | Interface           |
-| Your own VPC-bound Lambda action-group code | whatever it calls (`lambda`, `kms`, `bedrock-runtime`, `s3`, …) | Interface / Gateway |
+| Your own VPC-bound Lambda function code     | whatever it calls (`lambda`, `kms`, `bedrock-runtime`, `s3`, …) | Interface / Gateway |
 
 Aurora vector stores enable admin-password rotation unconditionally — every 60 days, not configurable from this module — and the rotation function runs in your VPC. Without a Secrets Manager endpoint or a NAT path it has no route to the API, and the failure is late and quiet: the stack deploys clean and rotation starts failing on the first scheduled run. Aurora itself needs no endpoint — it is reached through its ENIs in your subnets.
 
@@ -243,7 +240,7 @@ Copy the contents of the relevant sample config below into the `./bedrock-builde
 
 #### Minimal Configuration
 
-Deploys a single Bedrock Agent with a foundation model. Start here for a quick proof-of-concept agent before adding knowledge bases, action groups, or guardrails.
+Deploys a single AgentCore Harness - a declarative agent loop (foundation model + system prompt) configured via the top-level `harnesses` map. Sets only the mandatory fields (model, system prompt, VPC network configuration) and takes the default path for everything else. Start here for a quick proof-of-concept agent before adding tools, knowledge bases, or guardrails.
 
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 
@@ -254,7 +251,7 @@ Deploys a single Bedrock Agent with a foundation model. Start here for a quick p
 
 #### Comprehensive Configuration
 
-Deploys Bedrock agents with action groups, knowledge bases backed by Aurora and OpenSearch vector stores, Lambda functions, guardrails with content and sensitive information filters, and S3/SharePoint data sources with multiple parsing and chunking strategies. Use this as a reference when you need full control over agent orchestration, RAG pipelines, and content safety policies.
+Deploys a customer support agent end to end: knowledge bases backed by Aurora and OpenSearch vector stores with S3/SharePoint data sources and multiple parsing and chunking strategies, Lambda functions, a guardrail, an AgentCore Gateway serving a Lambda tool and a knowledge base, shared VPC endpoints, and an AgentCore Harness with production settings - JWT auth, a guardrail, a tool allowlist, private networking, PII masking, log retention, and a pinned endpoint. Use this as a reference for a production deployment and for the full harness, knowledge base, and guardrail option surface.
 
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
@@ -265,7 +262,7 @@ Deploys Bedrock agents with action groups, knowledge bases backed by Aurora and 
 
 #### Knowledge Bases Only
 
-Deploys vector stores and knowledge bases with S3 data sources, without agents, gateways, harnesses, or guardrails. Use this when another module or application consumes the knowledge bases.
+Deploys vector stores and knowledge bases with S3 data sources, encrypted with an existing KMS key, without gateways, harnesses, or guardrails. Use this when another module or application consumes the knowledge bases.
 
 [sample-config-kb-only.yaml](sample_configs/sample-config-kb-only.yaml)
 
@@ -285,26 +282,26 @@ Deploys a knowledge base, an AgentCore Gateway with three `knowledgeBase` target
 --8<-- "target/docs/packages/apps/ai/bedrock-builder-app/sample_configs/sample-config-gateway-kb.yaml"
 ```
 
-#### AgentCore Harness Configuration (Minimal)
+#### AgentCore Gateway Options (AWS IAM)
 
-Deploys a single AgentCore Harness - a declarative agent loop (foundation model + system prompt) configured via the top-level `harnesses` map, independently of `agents`. Sets only the mandatory fields (model, system prompt, VPC network configuration) and takes the default path for everything else. Start here for a quick agent-loop proof-of-concept on AgentCore rather than classic Bedrock Agents.
+Deploys an AWS IAM gateway with the options the comprehensive configuration does not use: `DEBUG` exception detail, non-semantic tool search, a Lambda target by plain ARN with an S3 tool schema, an inline REQUEST interceptor with header pass-through, a RESPONSE interceptor by ARN, and an existing execution role.
 
-[sample-config-harness-minimal.yaml](sample_configs/sample-config-harness-minimal.yaml)
+[sample-config-gateway-iam.yaml](sample_configs/sample-config-gateway-iam.yaml)
 
 ```yaml
 # Contents available via above link
---8<-- "target/docs/packages/apps/ai/bedrock-builder-app/sample_configs/sample-config-harness-minimal.yaml"
+--8<-- "target/docs/packages/apps/ai/bedrock-builder-app/sample_configs/sample-config-gateway-iam.yaml"
 ```
 
-#### AgentCore Harness Configuration (Comprehensive)
+#### AgentCore Gateways with JWT Auth
 
-Deploys an AgentCore Harness exercising the optional harness features: model tuning and lifecycle limits, JWT auth, a guardrail and gateway tool via `config:<name>` references, tools and a tool allowlist, a bring-your-own container, VPC placement with shared VPC endpoints, PII masking, truncation, and a versioned endpoint. Use this as a reference for full control over an AgentCore agent loop.
+Deploys two gateways with CUSTOM_JWT (OIDC) inbound auth, for MCP clients that present a token rather than AWS credentials, and shows audit log retention and opting out of log delivery. A harness cannot call a JWT gateway, since it authenticates with AWS IAM.
 
-[sample-config-harness-comprehensive.yaml](sample_configs/sample-config-harness-comprehensive.yaml)
+[sample-config-gateway-jwt.yaml](sample_configs/sample-config-gateway-jwt.yaml)
 
 ```yaml
 # Contents available via above link
---8<-- "target/docs/packages/apps/ai/bedrock-builder-app/sample_configs/sample-config-harness-comprehensive.yaml"
+--8<-- "target/docs/packages/apps/ai/bedrock-builder-app/sample_configs/sample-config-gateway-jwt.yaml"
 ```
 
 ---

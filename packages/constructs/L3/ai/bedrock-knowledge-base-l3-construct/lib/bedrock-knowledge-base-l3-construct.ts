@@ -87,7 +87,12 @@ export interface CustomTransformationConfiguration {
   readonly intermediateStorageBucket: string;
   /** S3 prefix for intermediate storage organization */
   readonly intermediateStoragePrefix: string;
-  /** Lambda function ARNs for custom document transformation */
+  /**
+   * Lambda function ARN for custom document transformation. Bedrock accepts exactly one
+   * transformation per data source.
+   * @minItems 1
+   * @maxItems 1
+   */
   readonly transformLambdaArns: string[];
 }
 

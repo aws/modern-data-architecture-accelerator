@@ -550,12 +550,7 @@
           "PasswordLength": 30,
           "SecretStringTemplate": "{\"username\":\"postgres\"}"
         },
-        "KmsKeyId": {
-          "Fn::GetAtt": [
-            "bedrockcmk710EFABC",
-            "Arn"
-          ]
-        },
+        "KmsKeyId": "arn:test-partition:kms:test-region:test-account:key/test-key-id",
         "Tags": [
           {
             "Key": "mdaa_cdk_app",
@@ -818,12 +813,7 @@
         "EnableIAMDatabaseAuthentication": true,
         "Engine": "aurora-postgresql",
         "EngineVersion": "16.13",
-        "KmsKeyId": {
-          "Fn::GetAtt": [
-            "bedrockcmk710EFABC",
-            "Arn"
-          ]
-        },
+        "KmsKeyId": "arn:test-partition:kms:test-region:test-account:key/test-key-id",
         "MasterUserPassword": {
           "Fn::Join": [
             "",
@@ -1261,12 +1251,7 @@
             ]
           },
           "excludeCharacters": " %+~`#$&*()|[]{}:;<>?!'/@\"\\",
-          "kmsKeyArn": {
-            "Fn::GetAtt": [
-              "bedrockcmk710EFABC",
-              "Arn"
-            ]
-          }
+          "kmsKeyArn": "arn:test-partition:kms:test-region:test-account:key/test-key-id"
         },
         "Tags": {
           "mdaa_cdk_app": "bedrock-builder",
@@ -1598,12 +1583,7 @@
     "bedrockbuilderbedrockkbkbproductdocskbloggroupkbproductdocs515C104F": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "KmsKeyId": {
-          "Fn::GetAtt": [
-            "bedrockcmk710EFABC",
-            "Arn"
-          ]
-        },
+        "KmsKeyId": "arn:test-partition:kms:test-region:test-account:key/test-key-id",
         "LogGroupName": "/aws/vendedlogs/bedrock/knowledge-base/test-org-test-env-test-domain-test-bedrock-builder-kb-only-kb-product-docs",
         "Tags": [
           {
@@ -1790,12 +1770,7 @@
         },
         "Name": "product-docs",
         "ServerSideEncryptionConfiguration": {
-          "KmsKeyArn": {
-            "Fn::GetAtt": [
-              "bedrockcmk710EFABC",
-              "Arn"
-            ]
-          }
+          "KmsKeyArn": "arn:test-partition:kms:test-region:test-account:key/test-key-id"
         }
       }
     },
@@ -1822,12 +1797,7 @@
     "bedrockbuilderbedrockkbkbproductdocskbproductdocsproductdocssynclambdadlqkbproductdocsproductdocssync132DD077": {
       "Type": "AWS::SQS::Queue",
       "Properties": {
-        "KmsMasterKeyId": {
-          "Fn::GetAtt": [
-            "bedrockcmk710EFABC",
-            "Arn"
-          ]
-        },
+        "KmsMasterKeyId": "arn:test-partition:kms:test-region:test-account:key/test-key-id",
         "QueueName": "test-org-test-env-test-domain-test-bedrock-builder-kb-only-kb-product-d-43073ff3",
         "Tags": [
           {
@@ -2040,12 +2010,7 @@
         },
         "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-kb-o-1c4809d7",
         "Handler": "datasource_sync.lambda_handler",
-        "KmsKeyArn": {
-          "Fn::GetAtt": [
-            "bedrockcmk710EFABC",
-            "Arn"
-          ]
-        },
+        "KmsKeyArn": "arn:test-partition:kms:test-region:test-account:key/test-key-id",
         "Role": {
           "Fn::GetAtt": [
             "RoleReskbexecutionrolekbproductdocs",
@@ -2263,12 +2228,7 @@
     "bedrockbuilderbedrockkbkbproductdocskbproductdocsproductdocssynclambdadlqkbproductdocsproductdocssynceventsE65E2521": {
       "Type": "AWS::SQS::Queue",
       "Properties": {
-        "KmsMasterKeyId": {
-          "Fn::GetAtt": [
-            "bedrockcmk710EFABC",
-            "Arn"
-          ]
-        },
+        "KmsMasterKeyId": "arn:test-partition:kms:test-region:test-account:key/test-key-id",
         "QueueName": "test-org-test-env-test-domain-test-bedrock-builder-kb-only-kb-product-do-3934beb",
         "Tags": [
           {
@@ -2570,12 +2530,7 @@
         },
         "Name": "product-faqs",
         "ServerSideEncryptionConfiguration": {
-          "KmsKeyArn": {
-            "Fn::GetAtt": [
-              "bedrockcmk710EFABC",
-              "Arn"
-            ]
-          }
+          "KmsKeyArn": "arn:test-partition:kms:test-region:test-account:key/test-key-id"
         }
       }
     },
@@ -2602,12 +2557,7 @@
     "bedrockbuilderbedrockkbkbproductdocskbproductdocsproductfaqssynclambdadlqkbproductdocsproductfaqssyncE4E254E7": {
       "Type": "AWS::SQS::Queue",
       "Properties": {
-        "KmsMasterKeyId": {
-          "Fn::GetAtt": [
-            "bedrockcmk710EFABC",
-            "Arn"
-          ]
-        },
+        "KmsMasterKeyId": "arn:test-partition:kms:test-region:test-account:key/test-key-id",
         "QueueName": "test-org-test-env-test-domain-test-bedrock-builder-kb-only-kb-product---2727f7af",
         "Tags": [
           {
@@ -2820,12 +2770,7 @@
         },
         "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-kb-o-7b17b135",
         "Handler": "datasource_sync.lambda_handler",
-        "KmsKeyArn": {
-          "Fn::GetAtt": [
-            "bedrockcmk710EFABC",
-            "Arn"
-          ]
-        },
+        "KmsKeyArn": "arn:test-partition:kms:test-region:test-account:key/test-key-id",
         "Role": {
           "Fn::GetAtt": [
             "RoleReskbexecutionrolekbproductdocs",
@@ -3043,12 +2988,7 @@
     "bedrockbuilderbedrockkbkbproductdocskbproductdocsproductfaqssynclambdadlqkbproductdocsproductfaqssyncevents2A700724": {
       "Type": "AWS::SQS::Queue",
       "Properties": {
-        "KmsMasterKeyId": {
-          "Fn::GetAtt": [
-            "bedrockcmk710EFABC",
-            "Arn"
-          ]
-        },
+        "KmsMasterKeyId": "arn:test-partition:kms:test-region:test-account:key/test-key-id",
         "QueueName": "test-org-test-env-test-domain-test-bedrock-builder-kb-only-kb-product-d-537ffdcd",
         "Tags": [
           {
@@ -3355,21 +3295,7 @@
       "Properties": {
         "Description": "Encryption policy for OpenSearch Serverless collection",
         "Name": "test-org-test-env-test--58442ecf",
-        "Policy": {
-          "Fn::Join": [
-            "",
-            [
-              "{\"Rules\":[{\"ResourceType\":\"collection\",\"Resource\":[\"collection/test-org-test-env-test--7980e87e\"]}],\"AWSOwnedKey\":false,\"KmsARN\":\"",
-              {
-                "Fn::GetAtt": [
-                  "bedrockcmk710EFABC",
-                  "Arn"
-                ]
-              },
-              "\"}"
-            ]
-          ]
-        },
+        "Policy": "{\"Rules\":[{\"ResourceType\":\"collection\",\"Resource\":[\"collection/test-org-test-env-test--7980e87e\"]}],\"AWSOwnedKey\":false,\"KmsARN\":\"arn:test-partition:kms:test-region:test-account:key/test-key-id\"}",
         "Type": "encryption"
       }
     },
@@ -3637,12 +3563,7 @@
     "bedrockbuilderbedrockkbkbsupportrunbookskbloggroupkbsupportrunbooks8A330DCC": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "KmsKeyId": {
-          "Fn::GetAtt": [
-            "bedrockcmk710EFABC",
-            "Arn"
-          ]
-        },
+        "KmsKeyId": "arn:test-partition:kms:test-region:test-account:key/test-key-id",
         "LogGroupName": "/aws/vendedlogs/bedrock/knowledge-base/test-org-test-env-test-domain-test-bedrock-builder-kb-only-kb-support-runbooks",
         "Tags": [
           {
@@ -3829,12 +3750,7 @@
         },
         "Name": "runbooks",
         "ServerSideEncryptionConfiguration": {
-          "KmsKeyArn": {
-            "Fn::GetAtt": [
-              "bedrockcmk710EFABC",
-              "Arn"
-            ]
-          }
+          "KmsKeyArn": "arn:test-partition:kms:test-region:test-account:key/test-key-id"
         }
       }
     },
@@ -3929,12 +3845,7 @@
                 "kms:GenerateDataKeyPairWithoutPlaintext"
               ],
               "Effect": "Allow",
-              "Resource": {
-                "Fn::GetAtt": [
-                  "bedrockcmk710EFABC",
-                  "Arn"
-                ]
-              },
+              "Resource": "arn:test-partition:kms:test-region:test-account:key/test-key-id",
               "Sid": "KMSUsage"
             },
             {
@@ -4083,12 +3994,7 @@
                 "kms:CreateGrant"
               ],
               "Effect": "Allow",
-              "Resource": {
-                "Fn::GetAtt": [
-                  "bedrockcmk710EFABC",
-                  "Arn"
-                ]
-              },
+              "Resource": "arn:test-partition:kms:test-region:test-account:key/test-key-id",
               "Sid": "BedrockKms"
             }
           ],
@@ -4344,302 +4250,6 @@
         }
       }
     },
-    "bedrockcmk710EFABC": {
-      "Type": "AWS::KMS::Key",
-      "Properties": {
-        "EnableKeyRotation": true,
-        "Enabled": true,
-        "KeyPolicy": {
-          "Statement": [
-            {
-              "Action": "kms:*",
-              "Effect": "Allow",
-              "Principal": {
-                "AWS": "arn:test-partition:iam::test-account:root"
-              },
-              "Resource": "*"
-            },
-            {
-              "Action": [
-                "kms:Create*",
-                "kms:Describe*",
-                "kms:Enable*",
-                "kms:List*",
-                "kms:Put*",
-                "kms:Update*",
-                "kms:Revoke*",
-                "kms:Disable*",
-                "kms:Get*",
-                "kms:Delete*",
-                "kms:TagResource",
-                "kms:UntagResource",
-                "kms:ScheduleKeyDeletion",
-                "kms:CancelKeyDeletion"
-              ],
-              "Condition": {
-                "StringLike": {
-                  "aws:userId": [
-                    {
-                      "Fn::Join": [
-                        "",
-                        [
-                          {
-                            "Fn::GetAtt": [
-                              "RoleResDataAdmin0",
-                              "id"
-                            ]
-                          },
-                          ":*"
-                        ]
-                      ]
-                    }
-                  ]
-                }
-              },
-              "Effect": "Allow",
-              "Principal": {
-                "AWS": "*"
-              },
-              "Resource": "*",
-              "Sid": "test-org-test-env-test-domain-test-bedrock-builder-kb-only-usage-stmt"
-            },
-            {
-              "Action": [
-                "kms:Decrypt",
-                "kms:Encrypt",
-                "kms:ReEncryptFrom",
-                "kms:ReEncryptTo",
-                "kms:GenerateDataKey",
-                "kms:GenerateDataKeyWithoutPlaintext",
-                "kms:GenerateDataKeyPair",
-                "kms:GenerateDataKeyPairWithoutPlaintext"
-              ],
-              "Condition": {
-                "ArnEquals": {
-                  "kms:EncryptionContext:aws:logs:arn": "arn:test-partition:logs:test-region:test-account:log-group:*"
-                }
-              },
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "logs.test-region.amazonaws.com"
-              },
-              "Resource": "*",
-              "Sid": "CloudWatchLogsEncryption"
-            },
-            {
-              "Action": [
-                "kms:GenerateDataKey*",
-                "kms:Decrypt",
-                "kms:DescribeKey"
-              ],
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "bedrock.amazonaws.com"
-              },
-              "Resource": "*",
-              "Sid": "AllowBedrockServiceForAgents"
-            },
-            {
-              "Action": [
-                "kms:CreateGrant",
-                "kms:ListGrants",
-                "kms:RevokeGrant"
-              ],
-              "Condition": {
-                "Bool": {
-                  "kms:GrantIsForAWSResource": "true"
-                },
-                "StringEquals": {
-                  "aws:SourceAccount": "test-account",
-                  "kms:ViaService": "bedrock.test-region.amazonaws.com"
-                }
-              },
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "bedrock.amazonaws.com"
-              },
-              "Resource": "*",
-              "Sid": "AllowBedrockServiceToManageGrants"
-            },
-            {
-              "Action": [
-                "kms:GenerateDataKey*",
-                "kms:Decrypt",
-                "kms:DescribeKey"
-              ],
-              "Condition": {
-                "StringLike": {
-                  "kms:ViaService": "bedrock.test-region.amazonaws.com"
-                }
-              },
-              "Effect": "Allow",
-              "Principal": {
-                "AWS": {
-                  "Fn::GetAtt": [
-                    "RoleReskbexecutionrolekbproductdocs",
-                    "arn"
-                  ]
-                }
-              },
-              "Resource": "*",
-              "Sid": "AllowExecutionRolesToUseKeyWithContext"
-            },
-            {
-              "Action": [
-                "kms:CreateGrant",
-                "kms:DescribeKey"
-              ],
-              "Condition": {
-                "StringLike": {
-                  "kms:ViaService": "bedrock.test-region.amazonaws.com"
-                },
-                "StringEquals": {
-                  "kms:GrantOperations": [
-                    "Decrypt",
-                    "GenerateDataKey*",
-                    "DescribeKey"
-                  ],
-                  "aws:SourceAccount": "test-account"
-                }
-              },
-              "Effect": "Allow",
-              "Principal": {
-                "AWS": {
-                  "Fn::GetAtt": [
-                    "RoleReskbexecutionrolekbproductdocs",
-                    "arn"
-                  ]
-                }
-              },
-              "Resource": "*",
-              "Sid": "AllowCreateGrantForBedrockResources"
-            },
-            {
-              "Action": [
-                "kms:Decrypt",
-                "kms:Encrypt",
-                "kms:ReEncrypt*",
-                "kms:GenerateDataKey*"
-              ],
-              "Condition": {
-                "StringEquals": {
-                  "kms:ViaService": "secretsmanager.test-region.amazonaws.com"
-                }
-              },
-              "Effect": "Allow",
-              "Principal": {
-                "AWS": "arn:test-partition:iam::test-account:root"
-              },
-              "Resource": "*"
-            },
-            {
-              "Action": [
-                "kms:CreateGrant",
-                "kms:DescribeKey"
-              ],
-              "Condition": {
-                "StringEquals": {
-                  "kms:ViaService": "secretsmanager.test-region.amazonaws.com"
-                }
-              },
-              "Effect": "Allow",
-              "Principal": {
-                "AWS": "arn:test-partition:iam::test-account:root"
-              },
-              "Resource": "*"
-            }
-          ],
-          "Version": "2012-10-17"
-        },
-        "Tags": [
-          {
-            "Key": "mdaa_cdk_app",
-            "Value": "bedrock-builder"
-          },
-          {
-            "Key": "mdaa_domain",
-            "Value": "test-domain"
-          },
-          {
-            "Key": "mdaa_env",
-            "Value": "test-env"
-          },
-          {
-            "Key": "mdaa_module_name",
-            "Value": "test-bedrock-builder-kb-only"
-          },
-          {
-            "Key": "mdaa_org",
-            "Value": "test-org"
-          }
-        ]
-      },
-      "UpdateReplacePolicy": "Retain",
-      "DeletionPolicy": "Retain"
-    },
-    "bedrockcmkAlias64D9B0C4": {
-      "Type": "AWS::KMS::Alias",
-      "Properties": {
-        "AliasName": "alias/test-org-test-env-test-domain-test-bedrock-builder-kb-only",
-        "TargetKeyId": {
-          "Fn::GetAtt": [
-            "bedrockcmk710EFABC",
-            "Arn"
-          ]
-        }
-      }
-    },
-    "bedrockcmkkmsarnssm9ABBCC7F": {
-      "Type": "AWS::SSM::Parameter",
-      "Properties": {
-        "Name": "/test-org/test-domain/test-bedrock-builder-kb-only/kms/arn",
-        "Tags": {
-          "mdaa_cdk_app": "bedrock-builder",
-          "mdaa_domain": "test-domain",
-          "mdaa_env": "test-env",
-          "mdaa_module_name": "test-bedrock-builder-kb-only",
-          "mdaa_org": "test-org"
-        },
-        "Type": "String",
-        "Value": {
-          "Fn::GetAtt": [
-            "bedrockcmk710EFABC",
-            "Arn"
-          ]
-        }
-      }
-    },
-    "bedrockcmkkmsidssm418027C6": {
-      "Type": "AWS::SSM::Parameter",
-      "Properties": {
-        "Name": "/test-org/test-domain/test-bedrock-builder-kb-only/kms/id",
-        "Tags": {
-          "mdaa_cdk_app": "bedrock-builder",
-          "mdaa_domain": "test-domain",
-          "mdaa_env": "test-env",
-          "mdaa_module_name": "test-bedrock-builder-kb-only",
-          "mdaa_org": "test-org"
-        },
-        "Type": "String",
-        "Value": {
-          "Ref": "bedrockcmk710EFABC"
-        }
-      }
-    },
-    "RoleResDataAdmin0": {
-      "Type": "AWS::CloudFormation::CustomResource",
-      "Properties": {
-        "ServiceToken": {
-          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter"
-        },
-        "roleRef": {
-          "refId": "DataAdmin-0",
-          "name": "Admin"
-        }
-      },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
-    },
     "RoleReskbexecutionrolekbproductdocs": {
       "Type": "AWS::CloudFormation::CustomResource",
       "Properties": {
@@ -4799,12 +4409,7 @@
             {
               "Action": "kms:Decrypt",
               "Effect": "Allow",
-              "Resource": {
-                "Fn::GetAtt": [
-                  "bedrockcmk710EFABC",
-                  "Arn"
-                ]
-              }
+              "Resource": "arn:test-partition:kms:test-region:test-account:key/test-key-id"
             }
           ],
           "Version": "2012-10-17"
@@ -6734,25 +6339,6 @@
       },
       "Export": {
         "Name": "test-org:test-domain:test-bedrock-builder-kb-only:managed-policy:kbdatasyncbedrockknowledgebaserolekbproductdocs:name"
-      }
-    },
-    "bedrockcmkkmsarnout0D3BC511": {
-      "Value": {
-        "Fn::GetAtt": [
-          "bedrockcmk710EFABC",
-          "Arn"
-        ]
-      },
-      "Export": {
-        "Name": "test-org:test-domain:test-bedrock-builder-kb-only:kms:arn"
-      }
-    },
-    "bedrockcmkkmsidout38E894CA": {
-      "Value": {
-        "Ref": "bedrockcmk710EFABC"
-      },
-      "Export": {
-        "Name": "test-org:test-domain:test-bedrock-builder-kb-only:kms:id"
       }
     },
     "customRDSDatahandlerfunctionlambdaRDSDatahandlernameoutD399CD66": {

@@ -9,7 +9,6 @@ import { MdaaResourceType } from '@aws-mdaa/naming';
 import { MdaaTestApp } from '@aws-mdaa/testing';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import { BedrockBuilderL3Construct, BedrockBuilderL3ConstructProps, LambdaFunctionProps } from '../lib';
-import { BedrockAgentProps, NamedAgentProps } from '@aws-mdaa/bedrock-agent-l3-construct';
 import {
   BedrockKnowledgeBaseProps,
   NamedKnowledgeBaseProps,
@@ -78,11 +77,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
   };
 
   // Role References
-  const agentExecutionRoleRef: MdaaRoleRef = {
-    arn: 'arn:test-partition:iam::test-account:role/agent-execution-role',
-    name: 'agent-execution-role',
-  };
-
   const kbRoleRef: MdaaRoleRef = {
     arn: 'arn:test-partition:iam::test-account:role/kb-execution-role',
     name: 'kb-execution-role',
@@ -96,32 +90,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
   const lambdaFunctions: LambdaFunctionProps = {
     functions: [functionProps],
     layers: [layerProps],
-  };
-
-  // Agent Properties
-  const agent: BedrockAgentProps = {
-    role: agentExecutionRoleRef,
-    autoPrepare: false,
-    description: 'Sample Agent',
-    instruction: 'Agent Test Instructions',
-    foundationModel: 'anthropic.claude-3-sonnet-20240229-v1:0',
-    agentAliasName: 'test-alias',
-    guardrail: {
-      id: 'test-guardrail-id',
-      version: 'DRAFT',
-    },
-    actionGroups: [
-      {
-        actionGroupExecutor: {
-          lambda: 'generated-function:test-agent-lambda',
-        },
-        actionGroupName: 'test-action-group',
-        description: 'test-action-group-description',
-        apiSchema: {
-          openApiSchemaPath: `${__dirname}/api-schema/test-schema.yaml`,
-        },
-      },
-    ],
   };
 
   // Guardrail Properties
@@ -170,7 +138,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
     const template = generateTemplateFromTestInput(
       testApp,
       dataAdminRoleRef,
-      { 'test-agent-1': agent },
       { 'test-vector-store': vectorStore },
       { 'test-kb-1': knowledgeBase },
       { 'test-guardrail-1': guardrail },
@@ -178,18 +145,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       lambdaFunctions,
     );
     // console.log(JSON.stringify(template, undefined, 2));
-    test('Bedrock Agent Resource', () => {
-      template.hasResourceProperties('AWS::Bedrock::Agent', {
-        AgentName: 'test-org-test-env-test-domain-test-module-test-agent-1',
-        AgentResourceRoleArn: 'arn:test-partition:iam::test-account:role/agent-execution-role',
-        AutoPrepare: false,
-        Description: 'Sample Agent',
-        FoundationModel:
-          'arn:test-partition:bedrock:test-region::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0',
-        IdleSessionTTLInSeconds: 3600,
-      });
-    });
-
     test('Bedrock Knowledge Base Resource', () => {
       template.hasResourceProperties('AWS::Bedrock::KnowledgeBase', {
         Name: 'test-org-test-env-test-domain-test-module-test-kb-1',
@@ -231,6 +186,30 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       });
     });
 
+    test('KMS Key Policy for Bedrock Service', () => {
+      const kmsResources = template.findResources('AWS::KMS::Key');
+      const kmsKey = Object.values(kmsResources)[0] as {
+        Properties: {
+          KeyPolicy: {
+            Statement: Array<{
+              Sid?: string;
+              Effect: string;
+              Principal: { Service: string };
+              Action: string[];
+              Condition?: { StringEquals?: Record<string, unknown> };
+            }>;
+          };
+        };
+      };
+      const statements = kmsKey.Properties.KeyPolicy.Statement;
+      const bedrockStatement = statements.find(stmt => stmt.Sid === 'AllowBedrockServiceForKnowledgeBases');
+      expect(bedrockStatement).toBeDefined();
+      expect(bedrockStatement!.Effect).toBe('Allow');
+      expect(bedrockStatement!.Principal.Service).toBe('bedrock.amazonaws.com');
+      expect(bedrockStatement!.Action).toEqual(['kms:GenerateDataKey*', 'kms:Decrypt', 'kms:DescribeKey']);
+      expect(bedrockStatement!.Condition?.StringEquals?.['aws:SourceAccount']).toBeDefined();
+    });
+
     test('CMK Generation', () => {
       template.hasResourceProperties('AWS::KMS::Key', {
         EnableKeyRotation: true,
@@ -268,7 +247,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
     const template = generateTemplateFromTestInput(
       testApp,
       dataAdminRoleRef,
-      { 'test-agent-2': agent },
       { 'test-vector-store': vectorStore },
       { 'test-kb-2': knowledgeBase },
       { 'test-guardrail-2': guardrail },
@@ -280,50 +258,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       template.hasResourceProperties('AWS::Bedrock::Guardrail', {
         KmsKeyArn: kmsKeyArn,
       });
-    });
-  });
-
-  describe('Bedrock Builder L3 Construct with Agents Only', () => {
-    const testApp = new MdaaTestApp();
-
-    const template = generateTemplateFromTestInput(
-      testApp,
-      dataAdminRoleRef,
-      { 'test-agent-3': agent },
-      undefined,
-      undefined,
-      undefined,
-      lambdaFunctions,
-    );
-
-    test('Agent Created Without Knowledge Bases or Guardrails', () => {
-      template.hasResourceProperties('AWS::Bedrock::Agent', {
-        AgentName: 'test-org-test-env-test-domain-test-module-test-agent-3',
-      });
-
-      // Verify no Knowledge Base or Guardrail resources are created
-      const resources = template.findResources('AWS::Bedrock::KnowledgeBase', {});
-      expect(Object.keys(resources).length).toBe(0);
-
-      const guardrailResources = template.findResources('AWS::Bedrock::Guardrail', {});
-      expect(Object.keys(guardrailResources).length).toBe(0);
-    });
-
-    test('KMS Key Policy for Bedrock Service', () => {
-      const kmsResources = template.findResources('AWS::KMS::Key');
-      const kmsKey = Object.values(kmsResources)[0] as {
-        Properties: {
-          KeyPolicy: {
-            Statement: Array<{ Sid?: string; Effect: string; Principal: { Service: string }; Action: string[] }>;
-          };
-        };
-      };
-      const statements = kmsKey.Properties.KeyPolicy.Statement;
-      const bedrockStatement = statements.find(stmt => stmt.Sid === 'AllowBedrockServiceForAgents');
-      expect(bedrockStatement).toBeDefined();
-      expect(bedrockStatement!.Effect).toBe('Allow');
-      expect(bedrockStatement!.Principal.Service).toBe('bedrock.amazonaws.com');
-      expect(bedrockStatement!.Action).toEqual(['kms:GenerateDataKey*', 'kms:Decrypt', 'kms:DescribeKey']);
     });
   });
 
@@ -350,7 +284,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         generateTemplateFromTestInput(
           testApp,
           dataAdminRoleRef,
-          undefined,
           { 'valid-vector-store': validVectorStore },
           { 'invalid-kb': invalidKnowledgeBase },
           undefined,
@@ -381,7 +314,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         generateTemplateFromTestInput(
           testApp,
           dataAdminRoleRef,
-          undefined,
           { 'test-vector-store': vectorStore },
           { 'invalid-kb': invalidKnowledgeBase },
           undefined,
@@ -512,7 +444,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
     const template = generateTemplateFromTestInput(
       testApp,
       dataAdminRoleRef,
-      { 'test-agent-vector': agent },
       { 'test-vector-store': vectorStore },
       { 'test-kb-vector': knowledgeBase },
       { 'test-guardrail-vector': guardrail },
@@ -708,13 +639,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       });
     });
 
-    test('Lambda Permissions for Agent Action Groups', () => {
-      template.hasResourceProperties('AWS::Lambda::Permission', {
-        Action: 'lambda:InvokeFunction',
-        Principal: 'bedrock.amazonaws.com',
-      });
-    });
-
     test('Knowledge Base Logging Configuration', () => {
       template.hasResourceProperties('AWS::Logs::DeliverySource', {
         LogType: 'APPLICATION_LOGS',
@@ -793,7 +717,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
 
       const constructProps: BedrockBuilderL3ConstructProps = {
         dataAdminRoles: [dataAdminRoleRef],
-        agents: {},
         roleHelper: roleHelper,
         naming: testApp.naming,
         knowledgeBases: { 'test-kb-no-s3': knowledgeBaseWithoutS3DataSources },
@@ -831,7 +754,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
 
       const constructProps: BedrockBuilderL3ConstructProps = {
         dataAdminRoles: [dataAdminRoleRef],
-        agents: {},
         roleHelper: roleHelper,
         naming: testApp.naming,
         knowledgeBases: { 'test-kb-no-sync': knowledgeBaseWithoutSync },
@@ -883,7 +805,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
 
       const constructProps: BedrockBuilderL3ConstructProps = {
         dataAdminRoles: [dataAdminRoleRef],
-        agents: {},
         roleHelper: roleHelper,
         naming: testApp.naming,
         knowledgeBases: { 'test-kb-semantic-no-config': knowledgeBaseWithSemanticNoConfig },
@@ -922,7 +843,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
 
       const constructProps: BedrockBuilderL3ConstructProps = {
         dataAdminRoles: [dataAdminRoleRef],
-        agents: {},
         roleHelper: roleHelper,
         naming: testApp.naming,
         knowledgeBases: { 'test-kb-none-chunking': knowledgeBaseWithNoneChunking },
@@ -964,7 +884,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
 
       const constructProps: BedrockBuilderL3ConstructProps = {
         dataAdminRoles: [dataAdminRoleRef],
-        agents: {},
         roleHelper: roleHelper,
         naming: testApp.naming,
         knowledgeBases: { 'test-kb-no-prefix': knowledgeBaseWithoutPrefix },
@@ -1008,7 +927,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
 
       const constructProps: BedrockBuilderL3ConstructProps = {
         dataAdminRoles: [dataAdminRoleRef],
-        agents: {},
         roleHelper: roleHelper,
         naming: testApp.naming,
         knowledgeBases: { 'test-kb-sync-no-prefix': knowledgeBaseWithSyncNoPrefix },
@@ -1052,7 +970,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
 
       const constructProps: BedrockBuilderL3ConstructProps = {
         dataAdminRoles: [dataAdminRoleRef],
-        agents: {},
         roleHelper: roleHelper,
         naming: testApp.naming,
         knowledgeBases: { 'test-kb-generated-func': knowledgeBaseWithGeneratedFunction },
@@ -1092,6 +1009,74 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       ).toBe('Arn');
     });
 
+    test('Knowledge Base with generated function reference in SharePoint custom transformation', () => {
+      const testApp = new MdaaTestApp();
+      const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+      const vectorStore: AuroraServerlessPgVectorProps = {
+        vpcId: 'test-vpc-id',
+        subnetIds: ['test-subnet'],
+      };
+      const knowledgeBaseWithGeneratedFunction: BedrockKnowledgeBaseProps = {
+        role: kbRoleRef,
+        vectorStore: 'test-vector-store',
+        embeddingModel: 'amazon.titan-embed-text-v2:0',
+        sharepointDataSources: {
+          testSharepointGeneratedFunction: {
+            dataSource: {
+              authType: 'OAUTH2_SHAREPOINT_APP_ONLY_CLIENT_CREDENTIALS',
+              credentialsSecretArn: 'arn:test-partition:secretsmanager:test-region:test-account:secret:test-secret',
+              domain: 'test.sharepoint.com',
+              siteUrls: ['https://test.sharepoint.com/sites/test-site'],
+              tenantId: 'test-tenant-id',
+            },
+            vectorIngestionConfiguration: {
+              customTransformationConfiguration: {
+                intermediateStorageBucket: 'test-intermediate-bucket',
+                intermediateStoragePrefix: 'test-prefix',
+                transformLambdaArns: ['generated-function:test-agent-lambda'],
+              },
+            },
+          },
+        },
+      };
+
+      const constructProps: BedrockBuilderL3ConstructProps = {
+        dataAdminRoles: [dataAdminRoleRef],
+        roleHelper: roleHelper,
+        naming: testApp.naming,
+        knowledgeBases: { 'test-kb-sp-generated-func': knowledgeBaseWithGeneratedFunction },
+        vectorStores: { 'test-vector-store': vectorStore },
+        lambdaFunctions: lambdaFunctions,
+      };
+
+      new BedrockBuilderL3Construct(testApp.testStack, 'test-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      const dataSourceResources = template.findResources('AWS::Bedrock::DataSource');
+      const dataSource = Object.values(dataSourceResources).find(
+        ds => (ds as { Properties: { Name: string } }).Properties.Name === 'testSharepointGeneratedFunction',
+      ) as {
+        Properties: {
+          VectorIngestionConfiguration: {
+            CustomTransformationConfiguration: {
+              Transformations: Array<{
+                TransformationFunction: {
+                  TransformationLambdaConfiguration: { LambdaArn: { 'Fn::GetAtt': [string, string] } };
+                };
+              }>;
+            };
+          };
+        };
+      };
+
+      expect(dataSource).toBeDefined();
+      const lambdaArn =
+        dataSource.Properties.VectorIngestionConfiguration.CustomTransformationConfiguration.Transformations[0]
+          .TransformationFunction.TransformationLambdaConfiguration.LambdaArn;
+      expect(lambdaArn).toHaveProperty('Fn::GetAtt');
+      expect(lambdaArn['Fn::GetAtt'][1]).toBe('Arn');
+    });
+
     test('Knowledge Base with non-existent generated function reference', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
@@ -1120,7 +1105,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
 
       const constructProps: BedrockBuilderL3ConstructProps = {
         dataAdminRoles: [dataAdminRoleRef],
-        agents: {},
         roleHelper: roleHelper,
         naming: testApp.naming,
         knowledgeBases: { 'test-kb-invalid-func': knowledgeBaseWithInvalidFunction },
@@ -1132,268 +1116,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       }).toThrow(
         'knowledge base data source "testInvalidFunction" references non-existent Generated Lambda function: non-existent-function',
       );
-    });
-  });
-
-  describe('Bedrock Builder L3 Construct Action Groups Test', () => {
-    test('Agent without action groups', () => {
-      const testApp = new MdaaTestApp();
-      const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
-      const agentWithoutActionGroups: BedrockAgentProps = {
-        role: agentExecutionRoleRef,
-        description: 'Agent without action groups',
-        instruction: 'Test agent without action groups',
-        foundationModel: 'anthropic.claude-3-sonnet-20240229-v1:0',
-        // actionGroups is intentionally undefined to test the ?? [] fallback
-      };
-
-      const constructProps: BedrockBuilderL3ConstructProps = {
-        dataAdminRoles: [dataAdminRoleRef],
-        agents: { 'test-agent-no-actions': agentWithoutActionGroups },
-        roleHelper: roleHelper,
-        naming: testApp.naming,
-      };
-
-      new BedrockBuilderL3Construct(testApp.testStack, 'test-construct', constructProps);
-      const template = Template.fromStack(testApp.testStack);
-
-      // Test that agent is created successfully without action groups
-      template.hasResourceProperties('AWS::Bedrock::Agent', {
-        AgentName: 'test-org-test-env-test-domain-test-module-test-agent-no-actions',
-      });
-    });
-
-    test('Agent with action group without openApiSchemaPath', () => {
-      const testApp = new MdaaTestApp();
-      const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
-      const agentWithDirectApiSchema: BedrockAgentProps = {
-        role: agentExecutionRoleRef,
-        description: 'Agent with direct API schema',
-        instruction: 'Test agent with direct API schema',
-        foundationModel: 'anthropic.claude-3-sonnet-20240229-v1:0',
-        actionGroups: [
-          {
-            actionGroupExecutor: {
-              lambda: 'generated-function:test-agent-lambda',
-            },
-            actionGroupName: 'test-direct-schema',
-            description: 'Action group with direct schema',
-            apiSchema: {
-              payload: JSON.stringify({
-                openapi: '3.0.0',
-                info: { title: 'Test API', version: '1.0.0' },
-                paths: {},
-              }),
-            },
-            // openApiSchemaPath is intentionally not provided to test the else clause
-          },
-        ],
-      };
-
-      const constructProps: BedrockBuilderL3ConstructProps = {
-        dataAdminRoles: [dataAdminRoleRef],
-        agents: { 'test-agent-direct-schema': agentWithDirectApiSchema },
-        roleHelper: roleHelper,
-        naming: testApp.naming,
-        lambdaFunctions: lambdaFunctions,
-      };
-
-      new BedrockBuilderL3Construct(testApp.testStack, 'test-construct', constructProps);
-      const template = Template.fromStack(testApp.testStack);
-
-      // Test that agent is created with direct API schema
-      template.hasResourceProperties('AWS::Bedrock::Agent', {
-        AgentName: 'test-org-test-env-test-domain-test-module-test-agent-direct-schema',
-        ActionGroups: [
-          {
-            ActionGroupName: 'test-direct-schema',
-            Description: 'Action group with direct schema',
-          },
-        ],
-      });
-    });
-
-    test('Agent with knowledge base association', () => {
-      const testApp = new MdaaTestApp();
-      const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
-      const vectorStore: AuroraServerlessPgVectorProps = {
-        vpcId: 'test-vpc-id',
-        subnetIds: ['test-subnet'],
-      };
-      const knowledgeBase: BedrockKnowledgeBaseProps = {
-        role: kbRoleRef,
-        vectorStore: 'test-vector-store',
-        embeddingModel: 'amazon.titan-embed-text-v2:0',
-        s3DataSources: {
-          test: {
-            bucketName: 'test-docs-bucket',
-            prefix: 'test-prefix/',
-          },
-        },
-      };
-      const agentWithKB: BedrockAgentProps = {
-        role: agentExecutionRoleRef,
-        description: 'Agent with knowledge base',
-        instruction: 'Test agent with knowledge base',
-        foundationModel: 'anthropic.claude-3-sonnet-20240229-v1:0',
-        knowledgeBases: [
-          {
-            id: 'config:test-kb',
-            description: 'Test knowledge base association',
-          },
-        ],
-      };
-
-      const constructProps: BedrockBuilderL3ConstructProps = {
-        dataAdminRoles: [dataAdminRoleRef],
-        agents: { 'test-agent-kb': agentWithKB },
-        knowledgeBases: { 'test-kb': knowledgeBase },
-        vectorStores: { 'test-vector-store': vectorStore },
-        roleHelper: roleHelper,
-        naming: testApp.naming,
-      };
-
-      new BedrockBuilderL3Construct(testApp.testStack, 'test-construct', constructProps);
-      const template = Template.fromStack(testApp.testStack);
-
-      template.hasResourceProperties('AWS::Bedrock::Agent', {
-        AgentName: 'test-org-test-env-test-domain-test-module-test-agent-kb',
-        KnowledgeBases: [
-          {
-            Description: 'Test knowledge base association',
-          },
-        ],
-      });
-    });
-
-    test('Agent with guardrail association', () => {
-      const testApp = new MdaaTestApp();
-      const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
-      const guardrail: BedrockGuardrailProps = {
-        contentFilters: {
-          hate: {
-            inputStrength: 'MEDIUM',
-            outputStrength: 'MEDIUM',
-          },
-        },
-      };
-      const agentWithGuardrail: BedrockAgentProps = {
-        role: agentExecutionRoleRef,
-        description: 'Agent with guardrail',
-        instruction: 'Test agent with guardrail',
-        foundationModel: 'anthropic.claude-3-sonnet-20240229-v1:0',
-        guardrail: {
-          id: 'config:test-guardrail',
-        },
-      };
-
-      const constructProps: BedrockBuilderL3ConstructProps = {
-        dataAdminRoles: [dataAdminRoleRef],
-        agents: { 'test-agent-guardrail': agentWithGuardrail },
-        guardrails: { 'test-guardrail': guardrail },
-        roleHelper: roleHelper,
-        naming: testApp.naming,
-      };
-
-      new BedrockBuilderL3Construct(testApp.testStack, 'test-construct', constructProps);
-      const template = Template.fromStack(testApp.testStack);
-
-      // Test that agent has guardrail configuration
-      const agentResources = template.findResources('AWS::Bedrock::Agent');
-      const agent = Object.values(agentResources)[0] as {
-        Properties: {
-          AgentName: string;
-          GuardrailConfiguration: {
-            GuardrailIdentifier: { 'Fn::GetAtt': [string, string] };
-            GuardrailVersion: { 'Fn::GetAtt': [string, string] };
-          };
-        };
-      };
-
-      expect(agent.Properties.AgentName).toBe('test-org-test-env-test-domain-test-module-test-agent-guardrail');
-      expect(agent.Properties.GuardrailConfiguration).toBeDefined();
-      expect(agent.Properties.GuardrailConfiguration.GuardrailIdentifier).toHaveProperty('Fn::GetAtt');
-      expect(agent.Properties.GuardrailConfiguration.GuardrailVersion).toHaveProperty('Fn::GetAtt');
-    });
-
-    test('Agent with alias creation', () => {
-      const testApp = new MdaaTestApp();
-      const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
-      const agentWithAlias: BedrockAgentProps = {
-        role: agentExecutionRoleRef,
-        description: 'Agent with alias',
-        instruction: 'Test agent with alias',
-        foundationModel: 'anthropic.claude-3-sonnet-20240229-v1:0',
-        agentAliasName: 'test-alias',
-      };
-
-      const constructProps: BedrockBuilderL3ConstructProps = {
-        dataAdminRoles: [dataAdminRoleRef],
-        agents: { 'test-agent-alias': agentWithAlias },
-        roleHelper: roleHelper,
-        naming: testApp.naming,
-      };
-
-      new BedrockBuilderL3Construct(testApp.testStack, 'test-construct', constructProps);
-      const template = Template.fromStack(testApp.testStack);
-
-      template.hasResourceProperties('AWS::Bedrock::AgentAlias', {
-        AgentAliasName: 'test-alias',
-      });
-    });
-
-    test('Agent with invalid knowledge base reference', () => {
-      const testApp = new MdaaTestApp();
-      const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
-      const agentWithInvalidKB: BedrockAgentProps = {
-        role: agentExecutionRoleRef,
-        description: 'Agent with invalid KB',
-        instruction: 'Test agent with invalid KB',
-        foundationModel: 'anthropic.claude-3-sonnet-20240229-v1:0',
-        knowledgeBases: [
-          {
-            id: 'config:non-existent-kb',
-            description: 'Invalid knowledge base',
-          },
-        ],
-      };
-
-      const constructProps: BedrockBuilderL3ConstructProps = {
-        dataAdminRoles: [dataAdminRoleRef],
-        agents: { 'test-agent-invalid-kb': agentWithInvalidKB },
-        roleHelper: roleHelper,
-        naming: testApp.naming,
-      };
-
-      expect(() => {
-        new BedrockBuilderL3Construct(testApp.testStack, 'test-construct', constructProps);
-      }).toThrow('Agent references unknown knowledge base from config :config:non-existent-kb');
-    });
-
-    test('Agent with guardrail missing version', () => {
-      const testApp = new MdaaTestApp();
-      const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
-      const agentWithInvalidGuardrail: BedrockAgentProps = {
-        role: agentExecutionRoleRef,
-        description: 'Agent with invalid guardrail',
-        instruction: 'Test agent with invalid guardrail',
-        foundationModel: 'anthropic.claude-3-sonnet-20240229-v1:0',
-        guardrail: {
-          id: 'direct-guardrail-id',
-          // version is intentionally missing to test error case
-        },
-      };
-
-      const constructProps: BedrockBuilderL3ConstructProps = {
-        dataAdminRoles: [dataAdminRoleRef],
-        agents: { 'test-agent-invalid-guardrail': agentWithInvalidGuardrail },
-        roleHelper: roleHelper,
-        naming: testApp.naming,
-      };
-
-      expect(() => {
-        new BedrockBuilderL3Construct(testApp.testStack, 'test-construct', constructProps);
-      }).toThrow('Guardrail version must be specified');
     });
   });
 
@@ -1431,7 +1153,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
     const template = generateTemplateFromTestInput(
       testApp,
       dataAdminRoleRef,
-      undefined,
       { 'test-vector-store': vectorStore },
       { 'test-kb-multi-sync': knowledgeBase },
       undefined,
@@ -1501,129 +1222,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
     });
   });
 
-  describe('Error Handling Tests', () => {
-    test('Agent with Config Knowledge Base Reference Error', () => {
-      const testApp1 = new MdaaTestApp();
-      const agentWithInvalidKB: BedrockAgentProps = {
-        ...agent,
-        knowledgeBases: [
-          {
-            id: 'config:non-existent-kb',
-            description: 'Test KB',
-          },
-        ],
-      };
-
-      expect(() => {
-        generateTemplateFromTestInput(
-          testApp1,
-          dataAdminRoleRef,
-          { 'test-agent-error': agentWithInvalidKB },
-          undefined,
-          undefined,
-          undefined,
-          lambdaFunctions,
-        );
-      }).toThrow('Agent references unknown knowledge base from config :config:non-existent-kb');
-    });
-
-    test('Agent with Guardrail Missing Version Error', () => {
-      const testApp2 = new MdaaTestApp();
-      const agentWithInvalidGuardrail: BedrockAgentProps = {
-        ...agent,
-        guardrail: {
-          id: 'guardrail-67890',
-        },
-      };
-
-      expect(() => {
-        generateTemplateFromTestInput(
-          testApp2,
-          dataAdminRoleRef,
-          { 'test-agent-guardrail-error': agentWithInvalidGuardrail },
-          undefined,
-          undefined,
-          undefined,
-          lambdaFunctions,
-        );
-      }).toThrow('Guardrail version must be specified');
-    });
-  });
-
-  describe('Agent with Knowledge Base and Guardrail Integration', () => {
-    const testApp = new MdaaTestApp();
-
-    const agentWithKBAndGuardrail: BedrockAgentProps = {
-      ...agent,
-      knowledgeBases: [
-        {
-          id: 'kb-12345',
-          description: 'Test Knowledge Base',
-          knowledgeBaseState: 'ENABLED',
-        },
-      ],
-      guardrail: {
-        id: 'guardrail-67890',
-        version: '1',
-      },
-    };
-
-    const template = generateTemplateFromTestInput(
-      testApp,
-      dataAdminRoleRef,
-      { 'test-agent-full': agentWithKBAndGuardrail },
-      undefined,
-      undefined,
-      undefined,
-      lambdaFunctions,
-    );
-
-    test('Agent Policy Contains Guardrail Permission', () => {
-      template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
-        ManagedPolicyName: 'test-org-test-env-test-domain-test-module-agent-test-agent-full',
-        PolicyDocument: {
-          Statement: [
-            {},
-            {},
-            {
-              Sid: 'AllowApplyBedrockGuardrail',
-              Effect: 'Allow',
-              Action: 'bedrock:ApplyGuardrail',
-              Resource: 'arn:aws:bedrock:test-region:test-account:guardrail/guardrail-67890',
-            },
-            {},
-          ],
-        },
-      });
-    });
-
-    test('Agent Policy Contains Knowledge Base Permission', () => {
-      template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
-        ManagedPolicyName: 'test-org-test-env-test-domain-test-module-agent-test-agent-full',
-        PolicyDocument: {
-          Statement: [
-            {},
-            {},
-            {},
-            {
-              Sid: 'AllowBedrockKnowledgeBase',
-              Effect: 'Allow',
-              Action: 'bedrock:Retrieve',
-              Resource: 'arn:test-partition:bedrock:test-region:test-account:knowledge-base/kb-12345',
-            },
-          ],
-        },
-      });
-    });
-
-    test('Lambda Permission for Agent Action Group', () => {
-      template.hasResourceProperties('AWS::Lambda::Permission', {
-        Action: 'lambda:InvokeFunction',
-        Principal: 'bedrock.amazonaws.com',
-      });
-    });
-  });
-
   describe('Multiple Knowledge Bases in Same VPC', () => {
     const vectorStoreA = {
       vectorStoreType: 'OPENSEARCH_SERVERLESS' as const,
@@ -1667,7 +1265,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
     const template = generateTemplateFromTestInput(
       testApp,
       dataAdminRoleRef,
-      undefined,
       { 'vector-a': vectorStoreA, 'vector-b': vectorStoreB },
       { 'kb-a': kbA, 'kb-b': kbB },
     );
@@ -1744,7 +1341,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
     const template = generateTemplateFromTestInput(
       testApp,
       dataAdminRoleRef,
-      undefined,
       { 'vector-aurora': vectorStoreAurora, 'vector-opensearch': vectorStoreOpenSearch },
       { 'kb-aurora': kbAurora, 'kb-opensearch': kbOpenSearch },
     );
@@ -1833,7 +1429,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         generateTemplateFromTestInput(
           testApp,
           dataAdminRoleRef,
-          undefined,
           { 'vector-a': vectorStoreA, 'vector-b': vectorStoreB },
           { 'kb-a': kbA, 'kb-b': kbB },
         );
@@ -1868,7 +1463,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         const template = generateTemplateFromTestInput(
           testApp,
           dataAdminRoleRef,
-          undefined,
           { 'vector-existing': vectorStoreWithExisting },
           { 'kb-existing': kb },
           undefined,
@@ -1887,7 +1481,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         const template = generateTemplateFromTestInput(
           testApp,
           dataAdminRoleRef,
-          undefined,
           { 'vector-existing': vectorStoreWithExisting },
           { 'kb-existing': kb },
           undefined,
@@ -1906,7 +1499,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         const template = generateTemplateFromTestInput(
           testApp,
           dataAdminRoleRef,
-          undefined,
           { 'vector-existing': vectorStoreWithExisting },
           { 'kb-existing': kb },
           undefined,
@@ -1968,7 +1560,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
           generateTemplateFromTestInput(
             testApp,
             dataAdminRoleRef,
-            undefined,
             { 'vector-with-existing': vectorStoreWithExisting, 'vector-without-existing': vectorStoreWithoutExisting },
             { 'kb-a': kbA, 'kb-b': kbB },
             undefined,
@@ -2025,7 +1616,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
           generateTemplateFromTestInput(
             testApp,
             dataAdminRoleRef,
-            undefined,
             { 'vector-a': vectorStoreA, 'vector-b': vectorStoreB },
             { 'kb-a': kbA, 'kb-b': kbB },
             undefined,
@@ -2083,7 +1673,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         const template = generateTemplateFromTestInput(
           testApp,
           dataAdminRoleRef,
-          undefined,
           { 'vector-a': vectorStoreA, 'vector-b': vectorStoreB },
           { 'kb-a': kbA, 'kb-b': kbB },
           undefined,
@@ -2102,7 +1691,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         const template = generateTemplateFromTestInput(
           testApp,
           dataAdminRoleRef,
-          undefined,
           { 'vector-a': vectorStoreA, 'vector-b': vectorStoreB },
           { 'kb-a': kbA, 'kb-b': kbB },
           undefined,
@@ -2121,7 +1709,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         const template = generateTemplateFromTestInput(
           testApp,
           dataAdminRoleRef,
-          undefined,
           { 'vector-a': vectorStoreA, 'vector-b': vectorStoreB },
           { 'kb-a': kbA, 'kb-b': kbB },
           undefined,
@@ -2181,7 +1768,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const template = generateTemplateFromTestInput(
         testApp,
         dataAdminRoleRef,
-        undefined,
         { 'vector-vpc-a': vectorStoreVpcA, 'vector-vpc-b': vectorStoreVpcB },
         { 'kb-a': kbA, 'kb-b': kbB },
         undefined,
@@ -2200,7 +1786,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const template = generateTemplateFromTestInput(
         testApp,
         dataAdminRoleRef,
-        undefined,
         { 'vector-vpc-a': vectorStoreVpcA, 'vector-vpc-b': vectorStoreVpcB },
         { 'kb-a': kbA, 'kb-b': kbB },
         undefined,
@@ -2219,7 +1804,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const template = generateTemplateFromTestInput(
         testApp,
         dataAdminRoleRef,
-        undefined,
         { 'vector-vpc-a': vectorStoreVpcA, 'vector-vpc-b': vectorStoreVpcB },
         { 'kb-a': kbA, 'kb-b': kbB },
         undefined,
@@ -2238,7 +1822,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const template = generateTemplateFromTestInput(
         testApp,
         dataAdminRoleRef,
-        undefined,
         { 'vector-vpc-a': vectorStoreVpcA, 'vector-vpc-b': vectorStoreVpcB },
         { 'kb-a': kbA, 'kb-b': kbB },
         undefined,
@@ -2303,7 +1886,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const template = generateTemplateFromTestInput(
         testApp,
         dataAdminRoleRef,
-        undefined,
         { 'vector-vpc-a-existing': vectorStoreVpcAWithExisting, 'vector-vpc-b-new': vectorStoreVpcBNew },
         { 'kb-a': kbA, 'kb-b': kbB },
         undefined,
@@ -2322,7 +1904,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const template = generateTemplateFromTestInput(
         testApp,
         dataAdminRoleRef,
-        undefined,
         { 'vector-vpc-a-existing': vectorStoreVpcAWithExisting, 'vector-vpc-b-new': vectorStoreVpcBNew },
         { 'kb-a': kbA, 'kb-b': kbB },
         undefined,
@@ -2341,7 +1922,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const template = generateTemplateFromTestInput(
         testApp,
         dataAdminRoleRef,
-        undefined,
         { 'vector-vpc-a-existing': vectorStoreVpcAWithExisting, 'vector-vpc-b-new': vectorStoreVpcBNew },
         { 'kb-a': kbA, 'kb-b': kbB },
         undefined,
@@ -2381,7 +1961,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const template = generateTemplateFromTestInput(
         testApp,
         dataAdminRoleRef,
-        undefined,
         { 'vector-single-oss': vectorStoreOss },
         { 'kb-single-oss': kb },
         undefined,
@@ -2400,7 +1979,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const template = generateTemplateFromTestInput(
         testApp,
         dataAdminRoleRef,
-        undefined,
         { 'vector-single-oss': vectorStoreOss },
         { 'kb-single-oss': kb },
         undefined,
@@ -2419,7 +1997,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const template = generateTemplateFromTestInput(
         testApp,
         dataAdminRoleRef,
-        undefined,
         { 'vector-single-oss': vectorStoreOss },
         { 'kb-single-oss': kb },
         undefined,
@@ -2440,7 +2017,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const template = generateTemplateFromTestInput(
         testApp,
         dataAdminRoleRef,
-        undefined,
         { 'vector-single-oss': vectorStoreOss },
         { 'kb-single-oss': kb },
         undefined,
@@ -2465,7 +2041,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const template = generateTemplateFromTestInput(
         testApp,
         dataAdminRoleRef,
-        undefined,
         { 'vector-single-oss': vectorStoreOss },
         { 'kb-single-oss': kb },
         undefined,
@@ -2560,7 +2135,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const template = generateTemplateFromTestInput(
         testApp,
         dataAdminRoleRef,
-        undefined,
         { 'vector-vpc-a-1': vectorStoreVpcA1, 'vector-vpc-a-2': vectorStoreVpcA2, 'vector-vpc-b': vectorStoreVpcB },
         { 'kb-1': kb1, 'kb-2': kb2, 'kb-3': kb3 },
         undefined,
@@ -2579,7 +2153,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const template = generateTemplateFromTestInput(
         testApp,
         dataAdminRoleRef,
-        undefined,
         { 'vector-vpc-a-1': vectorStoreVpcA1, 'vector-vpc-a-2': vectorStoreVpcA2, 'vector-vpc-b': vectorStoreVpcB },
         { 'kb-1': kb1, 'kb-2': kb2, 'kb-3': kb3 },
         undefined,
@@ -2598,7 +2171,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const template = generateTemplateFromTestInput(
         testApp,
         dataAdminRoleRef,
-        undefined,
         { 'vector-vpc-a-1': vectorStoreVpcA1, 'vector-vpc-a-2': vectorStoreVpcA2, 'vector-vpc-b': vectorStoreVpcB },
         { 'kb-1': kb1, 'kb-2': kb2, 'kb-3': kb3 },
         undefined,
@@ -2645,7 +2217,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const template = generateTemplateFromTestInput(
         testApp,
         dataAdminRoleRef,
-        undefined,
         { 'vector-used': usedVectorStore, 'vector-unused': unusedVectorStore },
         { 'kb-used': kb },
         undefined,
@@ -2664,7 +2235,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const template = generateTemplateFromTestInput(
         testApp,
         dataAdminRoleRef,
-        undefined,
         { 'vector-used': usedVectorStore, 'vector-unused': unusedVectorStore },
         { 'kb-used': kb },
         undefined,
@@ -2737,7 +2307,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const template = generateTemplateFromTestInput(
         testApp,
         dataAdminRoleRef,
-        undefined,
         { 'vector-a': vectorStoreA, 'vector-b': vectorStoreB, 'vector-c': vectorStoreC },
         { 'kb-a': kbA, 'kb-b': kbB, 'kb-c': kbC },
         undefined,
@@ -2763,7 +2332,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const template = generateTemplateFromTestInput(
         testApp,
         dataAdminRoleRef,
-        undefined,
         { 'vector-a': vectorStoreA, 'vector-b': vectorStoreB, 'vector-c': vectorStoreC },
         { 'kb-a': kbA, 'kb-b': kbB, 'kb-c': kbC },
         undefined,
@@ -2792,7 +2360,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const template = generateTemplateFromTestInput(
         testApp,
         dataAdminRoleRef,
-        undefined,
         { 'vector-a': vectorStoreA, 'vector-b': vectorStoreB, 'vector-c': vectorStoreC },
         { 'kb-a': kbA, 'kb-b': kbB, 'kb-c': kbC },
         undefined,
@@ -2823,7 +2390,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const template = generateTemplateFromTestInput(
         testApp,
         dataAdminRoleRef,
-        undefined,
         { 'vector-a': vectorStoreA, 'vector-b': vectorStoreB, 'vector-c': vectorStoreC },
         { 'kb-a': kbA, 'kb-b': kbB, 'kb-c': kbC },
         undefined,
@@ -2855,7 +2421,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const template = generateTemplateFromTestInput(
         testApp,
         dataAdminRoleRef,
-        undefined,
         { 'vector-a': vectorStoreA, 'vector-b': vectorStoreB, 'vector-c': vectorStoreC },
         { 'kb-a': kbA, 'kb-b': kbB, 'kb-c': kbC },
         undefined,
@@ -2916,7 +2481,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const template = generateTemplateFromTestInput(
         testApp,
         dataAdminRoleRef,
-        undefined,
         { 'vector-a': vectorStoreA, 'vector-b': vectorStoreB },
         { 'kb-role1': kbRole1, 'kb-role2': kbRole2 },
         undefined,
@@ -2974,7 +2538,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const template = generateTemplateFromTestInput(
         testApp,
         dataAdminRoleRef,
-        undefined,
         { 'test-vector-store': vectorStore },
         knowledgeBases,
         undefined,
@@ -2988,45 +2551,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
 
       // Debug: log what we actually got
       console.log('CustomResources found:', resourceIds);
-
-      // The fix ensures unique refIds are used, preventing construct name collisions
-      // In test environment, roles may be cached, so we verify no collision errors occurred
-      expect(resourceIds.length).toBeGreaterThanOrEqual(0);
-    });
-
-    test('Multiple agents with different roles should create unique CustomResources', () => {
-      const testApp = new MdaaTestApp();
-
-      const agent1Role: MdaaRoleRef = { id: 'ssm:/org/role/agent-role-1/id' };
-      const agent2Role: MdaaRoleRef = { id: 'ssm:/org/role/agent-role-2/id' };
-
-      const agents: NamedAgentProps = {
-        'agent-1': {
-          role: agent1Role,
-          foundationModel: 'anthropic.claude-3-sonnet-20240229-v1:0',
-          instruction: 'Test agent 1',
-        },
-        'agent-2': {
-          role: agent2Role,
-          foundationModel: 'anthropic.claude-3-sonnet-20240229-v1:0',
-          instruction: 'Test agent 2',
-        },
-      };
-
-      const template = generateTemplateFromTestInput(
-        testApp,
-        dataAdminRoleRef,
-        agents,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        true,
-      );
-
-      const customResources = template.findResources('Custom::RoleResolver');
-      const resourceIds = Object.keys(customResources);
 
       // The fix ensures unique refIds are used, preventing construct name collisions
       // In test environment, roles may be cached, so we verify no collision errors occurred
@@ -3061,7 +2585,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const template = generateTemplateFromTestInput(
         testApp,
         dataAdminRoleRef,
-        undefined,
         { 'test-vector-store': vectorStore },
         knowledgeBases,
         undefined,
@@ -3082,24 +2605,9 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
   describe('Multiple Named Entries in Map Props', () => {
     const testApp = new MdaaTestApp();
 
-    const agentExecutionRoleRef2: MdaaRoleRef = {
-      arn: 'arn:test-partition:iam::test-account:role/agent-execution-role-2',
-      name: 'agent-execution-role-2',
-    };
-
     const kbRoleRef2: MdaaRoleRef = {
       arn: 'arn:test-partition:iam::test-account:role/kb-execution-role-2',
       name: 'kb-execution-role-2',
-    };
-
-    const agent2: BedrockAgentProps = {
-      role: agentExecutionRoleRef2,
-      autoPrepare: true,
-      description: 'Second Agent',
-      instruction: 'Agent 2 Instructions',
-      foundationModel: 'anthropic.claude-3-sonnet-20240229-v1:0',
-      agentAliasName: 'beta-alias',
-      idleSessionTtlInSeconds: 1800,
     };
 
     const guardrail2: BedrockGuardrailProps = {
@@ -3145,7 +2653,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
     const template = generateTemplateFromTestInput(
       testApp,
       dataAdminRoleRef,
-      { 'agent-alpha': agent, 'agent-beta': agent2 },
       { 'vector-store-1': vectorStore, 'vector-store-2': vectorStore2 },
       { 'kb-alpha': kb1, 'kb-beta': kb2 },
       { 'guardrail-alpha': guardrail, 'guardrail-beta': guardrail2 },
@@ -3153,25 +2660,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       undefined,
       true,
     );
-
-    test('Creates two Bedrock Agents', () => {
-      const agents = template.findResources('AWS::Bedrock::Agent');
-      expect(Object.keys(agents).length).toBe(2);
-    });
-
-    test('First agent has correct name', () => {
-      template.hasResourceProperties('AWS::Bedrock::Agent', {
-        AgentName: 'test-org-test-env-test-domain-test-module-agent-alpha',
-      });
-    });
-
-    test('Second agent has correct name', () => {
-      template.hasResourceProperties('AWS::Bedrock::Agent', {
-        AgentName: 'test-org-test-env-test-domain-test-module-agent-beta',
-        AutoPrepare: true,
-        IdleSessionTTLInSeconds: 1800,
-      });
-    });
 
     test('Creates two Knowledge Bases', () => {
       const kbs = template.findResources('AWS::Bedrock::KnowledgeBase');
@@ -3423,7 +2911,6 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
 function generateTemplateFromTestInput(
   testApp: MdaaTestApp,
   dataAdminRoleRef: MdaaRoleRef,
-  agents?: NamedAgentProps,
   vectorStores?: NamedVectorStoreProps,
   knowledgeBases?: NamedKnowledgeBaseProps,
   guardrails?: NamedGuardrailProps,
@@ -3435,7 +2922,6 @@ function generateTemplateFromTestInput(
 
   const constructProps: BedrockBuilderL3ConstructProps = {
     dataAdminRoles: [dataAdminRoleRef],
-    agents: agents || {},
     roleHelper: roleHelper,
     naming: testApp.naming,
     knowledgeBases: knowledgeBases,
@@ -3466,7 +2952,6 @@ describe('Bedrock CMK key policy role grants', () => {
       undefined,
       undefined,
       undefined,
-      undefined,
       true,
     );
 
@@ -3492,7 +2977,6 @@ describe('Bedrock CMK key policy role grants', () => {
     const template = generateTemplateFromTestInput(
       testApp,
       { arn: crossAccountArn },
-      undefined,
       undefined,
       undefined,
       undefined,

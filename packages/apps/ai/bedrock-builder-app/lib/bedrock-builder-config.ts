@@ -10,7 +10,6 @@ import {
   NamedKnowledgeBaseProps,
   NamedVectorStoreProps,
   NamedGuardrailProps,
-  NamedAgentProps,
   NamedGatewayProps,
   NamedGatewayTargetProps,
   NamedHarnessProps,
@@ -22,7 +21,8 @@ import * as configSchema from './config-schema.json';
 
 export interface BedrockBuilderConfigContents extends MdaaBaseConfigContents {
   /**
-   * Admin roles granted access to Bedrock agent resources including KMS keys and S3 buckets.
+   * Admin roles granted key-admin access to the KMS key the module creates. Unused when `kmsKeyArn`
+   * supplies an existing key.
    *
    * Use cases: Administrative access, role-based security, Bedrock resource management
    *
@@ -32,18 +32,8 @@ export interface BedrockBuilderConfigContents extends MdaaBaseConfigContents {
    **/
   readonly dataAdminRoles: MdaaRoleRef[];
   /**
-   * Bedrock agent configurations with foundation models, action groups, knowledge base integration, and guardrails.
-   *
-   * Use cases: AI agent deployment, conversational AI, task automation, intelligent workflows
-   *
-   * AWS: Amazon Bedrock Agents
-   *
-   * Validation: Optional; NamedAgentProps (map of agent name to config)
-   **/
-  readonly agents?: NamedAgentProps;
-  /**
-   * Existing KMS key ARN for encrypting all Bedrock resources in this module — agents, knowledge
-   * bases, guardrails, the shared Lambda pool, and AgentCore gateways all use this single key.
+   * Existing KMS key ARN for encrypting all Bedrock resources in this module — knowledge bases,
+   * guardrails, the shared Lambda pool, and AgentCore gateways and harnesses all use this single key.
    * If omitted, one customer-managed key is created automatically and shared across them.
    *
    * When an existing key is provided, its key policy must already grant the required service and
@@ -58,23 +48,12 @@ export interface BedrockBuilderConfigContents extends MdaaBaseConfigContents {
    **/
   readonly kmsKeyArn?: string;
   /**
-   * Existing S3 bucket ARN for agent data storage.
-   * If omitted, a dedicated bucket is created automatically.
+   * Lambda functions and layers for gateway tools, gateway interceptors, and knowledge base custom
+   * transformations, referenced via `generated-function:<name>`.
    *
-   * Use cases: Agent artifact storage, data management, bucket reuse
+   * Use cases: Gateway tool logic, external API integration, custom document transformation
    *
-   * AWS: S3 bucket for Bedrock agent storage
-   *
-   * Validation: Optional; String; must be valid S3 bucket ARN
-   **/
-  readonly agentBucketArn?: string;
-  /**
-   * Lambda functions and layers for Bedrock agent action groups.
-   * Enables custom business logic, API integrations, and business process automation within agents.
-   *
-   * Use cases: Custom action group logic, external API integration, business process automation
-   *
-   * AWS: Lambda functions/layers for Bedrock agent action groups
+   * AWS: Lambda functions/layers
    *
    * Validation: Optional; LambdaFunctionProps
    **/
@@ -174,24 +153,15 @@ export interface BedrockBuilderConfigContents extends MdaaBaseConfigContents {
 
 export class BedrockBuilderConfigParser extends MdaaAppConfigParser<BedrockBuilderConfigContents> {
   /**
-   * List of admin roles which will be provided access to agent resources (like KMS/Bucket)
+   * Admin roles granted key-admin access to the KMS key the module creates. Unused when `kmsKeyArn`
+   * supplies an existing key.
    */
   public readonly dataAdminRoles: MdaaRoleRef[];
-
-  /**
-   * Bedrock Agent
-   */
-  public readonly agents?: NamedAgentProps;
 
   /**
    * (Optional) KMS key ARN
    */
   public readonly kmsKeyArn?: string;
-
-  /**
-   * (Optional) S3 Bucket Arn for the agent
-   */
-  public readonly agentBucketArn?: string;
 
   /**
    * (Optional) Lambda Functions and associated layers
@@ -233,9 +203,7 @@ export class BedrockBuilderConfigParser extends MdaaAppConfigParser<BedrockBuild
   constructor(stack: Stack, props: MdaaAppConfigParserProps) {
     super(stack, props, configSchema as Schema);
     this.dataAdminRoles = this.configContents.dataAdminRoles;
-    this.agents = this.configContents.agents;
     this.kmsKeyArn = this.configContents.kmsKeyArn;
-    this.agentBucketArn = this.configContents.agentBucketArn;
     this.lambdaFunctions = this.configContents.lambdaFunctions;
     this.knowledgeBases = this.configContents.knowledgeBases;
     this.guardrails = this.configContents.guardrails;

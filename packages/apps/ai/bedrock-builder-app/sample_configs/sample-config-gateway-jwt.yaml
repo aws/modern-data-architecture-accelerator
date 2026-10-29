@@ -1,17 +1,22 @@
-# Bedrock Builder module configuration exercising the AgentCore Gateway AUDIT LOG-DELIVERY branches
-# that the other gateway samples do not. Two gateways are declared so the mutually-exclusive
-# logDelivery options each get their own gateway (a single gateway can set only one). Everything
-# here is deployable (successful synth).
+# Bedrock Builder module configuration exercising AgentCore Gateways with CUSTOM_JWT (OIDC) inbound
+# auth, for MCP clients that present a token rather than AWS credentials, plus the audit
+# log-delivery branches. A harness cannot call a JWT gateway (it signs with AWS IAM), so these
+# gateways serve external clients. Two gateways are declared so the mutually-exclusive logDelivery
+# options each get their own gateway (a single gateway can set only one). Everything here is
+# deployable (successful synth).
 #
 # What this sample covers:
-#   - gateway A: logDelivery.logRetentionDays finite (a different value than the IAM sample's 90)
-#   - gateway B: logDelivery.enabled: false          -> opt out of the vended log-delivery pipeline
-#                                                       (no destination log group / delivery created)
+#   - gateway A: CUSTOM_JWT with allowedAudience and allowedClients, and a finite
+#                logDelivery.logRetentionDays
+#   - gateway B: CUSTOM_JWT with only discoveryUrl, and logDelivery.enabled: false -> opt out of the
+#                vended log-delivery pipeline (no destination log group / delivery created)
 #   - an S3 tool schema WITHOUT bucketOwnerAccountId  -> defaults to the deploying account
 #                                                       (confused-deputy protection default branch)
-#   - CUSTOM_JWT with only discoveryUrl (no allowedAudience / allowedClients) -> minimal JWT config
+#
+# See sample-config-comprehensive.yaml for an AWS_IAM gateway serving a harness, and
+# sample-config-gateway-iam.yaml for the remaining gateway options.
 
-# Admin roles granted access to Bedrock resources including KMS keys and S3 buckets.
+# Admin roles granted key-admin rights on the module's KMS key.
 dataAdminRoles:
   - name: 'Admin'
 
@@ -57,13 +62,21 @@ gatewayTargets:
             # bucketOwnerAccountId omitted -> defaults to the deploying account.
 
 gateways:
-  # Gateway A: finite audit-log retention.
+  # Gateway A: full CUSTOM_JWT and finite audit-log retention.
   metrics-gateway:
     description: 'Metrics MCP gateway with finite log retention'
+    # Inbound authorization. MDAA rejects NONE / AUTHENTICATE_ONLY (compliance).
     authorizerConfiguration:
       customJwt:
-        # Minimal CUSTOM_JWT: only the required discoveryUrl (no allowedAudience / allowedClients).
+        # OIDC discovery URL; must end with /.well-known/openid-configuration.
         discoveryUrl: 'https://example.com/.well-known/openid-configuration'
+        # (Optional) Allowed audiences validated against the token `aud` claim.
+        allowedAudience:
+          - 'metrics-clients'
+          - 'metrics-admin'
+        # (Optional) Allowed client IDs validated against the token `client_id` claim.
+        allowedClients:
+          - 'client-abc123'
     targets:
       - metrics
     logDelivery:
@@ -76,6 +89,7 @@ gateways:
     description: 'Reports MCP gateway with log delivery disabled'
     authorizerConfiguration:
       customJwt:
+        # Minimal CUSTOM_JWT: only the required discoveryUrl (no allowedAudience / allowedClients).
         discoveryUrl: 'https://example.com/.well-known/openid-configuration'
     targets:
       - reports

@@ -25,7 +25,7 @@ This module deploys and integrates the following resources:
 
 ## Related Modules
 
-- [Bedrock Builder](../bedrock-builder-app/README.md) — Deploy Bedrock Agents, Knowledge Bases, and Guardrails whose invocations will be captured by the audit logging configured here
+- [Bedrock Builder](../bedrock-builder-app/README.md) — Deploy AgentCore Harnesses, Knowledge Bases, and Guardrails whose invocations will be captured by the audit logging configured here
 - [Bedrock AgentCore Runtime](../bedrock-agentcore-runtime-app/README.md) — Deploy custom agent runtimes whose Bedrock model invocations will be captured by audit logging
 - [GAIA v2](../gaia-v2-app/README.md) — Deploy a GenAI application backend whose Bedrock model invocations will be captured by audit logging
 

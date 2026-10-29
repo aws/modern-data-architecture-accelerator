@@ -64,6 +64,10 @@ RISK_RANK = {"BLOCKING": 0, "HIGH": 1, "MEDIUM": 2, "LOW": 3, "UNKNOWN": 1}
 RISK_ESCALATION_LADDER = ["LOW", "MEDIUM", "HIGH"]
 ICON_MAP = {"BLOCKING": "\u274c", "HIGH": "\u26a0\ufe0f", "MEDIUM": "\u26a0\ufe0f", "LOW": "\u2139\ufe0f", "UNKNOWN": "\u2753"}
 
+# GitLab rejects notes larger than 1 MiB; keep the summary safely below that.
+MAX_SUMMARY_BYTES = 900_000
+DIFF_TRUNCATION_NOTICE = "\n... (diff truncated to fit the GitLab note size limit; see the job artifacts for the full diff)"
+
 
 def build_root_cause_groups(entries: list[dict]) -> dict[str, dict]:
     """Group findings across all baselines by source (root cause).
@@ -175,8 +179,49 @@ def _apply_wide_impact_escalation(groups: dict[str, dict]) -> None:
             group["wide_impact"] = module_count
 
 
-def format_summary_body(entries: list[dict]) -> str:
-    """Format the summary thread body."""
+def _truncate_utf8(text: str, max_bytes: int) -> str:
+    """Truncate text to at most max_bytes UTF-8 bytes without splitting a character."""
+    encoded = text.encode("utf-8")
+    if len(encoded) <= max_bytes:
+        return text
+    return encoded[:max(max_bytes, 0)].decode("utf-8", errors="ignore")
+
+
+def _fit_diffs_to_budget(diffs: list[str], budget: int) -> list[str]:
+    """Shrink diffs so their combined UTF-8 size fits within budget bytes.
+
+    Small diffs are kept whole; the remaining budget is shared evenly among the
+    larger ones, which are truncated with a notice.
+    """
+    sizes = [len(d.encode("utf-8")) for d in diffs]
+    if sum(sizes) <= budget:
+        return diffs
+
+    notice_bytes = len(DIFF_TRUNCATION_NOTICE.encode("utf-8"))
+    caps = [0] * len(diffs)
+    remaining = max(budget, 0)
+    pending = sorted(range(len(diffs)), key=lambda i: sizes[i])
+    while pending:
+        share = remaining // len(pending)
+        i = pending[0]
+        if sizes[i] <= share:
+            caps[i] = sizes[i]
+            remaining -= sizes[i]
+            pending.pop(0)
+        else:
+            for j in pending:
+                caps[j] = share
+            break
+
+    return [
+        d if sizes[i] <= caps[i]
+        else _truncate_utf8(d, caps[i] - notice_bytes) + DIFF_TRUNCATION_NOTICE
+        for i, d in enumerate(diffs)
+    ]
+
+
+def format_summary_body(entries: list[dict], max_bytes: int = MAX_SUMMARY_BYTES) -> str:
+    """Format the summary thread body, truncating CDK diffs to stay under max_bytes."""
     risk_counts: dict[str, int] = {}
     for entry in entries:
         level = entry.get("risk_level", "UNKNOWN")
@@ -186,7 +231,7 @@ def format_summary_body(entries: list[dict]) -> str:
     breakdown_parts = [f"{c} {l}" for l in ["BLOCKING", "HIGH", "MEDIUM", "LOW", "UNKNOWN"]
                        if (c := risk_counts.get(l, 0))]
 
-    lines = [
+    head = [
         SUMMARY_MARKER, "",
         "## Baseline Review Summary", "",
         f"**Total baselines changed:** {total}", "",
@@ -196,24 +241,30 @@ def format_summary_body(entries: list[dict]) -> str:
     # Overall summary
     overall_summary = next((e.get("overall_summary", "") for e in entries if e.get("overall_summary")), "")
     if overall_summary:
-        lines.extend(["### Change Summary", "", overall_summary, ""])
+        head.extend(["### Change Summary", "", overall_summary, ""])
+
+    sorted_entries = sorted(entries, key=lambda e: (RISK_RANK.get(e.get("risk_level", "UNKNOWN"), 3), e.get("module", ""), len(e.get("config", "")), e.get("config", "")))
+
+    def render(diffs: list[str]) -> str:
+        lines = [*head, "<details><summary><b>Baseline Details</b></summary>", ""]
+        for entry, diff in zip(sorted_entries, diffs):
+            module_key = f"{entry['module']}/{entry['config']}"
+            icon = ICON_MAP.get(entry.get("risk_level", "UNKNOWN"), "\u2753")
+            lines.extend([
+                f"**{icon} `{module_key}`**", "",
+                "<details><summary>CDK Diff</summary>", "",
+                "```diff", diff, "```", "",
+                "</details>", "",
+            ])
+        lines.extend(["</details>", ""])
+        lines.append("_Root cause threads are positioned on the source code. "
+                     "Resolve each thread to acknowledge the change._")
+        return "\n".join(lines)
 
     # Collapsed baseline details
-    lines.extend(["<details><summary><b>Baseline Details</b></summary>", ""])
-    for entry in sorted(entries, key=lambda e: (RISK_RANK.get(e.get("risk_level", "UNKNOWN"), 3), e.get("module", ""), len(e.get("config", "")), e.get("config", ""))):
-        module_key = f"{entry['module']}/{entry['config']}"
-        icon = ICON_MAP.get(entry.get("risk_level", "UNKNOWN"), "\u2753")
-        lines.extend([
-            f"**{icon} `{module_key}`**", "",
-            "<details><summary>CDK Diff</summary>", "",
-            "```diff", entry.get("cdk_diff", ""), "```", "",
-            "</details>", "",
-        ])
-    lines.extend(["</details>", ""])
-
-    lines.append("_Root cause threads are positioned on the source code. "
-                 "Resolve each thread to acknowledge the change._")
-    return "\n".join(lines)
+    diffs = [e.get("cdk_diff", "") for e in sorted_entries]
+    overhead = len(render([""] * len(diffs)).encode("utf-8"))
+    return render(_fit_diffs_to_budget(diffs, max_bytes - overhead))
 
 
 def format_root_cause_thread(
