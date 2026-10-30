@@ -49,6 +49,7 @@
 - Updated dependencies to address CVEs (`js-yaml`, `axios`, `smol-toml`, `nx`, `@xmldom/xmldom`, `browserslist`, `baseline-browser-mapping`, `markdown-it`, `linkify-it`, `brace-expansion`, `stream-json`, `@babel/core`)
 - Updated `aws-cdk-lib` to 2.263.0. CDK's new built-in CloudFormation template validation is disabled by default in MDAA apps; set `CDK_VALIDATION=true` to enable it.
 - Added an `!includeYaml` tag for module config files that parses a referenced YAML file and splices it into the config tree. See [Including Other Files](CONFIGURATION.md#including-other-files).
+- Module baseline diff tests (`baselineDiffTestApp` in `@aws-mdaa/testing`) now fail when a sample config's synth produces an error annotation, such as an unsuppressed CDK Nag finding, and no longer write or update a baseline for it. See [Diff Baseline Testing](TESTING.md#how-to-test-diff-baseline-testing).
 
 ## [1.9.0] - 2026-10-01
 

@@ -1,6 +1,7 @@
 # Minimal config for the OpenSearch module.
-# Demonstrates the simplest valid configuration using only required
-# properties.
+# Demonstrates the simplest configuration that passes MDAA's CDK Nag
+# checks: the required properties plus dedicated master nodes and
+# two-AZ zone awareness.
 
 # Complete OpenSearch domain configuration
 domain:
@@ -26,6 +27,8 @@ domain:
     - subnetId: subnet-1a2b3c4d
       # Must match the actual AZ of the specified subnet
       availabilityZone: '{{region}}a'
+    - subnetId: subnet-9p0q1r2s
+      availabilityZone: '{{region}}b'
 
   # Security group ingress rules controlling network access
   securityGroupIngress:
@@ -33,10 +36,18 @@ domain:
     ipv4:
       - 10.0.0.0/28
 
+  # Zone awareness, required by CDK Nag rule AwsSolutions-OS7.
+  # Needs one subnet per AZ.
+  zoneAwareness:
+    enabled: true
+    availabilityZoneCount: 2
+
   # Cluster capacity configuration
   capacity:
-    # Number of data nodes (default: 1)
-    dataNodes: 1
+    # Dedicated master nodes, required by CDK Nag rule AwsSolutions-OS4
+    masterNodes: 3
+    # Number of data nodes, a multiple of the AZ count (default: 1)
+    dataNodes: 2
     # Data node instance type (default: r5.large.search)
     dataNodeInstanceType: r5.large.search
 

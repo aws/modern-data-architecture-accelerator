@@ -224,11 +224,14 @@ App modules use CDK diff-based baseline testing. This approach uses the CDK tool
 Each sample config gets a `baselineDiffTestApp` call that:
 
 1. Synths the CDK app with the sample config
-2. Stores the CloudFormation template as a `.baseline.json` file
-3. On subsequent runs, diffs the current output against the baseline using `@aws-cdk/toolkit-lib`
-4. Fails if resources or outputs changed
+2. Fails if synth left an error annotation on any construct, such as an unsuppressed CDK Nag finding
+3. Stores the CloudFormation template as a `.baseline.json` file
+4. On subsequent runs, diffs the current output against the baseline using `@aws-cdk/toolkit-lib`
+5. Fails if resources or outputs changed
 
-Only resource and output differences are flagged. Metadata changes (CDK Nag suppression annotations, asset hashes, CDK version metadata) are ignored, eliminating false positives that plagued traditional snapshot testing.
+Step 2 applies the same rule as `cdk synth`, so a sample config that `mdaa synth` would reject fails its diff test. The check runs before any baseline is written, so neither a first run nor `npm run test:update-baselines` can accept one.
+
+Only resource and output differences are flagged by the diff itself. Metadata changes (CDK Nag suppression annotations, asset hashes, CDK version metadata) are ignored, eliminating false positives that plagued traditional snapshot testing.
 
 ```typescript
 import { describe } from '@jest/globals';

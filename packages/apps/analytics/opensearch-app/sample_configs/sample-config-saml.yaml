@@ -24,6 +24,8 @@ domain:
   subnets:
     - subnetId: subnet-1a2b3c4d
       availabilityZone: '{{region}}a'
+    - subnetId: subnet-9p0q1r2s
+      availabilityZone: '{{region}}b'
 
   # Security group ingress rules
   securityGroupIngress:
@@ -31,10 +33,18 @@ domain:
     sg:
       - sg-u5x6y7z8
 
+  # Zone awareness, required by CDK Nag rule AwsSolutions-OS7.
+  # Needs one subnet per AZ.
+  zoneAwareness:
+    enabled: true
+    availabilityZoneCount: 2
+
   # Cluster capacity configuration
   capacity:
-    # Number of data nodes (default: 1)
-    dataNodes: 1
+    # Dedicated master nodes, required by CDK Nag rule AwsSolutions-OS4
+    masterNodes: 3
+    # Number of data nodes, a multiple of the AZ count (default: 1)
+    dataNodes: 2
     # Data node instance type (default: r5.large.search)
     dataNodeInstanceType: r6g.large.search
 

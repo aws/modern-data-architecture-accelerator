@@ -95,7 +95,7 @@ Copy the contents of the relevant sample config below into the `./opensearch.yam
 
 #### Minimal Configuration
 
-Demonstrates the simplest valid configuration using only required properties. Uses id-style MdaaRoleRef for role resolution by AWS-generated unique ID. Start here for a quick OpenSearch domain deployment before adding multi-AZ, SAML auth, or custom endpoints.
+Demonstrates the simplest configuration that passes MDAA's CDK Nag checks, which require dedicated master nodes and two-AZ zone awareness. Uses id-style MdaaRoleRef for role resolution by AWS-generated unique ID. Start here for a quick OpenSearch domain deployment before adding SAML auth or custom endpoints.
 
 [sample-config-minimal.yaml](sample_configs/sample-config-minimal.yaml)
 

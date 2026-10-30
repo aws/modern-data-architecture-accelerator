@@ -5,6 +5,7 @@
 
 import * as cdk from 'aws-cdk-lib';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as cxapi from 'aws-cdk-lib/cx-api';
 import * as fs from 'fs';
 import * as path from 'path';
 import { expect, jest, test } from '@jest/globals';
@@ -228,6 +229,10 @@ export interface BaselineDiffOptions {
  * Only resource and output differences are considered failures. Metadata,
  * input parameters, conditions, and mappings are ignored.
  *
+ * The test also fails, without writing or updating any baseline, if synth leaves
+ * an error annotation on any construct (e.g. an unsuppressed cdk-nag finding),
+ * since `cdk synth` would reject the same app.
+ *
  * @param testNamePrefix - Human-readable test name (shown in failures)
  * @param appProvider - Memoized factory that returns the CDK app
  * @param options - Optional configuration (e.g., ignoreResourcePatterns)
@@ -248,8 +253,116 @@ export function baselineDiffTestApp(
     throw new TypeError('appProvider must be a function');
   }
 
-  // Global patterns for resources with non-deterministic logical IDs
+  test(`${testNamePrefix} Baseline Diff Test`, () => runBaselineDiff(testNamePrefix, appProvider, options), 120000);
+}
 
+type StripFn = (template: Record<string, unknown>) => Record<string, unknown>;
+type BaselineFileFn = (stack: cxapi.CloudFormationStackArtifact) => string;
+
+/**
+ * Throws if synth left an error annotation on any construct (e.g. an unsuppressed
+ * cdk-nag finding). cdk synth refuses such an assembly, but toolkit diff() never
+ * validates them.
+ */
+function assertNoErrorAnnotations(testNamePrefix: string, assembly: cxapi.CloudAssembly): void {
+  const errors = assembly.stacks.flatMap(s => s.messages).filter(m => m.level === 'error');
+  if (errors.length > 0) {
+    throw new Error(
+      `[${testNamePrefix}] synth produced ${errors.length} error annotation(s):\n` +
+        errors
+          .map(m => `  ${m.id}: ${typeof m.entry.data === 'string' ? m.entry.data : JSON.stringify(m.entry.data)}`)
+          .join('\n'),
+    );
+  }
+}
+
+/** Writes a baseline for each stack that has none yet. Returns true if any was written. */
+function writeMissingBaselines(
+  stacks: cxapi.CloudFormationStackArtifact[],
+  baselineFileFor: BaselineFileFn,
+  stripIgnored: StripFn,
+): boolean {
+  let written = false;
+  for (const stack of stacks) {
+    const baselineFile = baselineFileFor(stack);
+
+    if (!fs.existsSync(baselineFile)) {
+      fs.mkdirSync(path.dirname(baselineFile), { recursive: true });
+      const normalized = stripIgnored(normalizeTemplate(stack.template as Record<string, unknown>));
+      fs.writeFileSync(baselineFile, JSON.stringify(normalized, null, 2) + '\n');
+      written = true;
+    }
+  }
+  return written;
+}
+
+/**
+ * Diffs each stack against its baseline using the CDK toolkit. With UPDATE_BASELINES a
+ * differing baseline is rewritten; otherwise each difference is returned as a failure.
+ */
+async function diffAgainstBaselines(
+  testNamePrefix: string,
+  assembly: cxapi.CloudAssembly,
+  stacks: cxapi.CloudFormationStackArtifact[],
+  baselineFileFor: BaselineFileFn,
+  stripIgnored: StripFn,
+): Promise<string[]> {
+  const failures: string[] = [];
+
+  // Normalize synth output on disk so the toolkit diffs version-stable templates
+  // Also strip ignored resources so they don't appear in diffs
+  for (const stack of stacks) {
+    const templateFile = path.join(assembly.directory, stack.templateFile);
+    const raw = JSON.parse(fs.readFileSync(templateFile, 'utf-8'));
+    const normalized = stripIgnored(normalizeTemplate(raw as Record<string, unknown>));
+    fs.writeFileSync(templateFile, JSON.stringify(normalized, null, 2));
+  }
+
+  for (const stack of stacks) {
+    const baselineFile = baselineFileFor(stack);
+    const ioHost = new NonInteractiveIoHost({ isCI: true });
+    const toolkit = new Toolkit({ ioHost });
+    const source = await toolkit.fromAssemblyDirectory(assembly.directory);
+
+    const result = await toolkit.diff(source, {
+      method: DiffMethod.LocalFile(baselineFile),
+      stacks: { strategy: 'pattern-must-match-single' as never, patterns: [stack.hierarchicalId] },
+    });
+
+    const stackDiff = result[stack.stackName];
+    if (stackDiff) {
+      const resourceDiffs = stackDiff.resources.differenceCount;
+      const outputDiffs = stackDiff.outputs.differenceCount;
+      const total = resourceDiffs + outputDiffs;
+      if (total > 0) {
+        const diffSummary = `[${testNamePrefix}] Stack "${stack.stackName}" has ${resourceDiffs} resource and ${outputDiffs} output difference(s).`;
+
+        if (UPDATE_BASELINES) {
+          // Print the diff, update the baseline, and continue without failing
+          console.log(`\n${diffSummary}`);
+          const normalized = stripIgnored(normalizeTemplate(stack.template as Record<string, unknown>));
+          fs.writeFileSync(baselineFile, JSON.stringify(normalized, null, 2) + '\n');
+          console.log(`[baseline-updated] ${baselineFile}\n`);
+        } else {
+          failures.push(`${diffSummary} Run npm run test:update-baselines to accept.`);
+        }
+      }
+    }
+  }
+
+  return failures;
+}
+
+/**
+ * The body of the test that baselineDiffTestApp registers. Exported so the
+ * helper's own unit tests can assert on a failing run; module diff tests should
+ * call baselineDiffTestApp instead.
+ */
+export async function runBaselineDiff(
+  testNamePrefix: string,
+  appProvider: () => cdk.App,
+  options?: BaselineDiffOptions,
+): Promise<void> {
   /**
    * Remove ignored resources and properties from a template.
    */
@@ -257,101 +370,52 @@ export function baselineDiffTestApp(
     return stripIgnoredContent(template, options?.ignoreResourcePatterns, options?.ignoreResourceProperties);
   }
 
-  test(`${testNamePrefix} Baseline Diff Test`, async () => {
-    const spies = mockCodeFactoryMethods();
+  const spies = mockCodeFactoryMethods();
 
-    const prevEnv = Object.fromEntries(Object.keys(SYNTH_ENV).map(name => [name, process.env[name]]));
-    applyEnv(SYNTH_ENV);
-    Fact.register(new TestRegionFact(), true);
+  const prevEnv = Object.fromEntries(Object.keys(SYNTH_ENV).map(name => [name, process.env[name]]));
+  applyEnv(SYNTH_ENV);
+  Fact.register(new TestRegionFact(), true);
 
-    try {
-      const app = appProvider();
-      expect(app).toBeDefined();
+  try {
+    const app = appProvider();
+    expect(app).toBeDefined();
 
-      const configName = configBaseName(app);
-      const assembly = app.synth();
-      const testFile = expect.getState().testPath;
-      if (!testFile) {
-        throw new Error('Could not determine test file path');
-      }
-      const snapshotsDir = path.join(path.dirname(testFile), '__snapshots__');
+    const configName = configBaseName(app);
+    const assembly = app.synth();
 
-      const stacks = assembly.stacks.filter(
-        s => s?.stackName && s?.template && typeof s.stackName === 'string' && isValidTestName(s.stackName),
-      );
-      expect(stacks.length).toBeGreaterThan(0);
+    // Checked before any baseline is written so neither a first run nor UPDATE_BASELINES can accept one.
+    assertNoErrorAnnotations(testNamePrefix, assembly);
 
-      const singleStack = stacks.length === 1;
-
-      // Write baselines for stacks that have no baseline yet (first run)
-      let firstRun = false;
-      for (const stack of stacks) {
-        const fileName = singleStack ? `${configName}.baseline.json` : `${configName}.${stack.stackName}.baseline.json`;
-        const baselineFile = path.join(snapshotsDir, fileName);
-
-        if (!fs.existsSync(baselineFile)) {
-          fs.mkdirSync(snapshotsDir, { recursive: true });
-          const normalized = stripIgnored(normalizeTemplate(stack.template as Record<string, unknown>));
-          fs.writeFileSync(baselineFile, JSON.stringify(normalized, null, 2) + '\n');
-          firstRun = true;
-        }
-      }
-
-      if (firstRun && !UPDATE_BASELINES) {
-        return; // First run — baselines created, nothing to diff
-      }
-
-      // Diff each stack against its baseline using the CDK toolkit
-      const failures: string[] = [];
-
-      // Normalize synth output on disk so the toolkit diffs version-stable templates
-      // Also strip ignored resources so they don't appear in diffs
-      for (const stack of stacks) {
-        const templateFile = path.join(assembly.directory, stack.templateFile);
-        const raw = JSON.parse(fs.readFileSync(templateFile, 'utf-8'));
-        const normalized = stripIgnored(normalizeTemplate(raw as Record<string, unknown>));
-        fs.writeFileSync(templateFile, JSON.stringify(normalized, null, 2));
-      }
-
-      for (const stack of stacks) {
-        const fileName = singleStack ? `${configName}.baseline.json` : `${configName}.${stack.stackName}.baseline.json`;
-        const baselineFile = path.join(snapshotsDir, fileName);
-        const ioHost = new NonInteractiveIoHost({ isCI: true });
-        const toolkit = new Toolkit({ ioHost });
-        const source = await toolkit.fromAssemblyDirectory(assembly.directory);
-
-        const result = await toolkit.diff(source, {
-          method: DiffMethod.LocalFile(baselineFile),
-          stacks: { strategy: 'pattern-must-match-single' as never, patterns: [stack.hierarchicalId] },
-        });
-
-        const stackDiff = result[stack.stackName];
-        if (stackDiff) {
-          const resourceDiffs = stackDiff.resources.differenceCount;
-          const outputDiffs = stackDiff.outputs.differenceCount;
-          const total = resourceDiffs + outputDiffs;
-          if (total > 0) {
-            const diffSummary = `[${testNamePrefix}] Stack "${stack.stackName}" has ${resourceDiffs} resource and ${outputDiffs} output difference(s).`;
-
-            if (UPDATE_BASELINES) {
-              // Print the diff, update the baseline, and continue without failing
-              console.log(`\n${diffSummary}`);
-              const normalized = stripIgnored(normalizeTemplate(stack.template as Record<string, unknown>));
-              fs.writeFileSync(baselineFile, JSON.stringify(normalized, null, 2) + '\n');
-              console.log(`[baseline-updated] ${baselineFile}\n`);
-            } else {
-              failures.push(`${diffSummary} Run npm run test:update-baselines to accept.`);
-            }
-          }
-        }
-      }
-
-      if (failures.length > 0) {
-        throw new Error(failures.join('\n\n'));
-      }
-    } finally {
-      spies.forEach((spy: { mockRestore: () => void }) => spy.mockRestore());
-      applyEnv(prevEnv);
+    const testFile = expect.getState().testPath;
+    if (!testFile) {
+      throw new Error('Could not determine test file path');
     }
-  }, 120000);
+    const snapshotsDir = path.join(path.dirname(testFile), '__snapshots__');
+
+    const stacks = assembly.stacks.filter(
+      s => s?.stackName && s?.template && typeof s.stackName === 'string' && isValidTestName(s.stackName),
+    );
+    expect(stacks.length).toBeGreaterThan(0);
+
+    const singleStack = stacks.length === 1;
+    const baselineFileFor: BaselineFileFn = stack =>
+      path.join(
+        snapshotsDir,
+        singleStack ? `${configName}.baseline.json` : `${configName}.${stack.stackName}.baseline.json`,
+      );
+
+    // Write baselines for stacks that have no baseline yet (first run)
+    const firstRun = writeMissingBaselines(stacks, baselineFileFor, stripIgnored);
+    if (firstRun && !UPDATE_BASELINES) {
+      return; // First run: baselines created, nothing to diff
+    }
+
+    const failures = await diffAgainstBaselines(testNamePrefix, assembly, stacks, baselineFileFor, stripIgnored);
+    if (failures.length > 0) {
+      throw new Error(failures.join('\n\n'));
+    }
+  } finally {
+    spies.forEach((spy: { mockRestore: () => void }) => spy.mockRestore());
+    applyEnv(prevEnv);
+  }
 }
