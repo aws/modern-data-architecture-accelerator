@@ -58,9 +58,10 @@ const guardrail = new BedrockGuardrailL3Construct(this, 'MyGuardrail', {
 - `violence`: Violence content detection
 - `insults`: Insult detection
 - `misconduct`: Professional misconduct detection
-- `promptAttack`: Prompt injection attack detection
+- `promptAttack`: Prompt injection attack detection. Evaluated on inputs only, so `outputStrength` must be `NONE`; any other value is rejected at synth
 
 ### Filter Strengths
+- `NONE`: No filtering in that direction
 - `LOW`: Minimal filtering
 - `MEDIUM`: Moderate filtering
 - `HIGH`: Strict filtering
@@ -88,7 +89,7 @@ contentFilters: {
   violence: { inputStrength: 'MEDIUM', outputStrength: 'MEDIUM' },
   insults: { inputStrength: 'LOW', outputStrength: 'LOW' },
   misconduct: { inputStrength: 'MEDIUM', outputStrength: 'MEDIUM' },
-  promptAttack: { inputStrength: 'HIGH', outputStrength: 'HIGH' }
+  promptAttack: { inputStrength: 'HIGH', outputStrength: 'NONE' }
 }
 ```
 

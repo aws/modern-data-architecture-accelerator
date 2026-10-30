@@ -656,10 +656,10 @@ guardrails:
       misconduct:
         inputStrength: 'HIGH'
         outputStrength: 'HIGH'
-      # (Optional) Prompt attack content filter
+      # (Optional) Prompt attack content filter. Evaluated on inputs only: outputStrength must be NONE
       promptAttack:
         inputStrength: 'HIGH'
-        outputStrength: 'HIGH'
+        outputStrength: 'NONE'
       # (Optional) Sexual content filter
       sexual:
         inputStrength: 'HIGH'

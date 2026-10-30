@@ -3902,14 +3902,14 @@ Validation: Optional; NamedGuardrailProps (map of guardrail name to config)
 
 **Description:** Content filter configuration across safety categories
 
-| Property                                                                        | Pattern | Type   | Deprecated | Definition                                                            | Title/Description              |
-| ------------------------------------------------------------------------------- | ------- | ------ | ---------- | --------------------------------------------------------------------- | ------------------------------ |
-| - [hate](#guardrails_additionalProperties_contentFilters_hate )                 | No      | object | No         | In #/definitions/ContentFilterConfig                                  | Hate speech filter config      |
-| - [insults](#guardrails_additionalProperties_contentFilters_insults )           | No      | object | No         | Same as [hate](#guardrails_additionalProperties_contentFilters_hate ) | Insults filter config          |
-| - [misconduct](#guardrails_additionalProperties_contentFilters_misconduct )     | No      | object | No         | Same as [hate](#guardrails_additionalProperties_contentFilters_hate ) | Misconduct filter config       |
-| - [promptAttack](#guardrails_additionalProperties_contentFilters_promptAttack ) | No      | object | No         | Same as [hate](#guardrails_additionalProperties_contentFilters_hate ) | Prompt attack filter config    |
-| - [sexual](#guardrails_additionalProperties_contentFilters_sexual )             | No      | object | No         | Same as [hate](#guardrails_additionalProperties_contentFilters_hate ) | Sexual content filter config   |
-| - [violence](#guardrails_additionalProperties_contentFilters_violence )         | No      | object | No         | Same as [hate](#guardrails_additionalProperties_contentFilters_hate ) | Violence content filter config |
+| Property                                                                        | Pattern | Type   | Deprecated | Definition                                                            | Title/Description                                                                                            |
+| ------------------------------------------------------------------------------- | ------- | ------ | ---------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| - [hate](#guardrails_additionalProperties_contentFilters_hate )                 | No      | object | No         | In #/definitions/ContentFilterConfig                                  | Hate speech filter config                                                                                    |
+| - [insults](#guardrails_additionalProperties_contentFilters_insults )           | No      | object | No         | Same as [hate](#guardrails_additionalProperties_contentFilters_hate ) | Insults filter config                                                                                        |
+| - [misconduct](#guardrails_additionalProperties_contentFilters_misconduct )     | No      | object | No         | Same as [hate](#guardrails_additionalProperties_contentFilters_hate ) | Misconduct filter config                                                                                     |
+| - [promptAttack](#guardrails_additionalProperties_contentFilters_promptAttack ) | No      | object | No         | Same as [hate](#guardrails_additionalProperties_contentFilters_hate ) | Prompt attack filter config. Bedrock evaluates prompt attacks on inputs only, so outputStrength must be NONE |
+| - [sexual](#guardrails_additionalProperties_contentFilters_sexual )             | No      | object | No         | Same as [hate](#guardrails_additionalProperties_contentFilters_hate ) | Sexual content filter config                                                                                 |
+| - [violence](#guardrails_additionalProperties_contentFilters_violence )         | No      | object | No         | Same as [hate](#guardrails_additionalProperties_contentFilters_hate ) | Violence content filter config                                                                               |
 
 ##### <a name="guardrails_additionalProperties_contentFilters_hate"></a>4.1.3.1. Property `root > guardrails > additionalProperties > contentFilters > hate`
 
@@ -3922,10 +3922,10 @@ Validation: Optional; NamedGuardrailProps (map of guardrail name to config)
 
 **Description:** Hate speech filter config
 
-| Property                                                                                 | Pattern | Type             | Deprecated | Definition                                                                                   | Title/Description                                     |
-| ---------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| + [inputStrength](#guardrails_additionalProperties_contentFilters_hate_inputStrength )   | No      | enum (of string) | No         | In #/definitions/Strength                                                                    | Filter strength for user inputs (LOW, MEDIUM, HIGH)   |
-| + [outputStrength](#guardrails_additionalProperties_contentFilters_hate_outputStrength ) | No      | enum (of string) | No         | Same as [inputStrength](#guardrails_additionalProperties_contentFilters_hate_inputStrength ) | Filter strength for model outputs (LOW, MEDIUM, HIGH) |
+| Property                                                                                 | Pattern | Type             | Deprecated | Definition                                                                                   | Title/Description                                                                          |
+| ---------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| + [inputStrength](#guardrails_additionalProperties_contentFilters_hate_inputStrength )   | No      | enum (of string) | No         | In #/definitions/Strength                                                                    | Filter strength for user inputs (NONE, LOW, MEDIUM, HIGH)                                  |
+| + [outputStrength](#guardrails_additionalProperties_contentFilters_hate_outputStrength ) | No      | enum (of string) | No         | Same as [inputStrength](#guardrails_additionalProperties_contentFilters_hate_inputStrength ) | Filter strength for model outputs (NONE, LOW, MEDIUM, HIGH). Must be NONE for promptAttack |
 
 ###### <a name="guardrails_additionalProperties_contentFilters_hate_inputStrength"></a>4.1.3.1.1. Property `root > guardrails > additionalProperties > contentFilters > hate > inputStrength`
 
@@ -3935,12 +3935,13 @@ Validation: Optional; NamedGuardrailProps (map of guardrail name to config)
 | **Required**   | Yes                    |
 | **Defined in** | #/definitions/Strength |
 
-**Description:** Filter strength for user inputs (LOW, MEDIUM, HIGH)
+**Description:** Filter strength for user inputs (NONE, LOW, MEDIUM, HIGH)
 
 Must be one of:
 * "HIGH"
 * "LOW"
 * "MEDIUM"
+* "NONE"
 
 ###### <a name="guardrails_additionalProperties_contentFilters_hate_outputStrength"></a>4.1.3.1.2. Property `root > guardrails > additionalProperties > contentFilters > hate > outputStrength`
 
@@ -3950,7 +3951,7 @@ Must be one of:
 | **Required**           | Yes                                                                                 |
 | **Same definition as** | [inputStrength](#guardrails_additionalProperties_contentFilters_hate_inputStrength) |
 
-**Description:** Filter strength for model outputs (LOW, MEDIUM, HIGH)
+**Description:** Filter strength for model outputs (NONE, LOW, MEDIUM, HIGH). Must be NONE for promptAttack
 
 ##### <a name="guardrails_additionalProperties_contentFilters_insults"></a>4.1.3.2. Property `root > guardrails > additionalProperties > contentFilters > insults`
 
@@ -3983,7 +3984,7 @@ Must be one of:
 | **Additional properties** | Not allowed                                                  |
 | **Same definition as**    | [hate](#guardrails_additionalProperties_contentFilters_hate) |
 
-**Description:** Prompt attack filter config
+**Description:** Prompt attack filter config. Bedrock evaluates prompt attacks on inputs only, so outputStrength must be NONE
 
 ##### <a name="guardrails_additionalProperties_contentFilters_sexual"></a>4.1.3.5. Property `root > guardrails > additionalProperties > contentFilters > sexual`
 

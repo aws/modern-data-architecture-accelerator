@@ -149,7 +149,7 @@ describe('Bedrock Guardrail L3 Construct Tests', () => {
         violence: { inputStrength: 'MEDIUM', outputStrength: 'MEDIUM' },
         insults: { inputStrength: 'LOW', outputStrength: 'LOW' },
         misconduct: { inputStrength: 'MEDIUM', outputStrength: 'MEDIUM' },
-        promptAttack: { inputStrength: 'HIGH', outputStrength: 'HIGH' },
+        promptAttack: { inputStrength: 'HIGH', outputStrength: 'NONE' },
       },
     };
 
@@ -173,7 +173,7 @@ describe('Bedrock Guardrail L3 Construct Tests', () => {
           { Type: 'VIOLENCE', InputStrength: 'MEDIUM', OutputStrength: 'MEDIUM' },
           { Type: 'INSULTS', InputStrength: 'LOW', OutputStrength: 'LOW' },
           { Type: 'MISCONDUCT', InputStrength: 'MEDIUM', OutputStrength: 'MEDIUM' },
-          { Type: 'PROMPT_ATTACK', InputStrength: 'HIGH', OutputStrength: 'HIGH' },
+          { Type: 'PROMPT_ATTACK', InputStrength: 'HIGH', OutputStrength: 'NONE' },
         ],
       },
     });
@@ -504,5 +504,42 @@ describe('Bedrock Guardrail L3 Construct Tests', () => {
     // Should use default messages
     expect(guardrail.Properties.BlockedInputMessaging).toBe('Your input contains content that is not allowed.');
     expect(guardrail.Properties.BlockedOutputsMessaging).toBe('The response contains content that is not allowed.');
+  });
+
+  test('Prompt Attack Filter with Output Strength NONE', () => {
+    const testApp = new MdaaTestApp();
+    new BedrockGuardrailL3Construct(testApp.testStack, 'test-guardrail-prompt-attack-construct', {
+      guardrailName: 'test-guardrail-prompt-attack',
+      guardrailConfig: { contentFilters: { promptAttack: { inputStrength: 'HIGH', outputStrength: 'NONE' } } },
+      kmsKey: new Key(testApp.testStack, 'TestKey'),
+      roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+      naming: testApp.naming,
+    });
+    const template = Template.fromStack(testApp.testStack);
+
+    template.hasResourceProperties('AWS::Bedrock::Guardrail', {
+      ContentPolicyConfig: {
+        FiltersConfig: [{ InputStrength: 'HIGH', OutputStrength: 'NONE', Type: 'PROMPT_ATTACK' }],
+      },
+    });
+  });
+
+  test('Output Strength NONE on Other Filters', () => {
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+    new BedrockGuardrailL3Construct(testApp.testStack, 'test-guardrail-input-only-construct', {
+      guardrailName: 'test-guardrail-input-only',
+      guardrailConfig: { contentFilters: { hate: { inputStrength: 'HIGH', outputStrength: 'NONE' } } },
+      kmsKey: new Key(testApp.testStack, 'TestKey'),
+      roleHelper,
+      naming: testApp.naming,
+    });
+    const template = Template.fromStack(testApp.testStack);
+
+    template.hasResourceProperties('AWS::Bedrock::Guardrail', {
+      ContentPolicyConfig: {
+        FiltersConfig: [{ InputStrength: 'HIGH', OutputStrength: 'NONE', Type: 'HATE' }],
+      },
+    });
   });
 });

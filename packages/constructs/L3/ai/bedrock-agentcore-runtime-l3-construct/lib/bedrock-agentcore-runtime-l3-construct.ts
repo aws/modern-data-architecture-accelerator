@@ -490,13 +490,14 @@ export interface RuntimeEndpointProperty {
    **/
   readonly description?: string;
   /**
-   * Specific agent runtime version for the endpoint.
+   * Specific agent runtime version for the endpoint. Omit to have the endpoint follow the runtime's
+   * current version, advancing with each deploy that creates a new version.
    *
    * Use cases: Version control, version-specific access, deployment control
    *
    * AWS: Bedrock AgentCore Runtime version
    *
-   * Validation: Optional; String
+   * Validation: Optional; String; matches `^([1-9][0-9]{0,4})$`
    **/
   readonly agentRuntimeVersion?: string;
 }
@@ -1775,6 +1776,17 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
     endpointConfig: RuntimeEndpointProperty,
     runtimeName: string,
   ): bedrockagentcore.CfnRuntimeEndpoint {
+    // Checked against undefined rather than truthiness: an empty string survives the `??` default
+    // below and would emit `AgentRuntimeVersion: ""`, which CloudFormation rejects at deploy.
+    if (
+      endpointConfig.agentRuntimeVersion !== undefined &&
+      !/^[1-9]\d{0,4}$/.test(endpointConfig.agentRuntimeVersion)
+    ) {
+      throw new Error(
+        String.raw`Agentcore "runtimeEndpoint.agentRuntimeVersion" must match ^([1-9]\d{0,4})$; received "${endpointConfig.agentRuntimeVersion}".`,
+      );
+    }
+
     // The sanitized endpoint name is the qualifier in the `Name` metric dimension
     // (`<runtimeName>::<qualifier>`), so it is retained for the alarms.
     // The cap is passed to sanitizeBedrockAgentcoreName as well as resourceName so it is enforced
@@ -1797,7 +1809,12 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
       // Optional properties - left undefined when not configured so the synthesized
       // template omits them entirely (matching the prior passthrough behavior).
       description: endpointConfig.description,
-      agentRuntimeVersion: endpointConfig.agentRuntimeVersion,
+      // An explicit config value pins the endpoint to that version. When omitted, default to the
+      // runtime's CURRENT version so the named endpoint advances with each redeploy, as the AgentCore
+      // Harness construct's endpoint does. Left unset, AgentCore fixes the endpoint at its create-time
+      // version and CloudFormation never moves it, so callers using this qualifier keep invoking the
+      // original image while DEFAULT serves the new one.
+      agentRuntimeVersion: endpointConfig.agentRuntimeVersion ?? this.runtime.attrAgentRuntimeVersion,
     };
 
     const endpoint = new bedrockagentcore.CfnRuntimeEndpoint(this, 'RuntimeEndpoint', endpointProps);

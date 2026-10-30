@@ -297,6 +297,62 @@ describe('BedrockAgentcoreRuntimeL3Construct Unit Tests', () => {
       });
     });
 
+    test('should point the endpoint at the runtime current version when no version is configured', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        agentRuntimeName: 'follow-runtime',
+        agentRuntimeArtifact: {
+          containerConfiguration: {
+            containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-runtime:latest',
+          },
+        },
+        networkConfiguration: {
+          securityGroups: ['sg-12345678'],
+          subnets: ['subnet-12345678'],
+        },
+        runtimeEndpoint: {
+          name: 'my_endpoint',
+        },
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'follow-runtime-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      // Without a version, CloudFormation would never move the endpoint off its create-time version.
+      template.hasResourceProperties('AWS::BedrockAgentCore::RuntimeEndpoint', {
+        AgentRuntimeVersion: { 'Fn::GetAtt': [Match.anyValue(), 'AgentRuntimeVersion'] },
+      });
+    });
+
+    test('should pin the endpoint to an explicitly configured version', () => {
+      const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+        agentRuntimeName: 'pinned-runtime',
+        agentRuntimeArtifact: {
+          containerConfiguration: {
+            containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-runtime:latest',
+          },
+        },
+        networkConfiguration: {
+          securityGroups: ['sg-12345678'],
+          subnets: ['subnet-12345678'],
+        },
+        runtimeEndpoint: {
+          name: 'my_endpoint',
+          agentRuntimeVersion: '3',
+        },
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      new BedrockAgentcoreRuntimeL3Construct(testApp.testStack, 'pinned-runtime-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      template.hasResourceProperties('AWS::BedrockAgentCore::RuntimeEndpoint', {
+        AgentRuntimeVersion: '3',
+      });
+    });
+
     test('should sanitize endpoint name with hyphens', () => {
       const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
         agentRuntimeName: 'sanitize-runtime',

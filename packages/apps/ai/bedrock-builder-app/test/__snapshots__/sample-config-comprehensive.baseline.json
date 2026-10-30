@@ -7338,7 +7338,7 @@
             },
             {
               "InputStrength": "HIGH",
-              "OutputStrength": "HIGH",
+              "OutputStrength": "NONE",
               "Type": "PROMPT_ATTACK"
             },
             {

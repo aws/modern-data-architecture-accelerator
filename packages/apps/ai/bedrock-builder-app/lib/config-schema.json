@@ -1138,11 +1138,11 @@
             "properties": {
                 "inputStrength": {
                     "$ref": "#/definitions/Strength",
-                    "description": "Filter strength for user inputs (LOW, MEDIUM, HIGH)"
+                    "description": "Filter strength for user inputs (NONE, LOW, MEDIUM, HIGH)"
                 },
                 "outputStrength": {
                     "$ref": "#/definitions/Strength",
-                    "description": "Filter strength for model outputs (LOW, MEDIUM, HIGH)"
+                    "description": "Filter strength for model outputs (NONE, LOW, MEDIUM, HIGH). Must be NONE for promptAttack"
                 }
             },
             "required": [
@@ -1168,7 +1168,7 @@
                 },
                 "promptAttack": {
                     "$ref": "#/definitions/ContentFilterConfig",
-                    "description": "Prompt attack filter config"
+                    "description": "Prompt attack filter config. Bedrock evaluates prompt attacks on inputs only, so outputStrength must be NONE"
                 },
                 "sexual": {
                     "$ref": "#/definitions/ContentFilterConfig",
@@ -5239,7 +5239,8 @@
             "enum": [
                 "HIGH",
                 "LOW",
-                "MEDIUM"
+                "MEDIUM",
+                "NONE"
             ],
             "type": "string"
         },

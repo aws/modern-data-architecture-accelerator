@@ -115,7 +115,7 @@
             "AgentRuntimeId"
           ]
         },
-        "AgentRuntimeVersion": "1.0.0",
+        "AgentRuntimeVersion": "1",
         "Description": "Test runtime endpoint",
         "Name": "test_org_test_env_test_domain_test_bedr_234a2cb0",
         "Tags": {

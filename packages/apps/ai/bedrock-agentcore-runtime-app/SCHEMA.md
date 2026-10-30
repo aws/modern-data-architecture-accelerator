@@ -2215,11 +2215,11 @@ AWS: Bedrock AgentCore Runtime endpoint
 
 Validation: Optional; RuntimeEndpointProperty
 
-| Property                                                       | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                  |
-| -------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| - [agentRuntimeVersion](#runtimeEndpoint_agentRuntimeVersion ) | No      | string | No         | -          | Specific agent runtime version for the endpoint.<br /><br />Use cases: Version control, version-specific access, deployment control<br /><br />AWS: Bedrock AgentCore Runtime version<br /><br />Validation: Optional; String                                      |
-| - [description](#runtimeEndpoint_description )                 | No      | string | No         | -          | Description of the runtime endpoint.<br /><br />Use cases: Endpoint documentation, operational clarity<br /><br />AWS: Bedrock AgentCore Runtime endpoint description<br /><br />Validation: Optional; String                                                      |
-| - [name](#runtimeEndpoint_name )                               | No      | string | No         | -          | Endpoint name for API access identification.<br /><br />Use cases: Endpoint naming, API identification, runtime access<br /><br />AWS: Bedrock AgentCore Runtime endpoint name<br /><br />Validation: Optional; String; alphanumeric and underscores; max 48 chars |
+| Property                                                       | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                          |
+| -------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [agentRuntimeVersion](#runtimeEndpoint_agentRuntimeVersion ) | No      | string | No         | -          | Specific agent runtime version for the endpoint. Omit to have the endpoint follow the runtime's<br />current version, advancing with each deploy that creates a new version.<br /><br />Use cases: Version control, version-specific access, deployment control<br /><br />AWS: Bedrock AgentCore Runtime version<br /><br />Validation: Optional; String; matches \`^([1-9][0-9]{0,4})$\` |
+| - [description](#runtimeEndpoint_description )                 | No      | string | No         | -          | Description of the runtime endpoint.<br /><br />Use cases: Endpoint documentation, operational clarity<br /><br />AWS: Bedrock AgentCore Runtime endpoint description<br /><br />Validation: Optional; String                                                                                                                                                                              |
+| - [name](#runtimeEndpoint_name )                               | No      | string | No         | -          | Endpoint name for API access identification.<br /><br />Use cases: Endpoint naming, API identification, runtime access<br /><br />AWS: Bedrock AgentCore Runtime endpoint name<br /><br />Validation: Optional; String; alphanumeric and underscores; max 48 chars                                                                                                                         |
 
 ### <a name="runtimeEndpoint_agentRuntimeVersion"></a>20.1. Property `root > runtimeEndpoint > agentRuntimeVersion`
 
@@ -2228,13 +2228,14 @@ Validation: Optional; RuntimeEndpointProperty
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Specific agent runtime version for the endpoint.
+**Description:** Specific agent runtime version for the endpoint. Omit to have the endpoint follow the runtime's
+current version, advancing with each deploy that creates a new version.
 
 Use cases: Version control, version-specific access, deployment control
 
 AWS: Bedrock AgentCore Runtime version
 
-Validation: Optional; String
+Validation: Optional; String; matches `^([1-9][0-9]{0,4})$`
 
 ### <a name="runtimeEndpoint_description"></a>20.2. Property `root > runtimeEndpoint > description`
 

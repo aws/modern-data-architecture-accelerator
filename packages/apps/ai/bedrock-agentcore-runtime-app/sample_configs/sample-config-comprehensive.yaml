@@ -157,8 +157,9 @@ runtimeEndpoint:
   name: test_runtime_endpoint
   # (Optional) Description of the runtime endpoint
   description: 'Test runtime endpoint'
-  # (Optional) Specific agent runtime version for the endpoint
-  agentRuntimeVersion: '1.0.0'
+  # (Optional) Pin the endpoint to a specific agent runtime version (an integer, as AgentCore
+  # numbers them). Omit to have the endpoint follow the runtime's current version on every deploy.
+  agentRuntimeVersion: '1'
 # (Optional) Enable XRay Transaction Search Configuration (singleton per account-region)
 enableTransactionSearch: true
 # (Optional) Enforce VPC-only invocation via resource-based policy.

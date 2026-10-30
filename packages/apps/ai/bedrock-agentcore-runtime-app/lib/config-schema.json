@@ -3045,7 +3045,7 @@
             "description": "Runtime endpoint configuration for invoking the agent runtime via Bedrock AgentCore API.\n\nUse cases: Runtime invocation, API access, endpoint management\n\nAWS: Bedrock AgentCore Runtime endpoint\n\nValidation: name must match ^[a-zA-Z][a-zA-Z0-9_]{0,47}$ if provided",
             "properties": {
                 "agentRuntimeVersion": {
-                    "description": "Specific agent runtime version for the endpoint.\n\nUse cases: Version control, version-specific access, deployment control\n\nAWS: Bedrock AgentCore Runtime version\n\nValidation: Optional; String",
+                    "description": "Specific agent runtime version for the endpoint. Omit to have the endpoint follow the runtime's\ncurrent version, advancing with each deploy that creates a new version.\n\nUse cases: Version control, version-specific access, deployment control\n\nAWS: Bedrock AgentCore Runtime version\n\nValidation: Optional; String; matches `^([1-9][0-9]{0,4})$`",
                     "type": "string"
                 },
                 "description": {

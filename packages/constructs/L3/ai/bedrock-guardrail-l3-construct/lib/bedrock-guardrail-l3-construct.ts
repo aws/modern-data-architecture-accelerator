@@ -14,7 +14,7 @@ import { MdaaParamAndOutput } from '@aws-mdaa/construct';
 // Guardrail Interfaces and Types
 // ---------------------------------------------
 
-export type Strength = 'LOW' | 'MEDIUM' | 'HIGH';
+export type Strength = 'NONE' | 'LOW' | 'MEDIUM' | 'HIGH';
 
 export interface ContentFilters {
   /** Sexual content filter config */
@@ -27,14 +27,14 @@ export interface ContentFilters {
   readonly insults?: ContentFilterConfig;
   /** Misconduct filter config */
   readonly misconduct?: ContentFilterConfig;
-  /** Prompt attack filter config */
+  /** Prompt attack filter config. Bedrock evaluates prompt attacks on inputs only, so outputStrength must be NONE */
   readonly promptAttack?: ContentFilterConfig;
 }
 
 export interface ContentFilterConfig {
-  /** Filter strength for user inputs (LOW, MEDIUM, HIGH) */
+  /** Filter strength for user inputs (NONE, LOW, MEDIUM, HIGH) */
   readonly inputStrength: Strength;
-  /** Filter strength for model outputs (LOW, MEDIUM, HIGH) */
+  /** Filter strength for model outputs (NONE, LOW, MEDIUM, HIGH). Must be NONE for promptAttack */
   readonly outputStrength: Strength;
 }
 
@@ -100,6 +100,14 @@ export class BedrockGuardrailL3Construct extends MdaaL3Construct {
 
     const filtersConfig = Object.entries(config.contentFilters).map(([contentType, contentFilter]) => {
       const resolvedContentType = contentTypeMap[contentType] ? contentTypeMap[contentType] : contentType.toUpperCase();
+      // Bedrock rejects any other value at deploy time ("PROMPT ATTACK content filter strength for
+      // response must be NONE"), after the guardrail's KMS key has already been created.
+      if (resolvedContentType === 'PROMPT_ATTACK' && contentFilter.outputStrength !== 'NONE') {
+        throw new Error(
+          `Guardrail '${guardrailName}': promptAttack outputStrength must be NONE, got '${contentFilter.outputStrength}'. ` +
+            'Bedrock evaluates prompt attacks on inputs only.',
+        );
+      }
       return {
         type: resolvedContentType,
         inputStrength: contentFilter.inputStrength,

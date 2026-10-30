@@ -35,6 +35,10 @@
 
 - Fixed M2M API module uploads failing with `InvalidArgument` when the target bucket is KMS-encrypted, as every MDAA data lake bucket is. The upload Lambda now signs its presigned URLs with SigV4. Existing deployments get an in-place update of the Lambda's code on the next deploy.
 
+- Fixed the Bedrock Builder module being unable to deploy a guardrail with a `promptAttack` content filter. Content filter strengths now accept `NONE`, and a `promptAttack` `outputStrength` other than `NONE` is rejected at synth. See the [module schema](packages/apps/ai/bedrock-builder-app/SCHEMA.md#guardrails_additionalProperties_contentFilters_promptAttack). `Upgrade impact:` none for deployed guardrails, since such a configuration could not deploy; set `outputStrength: NONE` on `promptAttack`.
+
+- Fixed the Bedrock AgentCore Runtime module's named `runtimeEndpoint` staying on the runtime version it was created with, so callers using its qualifier kept invoking the original container image after updates. The endpoint now follows the runtime's current version unless `agentRuntimeVersion` pins it. See the [module schema](packages/apps/ai/bedrock-agentcore-runtime-app/SCHEMA.md#runtimeEndpoint_agentRuntimeVersion). `Upgrade impact:` on the next deploy, an existing named endpoint without `agentRuntimeVersion` moves in place to the runtime's latest version; set `agentRuntimeVersion` to keep it where it is.
+
 ### Removed
 
 - **`glossaryCreators` removed** from `authorizations` in `@aws-mdaa/datazone-l3-construct` (DataZone and SageMaker domain modules). DataZone's `CREATE_GLOSSARY` policy never accepts a user/group principal, so this field always failed at deploy; every project owner in the domain can create glossaries unconditionally instead (see above). **Breaking change** for any config setting `authorizations.glossaryCreators`, which must be removed.
