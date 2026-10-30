@@ -23,9 +23,17 @@
 
 - Added **declarative business glossaries** via a new `glossaries` property on each SageMaker project (`sagemaker.project` in the DataOps Project module), alongside `metadataForms`. Glossaries and their terms are created via the DataZone API, so a `metadataForms` field's `glossaryId` can name a declared glossary (`"<glossaryName>"` or `"<glossaryName>.<termName>"`) instead of a glossary ID created out-of-band; a literal, pre-existing glossary ID string continues to work unchanged. Glossaries/terms are created only when the property is set, but redeploy the DataZone/SageMaker domain module first (see DataZone/SMUS Modules below), or the domain won't yet have granted glossary creation to project owners. See the [SageMaker Project module README](packages/apps/governance/sagemaker-project-app/README.md) for the config surface.
 
+#### M2M API Module
+
+- Added opt-in `allowCallerKeyPath`, letting callers choose an upload's sub-path under `targetPrefix` and its filename through the `sub_path` and `filename` query parameters. Off by default; existing configs are unchanged. See [Caller-Chosen Object Keys](packages/apps/utility/m2m-api-app/README.md#caller-chosen-object-keys).
+
 #### Data Lake Module
 
 - Added per-bucket `transferAcceleration`, enabling S3 Transfer Acceleration so distant clients upload through a CloudFront edge location instead of the bucket's regional endpoint. Optional - omit the property unless a bucket needs it, and existing configs synthesize unchanged. Accelerated transfers are billed per GB, acceleration is only available in some AWS regions, and turning it off requires setting `false` rather than removing the property. See the [module README](packages/apps/datalake/datalake-app/README.md#transfer-acceleration).
+
+### Bug Fixes
+
+- Fixed M2M API module uploads failing with `InvalidArgument` when the target bucket is KMS-encrypted, as every MDAA data lake bucket is. The upload Lambda now signs its presigned URLs with SigV4. Existing deployments get an in-place update of the Lambda's code on the next deploy.
 
 ### Removed
 

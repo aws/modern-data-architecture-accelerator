@@ -27,6 +27,10 @@ api:
   targetPrefix: testing
   # (Optional) Identifies the target prefix for metadata within the bucket. If not specified, will default to targetPrefix.
   metadataTargetPrefix: metadata-testing
+  # (Optional) If true, callers can send the sub_path and filename query parameters to choose
+  # where each upload lands under targetPrefix and what it is named. Defaults to false.
+  # See the module README for the object key format and the parameter rules.
+  allowCallerKeyPath: true
   # The reserved concurrency limit for the Lambda which executes the API actions
   concurrencyLimit: 10
   # (Optional) Specific key to use to encrypt CloudWatch logs. If not specified, one will be created.

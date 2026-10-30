@@ -31,22 +31,23 @@ AWS: API Gateway configuration for M2M API deployment with authentication and se
 
 Validation: Must be valid M2MApiProps; required for M2M API deployment and configuration
 
-| Property                                                     | Pattern | Type            | Deprecated | Definition                           | Title/Description                                                                                                                                                                                                                                                                                                                                       |
-| ------------------------------------------------------------ | ------- | --------------- | ---------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [adminRoles](#api_adminRoles )                             | No      | array           | No         | -                                    | Roles which will be provided Admin access to the<br />KMS key, and KeyPair secrets.                                                                                                                                                                                                                                                                     |
-| + [allowedCidrs](#api_allowedCidrs )                         | No      | array of string | No         | -                                    | IPv4 CIDR blocks permitted to access the API. All other IPs are denied<br />by the WAF WebACL IP set rule.<br /><br />Use cases: Corporate network restrictions; IP-based API access control<br /><br />AWS: WAF WebACL IP set for API Gateway access filtering<br /><br />Validation: Required; array of valid CIDR blocks (e.g. 10.0.0.0/8)           |
-| - [appClients](#api_appClients )                             | No      | object          | No         | In #/definitions/NamedAppClientProps | List of Cognito app clients to be created.                                                                                                                                                                                                                                                                                                              |
-| + [concurrencyLimit](#api_concurrencyLimit )                 | No      | number          | No         | -                                    | Reserved concurrency limit for the API integration Lambda function.<br />Prevents resource exhaustion and ensures predictable API performance.<br /><br />Use cases: API throttling; Cost control; Predictable Lambda scaling<br /><br />AWS: Lambda reserved concurrency for API Gateway integration<br /><br />Validation: Required; positive integer |
-| - [eventMetadataMappings](#api_eventMetadataMappings )       | No      | object          | No         | -                                    | Specified fields will be mapped from the request into the metadata<br />persisted in S3 for each upload request. The key is the destination<br />key in the metadata, and the value is the event source key in dot notation<br />such as "requestContext.requestTime".                                                                                  |
-| - [integrationLambdaRoleArn](#api_integrationLambdaRoleArn ) | No      | string          | No         | -                                    | If specified, the integration Lambda function will run as this role.<br />If not specified, one will be generated                                                                                                                                                                                                                                       |
-| - [kmsKeyArn](#api_kmsKeyArn )                               | No      | string          | No         | -                                    | Specific key to use to encrypt CloudWatch logs. If not specifed, one will be created.                                                                                                                                                                                                                                                                   |
-| - [metadataTargetPrefix](#api_metadataTargetPrefix )         | No      | string          | No         | -                                    | Identifies the target prefix for metadata within the bucket.<br />If not specified, will default to targetPrefix.                                                                                                                                                                                                                                       |
-| - [requestParameters](#api_requestParameters )               | No      | object          | No         | -                                    | Map of accepted request parameter names to boolean indicating if they are required.<br />If specified, API gateway will validate that: 1) each provided parameter is accepted;<br />and 2) all required parameters have been provided.                                                                                                                  |
-| - [setAccountCloudWatchRole](#api_setAccountCloudWatchRole ) | No      | boolean         | No         | -                                    | If true (default false), the API Gateway Cloudwatch role will be set at the account/region level.<br />This should be done only once per account/region.                                                                                                                                                                                                |
-| - [stageName](#api_stageName )                               | No      | string          | No         | -                                    | API Gateway deployment stage name (e.g. dev, staging, prod).<br /><br />Use cases: Environment separation; Multi-stage API deployment<br /><br />AWS: API Gateway deployment stage<br /><br />Validation: Optional; valid API Gateway stage name                                                                                                        |
-| + [targetBucketName](#api_targetBucketName )                 | No      | string          | No         | -                                    | S3 bucket name where API operations read/write data.<br /><br />Use cases: Data lake target for API-driven ingestion and retrieval<br /><br />AWS: S3 bucket for Lambda integration data operations<br /><br />Validation: Required; must be existing S3 bucket name                                                                                    |
-| + [targetPrefix](#api_targetPrefix )                         | No      | string          | No         | -                                    | Required. Identifies the target prefix within the bucket                                                                                                                                                                                                                                                                                                |
-| - [wafArns](#api_wafArns )                                   | No      | object          | No         | -                                    | Arns of WAF to be applied to API.                                                                                                                                                                                                                                                                                                                       |
+| Property                                                     | Pattern | Type            | Deprecated | Definition                           | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ------------------------------------------------------------ | ------- | --------------- | ---------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| + [adminRoles](#api_adminRoles )                             | No      | array           | No         | -                                    | Roles which will be provided Admin access to the<br />KMS key, and KeyPair secrets.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [allowCallerKeyPath](#api_allowCallerKeyPath )             | No      | boolean         | No         | -                                    | If true, callers choose where each upload lands under targetPrefix and what it is named, through the<br />optional \`sub_path\` and \`filename\` query parameters. The object key becomes<br />\`{targetPrefix}/{sub_path}/{uuid}_{filename}\`, and the \`unipart\` and \`multi_init\` responses return it as<br />\`object_key\`. A multipart upload must send the same \`sub_path\` and \`filename\` on every call. When false,<br />both parameters are ignored and every object is stored as \`{targetPrefix}/{uuid}\`.<br /><br />Use cases: Partitioning uploads by source, device, or date for Athena or Glue; Scoping lifecycle or access rules to a sub-prefix; Keeping the original filename and extension<br /><br />AWS: S3 object key of each presigned upload<br /><br />Validation: Optional; boolean. Invalid sub_path or filename values are rejected with HTTP 400 before anything is written. Any authenticated app client can write to any sub-path, so a sub-path is not an isolation boundary between clients. |
+| + [allowedCidrs](#api_allowedCidrs )                         | No      | array of string | No         | -                                    | IPv4 CIDR blocks permitted to access the API. All other IPs are denied<br />by the WAF WebACL IP set rule.<br /><br />Use cases: Corporate network restrictions; IP-based API access control<br /><br />AWS: WAF WebACL IP set for API Gateway access filtering<br /><br />Validation: Required; array of valid CIDR blocks (e.g. 10.0.0.0/8)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [appClients](#api_appClients )                             | No      | object          | No         | In #/definitions/NamedAppClientProps | List of Cognito app clients to be created.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| + [concurrencyLimit](#api_concurrencyLimit )                 | No      | number          | No         | -                                    | Reserved concurrency limit for the API integration Lambda function.<br />Prevents resource exhaustion and ensures predictable API performance.<br /><br />Use cases: API throttling; Cost control; Predictable Lambda scaling<br /><br />AWS: Lambda reserved concurrency for API Gateway integration<br /><br />Validation: Required; positive integer                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| - [eventMetadataMappings](#api_eventMetadataMappings )       | No      | object          | No         | -                                    | Specified fields will be mapped from the request into the metadata<br />persisted in S3 for each upload request. The key is the destination<br />key in the metadata, and the value is the event source key in dot notation<br />such as "requestContext.requestTime".                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| - [integrationLambdaRoleArn](#api_integrationLambdaRoleArn ) | No      | string          | No         | -                                    | If specified, the integration Lambda function will run as this role.<br />If not specified, one will be generated                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| - [kmsKeyArn](#api_kmsKeyArn )                               | No      | string          | No         | -                                    | Specific key to use to encrypt CloudWatch logs. If not specifed, one will be created.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| - [metadataTargetPrefix](#api_metadataTargetPrefix )         | No      | string          | No         | -                                    | Identifies the target prefix for metadata within the bucket.<br />If not specified, will default to targetPrefix.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| - [requestParameters](#api_requestParameters )               | No      | object          | No         | -                                    | Map of accepted request parameter names to boolean indicating if they are required.<br />If specified, API gateway will validate that: 1) each provided parameter is accepted;<br />and 2) all required parameters have been provided.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| - [setAccountCloudWatchRole](#api_setAccountCloudWatchRole ) | No      | boolean         | No         | -                                    | If true (default false), the API Gateway Cloudwatch role will be set at the account/region level.<br />This should be done only once per account/region.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [stageName](#api_stageName )                               | No      | string          | No         | -                                    | API Gateway deployment stage name (e.g. dev, staging, prod).<br /><br />Use cases: Environment separation; Multi-stage API deployment<br /><br />AWS: API Gateway deployment stage<br /><br />Validation: Optional; valid API Gateway stage name                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| + [targetBucketName](#api_targetBucketName )                 | No      | string          | No         | -                                    | S3 bucket name where API operations read/write data.<br /><br />Use cases: Data lake target for API-driven ingestion and retrieval<br /><br />AWS: S3 bucket for Lambda integration data operations<br /><br />Validation: Required; must be existing S3 bucket name                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| + [targetPrefix](#api_targetPrefix )                         | No      | string          | No         | -                                    | Required. Identifies the target prefix within the bucket                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [wafArns](#api_wafArns )                                   | No      | object          | No         | -                                    | Arns of WAF to be applied to API.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 
 ### <a name="api_adminRoles"></a>1.1. Property `root > api > adminRoles`
 
@@ -178,7 +179,27 @@ AWS: Resolves role via AWS SSO/Identity Center auto-generated role naming conven
 
 Validation: Optional boolean; defaults to false
 
-### <a name="api_allowedCidrs"></a>1.2. Property `root > api > allowedCidrs`
+### <a name="api_allowCallerKeyPath"></a>1.2. Property `root > api > allowCallerKeyPath`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `false`   |
+
+**Description:** If true, callers choose where each upload lands under targetPrefix and what it is named, through the
+optional `sub_path` and `filename` query parameters. The object key becomes
+`{targetPrefix}/{sub_path}/{uuid}_{filename}`, and the `unipart` and `multi_init` responses return it as
+`object_key`. A multipart upload must send the same `sub_path` and `filename` on every call. When false,
+both parameters are ignored and every object is stored as `{targetPrefix}/{uuid}`.
+
+Use cases: Partitioning uploads by source, device, or date for Athena or Glue; Scoping lifecycle or access rules to a sub-prefix; Keeping the original filename and extension
+
+AWS: S3 object key of each presigned upload
+
+Validation: Optional; boolean. Invalid sub_path or filename values are rejected with HTTP 400 before anything is written. Any authenticated app client can write to any sub-path, so a sub-path is not an isolation boundary between clients.
+
+### <a name="api_allowedCidrs"></a>1.3. Property `root > api > allowedCidrs`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -206,14 +227,14 @@ Validation: Required; array of valid CIDR blocks (e.g. 10.0.0.0/8)
 | --------------------------------------------- | ----------- |
 | [allowedCidrs items](#api_allowedCidrs_items) | -           |
 
-#### <a name="api_allowedCidrs_items"></a>1.2.1. root > api > allowedCidrs > allowedCidrs items
+#### <a name="api_allowedCidrs_items"></a>1.3.1. root > api > allowedCidrs > allowedCidrs items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="api_appClients"></a>1.3. Property `root > api > appClients`
+### <a name="api_appClients"></a>1.4. Property `root > api > appClients`
 
 |                           |                                                                                             |
 | ------------------------- | ------------------------------------------------------------------------------------------- |
@@ -228,7 +249,7 @@ Validation: Required; array of valid CIDR blocks (e.g. 10.0.0.0/8)
 | ------------------------------------------- | ------- | ------ | ---------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | - [](#api_appClients_additionalProperties ) | No      | object | No         | In #/definitions/AppClientProps | Cognito app client token validity configuration for M2M API authentication.<br />Controls ID, access, and refresh token lifetimes for the client credentials flow.<br /><br />Use cases: Token lifetime tuning; Security policy compliance; Long-lived service credentials<br /><br />AWS: Cognito User Pool app client token validity settings<br /><br />Validation: All optional; ID/access tokens: 5-1440 min; refresh tokens: 1-87600 hours |
 
-#### <a name="api_appClients_additionalProperties"></a>1.3.1. Property `root > api > appClients > AppClientProps`
+#### <a name="api_appClients_additionalProperties"></a>1.4.1. Property `root > api > appClients > AppClientProps`
 
 |                           |                              |
 | ------------------------- | ---------------------------- |
@@ -252,7 +273,7 @@ Validation: All optional; ID/access tokens: 5-1440 min; refresh tokens: 1-87600 
 | - [idTokenValidityMinutes](#api_appClients_additionalProperties_idTokenValidityMinutes )         | No      | number | No         | -          | ID token validity period in minutes.<br /><br />Use cases: Identity verification duration control<br /><br />AWS: Cognito app client ID token validity<br /><br />Validation: Optional; 5-1440 minutes                                                   |
 | - [refreshTokenValidityHours](#api_appClients_additionalProperties_refreshTokenValidityHours )   | No      | number | No         | -          | Refresh token validity period in hours.<br /><br />Use cases: Long-lived service authentication; Token refresh without re-auth<br /><br />AWS: Cognito app client refresh token validity<br /><br />Validation: Optional; 1-87600 hours (up to 10 years) |
 
-##### <a name="api_appClients_additionalProperties_accessTokenValidityMinutes"></a>1.3.1.1. Property `root > api > appClients > additionalProperties > accessTokenValidityMinutes`
+##### <a name="api_appClients_additionalProperties_accessTokenValidityMinutes"></a>1.4.1.1. Property `root > api > appClients > additionalProperties > accessTokenValidityMinutes`
 
 |              |          |
 | ------------ | -------- |
@@ -268,7 +289,7 @@ AWS: Cognito app client access token validity
 
 Validation: Optional; 5-1440 minutes
 
-##### <a name="api_appClients_additionalProperties_idTokenValidityMinutes"></a>1.3.1.2. Property `root > api > appClients > additionalProperties > idTokenValidityMinutes`
+##### <a name="api_appClients_additionalProperties_idTokenValidityMinutes"></a>1.4.1.2. Property `root > api > appClients > additionalProperties > idTokenValidityMinutes`
 
 |              |          |
 | ------------ | -------- |
@@ -284,7 +305,7 @@ AWS: Cognito app client ID token validity
 
 Validation: Optional; 5-1440 minutes
 
-##### <a name="api_appClients_additionalProperties_refreshTokenValidityHours"></a>1.3.1.3. Property `root > api > appClients > additionalProperties > refreshTokenValidityHours`
+##### <a name="api_appClients_additionalProperties_refreshTokenValidityHours"></a>1.4.1.3. Property `root > api > appClients > additionalProperties > refreshTokenValidityHours`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -300,7 +321,7 @@ AWS: Cognito app client refresh token validity
 
 Validation: Optional; 1-87600 hours (up to 10 years)
 
-### <a name="api_concurrencyLimit"></a>1.4. Property `root > api > concurrencyLimit`
+### <a name="api_concurrencyLimit"></a>1.5. Property `root > api > concurrencyLimit`
 
 |              |          |
 | ------------ | -------- |
@@ -316,7 +337,7 @@ AWS: Lambda reserved concurrency for API Gateway integration
 
 Validation: Required; positive integer
 
-### <a name="api_eventMetadataMappings"></a>1.5. Property `root > api > eventMetadataMappings`
+### <a name="api_eventMetadataMappings"></a>1.6. Property `root > api > eventMetadataMappings`
 
 |                           |                                                                                                        |
 | ------------------------- | ------------------------------------------------------------------------------------------------------ |
@@ -333,14 +354,14 @@ such as "requestContext.requestTime".
 | ------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#api_eventMetadataMappings_additionalProperties ) | No      | string | No         | -          | -                 |
 
-#### <a name="api_eventMetadataMappings_additionalProperties"></a>1.5.1. Property `root > api > eventMetadataMappings > additionalProperties`
+#### <a name="api_eventMetadataMappings_additionalProperties"></a>1.6.1. Property `root > api > eventMetadataMappings > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="api_integrationLambdaRoleArn"></a>1.6. Property `root > api > integrationLambdaRoleArn`
+### <a name="api_integrationLambdaRoleArn"></a>1.7. Property `root > api > integrationLambdaRoleArn`
 
 |              |          |
 | ------------ | -------- |
@@ -350,7 +371,7 @@ such as "requestContext.requestTime".
 **Description:** If specified, the integration Lambda function will run as this role.
 If not specified, one will be generated
 
-### <a name="api_kmsKeyArn"></a>1.7. Property `root > api > kmsKeyArn`
+### <a name="api_kmsKeyArn"></a>1.8. Property `root > api > kmsKeyArn`
 
 |              |          |
 | ------------ | -------- |
@@ -359,7 +380,7 @@ If not specified, one will be generated
 
 **Description:** Specific key to use to encrypt CloudWatch logs. If not specifed, one will be created.
 
-### <a name="api_metadataTargetPrefix"></a>1.8. Property `root > api > metadataTargetPrefix`
+### <a name="api_metadataTargetPrefix"></a>1.9. Property `root > api > metadataTargetPrefix`
 
 |              |          |
 | ------------ | -------- |
@@ -369,7 +390,7 @@ If not specified, one will be generated
 **Description:** Identifies the target prefix for metadata within the bucket.
 If not specified, will default to targetPrefix.
 
-### <a name="api_requestParameters"></a>1.9. Property `root > api > requestParameters`
+### <a name="api_requestParameters"></a>1.10. Property `root > api > requestParameters`
 
 |                           |                                                                                                    |
 | ------------------------- | -------------------------------------------------------------------------------------------------- |
@@ -385,14 +406,14 @@ and 2) all required parameters have been provided.
 | -------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
 | - [](#api_requestParameters_additionalProperties ) | No      | boolean | No         | -          | -                 |
 
-#### <a name="api_requestParameters_additionalProperties"></a>1.9.1. Property `root > api > requestParameters > additionalProperties`
+#### <a name="api_requestParameters_additionalProperties"></a>1.10.1. Property `root > api > requestParameters > additionalProperties`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-### <a name="api_setAccountCloudWatchRole"></a>1.10. Property `root > api > setAccountCloudWatchRole`
+### <a name="api_setAccountCloudWatchRole"></a>1.11. Property `root > api > setAccountCloudWatchRole`
 
 |              |           |
 | ------------ | --------- |
@@ -402,7 +423,7 @@ and 2) all required parameters have been provided.
 **Description:** If true (default false), the API Gateway Cloudwatch role will be set at the account/region level.
 This should be done only once per account/region.
 
-### <a name="api_stageName"></a>1.11. Property `root > api > stageName`
+### <a name="api_stageName"></a>1.12. Property `root > api > stageName`
 
 |              |          |
 | ------------ | -------- |
@@ -418,7 +439,7 @@ AWS: API Gateway deployment stage
 
 Validation: Optional; valid API Gateway stage name
 
-### <a name="api_targetBucketName"></a>1.12. Property `root > api > targetBucketName`
+### <a name="api_targetBucketName"></a>1.13. Property `root > api > targetBucketName`
 
 |              |          |
 | ------------ | -------- |
@@ -433,7 +454,7 @@ AWS: S3 bucket for Lambda integration data operations
 
 Validation: Required; must be existing S3 bucket name
 
-### <a name="api_targetPrefix"></a>1.13. Property `root > api > targetPrefix`
+### <a name="api_targetPrefix"></a>1.14. Property `root > api > targetPrefix`
 
 |              |          |
 | ------------ | -------- |
@@ -442,7 +463,7 @@ Validation: Required; must be existing S3 bucket name
 
 **Description:** Required. Identifies the target prefix within the bucket
 
-### <a name="api_wafArns"></a>1.14. Property `root > api > wafArns`
+### <a name="api_wafArns"></a>1.15. Property `root > api > wafArns`
 
 |                           |                                                                                          |
 | ------------------------- | ---------------------------------------------------------------------------------------- |
@@ -456,7 +477,7 @@ Validation: Required; must be existing S3 bucket name
 | ---------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#api_wafArns_additionalProperties ) | No      | string | No         | -          | -                 |
 
-#### <a name="api_wafArns_additionalProperties"></a>1.14.1. Property `root > api > wafArns > additionalProperties`
+#### <a name="api_wafArns_additionalProperties"></a>1.15.1. Property `root > api > wafArns > additionalProperties`
 
 |              |          |
 | ------------ | -------- |

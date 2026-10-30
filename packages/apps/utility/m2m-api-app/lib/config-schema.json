@@ -1652,6 +1652,11 @@
                     },
                     "type": "array"
                 },
+                "allowCallerKeyPath": {
+                    "default": false,
+                    "description": "If true, callers choose where each upload lands under targetPrefix and what it is named, through the\noptional `sub_path` and `filename` query parameters. The object key becomes\n`{targetPrefix}/{sub_path}/{uuid}_{filename}`, and the `unipart` and `multi_init` responses return it as\n`object_key`. A multipart upload must send the same `sub_path` and `filename` on every call. When false,\nboth parameters are ignored and every object is stored as `{targetPrefix}/{uuid}`.\n\nUse cases: Partitioning uploads by source, device, or date for Athena or Glue; Scoping lifecycle or access rules to a sub-prefix; Keeping the original filename and extension\n\nAWS: S3 object key of each presigned upload\n\nValidation: Optional; boolean. Invalid sub_path or filename values are rejected with HTTP 400 before anything is written. Any authenticated app client can write to any sub-path, so a sub-path is not an isolation boundary between clients.",
+                    "type": "boolean"
+                },
                 "allowedCidrs": {
                     "description": "IPv4 CIDR blocks permitted to access the API. All other IPs are denied\nby the WAF WebACL IP set rule.\n\nUse cases: Corporate network restrictions; IP-based API access control\n\nAWS: WAF WebACL IP set for API Gateway access filtering\n\nValidation: Required; array of valid CIDR blocks (e.g. 10.0.0.0/8)",
                     "items": {

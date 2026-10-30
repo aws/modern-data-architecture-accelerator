@@ -151,6 +151,21 @@ export interface M2MApiProps {
    * such as "requestContext.requestTime".
    */
   readonly eventMetadataMappings?: { [dest: string]: string };
+  /**
+   * If true, callers choose where each upload lands under targetPrefix and what it is named, through the
+   * optional `sub_path` and `filename` query parameters. The object key becomes
+   * `{targetPrefix}/{sub_path}/{uuid}_{filename}`, and the `unipart` and `multi_init` responses return it as
+   * `object_key`. A multipart upload must send the same `sub_path` and `filename` on every call. When false,
+   * both parameters are ignored and every object is stored as `{targetPrefix}/{uuid}`.
+   *
+   * Use cases: Partitioning uploads by source, device, or date for Athena or Glue; Scoping lifecycle or access rules to a sub-prefix; Keeping the original filename and extension
+   *
+   * AWS: S3 object key of each presigned upload
+   *
+   * Validation: Optional; boolean. Invalid sub_path or filename values are rejected with HTTP 400 before anything is written. Any authenticated app client can write to any sub-path, so a sub-path is not an isolation boundary between clients.
+   * @default false
+   */
+  readonly allowCallerKeyPath?: boolean;
 }
 
 /**
@@ -461,6 +476,7 @@ export class M2MApiL3Construct extends MdaaL3Construct {
         METADATA_TARGET_PREFIX: this.props.m2mApiProps.metadataTargetPrefix || this.props.m2mApiProps.targetPrefix,
         EVENT_METADATA_MAPPINGS: JSON.stringify(this.props.m2mApiProps.eventMetadataMappings || {}),
         LOG_LEVEL: 'INFO',
+        ...(this.props.m2mApiProps.allowCallerKeyPath ? { ALLOW_CALLER_KEY_PATH: 'true' } : {}),
       },
       reservedConcurrentExecutions: this.props.m2mApiProps.concurrencyLimit,
     });

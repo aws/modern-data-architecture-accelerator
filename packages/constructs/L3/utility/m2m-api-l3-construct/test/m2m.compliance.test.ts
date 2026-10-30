@@ -499,6 +499,7 @@ describe('Mandatory Prop Tests', () => {
             TARGET_PREFIX: 'testing',
             METADATA_TARGET_PREFIX: 'testing',
             EVENT_METADATA_MAPPINGS: '{"dest_path":"test.source.path"}',
+            ALLOW_CALLER_KEY_PATH: Match.absent(),
           },
         },
         FunctionName: 'test-org-test-env-test-domain-test-module-signed-s3-url-gen',
@@ -645,6 +646,7 @@ describe('Optional Prop Tests', () => {
     },
     setAccountCloudWatchRole: true,
     stageName: 'Prod',
+    allowCallerKeyPath: true,
   };
 
   const constructProps: M2MApiL3ConstructProps = {
@@ -767,6 +769,7 @@ describe('Optional Prop Tests', () => {
           TARGET_PREFIX: 'testing',
           METADATA_TARGET_PREFIX: 'metadata-testing',
           EVENT_METADATA_MAPPINGS: '{}',
+          ALLOW_CALLER_KEY_PATH: 'true',
         },
       },
       FunctionName: 'test-org-test-env-test-domain-test-module-signed-s3-url-gen',

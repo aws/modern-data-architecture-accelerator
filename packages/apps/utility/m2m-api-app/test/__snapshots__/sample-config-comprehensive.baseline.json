@@ -630,6 +630,7 @@
             "METADATA_TARGET_PREFIX": "metadata-testing",
             "EVENT_METADATA_MAPPINGS": "{\"Resource\":\"resource\",\"Host\":\"headers.Host\",\"UserAgent\":\"headers.User-Agent\",\"IPForwarding\":\"headers.X-Forwarded-For\",\"RequestTime\":\"requestContext.requestTime\",\"queryStringParameters\":\"queryStringParameters\"}",
             "LOG_LEVEL": "INFO",
+            "ALLOW_CALLER_KEY_PATH": "true",
             "USER_AGENT_STRING": "AWSSOLUTION/SO0320/vVERSION"
           }
         },
