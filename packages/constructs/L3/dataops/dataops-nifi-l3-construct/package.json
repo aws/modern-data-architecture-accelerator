@@ -59,7 +59,7 @@
     "@aws-mdaa/naming": "1.9.0",
     "aws-cdk-lib": "2.263.0",
     "cdk-nag": "2.37.55",
-    "cdk8s": "2.70.73",
+    "cdk8s": "2.70.107",
     "constructs": "10.6.0",
     "fast-xml-parser": "5.7.0",
     "lodash": "4.18.1"
