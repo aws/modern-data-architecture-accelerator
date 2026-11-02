@@ -11,12 +11,17 @@ import re
 import uuid as uid
 import logging
 from botocore import config
+from botocore.client import BaseClient
 
 solution_identifier = os.getenv("USER_AGENT_STRING")
 user_agent_extra_param = { "user_agent_extra": solution_identifier }
 # botocore presigns S3 URLs with SigV2 unless told otherwise, and S3 refuses SigV2 for objects
 # encrypted with KMS, as the target bucket's are when it is an MDAA data lake bucket.
-config = config.Config(signature_version='s3v4', **user_agent_extra_param)
+# Without an explicit addressing style, botocore presigns on the global endpoint
+# ({bucket}.s3.amazonaws.com) even outside us-east-1. S3 redirects requests on that endpoint for a newly created
+# bucket outside us-east-1 until its DNS propagates, and a presigned upload cannot follow the redirect,
+# since host is a signed header. Virtual addressing presigns on the bucket's regional endpoint instead.
+config = config.Config(signature_version='s3v4', s3={'addressing_style': 'virtual'}, **user_agent_extra_param)
 
 logging.basicConfig(
     format="%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s | Function: %(funcName)s | %(message)s",
@@ -26,7 +31,12 @@ logging.basicConfig(
 logger = logging.getLogger("S3 presigned url")
 
 
-s3 = boto3.client('s3', config=config)
+def create_s3_client() -> BaseClient:
+    """S3 client for the region the function runs in, which the Lambda runtime sets in the environment."""
+    return boto3.client('s3', config=config)
+
+
+s3 = create_s3_client()
 presigned_url_expiry_seconds = os.environ['EXPIRY_TIME_SECONDS']
 target_bucket = os.environ['TARGET_BUCKET']
 target_prefix = os.environ['TARGET_PREFIX']

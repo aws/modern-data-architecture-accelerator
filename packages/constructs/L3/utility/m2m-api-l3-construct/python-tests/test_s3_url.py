@@ -4,6 +4,7 @@ sub_path and filename values are validated.
 """
 
 import json
+from urllib.parse import urlparse
 
 import pytest
 from botocore.exceptions import ClientError
@@ -303,3 +304,47 @@ class TestPresignedUrlSignature:
         url = s3_url.s3.generate_presigned_url(client_method, Params=params, ExpiresIn=600)
 
         assert "X-Amz-Algorithm=AWS4-HMAC-SHA256" in url
+
+
+class TestPresignedUrlEndpoint:
+    """Uses a client built the way the function builds its own: S3 redirects requests on the global endpoint
+    for a newly created bucket outside us-east-1, and a presigned upload cannot follow the redirect, so the URL
+    has to name the bucket's regional endpoint."""
+
+    @pytest.mark.parametrize(
+        "region, expected_host",
+        [
+            ("us-east-1", "test-bucket.s3.amazonaws.com"),
+            ("eu-west-1", "test-bucket.s3.eu-west-1.amazonaws.com"),
+            ("ap-southeast-2", "test-bucket.s3.ap-southeast-2.amazonaws.com"),
+            ("cn-north-1", "test-bucket.s3.cn-north-1.amazonaws.com.cn"),
+        ],
+    )
+    @pytest.mark.parametrize(
+        "client_method, params",
+        [
+            ("put_object", {"Bucket": "test-bucket", "Key": "testing/key", "ContentMD5": MD5}),
+            (
+                "upload_part",
+                {"Bucket": "test-bucket", "Key": "testing/key", "UploadId": UPLOAD_ID, "PartNumber": 1, "ContentMD5": MD5},
+            ),
+        ],
+    )
+    def test_presigned_urls_use_the_regional_endpoint(self, monkeypatch, region, expected_host, client_method, params):
+        monkeypatch.setenv("AWS_DEFAULT_REGION", region)
+
+        url = s3_url.create_s3_client().generate_presigned_url(client_method, Params=params, ExpiresIn=600)
+
+        assert urlparse(url).hostname == expected_host
+
+    def test_bucket_name_with_dots_uses_the_regional_endpoint(self, monkeypatch):
+        """A dotted bucket name does not match the endpoint's TLS certificate as a subdomain, so the bucket
+        goes in the path instead, still on the regional endpoint."""
+        monkeypatch.setenv("AWS_DEFAULT_REGION", "eu-west-1")
+
+        url = s3_url.create_s3_client().generate_presigned_url(
+            "put_object", Params={"Bucket": "test.bucket", "Key": "testing/key", "ContentMD5": MD5}, ExpiresIn=600
+        )
+
+        assert urlparse(url).hostname == "s3.eu-west-1.amazonaws.com"
+        assert urlparse(url).path == "/test.bucket/testing/key"
