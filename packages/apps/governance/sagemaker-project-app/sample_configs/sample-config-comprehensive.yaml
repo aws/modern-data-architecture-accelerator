@@ -99,12 +99,50 @@ projects:
         # (Optional) Map of parameter name to value
         parameters:
           env-param-key: env-param-value
+    # (Optional) Default values for publishOnImport, enableSetting, schedule, recommendation,
+    # autoImportDataQualityResult, and filterExpressions, inherited by every entry in
+    # dataSources. A data source that sets one of these fields itself overrides the default
+    # for that field entirely (fields are not deep-merged); see test-source below.
+    dataSourceDefaults:
+      # (Optional) Auto-publish imported assets to the project's catalog
+      publishOnImport: true
+      # (Optional) Enabled setting enum: ENABLED | DISABLED
+      enableSetting: ENABLED
+      # (Optional) Schedule the data source runs on
+      schedule:
+        # (Required) Cron expression for the run schedule
+        schedule: cron(0 6 * * ? *)
+        # (Optional) Timezone the schedule is evaluated in
+        timezone: AMERICA_MONTREAL
+      # (Optional) Business name generation recommendation
+      recommendation:
+        # (Optional) Enable automatic business name generation
+        enableBusinessNameGeneration: true
     # (Optional) Data sources to import into the project
     dataSources:
       test-source:
         # (Required) Glue database name for the data source. Mutually exclusive with s3.
         databaseName: test-database-name
+        # (Optional) Overrides dataSourceDefaults.publishOnImport for this source only
+        publishOnImport: false
+        # (Optional) Whether to auto-import AWS Glue Data Quality results
+        autoImportDataQualityResult: false
+        # (Optional) Limits imported tables to those matching these filter expressions.
+        # Controls catalog import only, not access: Lake Formation still grants read on
+        # every table in the database regardless of these filters.
+        filterExpressions:
+          - type: INCLUDE
+            expression: dim_*
+          - type: EXCLUDE
+            expression: tmp_*
+        # (Optional) Metadata forms (declared under this project's metadataForms, below) to
+        # attach to every asset this data source imports
+        metadataForms:
+          CustomerMetadataForm:
+            # (Optional) JSON-encoded field values to pre-populate on the form
+            content: '{"customerName":"unknown"}'
       second-source:
+        # Inherits dataSourceDefaults in full: no fields overridden here
         databaseName: another-database
       s3-source:
         # (Required) S3 location to register as a data source. Mutually exclusive with databaseName.

@@ -15,7 +15,7 @@ import {
   MdaaSageMakerProject,
   ProjectEnvironmentConfiguration,
 } from '@aws-mdaa/datazone-constructs';
-import { Annotations, CustomResource } from 'aws-cdk-lib';
+import { Annotations, CustomResource, Token } from 'aws-cdk-lib';
 
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaResourceType } from '@aws-mdaa/naming';
@@ -148,6 +148,25 @@ export interface SageMakerProjectProps {
   readonly dataSources?: { [name: string]: DataSourceProps };
 
   /**
+   * Default values for `publishOnImport`, `enableSetting`, `schedule`, `recommendation`,
+   * `autoImportDataQualityResult`, and `filterExpressions`, inherited by every Glue
+   * (`databaseName`) entry in `dataSources`. A data source that specifies one of these
+   * fields itself overrides the default for that field entirely (fields are not
+   * deep-merged). Has no effect on an `s3` data source, which has no equivalent
+   * properties.
+   *
+   * Use cases: Consistent run schedule/publishing behavior across many data sources in a
+   * producer project
+   *
+   * AWS: AWS::DataZone::DataSource (defaults applied per-data-source at synth time)
+   *
+   * Validation: Optional; DataSourceDefaultsProps
+   *
+   * @default - no defaults; each data source uses DataZone's own defaults for unset fields
+   */
+  readonly dataSourceDefaults?: DataSourceDefaultsProps;
+
+  /**
    * Metadata form types to create, owned by this project. Each form is defined by
    * a set of fields; MDAA assembles the Smithy model (setting the namespace to the
    * domain ID and the structure name to the form name). Forms are usable across the
@@ -253,12 +272,259 @@ export interface MetadataFormProps {
 }
 
 /**
- * A project data source: either a Glue database or a raw S3 location.
- *
- * @minProperties 1
- * @maxProperties 1
+ * Glue-run configuration shared between a project's `dataSourceDefaults` and an
+ * individual data source. Any field specified on a data source entirely replaces the
+ * corresponding default (fields are not deep-merged); fields omitted on the data source
+ * fall back to the default, if any. There is no way to omit an inherited `schedule`
+ * other than setting the data source's own `enableSetting` to `DISABLED`, which disables
+ * the whole data source rather than just the schedule.
  */
-export interface DataSourceProps {
+export interface DataSourceDefaultsProps {
+  /**
+   * Whether assets imported by the data source are automatically published to the
+   * project's catalog. When false, imported assets remain in the project inventory
+   * and must be published by hand.
+   *
+   * Use cases: Publish-and-subscribe data mesh models; Automated asset catalog population
+   *
+   * AWS: AWS::DataZone::DataSource PublishOnImport
+   *
+   * Validation: Optional; boolean
+   *
+   * @default false (DataZone default; assets are not auto-published)
+   */
+  readonly publishOnImport?: boolean;
+
+  /**
+   * Whether the data source is enabled to run.
+   *
+   * AWS: AWS::DataZone::DataSource EnableSetting
+   *
+   * Validation: Optional; 'ENABLED' | 'DISABLED'
+   *
+   * @default ENABLED (DataZone default)
+   */
+  readonly enableSetting?: 'ENABLED' | 'DISABLED';
+
+  /**
+   * Schedule on which the data source runs automatically. When omitted, the data source
+   * never runs on its own and must be run manually or via another trigger.
+   *
+   * Use cases: Automated, recurring metadata import
+   *
+   * AWS: AWS::DataZone::DataSource Schedule (AWS::DataZone::DataSource ScheduleConfiguration)
+   *
+   * Validation: Optional; DataSourceScheduleProps
+   *
+   * @default - data source does not run on a schedule
+   */
+  readonly schedule?: DataSourceScheduleProps;
+
+  /**
+   * Business name generation recommendation configuration for assets this data source
+   * imports.
+   *
+   * AWS: AWS::DataZone::DataSource Recommendation (AWS::DataZone::DataSource RecommendationConfiguration)
+   *
+   * Validation: Optional; DataSourceRecommendationProps
+   *
+   * @default - business name generation is not enabled
+   */
+  readonly recommendation?: DataSourceRecommendationProps;
+
+  /**
+   * Whether to automatically import AWS Glue Data Quality results as part of the data
+   * source run.
+   *
+   * AWS: AWS::DataZone::DataSource Configuration.GlueRunConfiguration.AutoImportDataQualityResult
+   *
+   * Validation: Optional; boolean
+   *
+   * @default true
+   */
+  readonly autoImportDataQualityResult?: boolean;
+
+  /**
+   * Filter expressions limiting which tables in the Glue database are imported. When
+   * omitted, every table in the database is imported.
+   *
+   * Use cases: Importing a subset of tables from a large shared database
+   *
+   * AWS: AWS::DataZone::DataSource Configuration.GlueRunConfiguration.RelationalFilterConfigurations[].FilterExpressions
+   *
+   * Validation: Optional; array of DataSourceFilterExpressionProps
+   *
+   * @default - every table in the database is imported
+   */
+  readonly filterExpressions?: DataSourceFilterExpressionProps[];
+}
+
+/**
+ * Valid `AWS::DataZone::DataSource` `ScheduleConfiguration.Timezone` values, per
+ * https://docs.aws.amazon.com/datazone/latest/APIReference/API_ScheduleConfiguration.html.
+ */
+export type DataZoneScheduleTimezone =
+  | 'UTC'
+  | 'AFRICA_JOHANNESBURG'
+  | 'AMERICA_MONTREAL'
+  | 'AMERICA_SAO_PAULO'
+  | 'ASIA_BAHRAIN'
+  | 'ASIA_BANGKOK'
+  | 'ASIA_CALCUTTA'
+  | 'ASIA_DUBAI'
+  | 'ASIA_HONG_KONG'
+  | 'ASIA_JAKARTA'
+  | 'ASIA_KUALA_LUMPUR'
+  | 'ASIA_SEOUL'
+  | 'ASIA_SHANGHAI'
+  | 'ASIA_SINGAPORE'
+  | 'ASIA_TAIPEI'
+  | 'ASIA_TOKYO'
+  | 'AUSTRALIA_MELBOURNE'
+  | 'AUSTRALIA_SYDNEY'
+  | 'CANADA_CENTRAL'
+  | 'CET'
+  | 'CST6CDT'
+  | 'ETC_GMT'
+  | 'ETC_GMT0'
+  | 'ETC_GMT_ADD_0'
+  | 'ETC_GMT_ADD_1'
+  | 'ETC_GMT_ADD_10'
+  | 'ETC_GMT_ADD_11'
+  | 'ETC_GMT_ADD_12'
+  | 'ETC_GMT_ADD_2'
+  | 'ETC_GMT_ADD_3'
+  | 'ETC_GMT_ADD_4'
+  | 'ETC_GMT_ADD_5'
+  | 'ETC_GMT_ADD_6'
+  | 'ETC_GMT_ADD_7'
+  | 'ETC_GMT_ADD_8'
+  | 'ETC_GMT_ADD_9'
+  | 'ETC_GMT_NEG_0'
+  | 'ETC_GMT_NEG_1'
+  | 'ETC_GMT_NEG_10'
+  | 'ETC_GMT_NEG_11'
+  | 'ETC_GMT_NEG_12'
+  | 'ETC_GMT_NEG_13'
+  | 'ETC_GMT_NEG_14'
+  | 'ETC_GMT_NEG_2'
+  | 'ETC_GMT_NEG_3'
+  | 'ETC_GMT_NEG_4'
+  | 'ETC_GMT_NEG_5'
+  | 'ETC_GMT_NEG_6'
+  | 'ETC_GMT_NEG_7'
+  | 'ETC_GMT_NEG_8'
+  | 'ETC_GMT_NEG_9'
+  | 'EUROPE_DUBLIN'
+  | 'EUROPE_LONDON'
+  | 'EUROPE_PARIS'
+  | 'EUROPE_STOCKHOLM'
+  | 'EUROPE_ZURICH'
+  | 'ISRAEL'
+  | 'MEXICO_GENERAL'
+  | 'MST7MDT'
+  | 'PACIFIC_AUCKLAND'
+  | 'US_CENTRAL'
+  | 'US_EASTERN'
+  | 'US_MOUNTAIN'
+  | 'US_PACIFIC';
+
+export interface DataSourceScheduleProps {
+  /**
+   * Cron expression for the data source run schedule, e.g. `cron(0 6 * * ? *)`. DataZone's
+   * cron grammar only accepts a single value in the minute and hour fields (no lists,
+   * ranges, or step values, e.g. an every-6-hours step); such expressions pass synth
+   * but fail at deploy.
+   *
+   * AWS: AWS::DataZone::DataSource ScheduleConfiguration.Schedule
+   *
+   * Validation: Required; valid DataZone cron expression with single-value minute/hour fields
+   */
+  readonly schedule: string;
+  /**
+   * Timezone the schedule is evaluated in, e.g. `UTC`, `US_EASTERN`.
+   *
+   * AWS: AWS::DataZone::DataSource ScheduleConfiguration.Timezone
+   *
+   * Validation: Optional; valid DataZone Timezone enum value
+   *
+   * @default UTC (DataZone default)
+   */
+  readonly timezone?: DataZoneScheduleTimezone;
+}
+
+export interface DataSourceRecommendationProps {
+  /**
+   * Whether automatic business name generation is enabled for assets this data source
+   * imports.
+   *
+   * AWS: AWS::DataZone::DataSource RecommendationConfiguration.EnableBusinessNameGeneration
+   *
+   * Validation: Optional; boolean
+   *
+   * @default false (DataZone default)
+   */
+  readonly enableBusinessNameGeneration?: boolean;
+}
+
+/**
+ * A filter expression controls only which tables the data source imports into the
+ * catalog; it is not an access boundary. The project's environment user is still granted
+ * Lake Formation read permissions on every table in the database (see `createDataSource`),
+ * so an `EXCLUDE`d table remains queryable and should not be relied on to hide sensitive data.
+ */
+export interface DataSourceFilterExpressionProps {
+  /**
+   * The filter expression, e.g. a glob pattern matching table names.
+   *
+   * AWS: AWS::DataZone::DataSource FilterExpression.Expression
+   *
+   * Validation: Required; 1-2048 chars
+   *
+   * @minLength 1
+   * @maxLength 2048
+   */
+  readonly expression: string;
+  /**
+   * Whether the expression includes or excludes matching tables.
+   *
+   * AWS: AWS::DataZone::DataSource FilterExpression.Type
+   *
+   * Validation: Required; 'INCLUDE' | 'EXCLUDE'
+   */
+  readonly type: 'INCLUDE' | 'EXCLUDE';
+}
+
+export interface DataSourceMetadataFormProps {
+  /**
+   * JSON-encoded field values to pre-populate on this form when attached to each asset
+   * the data source imports. Must conform to the referenced form type's field schema:
+   * every field the form declares `required: true` must be present, and every key must
+   * match a field the form declares. Validated at synth time.
+   *
+   * AWS: AWS::DataZone::DataSource FormInput.Content
+   *
+   * Validation: Optional; JSON string, max 75000 chars; required if the referenced form
+   * declares any required fields; keys must match the form's declared fields
+   *
+   * @maxLength 75000
+   * @default - form is attached with no pre-populated content (only valid if the referenced form declares no required fields)
+   */
+  readonly content?: string;
+}
+
+/**
+ * A project data source: either a Glue database or a raw S3 location, plus optional
+ * run/publish behavior. Exactly one of `databaseName` or `s3` is required; this is
+ * enforced at synth time (not via the JSON schema, since the mutually-exclusive pair
+ * sits alongside other, non-exclusive optional fields here). The inherited
+ * `DataSourceDefaultsProps` fields (and `metadataForms`) only apply to `databaseName`
+ * entries; setting any of them directly on an `s3` entry is a synth-time error, since
+ * an `AWS::DataZone::Connection` has no equivalent properties. Values an `s3` entry
+ * inherits from the project's `dataSourceDefaults` are silently not applied instead,
+ * since a project-level default is not a misconfiguration of the entry itself.
+ */
+export interface DataSourceProps extends DataSourceDefaultsProps {
   /**
    * Glue database name to use as the data source. The project's environment user
    * will be granted Lake Formation read permissions on this database and its tables.
@@ -282,6 +548,25 @@ export interface DataSourceProps {
    * Validation: Exactly one of databaseName or s3 is required
    */
   readonly s3?: S3DataSourceProps;
+
+  /**
+   * Metadata forms, declared under this project's `metadataForms`, to attach to every
+   * asset this data source imports. Map key must match a key declared under
+   * `metadataForms`, must reference an `ENABLED` form, and `content` must satisfy that
+   * form's required fields; only applies to Glue database data sources (a synth-time
+   * error on an `s3` entry).
+   *
+   * Use cases: Pre-populating governance metadata on imported assets
+   *
+   * AWS: AWS::DataZone::DataSource AssetFormsInput
+   *
+   * Validation: Optional; map of declared metadataForms key to DataSourceMetadataFormProps;
+   * max 10 entries; each key must exist in this project's metadataForms
+   *
+   * @maxProperties 10
+   * @default - no metadata forms are attached
+   */
+  readonly metadataForms?: { [formName: string]: DataSourceMetadataFormProps };
 }
 
 export interface S3DataSourceProps {
@@ -323,6 +608,72 @@ export interface S3DataSourceProps {
    * Validation: Optional; valid S3 Access Grants location ID
    */
   readonly s3AccessGrantLocationId?: string;
+}
+
+/**
+ * A project's declared `metadataForms` entry: the construct created for it (for the
+ * synth-time-unresolved form type revision) alongside the config it was declared with
+ * (for `status`/`fields`, which are only known from config, not from the construct).
+ */
+interface DeclaredMetadataForm {
+  readonly formType: MdaaDatazoneFormType;
+  readonly props: MetadataFormProps;
+}
+
+/** Internal, non-jsii-exported options for `createDataSource`. */
+interface CreateDataSourceOptions {
+  readonly projectName: string;
+  readonly project: MdaaSageMakerProject;
+  readonly dataSourceName: string;
+  readonly dataSourceProps: DataSourceProps;
+  readonly dataSourceDefaults: DataSourceDefaultsProps | undefined;
+  readonly declaredMetadataForms: { [formName: string]: DeclaredMetadataForm };
+}
+
+/** Internal, non-jsii-exported options for `resolveDataSourceMetadataForms`. */
+interface ResolveDataSourceMetadataFormsOptions {
+  readonly projectName: string;
+  readonly dataSourceName: string;
+  readonly formRefs: { [formName: string]: DataSourceMetadataFormProps } | undefined;
+  readonly declaredForms: { [formName: string]: DeclaredMetadataForm };
+}
+
+/**
+ * Data source fields that only apply to a Glue (`databaseName`) data source. An
+ * `AWS::DataZone::Connection` (the `s3` entry's resource) has no equivalent properties.
+ */
+const GLUE_ONLY_DATASOURCE_FIELDS: ReadonlyArray<keyof DataSourceProps> = [
+  'publishOnImport',
+  'enableSetting',
+  'schedule',
+  'recommendation',
+  'autoImportDataQualityResult',
+  'filterExpressions',
+  'metadataForms',
+];
+
+/**
+ * Per-field merge of a data source's run/publish options against the project's
+ * `dataSourceDefaults`. A plain object spread (`{ ...defaults, ...overrides }`) is not
+ * used because a key present on `overrides` but explicitly `undefined` — which only a
+ * programmatic (non-YAML) caller can produce, since the JSON schema rejects
+ * null/undefined — would wipe a set default; `??` instead falls back to the default for
+ * any field the data source leaves `undefined`. Object/array fields (`schedule`,
+ * `recommendation`, `filterExpressions`) are still not deep-merged: a value present on
+ * `overrides` fully replaces the matching default.
+ */
+export function resolveDataSourceDefaults(
+  defaults: DataSourceDefaultsProps | undefined,
+  overrides: DataSourceDefaultsProps,
+): DataSourceDefaultsProps {
+  return {
+    publishOnImport: overrides.publishOnImport ?? defaults?.publishOnImport,
+    enableSetting: overrides.enableSetting ?? defaults?.enableSetting,
+    schedule: overrides.schedule ?? defaults?.schedule,
+    recommendation: overrides.recommendation ?? defaults?.recommendation,
+    autoImportDataQualityResult: overrides.autoImportDataQualityResult ?? defaults?.autoImportDataQualityResult,
+    filterExpressions: overrides.filterExpressions ?? defaults?.filterExpressions,
+  };
 }
 
 export interface SagemakerProjectL3ConstructProps extends MdaaL3ConstructProps {
@@ -522,6 +873,9 @@ export interface NamedProjectProfiles {
 }
 
 export class SagemakerProjectL3Construct extends MdaaL3Construct {
+  // DataZone's AWS::DataZone::DataSource AssetFormsInput accepts at most 10 entries.
+  private static readonly MAX_METADATA_FORMS_PER_DATASOURCE = 10;
+
   protected readonly props: SagemakerProjectL3ConstructProps;
 
   public readonly projects: { [name: string]: MdaaSageMakerProject };
@@ -662,22 +1016,40 @@ export class SagemakerProjectL3Construct extends MdaaL3Construct {
     };
     const project = new MdaaSageMakerProject(scope, `project-${projectName}`, constructProps);
 
-    const createdDataSources = Object.entries(projectProps.dataSources || {}).map(
-      ([dataSourceName, dataSourceProps]) => {
-        return this.createDataSource(projectName, project, dataSourceName, dataSourceProps);
-      },
-    );
-    console.debug(`Created ${createdDataSources.length} datasources`);
-
     const createdGlossaries = Object.fromEntries(
       Object.entries(projectProps.glossaries || {}).map(([glossaryName, glossaryProps]) => {
         return [glossaryName, this.createGlossary(project, glossaryName, glossaryProps)];
       }),
     );
 
-    Object.entries(projectProps.metadataForms || {}).forEach(([formName, formProps]) => {
-      this.createMetadataForm(project, projectName, formName, formProps, createdGlossaries, glossaryKeyOwners);
-    });
+    // Created before dataSources, since a data source's metadataForms reference these by name.
+    const createdMetadataForms: { [formName: string]: DeclaredMetadataForm } = Object.fromEntries(
+      Object.entries(projectProps.metadataForms || {}).map(([formName, formProps]) => {
+        const formType = this.createMetadataForm(
+          project,
+          projectName,
+          formName,
+          formProps,
+          createdGlossaries,
+          glossaryKeyOwners,
+        );
+        return [formName, { formType, props: formProps }];
+      }),
+    );
+
+    const createdDataSources = Object.entries(projectProps.dataSources || {}).map(
+      ([dataSourceName, dataSourceProps]) => {
+        return this.createDataSource({
+          projectName,
+          project,
+          dataSourceName,
+          dataSourceProps,
+          dataSourceDefaults: projectProps.dataSourceDefaults,
+          declaredMetadataForms: createdMetadataForms,
+        });
+      },
+    );
+    console.debug(`Created ${createdDataSources.length} datasources`);
 
     return project;
   }
@@ -828,37 +1200,92 @@ export class SagemakerProjectL3Construct extends MdaaL3Construct {
     };
   }
 
-  private createDataSource(
-    projectName: string,
-    project: MdaaSageMakerProject,
-    dataSourceName: string,
-    dataSourceProps: DataSourceProps,
-  ) {
+  private createDataSource(options: CreateDataSourceOptions) {
+    const { projectName, project, dataSourceName, dataSourceProps, dataSourceDefaults, declaredMetadataForms } =
+      options;
     if (!!dataSourceProps.s3 === !!dataSourceProps.databaseName) {
       throw new Error(`Data source '${dataSourceName}': specify exactly one of 'databaseName' or 's3'`);
     }
     if (dataSourceProps.s3) {
+      this.rejectGlueOnlyFieldsOnS3DataSource(dataSourceName, dataSourceProps);
       return this.createS3Connection(project, dataSourceName, dataSourceProps.s3);
     }
     const databaseName = dataSourceProps.databaseName as string;
-    const datasourceProps: CfnDataSourceProps = {
+    const resolved = resolveDataSourceDefaults(dataSourceDefaults, dataSourceProps);
+    const assetFormsInput = this.resolveDataSourceMetadataForms({
+      projectName,
+      dataSourceName,
+      formRefs: dataSourceProps.metadataForms,
+      declaredForms: declaredMetadataForms,
+    });
+    const datasourceProps = this.buildGlueDataSourceCfnProps(
+      project,
+      dataSourceName,
+      databaseName,
+      resolved,
+      assetFormsInput,
+    );
+    const datasource = new CfnDataSource(project, `${dataSourceName}-datazone-datasource`, datasourceProps);
+    this.grantDataSourceDatabaseReadAccess(datasource, projectName, project, databaseName);
+    return { dataSourceName: dataSourceName, dataSource: datasource, props: dataSourceProps };
+  }
+
+  /**
+   * An `s3` entry's resource (`AWS::DataZone::Connection`) has no equivalent properties for
+   * Glue-only fields, so a field set directly on the entry itself is almost certainly a
+   * misconfiguration rather than a deliberate no-op. A value the entry inherits from the
+   * project's `dataSourceDefaults` is not flagged here: that's a project-level default
+   * applying across heterogeneous data sources, not a mistake in this entry.
+   */
+  private rejectGlueOnlyFieldsOnS3DataSource(dataSourceName: string, dataSourceProps: DataSourceProps): void {
+    const setFields = GLUE_ONLY_DATASOURCE_FIELDS.filter(field => dataSourceProps[field] !== undefined);
+    if (setFields.length > 0) {
+      throw new Error(
+        `Data source '${dataSourceName}': [${setFields.join(', ')}] only apply to Glue ('databaseName') data ` +
+          "sources and cannot be set on an 's3' entry.",
+      );
+    }
+  }
+
+  private buildGlueDataSourceCfnProps(
+    project: MdaaSageMakerProject,
+    dataSourceName: string,
+    databaseName: string,
+    resolved: DataSourceDefaultsProps,
+    assetFormsInput: CfnDataSource.FormInputProperty[],
+  ): CfnDataSourceProps {
+    return {
       domainIdentifier: project.project.attrDomainId,
       connectionIdentifier: project.glueConnectionId, //Need to pass glue connection id for SMUS projects
       name: this.props.naming.withResourceType(MdaaResourceType.DATAZONE_DATASOURCE).resourceName(dataSourceName),
       projectIdentifier: project.project.attrId,
       type: 'glue',
+      publishOnImport: resolved.publishOnImport,
+      enableSetting: resolved.enableSetting,
+      schedule: resolved.schedule,
+      recommendation: resolved.recommendation,
+      assetFormsInput: assetFormsInput.length > 0 ? assetFormsInput : undefined,
       configuration: {
         glueRunConfiguration: {
-          autoImportDataQualityResult: true,
+          autoImportDataQualityResult: resolved.autoImportDataQualityResult ?? true,
           relationalFilterConfigurations: [
             {
               databaseName: databaseName,
+              // DataSourceFilterExpressionProps mirrors FilterExpressionProperty 1:1.
+              filterExpressions: resolved.filterExpressions,
             },
           ],
         },
       },
     };
-    const datasource = new CfnDataSource(project, `${dataSourceName}-datazone-datasource`, datasourceProps);
+  }
+
+  private grantDataSourceDatabaseReadAccess(
+    datasource: CfnDataSource,
+    projectName: string,
+    project: MdaaSageMakerProject,
+    databaseName: string,
+  ): void {
     const grantProps: GrantProps = {
       database: databaseName,
       databasePermissions: LakeFormationAccessControlL3Construct.DATABASE_READ_PERMISSIONS,
@@ -879,7 +1306,92 @@ export class SagemakerProjectL3Construct extends MdaaL3Construct {
       ...this.props,
     };
     new LakeFormationAccessControlL3Construct(datasource, 'lf-permissions', lakeFormationProps);
-    return { dataSourceName: dataSourceName, dataSource: datasource, props: dataSourceProps };
+  }
+
+  /**
+   * Resolves a data source's `metadataForms` references to `AssetFormsInput` entries.
+   * Each key must match a form declared under the project's `metadataForms` (created
+   * before data sources specifically so this can resolve), since DataZone's
+   * `typeIdentifier` for a custom form type is just its name, and `typeRevision` is
+   * only known once the form type's custom resource has run. Also validates `status` and
+   * `content` against the declared form, since DataZone only enforces those at deploy
+   * time or when the data source runs.
+   */
+  private resolveDataSourceMetadataForms(
+    options: ResolveDataSourceMetadataFormsOptions,
+  ): CfnDataSource.FormInputProperty[] {
+    const { projectName, dataSourceName, formRefs, declaredForms } = options;
+    const entries = Object.entries(formRefs || {});
+    if (entries.length > SagemakerProjectL3Construct.MAX_METADATA_FORMS_PER_DATASOURCE) {
+      throw new Error(
+        `Data source '${dataSourceName}' in project '${projectName}' declares ${entries.length} metadataForms, ` +
+          `which exceeds the maximum of ${SagemakerProjectL3Construct.MAX_METADATA_FORMS_PER_DATASOURCE} ` +
+          'AssetFormsInput entries DataZone allows per data source.',
+      );
+    }
+    return entries.map(([formName, formProps]) => {
+      const context = `Data source '${dataSourceName}' in project '${projectName}': metadataForms.'${formName}'`;
+      const declared = Object.prototype.hasOwnProperty.call(declaredForms, formName)
+        ? declaredForms[formName]
+        : undefined;
+      if (!declared) {
+        throw new Error(`${context} is not declared under this project's metadataForms.`);
+      }
+      if (declared.props.status === 'DISABLED') {
+        throw new Error(`${context} references a DISABLED form, which is retained but not attachable.`);
+      }
+      this.validateMetadataFormContent(context, declared.props, formProps.content);
+      return {
+        formName: formName,
+        typeIdentifier: formName,
+        typeRevision: declared.formType.formType.getAttString('revision'),
+        ...(formProps.content ? { content: formProps.content } : {}),
+      };
+    });
+  }
+
+  /**
+   * Validates a `metadataForms` reference's `content` at synth time against the form it
+   * declares: `content`, if set, must be a JSON object naming only fields the form
+   * declares, and every field the form declares `required: true` must be present
+   * (whether supplied via `content` or omitted entirely). Skipped for a deploy-time
+   * value, e.g. a `content` built from an `ssm-org:` reference, since its value isn't
+   * known until deploy.
+   */
+  private validateMetadataFormContent(
+    context: string,
+    declaredForm: MetadataFormProps,
+    content: string | undefined,
+  ): void {
+    if (content !== undefined && Token.isUnresolved(content)) {
+      return;
+    }
+    let parsedContent: Record<string, unknown> = {};
+    if (content !== undefined) {
+      try {
+        parsedContent = JSON.parse(content);
+      } catch {
+        throw new Error(`${context} content is not valid JSON.`);
+      }
+      if (typeof parsedContent !== 'object' || parsedContent === null || Array.isArray(parsedContent)) {
+        throw new Error(`${context} content must be a JSON object.`);
+      }
+      const undeclaredFields = Object.keys(parsedContent).filter(
+        fieldName => !Object.prototype.hasOwnProperty.call(declaredForm.fields, fieldName),
+      );
+      if (undeclaredFields.length > 0) {
+        throw new Error(
+          `${context} content references field(s) [${undeclaredFields.join(', ')}] the form does not declare.`,
+        );
+      }
+    }
+    const missingRequiredFields = Object.entries(declaredForm.fields)
+      .filter(([, fieldProps]) => fieldProps.required)
+      .map(([fieldName]) => fieldName)
+      .filter(fieldName => parsedContent[fieldName] === undefined || parsedContent[fieldName] === null);
+    if (missingRequiredFields.length > 0) {
+      throw new Error(`${context} content is missing required field(s) [${missingRequiredFields.join(', ')}].`);
+    }
   }
 
   private createS3Connection(project: MdaaSageMakerProject, dataSourceName: string, s3Props: S3DataSourceProps) {

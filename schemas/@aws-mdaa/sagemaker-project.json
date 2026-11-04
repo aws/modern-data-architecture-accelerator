@@ -573,21 +573,241 @@
             ],
             "type": "object"
         },
+        "DataSourceDefaultsProps": {
+            "additionalProperties": false,
+            "description": "Glue-run configuration shared between a project's `dataSourceDefaults` and an\nindividual data source. Any field specified on a data source entirely replaces the\ncorresponding default (fields are not deep-merged); fields omitted on the data source\nfall back to the default, if any. There is no way to omit an inherited `schedule`\nother than setting the data source's own `enableSetting` to `DISABLED`, which disables\nthe whole data source rather than just the schedule.",
+            "properties": {
+                "autoImportDataQualityResult": {
+                    "default": true,
+                    "description": "Whether to automatically import AWS Glue Data Quality results as part of the data\nsource run.\n\nAWS: AWS::DataZone::DataSource Configuration.GlueRunConfiguration.AutoImportDataQualityResult\n\nValidation: Optional; boolean",
+                    "type": "boolean"
+                },
+                "enableSetting": {
+                    "default": "ENABLED (DataZone default)",
+                    "description": "Whether the data source is enabled to run.\n\nAWS: AWS::DataZone::DataSource EnableSetting\n\nValidation: Optional; 'ENABLED' | 'DISABLED'",
+                    "enum": [
+                        "DISABLED",
+                        "ENABLED"
+                    ],
+                    "type": "string"
+                },
+                "filterExpressions": {
+                    "default": "- every table in the database is imported",
+                    "description": "Filter expressions limiting which tables in the Glue database are imported. When\nomitted, every table in the database is imported.\n\nUse cases: Importing a subset of tables from a large shared database\n\nAWS: AWS::DataZone::DataSource Configuration.GlueRunConfiguration.RelationalFilterConfigurations[].FilterExpressions\n\nValidation: Optional; array of DataSourceFilterExpressionProps",
+                    "items": {
+                        "$ref": "#/definitions/DataSourceFilterExpressionProps"
+                    },
+                    "type": "array"
+                },
+                "publishOnImport": {
+                    "default": "false (DataZone default; assets are not auto-published)",
+                    "description": "Whether assets imported by the data source are automatically published to the\nproject's catalog. When false, imported assets remain in the project inventory\nand must be published by hand.\n\nUse cases: Publish-and-subscribe data mesh models; Automated asset catalog population\n\nAWS: AWS::DataZone::DataSource PublishOnImport\n\nValidation: Optional; boolean",
+                    "type": "boolean"
+                },
+                "recommendation": {
+                    "$ref": "#/definitions/DataSourceRecommendationProps",
+                    "default": "- business name generation is not enabled",
+                    "description": "Business name generation recommendation configuration for assets this data source\nimports.\n\nAWS: AWS::DataZone::DataSource Recommendation (AWS::DataZone::DataSource RecommendationConfiguration)\n\nValidation: Optional; DataSourceRecommendationProps"
+                },
+                "schedule": {
+                    "$ref": "#/definitions/DataSourceScheduleProps",
+                    "default": "- data source does not run on a schedule",
+                    "description": "Schedule on which the data source runs automatically. When omitted, the data source\nnever runs on its own and must be run manually or via another trigger.\n\nUse cases: Automated, recurring metadata import\n\nAWS: AWS::DataZone::DataSource Schedule (AWS::DataZone::DataSource ScheduleConfiguration)\n\nValidation: Optional; DataSourceScheduleProps"
+                }
+            },
+            "type": "object"
+        },
+        "DataSourceFilterExpressionProps": {
+            "additionalProperties": false,
+            "description": "A filter expression controls only which tables the data source imports into the\ncatalog; it is not an access boundary. The project's environment user is still granted\nLake Formation read permissions on every table in the database (see `createDataSource`),\nso an `EXCLUDE`d table remains queryable and should not be relied on to hide sensitive data.",
+            "properties": {
+                "expression": {
+                    "description": "The filter expression, e.g. a glob pattern matching table names.\n\nAWS: AWS::DataZone::DataSource FilterExpression.Expression\n\nValidation: Required; 1-2048 chars",
+                    "maxLength": 2048,
+                    "minLength": 1,
+                    "type": "string"
+                },
+                "type": {
+                    "description": "Whether the expression includes or excludes matching tables.\n\nAWS: AWS::DataZone::DataSource FilterExpression.Type\n\nValidation: Required; 'INCLUDE' | 'EXCLUDE'",
+                    "enum": [
+                        "EXCLUDE",
+                        "INCLUDE"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "expression",
+                "type"
+            ],
+            "type": "object"
+        },
+        "DataSourceMetadataFormProps": {
+            "additionalProperties": false,
+            "properties": {
+                "content": {
+                    "default": "- form is attached with no pre-populated content (only valid if the referenced form declares no required fields)",
+                    "description": "JSON-encoded field values to pre-populate on this form when attached to each asset\nthe data source imports. Must conform to the referenced form type's field schema:\nevery field the form declares `required: true` must be present, and every key must\nmatch a field the form declares. Validated at synth time.\n\nAWS: AWS::DataZone::DataSource FormInput.Content\n\nValidation: Optional; JSON string, max 75000 chars; required if the referenced form\ndeclares any required fields; keys must match the form's declared fields",
+                    "maxLength": 75000,
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
         "DataSourceProps": {
             "additionalProperties": false,
-            "description": "A project data source: either a Glue database or a raw S3 location.",
-            "maxProperties": 1,
-            "minProperties": 1,
+            "description": "A project data source: either a Glue database or a raw S3 location, plus optional\nrun/publish behavior. Exactly one of `databaseName` or `s3` is required; this is\nenforced at synth time (not via the JSON schema, since the mutually-exclusive pair\nsits alongside other, non-exclusive optional fields here). The inherited\n`DataSourceDefaultsProps` fields (and `metadataForms`) only apply to `databaseName`\nentries; setting any of them directly on an `s3` entry is a synth-time error, since\nan `AWS::DataZone::Connection` has no equivalent properties. Values an `s3` entry\ninherits from the project's `dataSourceDefaults` are silently not applied instead,\nsince a project-level default is not a misconfiguration of the entry itself.",
             "properties": {
+                "autoImportDataQualityResult": {
+                    "default": true,
+                    "description": "Whether to automatically import AWS Glue Data Quality results as part of the data\nsource run.\n\nAWS: AWS::DataZone::DataSource Configuration.GlueRunConfiguration.AutoImportDataQualityResult\n\nValidation: Optional; boolean",
+                    "type": "boolean"
+                },
                 "databaseName": {
                     "description": "Glue database name to use as the data source. The project's environment user\nwill be granted Lake Formation read permissions on this database and its tables.\nMutually exclusive with `s3`.\n\nUse cases: Glue database import; Data asset registration\n\nAWS: Glue database referenced as a DataZone data source\n\nValidation: Exactly one of databaseName or s3 is required; valid Glue database name",
                     "type": "string"
                 },
+                "enableSetting": {
+                    "default": "ENABLED (DataZone default)",
+                    "description": "Whether the data source is enabled to run.\n\nAWS: AWS::DataZone::DataSource EnableSetting\n\nValidation: Optional; 'ENABLED' | 'DISABLED'",
+                    "enum": [
+                        "DISABLED",
+                        "ENABLED"
+                    ],
+                    "type": "string"
+                },
+                "filterExpressions": {
+                    "default": "- every table in the database is imported",
+                    "description": "Filter expressions limiting which tables in the Glue database are imported. When\nomitted, every table in the database is imported.\n\nUse cases: Importing a subset of tables from a large shared database\n\nAWS: AWS::DataZone::DataSource Configuration.GlueRunConfiguration.RelationalFilterConfigurations[].FilterExpressions\n\nValidation: Optional; array of DataSourceFilterExpressionProps",
+                    "items": {
+                        "$ref": "#/definitions/DataSourceFilterExpressionProps"
+                    },
+                    "type": "array"
+                },
+                "metadataForms": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/DataSourceMetadataFormProps"
+                    },
+                    "default": "- no metadata forms are attached",
+                    "description": "Metadata forms, declared under this project's `metadataForms`, to attach to every\nasset this data source imports. Map key must match a key declared under\n`metadataForms`, must reference an `ENABLED` form, and `content` must satisfy that\nform's required fields; only applies to Glue database data sources (a synth-time\nerror on an `s3` entry).\n\nUse cases: Pre-populating governance metadata on imported assets\n\nAWS: AWS::DataZone::DataSource AssetFormsInput\n\nValidation: Optional; map of declared metadataForms key to DataSourceMetadataFormProps;\nmax 10 entries; each key must exist in this project's metadataForms",
+                    "maxProperties": 10,
+                    "type": "object"
+                },
+                "publishOnImport": {
+                    "default": "false (DataZone default; assets are not auto-published)",
+                    "description": "Whether assets imported by the data source are automatically published to the\nproject's catalog. When false, imported assets remain in the project inventory\nand must be published by hand.\n\nUse cases: Publish-and-subscribe data mesh models; Automated asset catalog population\n\nAWS: AWS::DataZone::DataSource PublishOnImport\n\nValidation: Optional; boolean",
+                    "type": "boolean"
+                },
+                "recommendation": {
+                    "$ref": "#/definitions/DataSourceRecommendationProps",
+                    "default": "- business name generation is not enabled",
+                    "description": "Business name generation recommendation configuration for assets this data source\nimports.\n\nAWS: AWS::DataZone::DataSource Recommendation (AWS::DataZone::DataSource RecommendationConfiguration)\n\nValidation: Optional; DataSourceRecommendationProps"
+                },
                 "s3": {
                     "$ref": "#/definitions/S3DataSourceProps",
                     "description": "S3 location to register as a data source. Mutually exclusive with `databaseName`.\n\nUse cases: Onboarding raw S3 data lake locations into a SMUS project's data catalog\n\nAWS: DataZone connection with S3 properties (AWS::DataZone::Connection)\n\nValidation: Exactly one of databaseName or s3 is required"
+                },
+                "schedule": {
+                    "$ref": "#/definitions/DataSourceScheduleProps",
+                    "default": "- data source does not run on a schedule",
+                    "description": "Schedule on which the data source runs automatically. When omitted, the data source\nnever runs on its own and must be run manually or via another trigger.\n\nUse cases: Automated, recurring metadata import\n\nAWS: AWS::DataZone::DataSource Schedule (AWS::DataZone::DataSource ScheduleConfiguration)\n\nValidation: Optional; DataSourceScheduleProps"
                 }
             },
+            "type": "object"
+        },
+        "DataSourceRecommendationProps": {
+            "additionalProperties": false,
+            "properties": {
+                "enableBusinessNameGeneration": {
+                    "default": "false (DataZone default)",
+                    "description": "Whether automatic business name generation is enabled for assets this data source\nimports.\n\nAWS: AWS::DataZone::DataSource RecommendationConfiguration.EnableBusinessNameGeneration\n\nValidation: Optional; boolean",
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
+        },
+        "DataSourceScheduleProps": {
+            "additionalProperties": false,
+            "properties": {
+                "schedule": {
+                    "description": "Cron expression for the data source run schedule, e.g. `cron(0 6 * * ? *)`. DataZone's\ncron grammar only accepts a single value in the minute and hour fields (no lists,\nranges, or step values, e.g. an every-6-hours step); such expressions pass synth\nbut fail at deploy.\n\nAWS: AWS::DataZone::DataSource ScheduleConfiguration.Schedule\n\nValidation: Required; valid DataZone cron expression with single-value minute/hour fields",
+                    "type": "string"
+                },
+                "timezone": {
+                    "default": "UTC (DataZone default)",
+                    "description": "Timezone the schedule is evaluated in, e.g. `UTC`, `US_EASTERN`.\n\nAWS: AWS::DataZone::DataSource ScheduleConfiguration.Timezone\n\nValidation: Optional; valid DataZone Timezone enum value",
+                    "enum": [
+                        "AFRICA_JOHANNESBURG",
+                        "AMERICA_MONTREAL",
+                        "AMERICA_SAO_PAULO",
+                        "ASIA_BAHRAIN",
+                        "ASIA_BANGKOK",
+                        "ASIA_CALCUTTA",
+                        "ASIA_DUBAI",
+                        "ASIA_HONG_KONG",
+                        "ASIA_JAKARTA",
+                        "ASIA_KUALA_LUMPUR",
+                        "ASIA_SEOUL",
+                        "ASIA_SHANGHAI",
+                        "ASIA_SINGAPORE",
+                        "ASIA_TAIPEI",
+                        "ASIA_TOKYO",
+                        "AUSTRALIA_MELBOURNE",
+                        "AUSTRALIA_SYDNEY",
+                        "CANADA_CENTRAL",
+                        "CET",
+                        "CST6CDT",
+                        "ETC_GMT",
+                        "ETC_GMT0",
+                        "ETC_GMT_ADD_0",
+                        "ETC_GMT_ADD_1",
+                        "ETC_GMT_ADD_10",
+                        "ETC_GMT_ADD_11",
+                        "ETC_GMT_ADD_12",
+                        "ETC_GMT_ADD_2",
+                        "ETC_GMT_ADD_3",
+                        "ETC_GMT_ADD_4",
+                        "ETC_GMT_ADD_5",
+                        "ETC_GMT_ADD_6",
+                        "ETC_GMT_ADD_7",
+                        "ETC_GMT_ADD_8",
+                        "ETC_GMT_ADD_9",
+                        "ETC_GMT_NEG_0",
+                        "ETC_GMT_NEG_1",
+                        "ETC_GMT_NEG_10",
+                        "ETC_GMT_NEG_11",
+                        "ETC_GMT_NEG_12",
+                        "ETC_GMT_NEG_13",
+                        "ETC_GMT_NEG_14",
+                        "ETC_GMT_NEG_2",
+                        "ETC_GMT_NEG_3",
+                        "ETC_GMT_NEG_4",
+                        "ETC_GMT_NEG_5",
+                        "ETC_GMT_NEG_6",
+                        "ETC_GMT_NEG_7",
+                        "ETC_GMT_NEG_8",
+                        "ETC_GMT_NEG_9",
+                        "EUROPE_DUBLIN",
+                        "EUROPE_LONDON",
+                        "EUROPE_PARIS",
+                        "EUROPE_STOCKHOLM",
+                        "EUROPE_ZURICH",
+                        "ISRAEL",
+                        "MEXICO_GENERAL",
+                        "MST7MDT",
+                        "PACIFIC_AUCKLAND",
+                        "US_CENTRAL",
+                        "US_EASTERN",
+                        "US_MOUNTAIN",
+                        "US_PACIFIC",
+                        "UTC"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "schedule"
+            ],
             "type": "object"
         },
         "DockerImage": {
@@ -2820,6 +3040,11 @@
         "SageMakerProjectProps": {
             "additionalProperties": false,
             "properties": {
+                "dataSourceDefaults": {
+                    "$ref": "#/definitions/DataSourceDefaultsProps",
+                    "default": "- no defaults; each data source uses DataZone's own defaults for unset fields",
+                    "description": "Default values for `publishOnImport`, `enableSetting`, `schedule`, `recommendation`,\n`autoImportDataQualityResult`, and `filterExpressions`, inherited by every Glue\n(`databaseName`) entry in `dataSources`. A data source that specifies one of these\nfields itself overrides the default for that field entirely (fields are not\ndeep-merged). Has no effect on an `s3` data source, which has no equivalent\nproperties.\n\nUse cases: Consistent run schedule/publishing behavior across many data sources in a\nproducer project\n\nAWS: AWS::DataZone::DataSource (defaults applied per-data-source at synth time)\n\nValidation: Optional; DataSourceDefaultsProps"
+                },
                 "dataSources": {
                     "additionalProperties": {
                         "$ref": "#/definitions/DataSourceProps"

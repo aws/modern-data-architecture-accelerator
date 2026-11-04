@@ -6978,21 +6978,345 @@ Validation: Optional; valid NamedSageMakerProjects
 | **Additional properties** | Not allowed                         |
 | **Defined in**            | #/definitions/SageMakerProjectProps |
 
-| Property                                                                   | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| -------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [dataSources](#projects_additionalProperties_dataSources )               | No      | object | No         | -          | Data sources to import into the project. Each entry is either a \`databaseName\`, which<br />imports a Glue database and grants the project's environment user Lake Formation read<br />permissions on it and its tables, or an \`s3\`, which creates a DataZone S3 connection and<br />grants the project's environment user role IAM read (list and get) on the registered<br />bucket and prefix.<br /><br />Use cases: Importing existing Glue databases into SageMaker projects; Onboarding raw S3<br />data lake locations into a SMUS project's data catalog; Data asset discovery<br /><br />AWS: DataZone data sources with Glue run configuration; DataZone connections with S3<br />properties (AWS::DataZone::Connection)<br /><br />Validation: Optional; map of data source name to DataSourceProps |
-| - [domainUnit](#projects_additionalProperties_domainUnit )                 | No      | string | No         | -          | Domain unit path where the project will be created (e.g., /some/domain/unit).<br /><br />Use cases: Project organizational placement; Governance scope targeting<br /><br />AWS: DataZone domain unit for project placement<br /><br />Validation: Optional; slash-delimited domain unit path                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| - [environmentConfigs](#projects_additionalProperties_environmentConfigs ) | No      | object | No         | -          | Per-environment configuration overrides for this project's environments.<br /><br />Use cases: Project-specific environment customization<br /><br />AWS: DataZone project environment configurations<br /><br />Validation: Optional; map of environment name to ProjectEnvironmentConfiguration                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| - [glossaries](#projects_additionalProperties_glossaries )                 | No      | object | No         | -          | Business glossaries to create, owned by this project. A metadata form field's<br />\`glossaryId\` may reference a declared glossary here as \`"<glossaryName>"\`, or a<br />declared term as \`"<glossaryName>.<termName>"\`, which MDAA resolves to the<br />glossary's deploy-time ID and wires as a CDK dependency, or it may continue to<br />use a literal, pre-existing glossary ID string, unchanged. The map key is used<br />as the glossary's stable identifier; renaming a key replaces that glossary<br />(create-then-delete).<br /><br />Use cases: Business glossary/terminology as code; Linking standardized terms to metadata forms<br /><br />AWS: DataZone business glossaries and terms, owned by the project<br /><br />Validation: Optional; map of glossary name to GlossaryProps         |
-| - [groups](#projects_additionalProperties_groups )                         | No      | object | No         | -          | MDAA group configuration names that receive PROJECT_CONTRIBUTOR designation<br />with contributor-level access to the project.<br /><br />Use cases: Team-based project contribution; Group standard access<br /><br />AWS: DataZone project membership with PROJECT_CONTRIBUTOR role<br /><br />Validation: Optional; map of ID to group config name; names must exist in module groups config                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| - [metadataForms](#projects_additionalProperties_metadataForms )           | No      | object | No         | -          | Metadata form types to create, owned by this project. Each form is defined by<br />a set of fields; MDAA assembles the Smithy model (setting the namespace to the<br />domain ID and the structure name to the form name). Forms are usable across the<br />domain to attach standardized metadata to assets. The map key is used as the form's<br />stable identifier; renaming a key replaces that form type (create-then-delete).<br /><br />Use cases: Data governance metadata standards; Asset metadata enforcement; Searchable custom attributes<br /><br />AWS: DataZone metadata form types (AWS::DataZone::FormType) owned by the project<br /><br />Validation: Optional; map of form name to MetadataFormProps; form name must be a valid Smithy structure name                                       |
-| - [nameOverride](#projects_additionalProperties_nameOverride )             | No      | string | No         | -          | Exact DataZone project name, used verbatim and bypassing MDAA naming conventions.<br />Intended for the user-facing SMUS project title, which is a free-form label chosen<br />by the business and is not derivable from org/env/domain/module metadata. All other<br />resources created by the module keep MDAA naming.<br /><br />AWS: AWS::DataZone::Project Name<br /><br />Validation: Optional; 1-64 chars matching \`^[\w -]+$\` (spaces and mixed case<br />allowed); must be unique within the DataZone domain.                                                                                                                                                                                                                                                                                         |
-| - [ownerGroups](#projects_additionalProperties_ownerGroups )               | No      | object | No         | -          | MDAA group configuration names (from the SageMaker module groups section) that<br />receive PROJECT_OWNER designation with full administrative access to the project.<br />These are not DataZone group names or Identity Center group identifiers.<br /><br />Use cases: Team-based project ownership; Group admin access<br /><br />AWS: DataZone project membership with PROJECT_OWNER role<br /><br />Validation: Optional; map of ID to group config name; names must exist in module groups config                                                                                                                                                                                                                                                                                                          |
-| - [ownerUsers](#projects_additionalProperties_ownerUsers )                 | No      | object | No         | -          | MDAA user configuration names (from the SageMaker module users section) that<br />receive PROJECT_OWNER designation with full administrative access to the project.<br />These are not DataZone usernames or Identity Center identifiers.<br /><br />Use cases: User-based project ownership; Full project admin access<br /><br />AWS: DataZone project membership with PROJECT_OWNER role<br /><br />Validation: Optional; map of ID to user config name; names must exist in module users config                                                                                                                                                                                                                                                                                                               |
-| + [profileName](#projects_additionalProperties_profileName )               | No      | string | No         | -          | Name of the project profile to use for this project. The profile must<br />target the same account as the project.<br /><br />Use cases: Profile-based project creation; Environment template selection<br /><br />AWS: DataZone project profile reference<br /><br />Validation: Required; string; must match a key in projectProfiles config                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| - [users](#projects_additionalProperties_users )                           | No      | object | No         | -          | MDAA user configuration names that receive PROJECT_CONTRIBUTOR designation<br />with contributor-level access to the project.<br /><br />Use cases: User-based project contribution; Standard project access<br /><br />AWS: DataZone project membership with PROJECT_CONTRIBUTOR role<br /><br />Validation: Optional; map of ID to user config name; names must exist in module users config                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Property                                                                   | Pattern | Type   | Deprecated | Definition                               | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| -------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [dataSourceDefaults](#projects_additionalProperties_dataSourceDefaults ) | No      | object | No         | In #/definitions/DataSourceDefaultsProps | Default values for \`publishOnImport\`, \`enableSetting\`, \`schedule\`, \`recommendation\`,<br />\`autoImportDataQualityResult\`, and \`filterExpressions\`, inherited by every Glue<br />(\`databaseName\`) entry in \`dataSources\`. A data source that specifies one of these<br />fields itself overrides the default for that field entirely (fields are not<br />deep-merged). Has no effect on an \`s3\` data source, which has no equivalent<br />properties.<br /><br />Use cases: Consistent run schedule/publishing behavior across many data sources in a<br />producer project<br /><br />AWS: AWS::DataZone::DataSource (defaults applied per-data-source at synth time)<br /><br />Validation: Optional; DataSourceDefaultsProps                                                                  |
+| - [dataSources](#projects_additionalProperties_dataSources )               | No      | object | No         | -                                        | Data sources to import into the project. Each entry is either a \`databaseName\`, which<br />imports a Glue database and grants the project's environment user Lake Formation read<br />permissions on it and its tables, or an \`s3\`, which creates a DataZone S3 connection and<br />grants the project's environment user role IAM read (list and get) on the registered<br />bucket and prefix.<br /><br />Use cases: Importing existing Glue databases into SageMaker projects; Onboarding raw S3<br />data lake locations into a SMUS project's data catalog; Data asset discovery<br /><br />AWS: DataZone data sources with Glue run configuration; DataZone connections with S3<br />properties (AWS::DataZone::Connection)<br /><br />Validation: Optional; map of data source name to DataSourceProps |
+| - [domainUnit](#projects_additionalProperties_domainUnit )                 | No      | string | No         | -                                        | Domain unit path where the project will be created (e.g., /some/domain/unit).<br /><br />Use cases: Project organizational placement; Governance scope targeting<br /><br />AWS: DataZone domain unit for project placement<br /><br />Validation: Optional; slash-delimited domain unit path                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| - [environmentConfigs](#projects_additionalProperties_environmentConfigs ) | No      | object | No         | -                                        | Per-environment configuration overrides for this project's environments.<br /><br />Use cases: Project-specific environment customization<br /><br />AWS: DataZone project environment configurations<br /><br />Validation: Optional; map of environment name to ProjectEnvironmentConfiguration                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [glossaries](#projects_additionalProperties_glossaries )                 | No      | object | No         | -                                        | Business glossaries to create, owned by this project. A metadata form field's<br />\`glossaryId\` may reference a declared glossary here as \`"<glossaryName>"\`, or a<br />declared term as \`"<glossaryName>.<termName>"\`, which MDAA resolves to the<br />glossary's deploy-time ID and wires as a CDK dependency, or it may continue to<br />use a literal, pre-existing glossary ID string, unchanged. The map key is used<br />as the glossary's stable identifier; renaming a key replaces that glossary<br />(create-then-delete).<br /><br />Use cases: Business glossary/terminology as code; Linking standardized terms to metadata forms<br /><br />AWS: DataZone business glossaries and terms, owned by the project<br /><br />Validation: Optional; map of glossary name to GlossaryProps         |
+| - [groups](#projects_additionalProperties_groups )                         | No      | object | No         | -                                        | MDAA group configuration names that receive PROJECT_CONTRIBUTOR designation<br />with contributor-level access to the project.<br /><br />Use cases: Team-based project contribution; Group standard access<br /><br />AWS: DataZone project membership with PROJECT_CONTRIBUTOR role<br /><br />Validation: Optional; map of ID to group config name; names must exist in module groups config                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| - [metadataForms](#projects_additionalProperties_metadataForms )           | No      | object | No         | -                                        | Metadata form types to create, owned by this project. Each form is defined by<br />a set of fields; MDAA assembles the Smithy model (setting the namespace to the<br />domain ID and the structure name to the form name). Forms are usable across the<br />domain to attach standardized metadata to assets. The map key is used as the form's<br />stable identifier; renaming a key replaces that form type (create-then-delete).<br /><br />Use cases: Data governance metadata standards; Asset metadata enforcement; Searchable custom attributes<br /><br />AWS: DataZone metadata form types (AWS::DataZone::FormType) owned by the project<br /><br />Validation: Optional; map of form name to MetadataFormProps; form name must be a valid Smithy structure name                                       |
+| - [nameOverride](#projects_additionalProperties_nameOverride )             | No      | string | No         | -                                        | Exact DataZone project name, used verbatim and bypassing MDAA naming conventions.<br />Intended for the user-facing SMUS project title, which is a free-form label chosen<br />by the business and is not derivable from org/env/domain/module metadata. All other<br />resources created by the module keep MDAA naming.<br /><br />AWS: AWS::DataZone::Project Name<br /><br />Validation: Optional; 1-64 chars matching \`^[\w -]+$\` (spaces and mixed case<br />allowed); must be unique within the DataZone domain.                                                                                                                                                                                                                                                                                         |
+| - [ownerGroups](#projects_additionalProperties_ownerGroups )               | No      | object | No         | -                                        | MDAA group configuration names (from the SageMaker module groups section) that<br />receive PROJECT_OWNER designation with full administrative access to the project.<br />These are not DataZone group names or Identity Center group identifiers.<br /><br />Use cases: Team-based project ownership; Group admin access<br /><br />AWS: DataZone project membership with PROJECT_OWNER role<br /><br />Validation: Optional; map of ID to group config name; names must exist in module groups config                                                                                                                                                                                                                                                                                                          |
+| - [ownerUsers](#projects_additionalProperties_ownerUsers )                 | No      | object | No         | -                                        | MDAA user configuration names (from the SageMaker module users section) that<br />receive PROJECT_OWNER designation with full administrative access to the project.<br />These are not DataZone usernames or Identity Center identifiers.<br /><br />Use cases: User-based project ownership; Full project admin access<br /><br />AWS: DataZone project membership with PROJECT_OWNER role<br /><br />Validation: Optional; map of ID to user config name; names must exist in module users config                                                                                                                                                                                                                                                                                                               |
+| + [profileName](#projects_additionalProperties_profileName )               | No      | string | No         | -                                        | Name of the project profile to use for this project. The profile must<br />target the same account as the project.<br /><br />Use cases: Profile-based project creation; Environment template selection<br /><br />AWS: DataZone project profile reference<br /><br />Validation: Required; string; must match a key in projectProfiles config                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| - [users](#projects_additionalProperties_users )                           | No      | object | No         | -                                        | MDAA user configuration names that receive PROJECT_CONTRIBUTOR designation<br />with contributor-level access to the project.<br /><br />Use cases: User-based project contribution; Standard project access<br /><br />AWS: DataZone project membership with PROJECT_CONTRIBUTOR role<br /><br />Validation: Optional; map of ID to user config name; names must exist in module users config                                                                                                                                                                                                                                                                                                                                                                                                                    |
 
-#### <a name="projects_additionalProperties_dataSources"></a>6.1.1. Property `root > projects > additionalProperties > dataSources`
+#### <a name="projects_additionalProperties_dataSourceDefaults"></a>6.1.1. Property `root > projects > additionalProperties > dataSourceDefaults`
+
+|                           |                                                                                   |
+| ------------------------- | --------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                          |
+| **Required**              | No                                                                                |
+| **Additional properties** | Not allowed                                                                       |
+| **Default**               | `"- no defaults; each data source uses DataZone's own defaults for unset fields"` |
+| **Defined in**            | #/definitions/DataSourceDefaultsProps                                             |
+
+**Description:** Default values for `publishOnImport`, `enableSetting`, `schedule`, `recommendation`,
+`autoImportDataQualityResult`, and `filterExpressions`, inherited by every Glue
+(`databaseName`) entry in `dataSources`. A data source that specifies one of these
+fields itself overrides the default for that field entirely (fields are not
+deep-merged). Has no effect on an `s3` data source, which has no equivalent
+properties.
+
+Use cases: Consistent run schedule/publishing behavior across many data sources in a
+producer project
+
+AWS: AWS::DataZone::DataSource (defaults applied per-data-source at synth time)
+
+Validation: Optional; DataSourceDefaultsProps
+
+| Property                                                                                                        | Pattern | Type             | Deprecated | Definition                                     | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| --------------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [autoImportDataQualityResult](#projects_additionalProperties_dataSourceDefaults_autoImportDataQualityResult ) | No      | boolean          | No         | -                                              | Whether to automatically import AWS Glue Data Quality results as part of the data<br />source run.<br /><br />AWS: AWS::DataZone::DataSource Configuration.GlueRunConfiguration.AutoImportDataQualityResult<br /><br />Validation: Optional; boolean                                                                                                                                                                              |
+| - [enableSetting](#projects_additionalProperties_dataSourceDefaults_enableSetting )                             | No      | enum (of string) | No         | -                                              | Whether the data source is enabled to run.<br /><br />AWS: AWS::DataZone::DataSource EnableSetting<br /><br />Validation: Optional; 'ENABLED' \| 'DISABLED'                                                                                                                                                                                                                                                                       |
+| - [filterExpressions](#projects_additionalProperties_dataSourceDefaults_filterExpressions )                     | No      | array            | No         | -                                              | Filter expressions limiting which tables in the Glue database are imported. When<br />omitted, every table in the database is imported.<br /><br />Use cases: Importing a subset of tables from a large shared database<br /><br />AWS: AWS::DataZone::DataSource Configuration.GlueRunConfiguration.RelationalFilterConfigurations[].FilterExpressions<br /><br />Validation: Optional; array of DataSourceFilterExpressionProps |
+| - [publishOnImport](#projects_additionalProperties_dataSourceDefaults_publishOnImport )                         | No      | boolean          | No         | -                                              | Whether assets imported by the data source are automatically published to the<br />project's catalog. When false, imported assets remain in the project inventory<br />and must be published by hand.<br /><br />Use cases: Publish-and-subscribe data mesh models; Automated asset catalog population<br /><br />AWS: AWS::DataZone::DataSource PublishOnImport<br /><br />Validation: Optional; boolean                         |
+| - [recommendation](#projects_additionalProperties_dataSourceDefaults_recommendation )                           | No      | object           | No         | In #/definitions/DataSourceRecommendationProps | Business name generation recommendation configuration for assets this data source<br />imports.<br /><br />AWS: AWS::DataZone::DataSource Recommendation (AWS::DataZone::DataSource RecommendationConfiguration)<br /><br />Validation: Optional; DataSourceRecommendationProps                                                                                                                                                   |
+| - [schedule](#projects_additionalProperties_dataSourceDefaults_schedule )                                       | No      | object           | No         | In #/definitions/DataSourceScheduleProps       | Schedule on which the data source runs automatically. When omitted, the data source<br />never runs on its own and must be run manually or via another trigger.<br /><br />Use cases: Automated, recurring metadata import<br /><br />AWS: AWS::DataZone::DataSource Schedule (AWS::DataZone::DataSource ScheduleConfiguration)<br /><br />Validation: Optional; DataSourceScheduleProps                                          |
+
+##### <a name="projects_additionalProperties_dataSourceDefaults_autoImportDataQualityResult"></a>6.1.1.1. Property `root > projects > additionalProperties > dataSourceDefaults > autoImportDataQualityResult`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+**Description:** Whether to automatically import AWS Glue Data Quality results as part of the data
+source run.
+
+AWS: AWS::DataZone::DataSource Configuration.GlueRunConfiguration.AutoImportDataQualityResult
+
+Validation: Optional; boolean
+
+##### <a name="projects_additionalProperties_dataSourceDefaults_enableSetting"></a>6.1.1.2. Property `root > projects > additionalProperties > dataSourceDefaults > enableSetting`
+
+|              |                                |
+| ------------ | ------------------------------ |
+| **Type**     | `enum (of string)`             |
+| **Required** | No                             |
+| **Default**  | `"ENABLED (DataZone default)"` |
+
+**Description:** Whether the data source is enabled to run.
+
+AWS: AWS::DataZone::DataSource EnableSetting
+
+Validation: Optional; 'ENABLED' | 'DISABLED'
+
+Must be one of:
+* "DISABLED"
+* "ENABLED"
+
+##### <a name="projects_additionalProperties_dataSourceDefaults_filterExpressions"></a>6.1.1.3. Property `root > projects > additionalProperties > dataSourceDefaults > filterExpressions`
+
+|              |                                               |
+| ------------ | --------------------------------------------- |
+| **Type**     | `array`                                       |
+| **Required** | No                                            |
+| **Default**  | `"- every table in the database is imported"` |
+
+**Description:** Filter expressions limiting which tables in the Glue database are imported. When
+omitted, every table in the database is imported.
+
+Use cases: Importing a subset of tables from a large shared database
+
+AWS: AWS::DataZone::DataSource Configuration.GlueRunConfiguration.RelationalFilterConfigurations[].FilterExpressions
+
+Validation: Optional; array of DataSourceFilterExpressionProps
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                              | Description                                                                         |
+| ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| [DataSourceFilterExpressionProps](#projects_additionalProperties_dataSourceDefaults_filterExpressions_items) | A filter expression controls only which tables the data source imports into the ... |
+
+###### <a name="projects_additionalProperties_dataSourceDefaults_filterExpressions_items"></a>6.1.1.3.1. root > projects > additionalProperties > dataSourceDefaults > filterExpressions > DataSourceFilterExpressionProps
+
+|                           |                                               |
+| ------------------------- | --------------------------------------------- |
+| **Type**                  | `object`                                      |
+| **Required**              | No                                            |
+| **Additional properties** | Not allowed                                   |
+| **Defined in**            | #/definitions/DataSourceFilterExpressionProps |
+
+**Description:** A filter expression controls only which tables the data source imports into the
+catalog; it is not an access boundary. The project's environment user is still granted
+Lake Formation read permissions on every table in the database (see `createDataSource`),
+so an `EXCLUDE`d table remains queryable and should not be relied on to hide sensitive data.
+
+| Property                                                                                              | Pattern | Type             | Deprecated | Definition | Title/Description                                                                                                                                                                    |
+| ----------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| + [expression](#projects_additionalProperties_dataSourceDefaults_filterExpressions_items_expression ) | No      | string           | No         | -          | The filter expression, e.g. a glob pattern matching table names.<br /><br />AWS: AWS::DataZone::DataSource FilterExpression.Expression<br /><br />Validation: Required; 1-2048 chars |
+| + [type](#projects_additionalProperties_dataSourceDefaults_filterExpressions_items_type )             | No      | enum (of string) | No         | -          | Whether the expression includes or excludes matching tables.<br /><br />AWS: AWS::DataZone::DataSource FilterExpression.Type<br /><br />Validation: Required; 'INCLUDE' \| 'EXCLUDE' |
+
+###### <a name="projects_additionalProperties_dataSourceDefaults_filterExpressions_items_expression"></a>6.1.1.3.1.1. Property `root > projects > additionalProperties > dataSourceDefaults > filterExpressions > filterExpressions items > expression`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** The filter expression, e.g. a glob pattern matching table names.
+
+AWS: AWS::DataZone::DataSource FilterExpression.Expression
+
+Validation: Required; 1-2048 chars
+
+| Restrictions   |      |
+| -------------- | ---- |
+| **Min length** | 1    |
+| **Max length** | 2048 |
+
+###### <a name="projects_additionalProperties_dataSourceDefaults_filterExpressions_items_type"></a>6.1.1.3.1.2. Property `root > projects > additionalProperties > dataSourceDefaults > filterExpressions > filterExpressions items > type`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | Yes                |
+
+**Description:** Whether the expression includes or excludes matching tables.
+
+AWS: AWS::DataZone::DataSource FilterExpression.Type
+
+Validation: Required; 'INCLUDE' | 'EXCLUDE'
+
+Must be one of:
+* "EXCLUDE"
+* "INCLUDE"
+
+##### <a name="projects_additionalProperties_dataSourceDefaults_publishOnImport"></a>6.1.1.4. Property `root > projects > additionalProperties > dataSourceDefaults > publishOnImport`
+
+|              |                                                             |
+| ------------ | ----------------------------------------------------------- |
+| **Type**     | `boolean`                                                   |
+| **Required** | No                                                          |
+| **Default**  | `"false (DataZone default; assets are not auto-published)"` |
+
+**Description:** Whether assets imported by the data source are automatically published to the
+project's catalog. When false, imported assets remain in the project inventory
+and must be published by hand.
+
+Use cases: Publish-and-subscribe data mesh models; Automated asset catalog population
+
+AWS: AWS::DataZone::DataSource PublishOnImport
+
+Validation: Optional; boolean
+
+##### <a name="projects_additionalProperties_dataSourceDefaults_recommendation"></a>6.1.1.5. Property `root > projects > additionalProperties > dataSourceDefaults > recommendation`
+
+|                           |                                               |
+| ------------------------- | --------------------------------------------- |
+| **Type**                  | `object`                                      |
+| **Required**              | No                                            |
+| **Additional properties** | Not allowed                                   |
+| **Default**               | `"- business name generation is not enabled"` |
+| **Defined in**            | #/definitions/DataSourceRecommendationProps   |
+
+**Description:** Business name generation recommendation configuration for assets this data source
+imports.
+
+AWS: AWS::DataZone::DataSource Recommendation (AWS::DataZone::DataSource RecommendationConfiguration)
+
+Validation: Optional; DataSourceRecommendationProps
+
+| Property                                                                                                                         | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                           |
+| -------------------------------------------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enableBusinessNameGeneration](#projects_additionalProperties_dataSourceDefaults_recommendation_enableBusinessNameGeneration ) | No      | boolean | No         | -          | Whether automatic business name generation is enabled for assets this data source<br />imports.<br /><br />AWS: AWS::DataZone::DataSource RecommendationConfiguration.EnableBusinessNameGeneration<br /><br />Validation: Optional; boolean |
+
+###### <a name="projects_additionalProperties_dataSourceDefaults_recommendation_enableBusinessNameGeneration"></a>6.1.1.5.1. Property `root > projects > additionalProperties > dataSourceDefaults > recommendation > enableBusinessNameGeneration`
+
+|              |                              |
+| ------------ | ---------------------------- |
+| **Type**     | `boolean`                    |
+| **Required** | No                           |
+| **Default**  | `"false (DataZone default)"` |
+
+**Description:** Whether automatic business name generation is enabled for assets this data source
+imports.
+
+AWS: AWS::DataZone::DataSource RecommendationConfiguration.EnableBusinessNameGeneration
+
+Validation: Optional; boolean
+
+##### <a name="projects_additionalProperties_dataSourceDefaults_schedule"></a>6.1.1.6. Property `root > projects > additionalProperties > dataSourceDefaults > schedule`
+
+|                           |                                              |
+| ------------------------- | -------------------------------------------- |
+| **Type**                  | `object`                                     |
+| **Required**              | No                                           |
+| **Additional properties** | Not allowed                                  |
+| **Default**               | `"- data source does not run on a schedule"` |
+| **Defined in**            | #/definitions/DataSourceScheduleProps        |
+
+**Description:** Schedule on which the data source runs automatically. When omitted, the data source
+never runs on its own and must be run manually or via another trigger.
+
+Use cases: Automated, recurring metadata import
+
+AWS: AWS::DataZone::DataSource Schedule (AWS::DataZone::DataSource ScheduleConfiguration)
+
+Validation: Optional; DataSourceScheduleProps
+
+| Property                                                                           | Pattern | Type             | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ---------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [schedule](#projects_additionalProperties_dataSourceDefaults_schedule_schedule ) | No      | string           | No         | -          | Cron expression for the data source run schedule, e.g. \`cron(0 6 * * ? *)\`. DataZone's<br />cron grammar only accepts a single value in the minute and hour fields (no lists,<br />ranges, or step values, e.g. an every-6-hours step); such expressions pass synth<br />but fail at deploy.<br /><br />AWS: AWS::DataZone::DataSource ScheduleConfiguration.Schedule<br /><br />Validation: Required; valid DataZone cron expression with single-value minute/hour fields |
+| - [timezone](#projects_additionalProperties_dataSourceDefaults_schedule_timezone ) | No      | enum (of string) | No         | -          | Timezone the schedule is evaluated in, e.g. \`UTC\`, \`US_EASTERN\`.<br /><br />AWS: AWS::DataZone::DataSource ScheduleConfiguration.Timezone<br /><br />Validation: Optional; valid DataZone Timezone enum value                                                                                                                                                                                                                                                            |
+
+###### <a name="projects_additionalProperties_dataSourceDefaults_schedule_schedule"></a>6.1.1.6.1. Property `root > projects > additionalProperties > dataSourceDefaults > schedule > schedule`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Cron expression for the data source run schedule, e.g. `cron(0 6 * * ? *)`. DataZone's
+cron grammar only accepts a single value in the minute and hour fields (no lists,
+ranges, or step values, e.g. an every-6-hours step); such expressions pass synth
+but fail at deploy.
+
+AWS: AWS::DataZone::DataSource ScheduleConfiguration.Schedule
+
+Validation: Required; valid DataZone cron expression with single-value minute/hour fields
+
+###### <a name="projects_additionalProperties_dataSourceDefaults_schedule_timezone"></a>6.1.1.6.2. Property `root > projects > additionalProperties > dataSourceDefaults > schedule > timezone`
+
+|              |                            |
+| ------------ | -------------------------- |
+| **Type**     | `enum (of string)`         |
+| **Required** | No                         |
+| **Default**  | `"UTC (DataZone default)"` |
+
+**Description:** Timezone the schedule is evaluated in, e.g. `UTC`, `US_EASTERN`.
+
+AWS: AWS::DataZone::DataSource ScheduleConfiguration.Timezone
+
+Validation: Optional; valid DataZone Timezone enum value
+
+Must be one of:
+* "AFRICA_JOHANNESBURG"
+* "AMERICA_MONTREAL"
+* "AMERICA_SAO_PAULO"
+* "ASIA_BAHRAIN"
+* "ASIA_BANGKOK"
+* "ASIA_CALCUTTA"
+* "ASIA_DUBAI"
+* "ASIA_HONG_KONG"
+* "ASIA_JAKARTA"
+* "ASIA_KUALA_LUMPUR"
+* "ASIA_SEOUL"
+* "ASIA_SHANGHAI"
+* "ASIA_SINGAPORE"
+* "ASIA_TAIPEI"
+* "ASIA_TOKYO"
+* "AUSTRALIA_MELBOURNE"
+* "AUSTRALIA_SYDNEY"
+* "CANADA_CENTRAL"
+* "CET"
+* "CST6CDT"
+* "ETC_GMT"
+* "ETC_GMT0"
+* "ETC_GMT_ADD_0"
+* "ETC_GMT_ADD_1"
+* "ETC_GMT_ADD_10"
+* "ETC_GMT_ADD_11"
+* "ETC_GMT_ADD_12"
+* "ETC_GMT_ADD_2"
+* "ETC_GMT_ADD_3"
+* "ETC_GMT_ADD_4"
+* "ETC_GMT_ADD_5"
+* "ETC_GMT_ADD_6"
+* "ETC_GMT_ADD_7"
+* "ETC_GMT_ADD_8"
+* "ETC_GMT_ADD_9"
+* "ETC_GMT_NEG_0"
+* "ETC_GMT_NEG_1"
+* "ETC_GMT_NEG_10"
+* "ETC_GMT_NEG_11"
+* "ETC_GMT_NEG_12"
+* "ETC_GMT_NEG_13"
+* "ETC_GMT_NEG_14"
+* "ETC_GMT_NEG_2"
+* "ETC_GMT_NEG_3"
+* "ETC_GMT_NEG_4"
+* "ETC_GMT_NEG_5"
+* "ETC_GMT_NEG_6"
+* "ETC_GMT_NEG_7"
+* "ETC_GMT_NEG_8"
+* "ETC_GMT_NEG_9"
+* "EUROPE_DUBLIN"
+* "EUROPE_LONDON"
+* "EUROPE_PARIS"
+* "EUROPE_STOCKHOLM"
+* "EUROPE_ZURICH"
+* "ISRAEL"
+* "MEXICO_GENERAL"
+* "MST7MDT"
+* "PACIFIC_AUCKLAND"
+* "US_CENTRAL"
+* "US_EASTERN"
+* "US_MOUNTAIN"
+* "US_PACIFIC"
+* "UTC"
+
+#### <a name="projects_additionalProperties_dataSources"></a>6.1.2. Property `root > projects > additionalProperties > dataSources`
 
 |                           |                                                                                                                        |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
@@ -7014,11 +7338,11 @@ properties (AWS::DataZone::Connection)
 
 Validation: Optional; map of data source name to DataSourceProps
 
-| Property                                                               | Pattern | Type   | Deprecated | Definition                       | Title/Description                                                   |
-| ---------------------------------------------------------------------- | ------- | ------ | ---------- | -------------------------------- | ------------------------------------------------------------------- |
-| - [](#projects_additionalProperties_dataSources_additionalProperties ) | No      | object | No         | In #/definitions/DataSourceProps | A project data source: either a Glue database or a raw S3 location. |
+| Property                                                               | Pattern | Type   | Deprecated | Definition                       | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ---------------------------------------------------------------------- | ------- | ------ | ---------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [](#projects_additionalProperties_dataSources_additionalProperties ) | No      | object | No         | In #/definitions/DataSourceProps | A project data source: either a Glue database or a raw S3 location, plus optional<br />run/publish behavior. Exactly one of \`databaseName\` or \`s3\` is required; this is<br />enforced at synth time (not via the JSON schema, since the mutually-exclusive pair<br />sits alongside other, non-exclusive optional fields here). The inherited<br />\`DataSourceDefaultsProps\` fields (and \`metadataForms\`) only apply to \`databaseName\`<br />entries; setting any of them directly on an \`s3\` entry is a synth-time error, since<br />an \`AWS::DataZone::Connection\` has no equivalent properties. Values an \`s3\` entry<br />inherits from the project's \`dataSourceDefaults\` are silently not applied instead,<br />since a project-level default is not a misconfiguration of the entry itself. |
 
-##### <a name="projects_additionalProperties_dataSources_additionalProperties"></a>6.1.1.1. Property `root > projects > additionalProperties > dataSources > DataSourceProps`
+##### <a name="projects_additionalProperties_dataSources_additionalProperties"></a>6.1.2.1. Property `root > projects > additionalProperties > dataSources > DataSourceProps`
 
 |                           |                               |
 | ------------------------- | ----------------------------- |
@@ -7027,14 +7351,44 @@ Validation: Optional; map of data source name to DataSourceProps
 | **Additional properties** | Not allowed                   |
 | **Defined in**            | #/definitions/DataSourceProps |
 
-**Description:** A project data source: either a Glue database or a raw S3 location.
+**Description:** A project data source: either a Glue database or a raw S3 location, plus optional
+run/publish behavior. Exactly one of `databaseName` or `s3` is required; this is
+enforced at synth time (not via the JSON schema, since the mutually-exclusive pair
+sits alongside other, non-exclusive optional fields here). The inherited
+`DataSourceDefaultsProps` fields (and `metadataForms`) only apply to `databaseName`
+entries; setting any of them directly on an `s3` entry is a synth-time error, since
+an `AWS::DataZone::Connection` has no equivalent properties. Values an `s3` entry
+inherits from the project's `dataSourceDefaults` are silently not applied instead,
+since a project-level default is not a misconfiguration of the entry itself.
 
-| Property                                                                                        | Pattern | Type   | Deprecated | Definition                         | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| ----------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [databaseName](#projects_additionalProperties_dataSources_additionalProperties_databaseName ) | No      | string | No         | -                                  | Glue database name to use as the data source. The project's environment user<br />will be granted Lake Formation read permissions on this database and its tables.<br />Mutually exclusive with \`s3\`.<br /><br />Use cases: Glue database import; Data asset registration<br /><br />AWS: Glue database referenced as a DataZone data source<br /><br />Validation: Exactly one of databaseName or s3 is required; valid Glue database name |
-| - [s3](#projects_additionalProperties_dataSources_additionalProperties_s3 )                     | No      | object | No         | In #/definitions/S3DataSourceProps | S3 location to register as a data source. Mutually exclusive with \`databaseName\`.<br /><br />Use cases: Onboarding raw S3 data lake locations into a SMUS project's data catalog<br /><br />AWS: DataZone connection with S3 properties (AWS::DataZone::Connection)<br /><br />Validation: Exactly one of databaseName or s3 is required                                                                                                    |
+| Property                                                                                                                      | Pattern | Type             | Deprecated | Definition                                     | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ----------------------------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [autoImportDataQualityResult](#projects_additionalProperties_dataSources_additionalProperties_autoImportDataQualityResult ) | No      | boolean          | No         | -                                              | Whether to automatically import AWS Glue Data Quality results as part of the data<br />source run.<br /><br />AWS: AWS::DataZone::DataSource Configuration.GlueRunConfiguration.AutoImportDataQualityResult<br /><br />Validation: Optional; boolean                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| - [databaseName](#projects_additionalProperties_dataSources_additionalProperties_databaseName )                               | No      | string           | No         | -                                              | Glue database name to use as the data source. The project's environment user<br />will be granted Lake Formation read permissions on this database and its tables.<br />Mutually exclusive with \`s3\`.<br /><br />Use cases: Glue database import; Data asset registration<br /><br />AWS: Glue database referenced as a DataZone data source<br /><br />Validation: Exactly one of databaseName or s3 is required; valid Glue database name                                                                                                                                                                                                                                                          |
+| - [enableSetting](#projects_additionalProperties_dataSources_additionalProperties_enableSetting )                             | No      | enum (of string) | No         | -                                              | Whether the data source is enabled to run.<br /><br />AWS: AWS::DataZone::DataSource EnableSetting<br /><br />Validation: Optional; 'ENABLED' \| 'DISABLED'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [filterExpressions](#projects_additionalProperties_dataSources_additionalProperties_filterExpressions )                     | No      | array            | No         | -                                              | Filter expressions limiting which tables in the Glue database are imported. When<br />omitted, every table in the database is imported.<br /><br />Use cases: Importing a subset of tables from a large shared database<br /><br />AWS: AWS::DataZone::DataSource Configuration.GlueRunConfiguration.RelationalFilterConfigurations[].FilterExpressions<br /><br />Validation: Optional; array of DataSourceFilterExpressionProps                                                                                                                                                                                                                                                                      |
+| - [metadataForms](#projects_additionalProperties_dataSources_additionalProperties_metadataForms )                             | No      | object           | No         | -                                              | Metadata forms, declared under this project's \`metadataForms\`, to attach to every<br />asset this data source imports. Map key must match a key declared under<br />\`metadataForms\`, must reference an \`ENABLED\` form, and \`content\` must satisfy that<br />form's required fields; only applies to Glue database data sources (a synth-time<br />error on an \`s3\` entry).<br /><br />Use cases: Pre-populating governance metadata on imported assets<br /><br />AWS: AWS::DataZone::DataSource AssetFormsInput<br /><br />Validation: Optional; map of declared metadataForms key to DataSourceMetadataFormProps;<br />max 10 entries; each key must exist in this project's metadataForms |
+| - [publishOnImport](#projects_additionalProperties_dataSources_additionalProperties_publishOnImport )                         | No      | boolean          | No         | -                                              | Whether assets imported by the data source are automatically published to the<br />project's catalog. When false, imported assets remain in the project inventory<br />and must be published by hand.<br /><br />Use cases: Publish-and-subscribe data mesh models; Automated asset catalog population<br /><br />AWS: AWS::DataZone::DataSource PublishOnImport<br /><br />Validation: Optional; boolean                                                                                                                                                                                                                                                                                              |
+| - [recommendation](#projects_additionalProperties_dataSources_additionalProperties_recommendation )                           | No      | object           | No         | In #/definitions/DataSourceRecommendationProps | Business name generation recommendation configuration for assets this data source<br />imports.<br /><br />AWS: AWS::DataZone::DataSource Recommendation (AWS::DataZone::DataSource RecommendationConfiguration)<br /><br />Validation: Optional; DataSourceRecommendationProps                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [s3](#projects_additionalProperties_dataSources_additionalProperties_s3 )                                                   | No      | object           | No         | In #/definitions/S3DataSourceProps             | S3 location to register as a data source. Mutually exclusive with \`databaseName\`.<br /><br />Use cases: Onboarding raw S3 data lake locations into a SMUS project's data catalog<br /><br />AWS: DataZone connection with S3 properties (AWS::DataZone::Connection)<br /><br />Validation: Exactly one of databaseName or s3 is required                                                                                                                                                                                                                                                                                                                                                             |
+| - [schedule](#projects_additionalProperties_dataSources_additionalProperties_schedule )                                       | No      | object           | No         | In #/definitions/DataSourceScheduleProps       | Schedule on which the data source runs automatically. When omitted, the data source<br />never runs on its own and must be run manually or via another trigger.<br /><br />Use cases: Automated, recurring metadata import<br /><br />AWS: AWS::DataZone::DataSource Schedule (AWS::DataZone::DataSource ScheduleConfiguration)<br /><br />Validation: Optional; DataSourceScheduleProps                                                                                                                                                                                                                                                                                                               |
 
-###### <a name="projects_additionalProperties_dataSources_additionalProperties_databaseName"></a>6.1.1.1.1. Property `root > projects > additionalProperties > dataSources > additionalProperties > databaseName`
+###### <a name="projects_additionalProperties_dataSources_additionalProperties_autoImportDataQualityResult"></a>6.1.2.1.1. Property `root > projects > additionalProperties > dataSources > additionalProperties > autoImportDataQualityResult`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+**Description:** Whether to automatically import AWS Glue Data Quality results as part of the data
+source run.
+
+AWS: AWS::DataZone::DataSource Configuration.GlueRunConfiguration.AutoImportDataQualityResult
+
+Validation: Optional; boolean
+
+###### <a name="projects_additionalProperties_dataSources_additionalProperties_databaseName"></a>6.1.2.1.2. Property `root > projects > additionalProperties > dataSources > additionalProperties > databaseName`
 
 |              |          |
 | ------------ | -------- |
@@ -7051,7 +7405,183 @@ AWS: Glue database referenced as a DataZone data source
 
 Validation: Exactly one of databaseName or s3 is required; valid Glue database name
 
-###### <a name="projects_additionalProperties_dataSources_additionalProperties_s3"></a>6.1.1.1.2. Property `root > projects > additionalProperties > dataSources > additionalProperties > s3`
+###### <a name="projects_additionalProperties_dataSources_additionalProperties_enableSetting"></a>6.1.2.1.3. Property `root > projects > additionalProperties > dataSources > additionalProperties > enableSetting`
+
+|              |                                |
+| ------------ | ------------------------------ |
+| **Type**     | `enum (of string)`             |
+| **Required** | No                             |
+| **Default**  | `"ENABLED (DataZone default)"` |
+
+**Description:** Whether the data source is enabled to run.
+
+AWS: AWS::DataZone::DataSource EnableSetting
+
+Validation: Optional; 'ENABLED' | 'DISABLED'
+
+Must be one of:
+* "DISABLED"
+* "ENABLED"
+
+###### <a name="projects_additionalProperties_dataSources_additionalProperties_filterExpressions"></a>6.1.2.1.4. Property `root > projects > additionalProperties > dataSources > additionalProperties > filterExpressions`
+
+|              |                                               |
+| ------------ | --------------------------------------------- |
+| **Type**     | `array`                                       |
+| **Required** | No                                            |
+| **Default**  | `"- every table in the database is imported"` |
+
+**Description:** Filter expressions limiting which tables in the Glue database are imported. When
+omitted, every table in the database is imported.
+
+Use cases: Importing a subset of tables from a large shared database
+
+AWS: AWS::DataZone::DataSource Configuration.GlueRunConfiguration.RelationalFilterConfigurations[].FilterExpressions
+
+Validation: Optional; array of DataSourceFilterExpressionProps
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                                            | Description                                                                         |
+| -------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| [DataSourceFilterExpressionProps](#projects_additionalProperties_dataSources_additionalProperties_filterExpressions_items) | A filter expression controls only which tables the data source imports into the ... |
+
+###### <a name="projects_additionalProperties_dataSources_additionalProperties_filterExpressions_items"></a>6.1.2.1.4.1. root > projects > additionalProperties > dataSources > additionalProperties > filterExpressions > DataSourceFilterExpressionProps
+
+|                           |                                                                                                                                                       |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                              |
+| **Required**              | No                                                                                                                                                    |
+| **Additional properties** | Not allowed                                                                                                                                           |
+| **Same definition as**    | [projects_additionalProperties_dataSourceDefaults_filterExpressions_items](#projects_additionalProperties_dataSourceDefaults_filterExpressions_items) |
+
+**Description:** A filter expression controls only which tables the data source imports into the
+catalog; it is not an access boundary. The project's environment user is still granted
+Lake Formation read permissions on every table in the database (see `createDataSource`),
+so an `EXCLUDE`d table remains queryable and should not be relied on to hide sensitive data.
+
+###### <a name="projects_additionalProperties_dataSources_additionalProperties_metadataForms"></a>6.1.2.1.5. Property `root > projects > additionalProperties > dataSources > additionalProperties > metadataForms`
+
+|                           |                                                                                                                                                           |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                                  |
+| **Required**              | No                                                                                                                                                        |
+| **Additional properties** | [Each additional property must conform to the schema](#projects_additionalProperties_dataSources_additionalProperties_metadataForms_additionalProperties) |
+| **Default**               | `"- no metadata forms are attached"`                                                                                                                      |
+
+**Description:** Metadata forms, declared under this project's `metadataForms`, to attach to every
+asset this data source imports. Map key must match a key declared under
+`metadataForms`, must reference an `ENABLED` form, and `content` must satisfy that
+form's required fields; only applies to Glue database data sources (a synth-time
+error on an `s3` entry).
+
+Use cases: Pre-populating governance metadata on imported assets
+
+AWS: AWS::DataZone::DataSource AssetFormsInput
+
+Validation: Optional; map of declared metadataForms key to DataSourceMetadataFormProps;
+max 10 entries; each key must exist in this project's metadataForms
+
+| Property                                                                                                  | Pattern | Type   | Deprecated | Definition                                   | Title/Description |
+| --------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | -------------------------------------------- | ----------------- |
+| - [](#projects_additionalProperties_dataSources_additionalProperties_metadataForms_additionalProperties ) | No      | object | No         | In #/definitions/DataSourceMetadataFormProps | -                 |
+
+###### <a name="projects_additionalProperties_dataSources_additionalProperties_metadataForms_additionalProperties"></a>6.1.2.1.5.1. Property `root > projects > additionalProperties > dataSources > additionalProperties > metadataForms > DataSourceMetadataFormProps`
+
+|                           |                                           |
+| ------------------------- | ----------------------------------------- |
+| **Type**                  | `object`                                  |
+| **Required**              | No                                        |
+| **Additional properties** | Not allowed                               |
+| **Defined in**            | #/definitions/DataSourceMetadataFormProps |
+
+| Property                                                                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ------------------------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [content](#projects_additionalProperties_dataSources_additionalProperties_metadataForms_additionalProperties_content ) | No      | string | No         | -          | JSON-encoded field values to pre-populate on this form when attached to each asset<br />the data source imports. Must conform to the referenced form type's field schema:<br />every field the form declares \`required: true\` must be present, and every key must<br />match a field the form declares. Validated at synth time.<br /><br />AWS: AWS::DataZone::DataSource FormInput.Content<br /><br />Validation: Optional; JSON string, max 75000 chars; required if the referenced form<br />declares any required fields; keys must match the form's declared fields |
+
+###### <a name="projects_additionalProperties_dataSources_additionalProperties_metadataForms_additionalProperties_content"></a>6.1.2.1.5.1.1. Property `root > projects > additionalProperties > dataSources > additionalProperties > metadataForms > additionalProperties > content`
+
+|              |                                                                                                                      |
+| ------------ | -------------------------------------------------------------------------------------------------------------------- |
+| **Type**     | `string`                                                                                                             |
+| **Required** | No                                                                                                                   |
+| **Default**  | `"- form is attached with no pre-populated content (only valid if the referenced form declares no required fields)"` |
+
+**Description:** JSON-encoded field values to pre-populate on this form when attached to each asset
+the data source imports. Must conform to the referenced form type's field schema:
+every field the form declares `required: true` must be present, and every key must
+match a field the form declares. Validated at synth time.
+
+AWS: AWS::DataZone::DataSource FormInput.Content
+
+Validation: Optional; JSON string, max 75000 chars; required if the referenced form
+declares any required fields; keys must match the form's declared fields
+
+| Restrictions   |       |
+| -------------- | ----- |
+| **Max length** | 75000 |
+
+###### <a name="projects_additionalProperties_dataSources_additionalProperties_publishOnImport"></a>6.1.2.1.6. Property `root > projects > additionalProperties > dataSources > additionalProperties > publishOnImport`
+
+|              |                                                             |
+| ------------ | ----------------------------------------------------------- |
+| **Type**     | `boolean`                                                   |
+| **Required** | No                                                          |
+| **Default**  | `"false (DataZone default; assets are not auto-published)"` |
+
+**Description:** Whether assets imported by the data source are automatically published to the
+project's catalog. When false, imported assets remain in the project inventory
+and must be published by hand.
+
+Use cases: Publish-and-subscribe data mesh models; Automated asset catalog population
+
+AWS: AWS::DataZone::DataSource PublishOnImport
+
+Validation: Optional; boolean
+
+###### <a name="projects_additionalProperties_dataSources_additionalProperties_recommendation"></a>6.1.2.1.7. Property `root > projects > additionalProperties > dataSources > additionalProperties > recommendation`
+
+|                           |                                               |
+| ------------------------- | --------------------------------------------- |
+| **Type**                  | `object`                                      |
+| **Required**              | No                                            |
+| **Additional properties** | Not allowed                                   |
+| **Default**               | `"- business name generation is not enabled"` |
+| **Defined in**            | #/definitions/DataSourceRecommendationProps   |
+
+**Description:** Business name generation recommendation configuration for assets this data source
+imports.
+
+AWS: AWS::DataZone::DataSource Recommendation (AWS::DataZone::DataSource RecommendationConfiguration)
+
+Validation: Optional; DataSourceRecommendationProps
+
+| Property                                                                                                                         | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                           |
+| -------------------------------------------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enableBusinessNameGeneration](#projects_additionalProperties_dataSourceDefaults_recommendation_enableBusinessNameGeneration ) | No      | boolean | No         | -          | Whether automatic business name generation is enabled for assets this data source<br />imports.<br /><br />AWS: AWS::DataZone::DataSource RecommendationConfiguration.EnableBusinessNameGeneration<br /><br />Validation: Optional; boolean |
+
+###### <a name="projects_additionalProperties_dataSourceDefaults_recommendation_enableBusinessNameGeneration"></a>6.1.2.1.7.1. Property `root > projects > additionalProperties > dataSourceDefaults > recommendation > enableBusinessNameGeneration`
+
+|              |                              |
+| ------------ | ---------------------------- |
+| **Type**     | `boolean`                    |
+| **Required** | No                           |
+| **Default**  | `"false (DataZone default)"` |
+
+**Description:** Whether automatic business name generation is enabled for assets this data source
+imports.
+
+AWS: AWS::DataZone::DataSource RecommendationConfiguration.EnableBusinessNameGeneration
+
+Validation: Optional; boolean
+
+###### <a name="projects_additionalProperties_dataSources_additionalProperties_s3"></a>6.1.2.1.8. Property `root > projects > additionalProperties > dataSources > additionalProperties > s3`
 
 |                           |                                 |
 | ------------------------- | ------------------------------- |
@@ -7075,7 +7605,7 @@ Validation: Exactly one of databaseName or s3 is required
 | - [registerS3AccessGrantLocation](#projects_additionalProperties_dataSources_additionalProperties_s3_registerS3AccessGrantLocation ) | No      | boolean | No         | -          | Whether to register an S3 Access Grants location for the connection.<br /><br />AWS: AWS::DataZone::Connection S3Properties.RegisterS3AccessGrantLocation<br /><br />Validation: Optional; boolean                                                                                                                                                                                                                                  |
 | - [s3AccessGrantLocationId](#projects_additionalProperties_dataSources_additionalProperties_s3_s3AccessGrantLocationId )             | No      | string  | No         | -          | S3 Access Grants location ID to associate with the connection.<br /><br />AWS: AWS::DataZone::Connection S3Properties.S3AccessGrantLocationId<br /><br />Validation: Optional; valid S3 Access Grants location ID                                                                                                                                                                                                                   |
 
-###### <a name="projects_additionalProperties_dataSources_additionalProperties_s3_bucketName"></a>6.1.1.1.2.1. Property `root > projects > additionalProperties > dataSources > additionalProperties > s3 > bucketName`
+###### <a name="projects_additionalProperties_dataSources_additionalProperties_s3_bucketName"></a>6.1.2.1.8.1. Property `root > projects > additionalProperties > dataSources > additionalProperties > s3 > bucketName`
 
 |              |          |
 | ------------ | -------- |
@@ -7090,7 +7620,7 @@ AWS: AWS::DataZone::Connection S3Properties.S3Uri (bucket component)
 
 Validation: Required; valid S3 bucket name, or an `ssm-org:`/`ssm-domain:` reference
 
-###### <a name="projects_additionalProperties_dataSources_additionalProperties_s3_prefix"></a>6.1.1.1.2.2. Property `root > projects > additionalProperties > dataSources > additionalProperties > s3 > prefix`
+###### <a name="projects_additionalProperties_dataSources_additionalProperties_s3_prefix"></a>6.1.2.1.8.2. Property `root > projects > additionalProperties > dataSources > additionalProperties > s3 > prefix`
 
 |              |          |
 | ------------ | -------- |
@@ -7106,7 +7636,7 @@ AWS: AWS::DataZone::Connection S3Properties.S3Uri (prefix component)
 
 Validation: Optional; S3 key prefix
 
-###### <a name="projects_additionalProperties_dataSources_additionalProperties_s3_registerS3AccessGrantLocation"></a>6.1.1.1.2.3. Property `root > projects > additionalProperties > dataSources > additionalProperties > s3 > registerS3AccessGrantLocation`
+###### <a name="projects_additionalProperties_dataSources_additionalProperties_s3_registerS3AccessGrantLocation"></a>6.1.2.1.8.3. Property `root > projects > additionalProperties > dataSources > additionalProperties > s3 > registerS3AccessGrantLocation`
 
 |              |           |
 | ------------ | --------- |
@@ -7119,7 +7649,7 @@ AWS: AWS::DataZone::Connection S3Properties.RegisterS3AccessGrantLocation
 
 Validation: Optional; boolean
 
-###### <a name="projects_additionalProperties_dataSources_additionalProperties_s3_s3AccessGrantLocationId"></a>6.1.1.1.2.4. Property `root > projects > additionalProperties > dataSources > additionalProperties > s3 > s3AccessGrantLocationId`
+###### <a name="projects_additionalProperties_dataSources_additionalProperties_s3_s3AccessGrantLocationId"></a>6.1.2.1.8.4. Property `root > projects > additionalProperties > dataSources > additionalProperties > s3 > s3AccessGrantLocationId`
 
 |              |          |
 | ------------ | -------- |
@@ -7132,7 +7662,127 @@ AWS: AWS::DataZone::Connection S3Properties.S3AccessGrantLocationId
 
 Validation: Optional; valid S3 Access Grants location ID
 
-#### <a name="projects_additionalProperties_domainUnit"></a>6.1.2. Property `root > projects > additionalProperties > domainUnit`
+###### <a name="projects_additionalProperties_dataSources_additionalProperties_schedule"></a>6.1.2.1.9. Property `root > projects > additionalProperties > dataSources > additionalProperties > schedule`
+
+|                           |                                              |
+| ------------------------- | -------------------------------------------- |
+| **Type**                  | `object`                                     |
+| **Required**              | No                                           |
+| **Additional properties** | Not allowed                                  |
+| **Default**               | `"- data source does not run on a schedule"` |
+| **Defined in**            | #/definitions/DataSourceScheduleProps        |
+
+**Description:** Schedule on which the data source runs automatically. When omitted, the data source
+never runs on its own and must be run manually or via another trigger.
+
+Use cases: Automated, recurring metadata import
+
+AWS: AWS::DataZone::DataSource Schedule (AWS::DataZone::DataSource ScheduleConfiguration)
+
+Validation: Optional; DataSourceScheduleProps
+
+| Property                                                                           | Pattern | Type             | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ---------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [schedule](#projects_additionalProperties_dataSourceDefaults_schedule_schedule ) | No      | string           | No         | -          | Cron expression for the data source run schedule, e.g. \`cron(0 6 * * ? *)\`. DataZone's<br />cron grammar only accepts a single value in the minute and hour fields (no lists,<br />ranges, or step values, e.g. an every-6-hours step); such expressions pass synth<br />but fail at deploy.<br /><br />AWS: AWS::DataZone::DataSource ScheduleConfiguration.Schedule<br /><br />Validation: Required; valid DataZone cron expression with single-value minute/hour fields |
+| - [timezone](#projects_additionalProperties_dataSourceDefaults_schedule_timezone ) | No      | enum (of string) | No         | -          | Timezone the schedule is evaluated in, e.g. \`UTC\`, \`US_EASTERN\`.<br /><br />AWS: AWS::DataZone::DataSource ScheduleConfiguration.Timezone<br /><br />Validation: Optional; valid DataZone Timezone enum value                                                                                                                                                                                                                                                            |
+
+###### <a name="projects_additionalProperties_dataSourceDefaults_schedule_schedule"></a>6.1.2.1.9.1. Property `root > projects > additionalProperties > dataSourceDefaults > schedule > schedule`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Cron expression for the data source run schedule, e.g. `cron(0 6 * * ? *)`. DataZone's
+cron grammar only accepts a single value in the minute and hour fields (no lists,
+ranges, or step values, e.g. an every-6-hours step); such expressions pass synth
+but fail at deploy.
+
+AWS: AWS::DataZone::DataSource ScheduleConfiguration.Schedule
+
+Validation: Required; valid DataZone cron expression with single-value minute/hour fields
+
+###### <a name="projects_additionalProperties_dataSourceDefaults_schedule_timezone"></a>6.1.2.1.9.2. Property `root > projects > additionalProperties > dataSourceDefaults > schedule > timezone`
+
+|              |                            |
+| ------------ | -------------------------- |
+| **Type**     | `enum (of string)`         |
+| **Required** | No                         |
+| **Default**  | `"UTC (DataZone default)"` |
+
+**Description:** Timezone the schedule is evaluated in, e.g. `UTC`, `US_EASTERN`.
+
+AWS: AWS::DataZone::DataSource ScheduleConfiguration.Timezone
+
+Validation: Optional; valid DataZone Timezone enum value
+
+Must be one of:
+* "AFRICA_JOHANNESBURG"
+* "AMERICA_MONTREAL"
+* "AMERICA_SAO_PAULO"
+* "ASIA_BAHRAIN"
+* "ASIA_BANGKOK"
+* "ASIA_CALCUTTA"
+* "ASIA_DUBAI"
+* "ASIA_HONG_KONG"
+* "ASIA_JAKARTA"
+* "ASIA_KUALA_LUMPUR"
+* "ASIA_SEOUL"
+* "ASIA_SHANGHAI"
+* "ASIA_SINGAPORE"
+* "ASIA_TAIPEI"
+* "ASIA_TOKYO"
+* "AUSTRALIA_MELBOURNE"
+* "AUSTRALIA_SYDNEY"
+* "CANADA_CENTRAL"
+* "CET"
+* "CST6CDT"
+* "ETC_GMT"
+* "ETC_GMT0"
+* "ETC_GMT_ADD_0"
+* "ETC_GMT_ADD_1"
+* "ETC_GMT_ADD_10"
+* "ETC_GMT_ADD_11"
+* "ETC_GMT_ADD_12"
+* "ETC_GMT_ADD_2"
+* "ETC_GMT_ADD_3"
+* "ETC_GMT_ADD_4"
+* "ETC_GMT_ADD_5"
+* "ETC_GMT_ADD_6"
+* "ETC_GMT_ADD_7"
+* "ETC_GMT_ADD_8"
+* "ETC_GMT_ADD_9"
+* "ETC_GMT_NEG_0"
+* "ETC_GMT_NEG_1"
+* "ETC_GMT_NEG_10"
+* "ETC_GMT_NEG_11"
+* "ETC_GMT_NEG_12"
+* "ETC_GMT_NEG_13"
+* "ETC_GMT_NEG_14"
+* "ETC_GMT_NEG_2"
+* "ETC_GMT_NEG_3"
+* "ETC_GMT_NEG_4"
+* "ETC_GMT_NEG_5"
+* "ETC_GMT_NEG_6"
+* "ETC_GMT_NEG_7"
+* "ETC_GMT_NEG_8"
+* "ETC_GMT_NEG_9"
+* "EUROPE_DUBLIN"
+* "EUROPE_LONDON"
+* "EUROPE_PARIS"
+* "EUROPE_STOCKHOLM"
+* "EUROPE_ZURICH"
+* "ISRAEL"
+* "MEXICO_GENERAL"
+* "MST7MDT"
+* "PACIFIC_AUCKLAND"
+* "US_CENTRAL"
+* "US_EASTERN"
+* "US_MOUNTAIN"
+* "US_PACIFIC"
+* "UTC"
+
+#### <a name="projects_additionalProperties_domainUnit"></a>6.1.3. Property `root > projects > additionalProperties > domainUnit`
 
 |              |          |
 | ------------ | -------- |
@@ -7147,7 +7797,7 @@ AWS: DataZone domain unit for project placement
 
 Validation: Optional; slash-delimited domain unit path
 
-#### <a name="projects_additionalProperties_environmentConfigs"></a>6.1.3. Property `root > projects > additionalProperties > environmentConfigs`
+#### <a name="projects_additionalProperties_environmentConfigs"></a>6.1.4. Property `root > projects > additionalProperties > environmentConfigs`
 
 |                           |                                                                                                                               |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
@@ -7167,7 +7817,7 @@ Validation: Optional; map of environment name to ProjectEnvironmentConfiguration
 | ----------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------------ | ----------------- |
 | - [](#projects_additionalProperties_environmentConfigs_additionalProperties ) | No      | object | No         | In #/definitions/ProjectEnvironmentConfiguration | -                 |
 
-##### <a name="projects_additionalProperties_environmentConfigs_additionalProperties"></a>6.1.3.1. Property `root > projects > additionalProperties > environmentConfigs > ProjectEnvironmentConfiguration`
+##### <a name="projects_additionalProperties_environmentConfigs_additionalProperties"></a>6.1.4.1. Property `root > projects > additionalProperties > environmentConfigs > ProjectEnvironmentConfiguration`
 
 |                           |                                               |
 | ------------------------- | --------------------------------------------- |
@@ -7180,7 +7830,7 @@ Validation: Optional; map of environment name to ProjectEnvironmentConfiguration
 | -------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [parameters](#projects_additionalProperties_environmentConfigs_additionalProperties_parameters ) | No      | object | No         | -          | -                 |
 
-###### <a name="projects_additionalProperties_environmentConfigs_additionalProperties_parameters"></a>6.1.3.1.1. Property `root > projects > additionalProperties > environmentConfigs > additionalProperties > parameters`
+###### <a name="projects_additionalProperties_environmentConfigs_additionalProperties_parameters"></a>6.1.4.1.1. Property `root > projects > additionalProperties > environmentConfigs > additionalProperties > parameters`
 
 |                           |                                                                                                                                                               |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -7192,14 +7842,14 @@ Validation: Optional; map of environment name to ProjectEnvironmentConfiguration
 | ------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#projects_additionalProperties_environmentConfigs_additionalProperties_parameters_additionalProperties ) | No      | string | No         | -          | -                 |
 
-###### <a name="projects_additionalProperties_environmentConfigs_additionalProperties_parameters_additionalProperties"></a>6.1.3.1.1.1. Property `root > projects > additionalProperties > environmentConfigs > additionalProperties > parameters > additionalProperties`
+###### <a name="projects_additionalProperties_environmentConfigs_additionalProperties_parameters_additionalProperties"></a>6.1.4.1.1.1. Property `root > projects > additionalProperties > environmentConfigs > additionalProperties > parameters > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="projects_additionalProperties_glossaries"></a>6.1.4. Property `root > projects > additionalProperties > glossaries`
+#### <a name="projects_additionalProperties_glossaries"></a>6.1.5. Property `root > projects > additionalProperties > glossaries`
 
 |                           |                                                                                                                       |
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------- |
@@ -7225,7 +7875,7 @@ Validation: Optional; map of glossary name to GlossaryProps
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------ | ----------------- |
 | - [](#projects_additionalProperties_glossaries_additionalProperties ) | No      | object | No         | In #/definitions/GlossaryProps | -                 |
 
-##### <a name="projects_additionalProperties_glossaries_additionalProperties"></a>6.1.4.1. Property `root > projects > additionalProperties > glossaries > GlossaryProps`
+##### <a name="projects_additionalProperties_glossaries_additionalProperties"></a>6.1.5.1. Property `root > projects > additionalProperties > glossaries > GlossaryProps`
 
 |                           |                             |
 | ------------------------- | --------------------------- |
@@ -7240,7 +7890,7 @@ Validation: Optional; map of glossary name to GlossaryProps
 | - [status](#projects_additionalProperties_glossaries_additionalProperties_status )           | No      | enum (of string) | No         | -          | Glossary status. DISABLED glossaries are retained but not attachable.<br /><br />Use cases: Staged glossary rollout; Temporarily retiring a glossary<br /><br />AWS: DataZone glossary status<br /><br />Validation: Optional; 'ENABLED' \| 'DISABLED'                                                                                                                                                                   |
 | - [terms](#projects_additionalProperties_glossaries_additionalProperties_terms )             | No      | object           | No         | -          | Terms to create under this glossary. The map key is used as the term's stable<br />identifier and is the name referenced by a form field's \`glossaryId\` as<br />\`"<glossaryName>.<termName>"\`.<br /><br />Use cases: Standardized business terminology; Terms linked to metadata form fields<br /><br />AWS: DataZone business glossary terms<br /><br />Validation: Optional; map of term name to GlossaryTermProps |
 
-###### <a name="projects_additionalProperties_glossaries_additionalProperties_description"></a>6.1.4.1.1. Property `root > projects > additionalProperties > glossaries > additionalProperties > description`
+###### <a name="projects_additionalProperties_glossaries_additionalProperties_description"></a>6.1.5.1.1. Property `root > projects > additionalProperties > glossaries > additionalProperties > description`
 
 |              |          |
 | ------------ | -------- |
@@ -7255,7 +7905,7 @@ AWS: DataZone glossary description
 
 Validation: Optional; string
 
-###### <a name="projects_additionalProperties_glossaries_additionalProperties_status"></a>6.1.4.1.2. Property `root > projects > additionalProperties > glossaries > additionalProperties > status`
+###### <a name="projects_additionalProperties_glossaries_additionalProperties_status"></a>6.1.5.1.2. Property `root > projects > additionalProperties > glossaries > additionalProperties > status`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -7275,7 +7925,7 @@ Must be one of:
 * "DISABLED"
 * "ENABLED"
 
-###### <a name="projects_additionalProperties_glossaries_additionalProperties_terms"></a>6.1.4.1.3. Property `root > projects > additionalProperties > glossaries > additionalProperties > terms`
+###### <a name="projects_additionalProperties_glossaries_additionalProperties_terms"></a>6.1.5.1.3. Property `root > projects > additionalProperties > glossaries > additionalProperties > terms`
 
 |                           |                                                                                                                                                  |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -7298,7 +7948,7 @@ Validation: Optional; map of term name to GlossaryTermProps
 | ------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------------------------------- | ----------------- |
 | - [](#projects_additionalProperties_glossaries_additionalProperties_terms_additionalProperties ) | No      | object | No         | In #/definitions/GlossaryTermProps | -                 |
 
-###### <a name="projects_additionalProperties_glossaries_additionalProperties_terms_additionalProperties"></a>6.1.4.1.3.1. Property `root > projects > additionalProperties > glossaries > additionalProperties > terms > GlossaryTermProps`
+###### <a name="projects_additionalProperties_glossaries_additionalProperties_terms_additionalProperties"></a>6.1.5.1.3.1. Property `root > projects > additionalProperties > glossaries > additionalProperties > terms > GlossaryTermProps`
 
 |                           |                                 |
 | ------------------------- | ------------------------------- |
@@ -7313,7 +7963,7 @@ Validation: Optional; map of term name to GlossaryTermProps
 | - [shortDescription](#projects_additionalProperties_glossaries_additionalProperties_terms_additionalProperties_shortDescription ) | No      | string           | No         | -          | Short, business-facing definition of the term.<br /><br />Validation: Optional; string; max 1024 chars                                    |
 | - [status](#projects_additionalProperties_glossaries_additionalProperties_terms_additionalProperties_status )                     | No      | enum (of string) | No         | -          | Term status. DISABLED terms are retained but not attachable to assets or fields.<br /><br />Validation: Optional; 'ENABLED' \| 'DISABLED' |
 
-###### <a name="projects_additionalProperties_glossaries_additionalProperties_terms_additionalProperties_longDescription"></a>6.1.4.1.3.1.1. Property `root > projects > additionalProperties > glossaries > additionalProperties > terms > additionalProperties > longDescription`
+###### <a name="projects_additionalProperties_glossaries_additionalProperties_terms_additionalProperties_longDescription"></a>6.1.5.1.3.1.1. Property `root > projects > additionalProperties > glossaries > additionalProperties > terms > additionalProperties > longDescription`
 
 |              |          |
 | ------------ | -------- |
@@ -7324,7 +7974,7 @@ Validation: Optional; map of term name to GlossaryTermProps
 
 Validation: Optional; string; max 4096 chars
 
-###### <a name="projects_additionalProperties_glossaries_additionalProperties_terms_additionalProperties_shortDescription"></a>6.1.4.1.3.1.2. Property `root > projects > additionalProperties > glossaries > additionalProperties > terms > additionalProperties > shortDescription`
+###### <a name="projects_additionalProperties_glossaries_additionalProperties_terms_additionalProperties_shortDescription"></a>6.1.5.1.3.1.2. Property `root > projects > additionalProperties > glossaries > additionalProperties > terms > additionalProperties > shortDescription`
 
 |              |          |
 | ------------ | -------- |
@@ -7335,7 +7985,7 @@ Validation: Optional; string; max 4096 chars
 
 Validation: Optional; string; max 1024 chars
 
-###### <a name="projects_additionalProperties_glossaries_additionalProperties_terms_additionalProperties_status"></a>6.1.4.1.3.1.3. Property `root > projects > additionalProperties > glossaries > additionalProperties > terms > additionalProperties > status`
+###### <a name="projects_additionalProperties_glossaries_additionalProperties_terms_additionalProperties_status"></a>6.1.5.1.3.1.3. Property `root > projects > additionalProperties > glossaries > additionalProperties > terms > additionalProperties > status`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -7351,7 +8001,7 @@ Must be one of:
 * "DISABLED"
 * "ENABLED"
 
-#### <a name="projects_additionalProperties_groups"></a>6.1.5. Property `root > projects > additionalProperties > groups`
+#### <a name="projects_additionalProperties_groups"></a>6.1.6. Property `root > projects > additionalProperties > groups`
 
 |                           |                                                                                                                   |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------- |
@@ -7372,14 +8022,14 @@ Validation: Optional; map of ID to group config name; names must exist in module
 | ----------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#projects_additionalProperties_groups_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="projects_additionalProperties_groups_additionalProperties"></a>6.1.5.1. Property `root > projects > additionalProperties > groups > additionalProperties`
+##### <a name="projects_additionalProperties_groups_additionalProperties"></a>6.1.6.1. Property `root > projects > additionalProperties > groups > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="projects_additionalProperties_metadataForms"></a>6.1.6. Property `root > projects > additionalProperties > metadataForms`
+#### <a name="projects_additionalProperties_metadataForms"></a>6.1.7. Property `root > projects > additionalProperties > metadataForms`
 
 |                           |                                                                                                                          |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
@@ -7403,7 +8053,7 @@ Validation: Optional; map of form name to MetadataFormProps; form name must be a
 | ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------------------------------- | ----------------- |
 | - [](#projects_additionalProperties_metadataForms_additionalProperties ) | No      | object | No         | In #/definitions/MetadataFormProps | -                 |
 
-##### <a name="projects_additionalProperties_metadataForms_additionalProperties"></a>6.1.6.1. Property `root > projects > additionalProperties > metadataForms > MetadataFormProps`
+##### <a name="projects_additionalProperties_metadataForms_additionalProperties"></a>6.1.7.1. Property `root > projects > additionalProperties > metadataForms > MetadataFormProps`
 
 |                           |                                 |
 | ------------------------- | ------------------------------- |
@@ -7418,7 +8068,7 @@ Validation: Optional; map of form name to MetadataFormProps; form name must be a
 | + [fields](#projects_additionalProperties_metadataForms_additionalProperties_fields )           | No      | object           | No         | -          | Field definitions for the form. Each entry becomes a member of the generated<br />Smithy structure; declaration order is preserved.<br /><br />Use cases: Custom metadata attributes; Required governance fields; Searchable attributes<br /><br />AWS: Smithy structure members in a DataZone form type model<br /><br />Validation: Required; non-empty map of field name to FormFieldProps |
 | - [status](#projects_additionalProperties_metadataForms_additionalProperties_status )           | No      | enum (of string) | No         | -          | Form type status. DISABLED form types are retained but not attachable.<br /><br />Use cases: Staged form rollout; Temporarily retiring a form<br /><br />AWS: DataZone form type status<br /><br />Validation: Optional; 'ENABLED' \| 'DISABLED'                                                                                                                                              |
 
-###### <a name="projects_additionalProperties_metadataForms_additionalProperties_description"></a>6.1.6.1.1. Property `root > projects > additionalProperties > metadataForms > additionalProperties > description`
+###### <a name="projects_additionalProperties_metadataForms_additionalProperties_description"></a>6.1.7.1.1. Property `root > projects > additionalProperties > metadataForms > additionalProperties > description`
 
 |              |          |
 | ------------ | -------- |
@@ -7433,7 +8083,7 @@ AWS: DataZone form type description
 
 Validation: Optional; string
 
-###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields"></a>6.1.6.1.2. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields`
+###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields"></a>6.1.7.1.2. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields`
 
 |                           |                                                                                                                                                      |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -7454,7 +8104,7 @@ Validation: Required; non-empty map of field name to FormFieldProps
 | ---------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------- | ----------------- |
 | - [](#projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties ) | No      | object | No         | In #/definitions/FormFieldProps | -                 |
 
-###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties"></a>6.1.6.1.2.1. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields > FormFieldProps`
+###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties"></a>6.1.7.1.2.1. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields > FormFieldProps`
 
 |                           |                              |
 | ------------------------- | ---------------------------- |
@@ -7471,7 +8121,7 @@ Validation: Required; non-empty map of field name to FormFieldProps
 | - [searchable](#projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_searchable )   | No      | array of enum (of string) | No         | -          | Search indexing modes for the field, annotated via \`@amazon.datazone#searchable\`.<br />LEXICAL enables stemmed/partial matches (disables semantic search); TECHNICAL<br />indexes for technical identifier search. Omit for no explicit indexing.<br /><br />Validation: Optional; array of 'LEXICAL' \| 'TECHNICAL'                                                                                                                                                                                                                          |
 | + [type](#projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_type )               | No      | enum (of string)          | No         | -          | Smithy prelude type for the field (e.g. String, Boolean, Integer).<br /><br />Validation: Required; one of String \| Boolean \| Integer \| Long \| Float \| Double \| Timestamp                                                                                                                                                                                                                                                                                                                                                                 |
 
-###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_description"></a>6.1.6.1.2.1.1. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields > additionalProperties > description`
+###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_description"></a>6.1.7.1.2.1.1. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields > additionalProperties > description`
 
 |              |                      |
 | ------------ | -------------------- |
@@ -7484,7 +8134,7 @@ trait. Lets stewards see what the field means when the form is attached to an as
 
 Validation: Optional; string
 
-###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_glossaryId"></a>6.1.6.1.2.1.2. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields > additionalProperties > glossaryId`
+###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_glossaryId"></a>6.1.7.1.2.1.2. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields > additionalProperties > glossaryId`
 
 |              |          |
 | ------------ | -------- |
@@ -7501,7 +8151,7 @@ until deploy.
 Validation: Optional; valid DataZone glossary ID (unless resolved from a
 deploy-time `glossaries` reference)
 
-###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_required"></a>6.1.6.1.2.1.3. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields > additionalProperties > required`
+###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_required"></a>6.1.7.1.2.1.3. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields > additionalProperties > required`
 
 |              |           |
 | ------------ | --------- |
@@ -7514,7 +8164,7 @@ form is attached to an asset.
 
 Validation: Optional; boolean
 
-###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_searchable"></a>6.1.6.1.2.1.4. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields > additionalProperties > searchable`
+###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_searchable"></a>6.1.7.1.2.1.4. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields > additionalProperties > searchable`
 
 |              |                             |
 | ------------ | --------------------------- |
@@ -7539,7 +8189,7 @@ Validation: Optional; array of 'LEXICAL' | 'TECHNICAL'
 | ---------------------------------------------------------------------------------------------------------------------------------- | ----------- |
 | [searchable items](#projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_searchable_items) | -           |
 
-###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_searchable_items"></a>6.1.6.1.2.1.4.1. root > projects > additionalProperties > metadataForms > additionalProperties > fields > additionalProperties > searchable > searchable items
+###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_searchable_items"></a>6.1.7.1.2.1.4.1. root > projects > additionalProperties > metadataForms > additionalProperties > fields > additionalProperties > searchable > searchable items
 
 |              |                    |
 | ------------ | ------------------ |
@@ -7550,7 +8200,7 @@ Must be one of:
 * "LEXICAL"
 * "TECHNICAL"
 
-###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_type"></a>6.1.6.1.2.1.5. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields > additionalProperties > type`
+###### <a name="projects_additionalProperties_metadataForms_additionalProperties_fields_additionalProperties_type"></a>6.1.7.1.2.1.5. Property `root > projects > additionalProperties > metadataForms > additionalProperties > fields > additionalProperties > type`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -7570,7 +8220,7 @@ Must be one of:
 * "String"
 * "Timestamp"
 
-###### <a name="projects_additionalProperties_metadataForms_additionalProperties_status"></a>6.1.6.1.3. Property `root > projects > additionalProperties > metadataForms > additionalProperties > status`
+###### <a name="projects_additionalProperties_metadataForms_additionalProperties_status"></a>6.1.7.1.3. Property `root > projects > additionalProperties > metadataForms > additionalProperties > status`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -7590,7 +8240,7 @@ Must be one of:
 * "DISABLED"
 * "ENABLED"
 
-#### <a name="projects_additionalProperties_nameOverride"></a>6.1.7. Property `root > projects > additionalProperties > nameOverride`
+#### <a name="projects_additionalProperties_nameOverride"></a>6.1.8. Property `root > projects > additionalProperties > nameOverride`
 
 |              |          |
 | ------------ | -------- |
@@ -7607,7 +8257,7 @@ AWS: AWS::DataZone::Project Name
 Validation: Optional; 1-64 chars matching `^[\w -]+$` (spaces and mixed case
 allowed); must be unique within the DataZone domain.
 
-#### <a name="projects_additionalProperties_ownerGroups"></a>6.1.8. Property `root > projects > additionalProperties > ownerGroups`
+#### <a name="projects_additionalProperties_ownerGroups"></a>6.1.9. Property `root > projects > additionalProperties > ownerGroups`
 
 |                           |                                                                                                                        |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
@@ -7629,14 +8279,14 @@ Validation: Optional; map of ID to group config name; names must exist in module
 | ---------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#projects_additionalProperties_ownerGroups_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="projects_additionalProperties_ownerGroups_additionalProperties"></a>6.1.8.1. Property `root > projects > additionalProperties > ownerGroups > additionalProperties`
+##### <a name="projects_additionalProperties_ownerGroups_additionalProperties"></a>6.1.9.1. Property `root > projects > additionalProperties > ownerGroups > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="projects_additionalProperties_ownerUsers"></a>6.1.9. Property `root > projects > additionalProperties > ownerUsers`
+#### <a name="projects_additionalProperties_ownerUsers"></a>6.1.10. Property `root > projects > additionalProperties > ownerUsers`
 
 |                           |                                                                                                                       |
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------- |
@@ -7658,14 +8308,14 @@ Validation: Optional; map of ID to user config name; names must exist in module 
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#projects_additionalProperties_ownerUsers_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="projects_additionalProperties_ownerUsers_additionalProperties"></a>6.1.9.1. Property `root > projects > additionalProperties > ownerUsers > additionalProperties`
+##### <a name="projects_additionalProperties_ownerUsers_additionalProperties"></a>6.1.10.1. Property `root > projects > additionalProperties > ownerUsers > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="projects_additionalProperties_profileName"></a>6.1.10. Property `root > projects > additionalProperties > profileName`
+#### <a name="projects_additionalProperties_profileName"></a>6.1.11. Property `root > projects > additionalProperties > profileName`
 
 |              |          |
 | ------------ | -------- |
@@ -7681,7 +8331,7 @@ AWS: DataZone project profile reference
 
 Validation: Required; string; must match a key in projectProfiles config
 
-#### <a name="projects_additionalProperties_users"></a>6.1.11. Property `root > projects > additionalProperties > users`
+#### <a name="projects_additionalProperties_users"></a>6.1.12. Property `root > projects > additionalProperties > users`
 
 |                           |                                                                                                                  |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------- |
@@ -7702,7 +8352,7 @@ Validation: Optional; map of ID to user config name; names must exist in module 
 | ---------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#projects_additionalProperties_users_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="projects_additionalProperties_users_additionalProperties"></a>6.1.11.1. Property `root > projects > additionalProperties > users > additionalProperties`
+##### <a name="projects_additionalProperties_users_additionalProperties"></a>6.1.12.1. Property `root > projects > additionalProperties > users > additionalProperties`
 
 |              |          |
 | ------------ | -------- |

@@ -50,9 +50,11 @@ import {
 } from '@aws-mdaa/s3-helpers';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import {
+  DataSourceDefaultsProps,
   SagemakerProjectL3Construct,
   SagemakerProjectL3ConstructProps,
   SageMakerProjectProps,
+  resolveDataSourceDefaults,
 } from '@aws-mdaa/sagemaker-project-l3-construct';
 import { MdaaSnsTopic, MdaaSnsTopicProps } from '@aws-mdaa/sns-constructs';
 import {
@@ -640,6 +642,8 @@ interface DatazoneResources {
   readonly lakeformationManageAccessRole?: IRole;
   readonly glueConnectionId?: string;
   readonly envUserRoleArn?: string;
+  /** Only set in SMUS (sagemaker) mode, from the project's own `dataSourceDefaults`. */
+  readonly dataSourceDefaults?: DataSourceDefaultsProps;
 }
 
 export class DataOpsProjectL3Construct extends MdaaL3Construct {
@@ -987,6 +991,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       datazoneProject: project,
       glueConnectionId: project.glueConnectionId,
       envUserRoleArn: project.envUserArn,
+      dataSourceDefaults: sageMakerProps.project.dataSourceDefaults,
     };
   }
 
@@ -1381,6 +1386,10 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       throw new Error('DataZone/SageMaker Project must be defined if creating a DataZone Data Source');
     }
 
+    // In SMUS (sagemaker) mode, the project's dataSourceDefaults apply here too: this
+    // database-backed data source has no per-field overrides of its own, so the defaults
+    // are the only input (resolveDataSourceDefaults(defaults, {}) resolves to the defaults).
+    const resolved = resolveDataSourceDefaults(datazoneResources.dataSourceDefaults, {});
     const datasourceProps: CfnDataSourceProps = {
       domainIdentifier: datazoneResources.datazoneProject.project.attrDomainId,
       environmentIdentifier: datazoneResources.datazoneEnvId, //Not required for SMUS projects
@@ -1388,13 +1397,18 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       name: this.props.naming.withResourceType(MdaaResourceType.DATAZONE_DATASOURCE).resourceName(databaseName),
       projectIdentifier: datazoneResources.datazoneProject.project.attrId,
       type: 'glue',
+      publishOnImport: resolved.publishOnImport,
+      enableSetting: resolved.enableSetting,
+      schedule: resolved.schedule,
+      recommendation: resolved.recommendation,
       configuration: {
         glueRunConfiguration: {
-          autoImportDataQualityResult: true,
+          autoImportDataQualityResult: resolved.autoImportDataQualityResult ?? true,
           dataAccessRole: datazoneResources.lakeformationManageAccessRole?.roleArn, //Used only for Datazone, not SUS
           relationalFilterConfigurations: [
             {
               databaseName: databaseResourceName,
+              filterExpressions: resolved.filterExpressions,
             },
           ],
         },

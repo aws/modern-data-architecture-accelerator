@@ -44,7 +44,20 @@ describe('MDAA Compliance Stack Tests', () => {
               },
             },
           },
+          dataSourceDefaults: {
+            publishOnImport: true,
+            enableSetting: 'ENABLED',
+            schedule: { schedule: 'cron(0 6 * * ? *)', timezone: 'UTC' },
+            recommendation: { enableBusinessNameGeneration: true },
+          },
           dataSources: {
+            'compliance-glue-source': {
+              databaseName: 'compliance_db',
+              filterExpressions: [{ type: 'INCLUDE', expression: 'dim_*' }],
+              metadataForms: {
+                CustomerForm: { content: '{"customerName":"unknown"}' },
+              },
+            },
             'compliance-s3-source': {
               s3: {
                 bucketName: 'compliance-test-bucket',

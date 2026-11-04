@@ -527,6 +527,693 @@ describe('SagemakerProjectL3Construct', () => {
     }).toThrow(/specify exactly one of 'databaseName' or 's3'/);
   });
 
+  it('forwards publishOnImport, enableSetting, schedule, recommendation and filterExpressions to the DataSource', () => {
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-datasource-options', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        'options-profile': {
+          environments: {
+            DefaultDataLake: {},
+          },
+        },
+      },
+      projects: {
+        'options-project': {
+          profileName: 'options-profile',
+          dataSources: {
+            'test-source': {
+              databaseName: 'test_db',
+              publishOnImport: true,
+              enableSetting: 'DISABLED',
+              schedule: { schedule: 'cron(0 6 * * ? *)', timezone: 'AMERICA_MONTREAL' },
+              recommendation: { enableBusinessNameGeneration: true },
+              autoImportDataQualityResult: false,
+              filterExpressions: [
+                { type: 'INCLUDE', expression: 'dim_*' },
+                { type: 'EXCLUDE', expression: 'tmp_*' },
+              ],
+            },
+          },
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    template.hasResourceProperties('AWS::DataZone::DataSource', {
+      PublishOnImport: true,
+      EnableSetting: 'DISABLED',
+      Schedule: { Schedule: 'cron(0 6 * * ? *)', Timezone: 'AMERICA_MONTREAL' },
+      Recommendation: { EnableBusinessNameGeneration: true },
+      Configuration: {
+        GlueRunConfiguration: Match.objectLike({
+          AutoImportDataQualityResult: false,
+          RelationalFilterConfigurations: [
+            Match.objectLike({
+              DatabaseName: 'test_db',
+              FilterExpressions: [
+                { Type: 'INCLUDE', Expression: 'dim_*' },
+                { Type: 'EXCLUDE', Expression: 'tmp_*' },
+              ],
+            }),
+          ],
+        }),
+      },
+    });
+  });
+
+  it('defaults autoImportDataQualityResult to true and omits unset optional DataSource fields', () => {
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-datasource-bare', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        'bare-profile': {
+          environments: {
+            DefaultDataLake: {},
+          },
+        },
+      },
+      projects: {
+        'bare-project': {
+          profileName: 'bare-profile',
+          dataSources: {
+            'test-source': { databaseName: 'test_db' },
+          },
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    template.hasResourceProperties('AWS::DataZone::DataSource', {
+      Configuration: {
+        GlueRunConfiguration: Match.objectLike({
+          AutoImportDataQualityResult: true,
+          RelationalFilterConfigurations: [Match.objectLike({ DatabaseName: 'test_db' })],
+        }),
+      },
+      PublishOnImport: Match.absent(),
+      EnableSetting: Match.absent(),
+      Schedule: Match.absent(),
+      Recommendation: Match.absent(),
+      AssetFormsInput: Match.absent(),
+    });
+  });
+
+  it("inherits the project's dataSourceDefaults for fields a data source does not set", () => {
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-datasource-defaults', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        'defaults-profile': {
+          environments: {
+            DefaultDataLake: {},
+          },
+        },
+      },
+      projects: {
+        'defaults-project': {
+          profileName: 'defaults-profile',
+          dataSourceDefaults: {
+            publishOnImport: true,
+            enableSetting: 'ENABLED',
+            schedule: { schedule: 'cron(0 6 * * ? *)', timezone: 'UTC' },
+            recommendation: { enableBusinessNameGeneration: true },
+            autoImportDataQualityResult: false,
+            filterExpressions: [{ type: 'INCLUDE', expression: 'dim_*' }],
+          },
+          dataSources: {
+            'inherits-defaults': { databaseName: 'inherited_db' },
+            'overrides-publish': { databaseName: 'overridden_db', publishOnImport: false },
+            'overrides-schedule': {
+              databaseName: 'overridden_schedule_db',
+              // No timezone: proves the default's timezone isn't deep-merged in alongside it.
+              schedule: { schedule: 'cron(0 12 * * ? *)' },
+            },
+            'overrides-filters': {
+              databaseName: 'overridden_filters_db',
+              // A single EXCLUDE entry: proves this fully replaces the default's list rather
+              // than appending to or merging with it.
+              filterExpressions: [{ type: 'EXCLUDE', expression: 'tmp_*' }],
+            },
+          },
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    // 'inherits-defaults' sets none of these fields, so it picks up every default, including
+    // the ones with DataZone-side fallbacks (recommendation, autoImportDataQualityResult,
+    // filterExpressions) that could otherwise mask a default failing to apply.
+    template.hasResourceProperties('AWS::DataZone::DataSource', {
+      Configuration: {
+        GlueRunConfiguration: Match.objectLike({
+          AutoImportDataQualityResult: false,
+          RelationalFilterConfigurations: [
+            Match.objectLike({
+              DatabaseName: 'inherited_db',
+              FilterExpressions: [{ Type: 'INCLUDE', Expression: 'dim_*' }],
+            }),
+          ],
+        }),
+      },
+      PublishOnImport: true,
+      EnableSetting: 'ENABLED',
+      Schedule: { Schedule: 'cron(0 6 * * ? *)', Timezone: 'UTC' },
+      Recommendation: { EnableBusinessNameGeneration: true },
+    });
+    // A data source setting publishOnImport itself fully overrides the default for that field,
+    // while still inheriting enableSetting/schedule from the default.
+    template.hasResourceProperties('AWS::DataZone::DataSource', {
+      Configuration: {
+        GlueRunConfiguration: Match.objectLike({
+          RelationalFilterConfigurations: [Match.objectLike({ DatabaseName: 'overridden_db' })],
+        }),
+      },
+      PublishOnImport: false,
+      EnableSetting: 'ENABLED',
+      Schedule: { Schedule: 'cron(0 6 * * ? *)', Timezone: 'UTC' },
+    });
+    // A data source setting its own schedule fully replaces the default schedule object,
+    // rather than merging in the default's timezone alongside the overridden cron.
+    template.hasResourceProperties('AWS::DataZone::DataSource', {
+      Configuration: {
+        GlueRunConfiguration: Match.objectLike({
+          RelationalFilterConfigurations: [Match.objectLike({ DatabaseName: 'overridden_schedule_db' })],
+        }),
+      },
+      Schedule: { Schedule: 'cron(0 12 * * ? *)', Timezone: Match.absent() },
+    });
+    // A data source setting its own filterExpressions fully replaces the default list,
+    // rather than appending to or merging with it.
+    template.hasResourceProperties('AWS::DataZone::DataSource', {
+      Configuration: {
+        GlueRunConfiguration: Match.objectLike({
+          RelationalFilterConfigurations: [
+            Match.objectLike({
+              DatabaseName: 'overridden_filters_db',
+              FilterExpressions: [{ Type: 'EXCLUDE', Expression: 'tmp_*' }],
+            }),
+          ],
+        }),
+      },
+    });
+  });
+
+  it("attaches a data source's referenced metadataForms as AssetFormsInput", () => {
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-datasource-forms', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        'forms-ds-profile': {
+          environments: {
+            DefaultDataLake: {},
+          },
+        },
+      },
+      projects: {
+        'forms-ds-project': {
+          profileName: 'forms-ds-profile',
+          metadataForms: {
+            CustomerForm: {
+              fields: { tier: { type: 'String' } },
+            },
+          },
+          dataSources: {
+            'test-source': {
+              databaseName: 'test_db',
+              metadataForms: {
+                CustomerForm: { content: '{"tier":"gold"}' },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    template.hasResourceProperties('AWS::DataZone::DataSource', {
+      AssetFormsInput: [
+        Match.objectLike({
+          FormName: 'CustomerForm',
+          TypeIdentifier: 'CustomerForm',
+          Content: '{"tier":"gold"}',
+          TypeRevision: Match.objectLike({ 'Fn::GetAtt': Match.arrayWith(['revision']) }),
+        }),
+      ],
+    });
+  });
+
+  it("throws when a data source's metadataForms references a form not declared under the project", () => {
+    expect(() => {
+      new SagemakerProjectL3Construct(testApp.testStack, 'test-datasource-forms-missing', {
+        naming: testApp.naming,
+        roleHelper,
+        domainConfig,
+        projectProfiles: {
+          'missing-form-profile': {
+            environments: {
+              DefaultDataLake: {},
+            },
+          },
+        },
+        projects: {
+          'missing-form-project': {
+            profileName: 'missing-form-profile',
+            dataSources: {
+              'test-source': {
+                databaseName: 'test_db',
+                metadataForms: {
+                  UndeclaredForm: {},
+                },
+              },
+            },
+          },
+        },
+      });
+    }).toThrow(/UndeclaredForm.*not declared under this project's metadataForms/);
+  });
+
+  it('treats a metadataForms key matching an Object.prototype property as undeclared, not a crash', () => {
+    // Regression test for the hasOwnProperty guard: a plain `declaredForms[formName]` lookup
+    // would resolve 'constructor' to the inherited Object constructor function rather than
+    // undefined, so `!form` would be falsy and `form.formType.getAttString` would throw a
+    // TypeError instead of the intended "not declared" error.
+    expect(() => {
+      new SagemakerProjectL3Construct(testApp.testStack, 'test-datasource-forms-prototype-pollution', {
+        naming: testApp.naming,
+        roleHelper,
+        domainConfig,
+        projectProfiles: {
+          'prototype-form-profile': {
+            environments: {
+              DefaultDataLake: {},
+            },
+          },
+        },
+        projects: {
+          'prototype-form-project': {
+            profileName: 'prototype-form-profile',
+            dataSources: {
+              'test-source': {
+                databaseName: 'test_db',
+                metadataForms: {
+                  constructor: {},
+                },
+              },
+            },
+          },
+        },
+      });
+    }).toThrow(/constructor.*not declared under this project's metadataForms/);
+  });
+
+  it('attaches a metadataForms reference with no content, omitting the Content field', () => {
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-datasource-forms-no-content', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        'forms-no-content-profile': {
+          environments: {
+            DefaultDataLake: {},
+          },
+        },
+      },
+      projects: {
+        'forms-no-content-project': {
+          profileName: 'forms-no-content-profile',
+          metadataForms: {
+            CustomerForm: {
+              fields: { tier: { type: 'String' } },
+            },
+          },
+          dataSources: {
+            'test-source': {
+              databaseName: 'test_db',
+              metadataForms: {
+                CustomerForm: {},
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    template.hasResourceProperties('AWS::DataZone::DataSource', {
+      AssetFormsInput: [
+        Match.objectLike({
+          FormName: 'CustomerForm',
+          TypeIdentifier: 'CustomerForm',
+          Content: Match.absent(),
+        }),
+      ],
+    });
+  });
+
+  it("throws when a data source's metadataForms references a DISABLED form", () => {
+    expect(() => {
+      new SagemakerProjectL3Construct(testApp.testStack, 'test-datasource-forms-disabled', {
+        naming: testApp.naming,
+        roleHelper,
+        domainConfig,
+        projectProfiles: {
+          'disabled-form-profile': {
+            environments: {
+              DefaultDataLake: {},
+            },
+          },
+        },
+        projects: {
+          'disabled-form-project': {
+            profileName: 'disabled-form-profile',
+            metadataForms: {
+              RetiredForm: {
+                status: 'DISABLED',
+                fields: { tier: { type: 'String' } },
+              },
+            },
+            dataSources: {
+              'test-source': {
+                databaseName: 'test_db',
+                metadataForms: { RetiredForm: {} },
+              },
+            },
+          },
+        },
+      });
+    }).toThrow(/RetiredForm.*DISABLED.*retained but not attachable/);
+  });
+
+  it("throws when a metadataForms reference's content is not valid JSON", () => {
+    expect(() => {
+      new SagemakerProjectL3Construct(testApp.testStack, 'test-datasource-forms-invalid-json', {
+        naming: testApp.naming,
+        roleHelper,
+        domainConfig,
+        projectProfiles: {
+          'invalid-json-profile': {
+            environments: {
+              DefaultDataLake: {},
+            },
+          },
+        },
+        projects: {
+          'invalid-json-project': {
+            profileName: 'invalid-json-profile',
+            metadataForms: {
+              CustomerForm: {
+                fields: { tier: { type: 'String' } },
+              },
+            },
+            dataSources: {
+              'test-source': {
+                databaseName: 'test_db',
+                metadataForms: { CustomerForm: { content: 'not json' } },
+              },
+            },
+          },
+        },
+      });
+    }).toThrow(/CustomerForm.*content is not valid JSON/);
+  });
+
+  it("throws when a metadataForms reference's content names a field the form does not declare", () => {
+    expect(() => {
+      new SagemakerProjectL3Construct(testApp.testStack, 'test-datasource-forms-undeclared-field', {
+        naming: testApp.naming,
+        roleHelper,
+        domainConfig,
+        projectProfiles: {
+          'undeclared-field-profile': {
+            environments: {
+              DefaultDataLake: {},
+            },
+          },
+        },
+        projects: {
+          'undeclared-field-project': {
+            profileName: 'undeclared-field-profile',
+            metadataForms: {
+              CustomerForm: {
+                fields: { tier: { type: 'String' } },
+              },
+            },
+            dataSources: {
+              'test-source': {
+                databaseName: 'test_db',
+                metadataForms: { CustomerForm: { content: '{"region":"us-east-1"}' } },
+              },
+            },
+          },
+        },
+      });
+    }).toThrow(/CustomerForm.*content references field\(s\) \[region\] the form does not declare/);
+  });
+
+  it('throws when a metadataForms reference omits a field the form declares required', () => {
+    expect(() => {
+      new SagemakerProjectL3Construct(testApp.testStack, 'test-datasource-forms-missing-required', {
+        naming: testApp.naming,
+        roleHelper,
+        domainConfig,
+        projectProfiles: {
+          'missing-required-profile': {
+            environments: {
+              DefaultDataLake: {},
+            },
+          },
+        },
+        projects: {
+          'missing-required-project': {
+            profileName: 'missing-required-profile',
+            metadataForms: {
+              CustomerForm: {
+                fields: { owner: { type: 'String', required: true } },
+              },
+            },
+            dataSources: {
+              // No content at all: a required field must still be enforced, since the
+              // @default doc for `content` only applies when the form has no required fields.
+              'test-source': {
+                databaseName: 'test_db',
+                metadataForms: { CustomerForm: {} },
+              },
+            },
+          },
+        },
+      });
+    }).toThrow(/CustomerForm.*content is missing required field\(s\) \[owner\]/);
+  });
+
+  it('attaches a metadataForms reference whose content satisfies all required fields', () => {
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-datasource-forms-required-satisfied', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        'required-satisfied-profile': {
+          environments: {
+            DefaultDataLake: {},
+          },
+        },
+      },
+      projects: {
+        'required-satisfied-project': {
+          profileName: 'required-satisfied-profile',
+          metadataForms: {
+            CustomerForm: {
+              fields: { owner: { type: 'String', required: true } },
+            },
+          },
+          dataSources: {
+            'test-source': {
+              databaseName: 'test_db',
+              metadataForms: { CustomerForm: { content: '{"owner":"data-team"}' } },
+            },
+          },
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    template.hasResourceProperties('AWS::DataZone::DataSource', {
+      AssetFormsInput: [Match.objectLike({ FormName: 'CustomerForm', Content: '{"owner":"data-team"}' })],
+    });
+  });
+
+  it('throws when metadataForms is set directly on an s3 data source (no AssetFormsInput support on a Connection)', () => {
+    expect(() => {
+      new SagemakerProjectL3Construct(testApp.testStack, 'test-datasource-forms-s3-rejected', {
+        naming: testApp.naming,
+        roleHelper,
+        domainConfig,
+        projectProfiles: {
+          's3-forms-profile': {
+            environments: {
+              DefaultDataLake: {},
+            },
+          },
+        },
+        projects: {
+          's3-forms-project': {
+            profileName: 's3-forms-profile',
+            dataSources: {
+              'test-s3-source': {
+                s3: { bucketName: 'test-bucket' },
+                // Not declared under this project's metadataForms either; proves the field is
+                // rejected before resolveDataSourceMetadataForms would otherwise throw on it.
+                metadataForms: { UndeclaredForm: {} },
+              },
+            },
+          },
+        },
+      });
+    }).toThrow(/\[metadataForms\] only apply to Glue \('databaseName'\) data sources/);
+  });
+
+  it('throws listing every Glue-only field set directly on an s3 data source', () => {
+    expect(() => {
+      new SagemakerProjectL3Construct(testApp.testStack, 'test-datasource-glue-fields-s3-rejected', {
+        naming: testApp.naming,
+        roleHelper,
+        domainConfig,
+        projectProfiles: {
+          's3-glue-fields-profile': {
+            environments: {
+              DefaultDataLake: {},
+            },
+          },
+        },
+        projects: {
+          's3-glue-fields-project': {
+            profileName: 's3-glue-fields-profile',
+            dataSources: {
+              'test-s3-source': {
+                s3: { bucketName: 'test-bucket' },
+                publishOnImport: true,
+                autoImportDataQualityResult: false,
+              },
+            },
+          },
+        },
+      });
+    }).toThrow(/\[publishOnImport, autoImportDataQualityResult\] only apply to Glue/);
+  });
+
+  it("ignores the project's dataSourceDefaults on an s3 data source (no equivalent Connection properties)", () => {
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-datasource-defaults-s3-ignored', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        's3-defaults-profile': {
+          environments: {
+            DefaultDataLake: {},
+          },
+        },
+      },
+      projects: {
+        's3-defaults-project': {
+          profileName: 's3-defaults-profile',
+          // publishOnImport/enableSetting/schedule/recommendation have no equivalent on an
+          // AWS::DataZone::Connection; this proves they're silently not applied, as documented.
+          dataSourceDefaults: {
+            publishOnImport: true,
+            enableSetting: 'ENABLED',
+            schedule: { schedule: 'cron(0 6 * * ? *)', timezone: 'UTC' },
+            recommendation: { enableBusinessNameGeneration: true },
+          },
+          dataSources: {
+            'test-s3-source': {
+              s3: { bucketName: 'test-bucket' },
+            },
+          },
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    template.resourceCountIs('AWS::DataZone::DataSource', 0);
+    template.hasResourceProperties('AWS::DataZone::Connection', {
+      Props: {
+        S3Properties: Match.objectLike({
+          S3Uri: Match.stringLikeRegexp('s3://test-bucket'),
+        }),
+      },
+    });
+  });
+
+  it('throws when a data source declares more metadataForms than DataZone allows per data source', () => {
+    const tooManyForms = Object.fromEntries(Array.from({ length: 11 }, (_, i) => [`Form${i}`, {}]));
+    expect(() => {
+      new SagemakerProjectL3Construct(testApp.testStack, 'test-datasource-forms-too-many', {
+        naming: testApp.naming,
+        roleHelper,
+        domainConfig,
+        projectProfiles: {
+          'too-many-forms-profile': {
+            environments: {
+              DefaultDataLake: {},
+            },
+          },
+        },
+        projects: {
+          'too-many-forms-project': {
+            profileName: 'too-many-forms-profile',
+            dataSources: {
+              'test-source': {
+                databaseName: 'test_db',
+                metadataForms: tooManyForms,
+              },
+            },
+          },
+        },
+      });
+    }).toThrow(/declares 11 metadataForms, which exceeds the maximum of 10/);
+  });
+
+  it('accepts exactly 10 metadataForms on a data source (the DataZone-allowed maximum)', () => {
+    const formNames = Array.from({ length: 10 }, (_, i) => `Form${i}`);
+    const declaredForms = Object.fromEntries(
+      formNames.map(formName => [formName, { fields: { tier: { type: 'String' as const } } }]),
+    );
+    const referencedForms = Object.fromEntries(formNames.map(formName => [formName, {}]));
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-datasource-forms-exactly-max', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        'exactly-max-forms-profile': {
+          environments: {
+            DefaultDataLake: {},
+          },
+        },
+      },
+      projects: {
+        'exactly-max-forms-project': {
+          profileName: 'exactly-max-forms-profile',
+          metadataForms: declaredForms,
+          dataSources: {
+            'test-source': {
+              databaseName: 'test_db',
+              metadataForms: referencedForms,
+            },
+          },
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    const resources = template.findResources('AWS::DataZone::DataSource');
+    const assetFormsInput = Object.values(resources)[0].Properties.AssetFormsInput;
+    expect(assetFormsInput).toHaveLength(10);
+  });
+
   it('creates project-owned FormTypes when project has metadataForms', () => {
     new SagemakerProjectL3Construct(testApp.testStack, 'test-forms', {
       naming: testApp.naming,

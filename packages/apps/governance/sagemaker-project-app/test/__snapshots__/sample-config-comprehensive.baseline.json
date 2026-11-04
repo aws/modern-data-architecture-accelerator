@@ -650,15 +650,242 @@
       "UpdateReplacePolicy": "Delete",
       "DeletionPolicy": "Delete"
     },
+    "sagemakerprojectprojecttestprojectfullglossaryCustomerGlossaryglossaryB95B33FB": {
+      "Type": "Custom::DataZoneGlossary",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customDataZoneGlossaryproviderframeworkonEvent73570884",
+            "Arn"
+          ]
+        },
+        "domainId": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectfullprojectC620150B",
+            "DomainId"
+          ]
+        },
+        "owningProjectId": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectfullprojectC620150B",
+            "Id"
+          ]
+        },
+        "glossaryName": "CustomerGlossary",
+        "status": "ENABLED",
+        "description": "Standard customer business terms"
+      },
+      "DependsOn": [
+        "sagemakerprojectprojecttestprojectfullmonitorcrprojectmembershipDC417137"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "sagemakerprojectprojecttestprojectfullglossaryCustomerGlossarytermSegmentC7824B42": {
+      "Type": "Custom::DataZoneGlossaryTerm",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customDataZoneGlossaryTermproviderframeworkonEvent30A70716",
+            "Arn"
+          ]
+        },
+        "domainId": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectfullprojectC620150B",
+            "DomainId"
+          ]
+        },
+        "glossaryId": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectfullglossaryCustomerGlossaryglossaryB95B33FB",
+            "glossaryId"
+          ]
+        },
+        "termName": "Segment",
+        "status": "ENABLED",
+        "shortDescription": "Customer segment classification",
+        "longDescription": "The marketing segment a customer has been classified into"
+      },
+      "DependsOn": [
+        "sagemakerprojectprojecttestprojectfullglossaryCustomerGlossaryglossaryB95B33FB",
+        "sagemakerprojectprojecttestprojectfullmonitorcrprojectmembershipDC417137"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "sagemakerprojectprojecttestprojectfullglossaryCustomerGlossarytermChurnRisk1E7C9EE2": {
+      "Type": "Custom::DataZoneGlossaryTerm",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customDataZoneGlossaryTermproviderframeworkonEvent30A70716",
+            "Arn"
+          ]
+        },
+        "domainId": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectfullprojectC620150B",
+            "DomainId"
+          ]
+        },
+        "glossaryId": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectfullglossaryCustomerGlossaryglossaryB95B33FB",
+            "glossaryId"
+          ]
+        },
+        "termName": "ChurnRisk",
+        "status": "ENABLED",
+        "shortDescription": "Likelihood a customer churns"
+      },
+      "DependsOn": [
+        "sagemakerprojectprojecttestprojectfullglossaryCustomerGlossaryglossaryB95B33FB",
+        "sagemakerprojectprojecttestprojectfullmonitorcrprojectmembershipDC417137"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "sagemakerprojectprojecttestprojectfullglossaryProductGlossaryglossaryF94F7775": {
+      "Type": "Custom::DataZoneGlossary",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customDataZoneGlossaryproviderframeworkonEvent73570884",
+            "Arn"
+          ]
+        },
+        "domainId": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectfullprojectC620150B",
+            "DomainId"
+          ]
+        },
+        "owningProjectId": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectfullprojectC620150B",
+            "Id"
+          ]
+        },
+        "glossaryName": "ProductGlossary",
+        "status": "ENABLED"
+      },
+      "DependsOn": [
+        "sagemakerprojectprojecttestprojectfullmonitorcrprojectmembershipDC417137"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "sagemakerprojectprojecttestprojectfullformCustomerMetadataFormformtype65A3D7D9": {
+      "Type": "Custom::DataZoneFormType",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customDataZoneFormTypeproviderframeworkonEvent5E22B76E",
+            "Arn"
+          ]
+        },
+        "domainId": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectfullprojectC620150B",
+            "DomainId"
+          ]
+        },
+        "owningProjectId": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectfullprojectC620150B",
+            "Id"
+          ]
+        },
+        "formName": "CustomerMetadataForm",
+        "modelStructure": {
+          "Fn::Join": [
+            "",
+            [
+              "structure CustomerMetadataForm {\n    @documentation(\"Unique identifier for the customer account\")\n    @required\n    @amazon.datazone#searchable(modes:[\"TECHNICAL\"])\n    customerName: smithy.api#String\n    @amazon.datazone#searchable(modes:[\"LEXICAL\"])\n    @amazon.datazone#glossaryterm(\"test-glossary-id\")\n    tier: smithy.api#String\n    @amazon.datazone#glossaryterm(\"",
+              {
+                "Fn::GetAtt": [
+                  "sagemakerprojectprojecttestprojectfullglossaryCustomerGlossaryglossaryB95B33FB",
+                  "glossaryId"
+                ]
+              },
+              "\")\n    customerSegment: smithy.api#String\n    activeFlag: smithy.api#Boolean\n    recordCount: smithy.api#Integer\n    createdAt: smithy.api#Timestamp\n}"
+            ]
+          ]
+        },
+        "status": "ENABLED",
+        "description": "Customer governance metadata"
+      },
+      "DependsOn": [
+        "sagemakerprojectprojecttestprojectfullglossaryCustomerGlossarytermSegmentC7824B42",
+        "sagemakerprojectprojecttestprojectfullmonitorcrprojectmembershipDC417137"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "sagemakerprojectprojecttestprojectfullformSimpleFormformtype891AB1C8": {
+      "Type": "Custom::DataZoneFormType",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customDataZoneFormTypeproviderframeworkonEvent5E22B76E",
+            "Arn"
+          ]
+        },
+        "domainId": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectfullprojectC620150B",
+            "DomainId"
+          ]
+        },
+        "owningProjectId": {
+          "Fn::GetAtt": [
+            "sagemakerprojectprojecttestprojectfullprojectC620150B",
+            "Id"
+          ]
+        },
+        "formName": "SimpleForm",
+        "modelStructure": "structure SimpleForm {\n    @documentation(\"Free-form note about this asset\")\n    note: smithy.api#String\n    @required\n    priority: smithy.api#Integer\n    reviewedAt: smithy.api#Timestamp\n}",
+        "status": "ENABLED"
+      },
+      "DependsOn": [
+        "sagemakerprojectprojecttestprojectfullmonitorcrprojectmembershipDC417137"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
     "sagemakerprojectprojecttestprojectfulltestsourcedatazonedatasource4A4BDFB2": {
       "Type": "AWS::DataZone::DataSource",
       "Properties": {
+        "AssetFormsInput": [
+          {
+            "Content": "{\"customerName\":\"unknown\"}",
+            "FormName": "CustomerMetadataForm",
+            "TypeIdentifier": "CustomerMetadataForm",
+            "TypeRevision": {
+              "Fn::GetAtt": [
+                "sagemakerprojectprojecttestprojectfullformCustomerMetadataFormformtype65A3D7D9",
+                "revision"
+              ]
+            }
+          }
+        ],
         "Configuration": {
           "GlueRunConfiguration": {
-            "AutoImportDataQualityResult": true,
+            "AutoImportDataQualityResult": false,
             "RelationalFilterConfigurations": [
               {
-                "DatabaseName": "test-database-name"
+                "DatabaseName": "test-database-name",
+                "FilterExpressions": [
+                  {
+                    "Expression": "dim_*",
+                    "Type": "INCLUDE"
+                  },
+                  {
+                    "Expression": "tmp_*",
+                    "Type": "EXCLUDE"
+                  }
+                ]
               }
             ]
           }
@@ -675,12 +902,21 @@
             "DomainId"
           ]
         },
+        "EnableSetting": "ENABLED",
         "Name": "test-org-test-env-test-domain-test-sagemaker-project-main-test-source",
         "ProjectIdentifier": {
           "Fn::GetAtt": [
             "sagemakerprojectprojecttestprojectfullprojectC620150B",
             "Id"
           ]
+        },
+        "PublishOnImport": false,
+        "Recommendation": {
+          "EnableBusinessNameGeneration": true
+        },
+        "Schedule": {
+          "Schedule": "cron(0 6 * * ? *)",
+          "Timezone": "AMERICA_MONTREAL"
         },
         "Type": "glue"
       }
@@ -766,12 +1002,21 @@
             "DomainId"
           ]
         },
+        "EnableSetting": "ENABLED",
         "Name": "test-org-test-env-test-domain-test-sagemaker-project-main-second-source",
         "ProjectIdentifier": {
           "Fn::GetAtt": [
             "sagemakerprojectprojecttestprojectfullprojectC620150B",
             "Id"
           ]
+        },
+        "PublishOnImport": true,
+        "Recommendation": {
+          "EnableBusinessNameGeneration": true
+        },
+        "Schedule": {
+          "Schedule": "cron(0 6 * * ? *)",
+          "Timezone": "AMERICA_MONTREAL"
         },
         "Type": "glue"
       }
@@ -983,210 +1228,6 @@
           ]
         }
       }
-    },
-    "sagemakerprojectprojecttestprojectfullglossaryCustomerGlossaryglossaryB95B33FB": {
-      "Type": "Custom::DataZoneGlossary",
-      "Properties": {
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "customDataZoneGlossaryproviderframeworkonEvent73570884",
-            "Arn"
-          ]
-        },
-        "domainId": {
-          "Fn::GetAtt": [
-            "sagemakerprojectprojecttestprojectfullprojectC620150B",
-            "DomainId"
-          ]
-        },
-        "owningProjectId": {
-          "Fn::GetAtt": [
-            "sagemakerprojectprojecttestprojectfullprojectC620150B",
-            "Id"
-          ]
-        },
-        "glossaryName": "CustomerGlossary",
-        "status": "ENABLED",
-        "description": "Standard customer business terms"
-      },
-      "DependsOn": [
-        "sagemakerprojectprojecttestprojectfullmonitorcrprojectmembershipDC417137"
-      ],
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
-    },
-    "sagemakerprojectprojecttestprojectfullglossaryCustomerGlossarytermSegmentC7824B42": {
-      "Type": "Custom::DataZoneGlossaryTerm",
-      "Properties": {
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "customDataZoneGlossaryTermproviderframeworkonEvent30A70716",
-            "Arn"
-          ]
-        },
-        "domainId": {
-          "Fn::GetAtt": [
-            "sagemakerprojectprojecttestprojectfullprojectC620150B",
-            "DomainId"
-          ]
-        },
-        "glossaryId": {
-          "Fn::GetAtt": [
-            "sagemakerprojectprojecttestprojectfullglossaryCustomerGlossaryglossaryB95B33FB",
-            "glossaryId"
-          ]
-        },
-        "termName": "Segment",
-        "status": "ENABLED",
-        "shortDescription": "Customer segment classification",
-        "longDescription": "The marketing segment a customer has been classified into"
-      },
-      "DependsOn": [
-        "sagemakerprojectprojecttestprojectfullglossaryCustomerGlossaryglossaryB95B33FB",
-        "sagemakerprojectprojecttestprojectfullmonitorcrprojectmembershipDC417137"
-      ],
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
-    },
-    "sagemakerprojectprojecttestprojectfullglossaryCustomerGlossarytermChurnRisk1E7C9EE2": {
-      "Type": "Custom::DataZoneGlossaryTerm",
-      "Properties": {
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "customDataZoneGlossaryTermproviderframeworkonEvent30A70716",
-            "Arn"
-          ]
-        },
-        "domainId": {
-          "Fn::GetAtt": [
-            "sagemakerprojectprojecttestprojectfullprojectC620150B",
-            "DomainId"
-          ]
-        },
-        "glossaryId": {
-          "Fn::GetAtt": [
-            "sagemakerprojectprojecttestprojectfullglossaryCustomerGlossaryglossaryB95B33FB",
-            "glossaryId"
-          ]
-        },
-        "termName": "ChurnRisk",
-        "status": "ENABLED",
-        "shortDescription": "Likelihood a customer churns"
-      },
-      "DependsOn": [
-        "sagemakerprojectprojecttestprojectfullglossaryCustomerGlossaryglossaryB95B33FB",
-        "sagemakerprojectprojecttestprojectfullmonitorcrprojectmembershipDC417137"
-      ],
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
-    },
-    "sagemakerprojectprojecttestprojectfullglossaryProductGlossaryglossaryF94F7775": {
-      "Type": "Custom::DataZoneGlossary",
-      "Properties": {
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "customDataZoneGlossaryproviderframeworkonEvent73570884",
-            "Arn"
-          ]
-        },
-        "domainId": {
-          "Fn::GetAtt": [
-            "sagemakerprojectprojecttestprojectfullprojectC620150B",
-            "DomainId"
-          ]
-        },
-        "owningProjectId": {
-          "Fn::GetAtt": [
-            "sagemakerprojectprojecttestprojectfullprojectC620150B",
-            "Id"
-          ]
-        },
-        "glossaryName": "ProductGlossary",
-        "status": "ENABLED"
-      },
-      "DependsOn": [
-        "sagemakerprojectprojecttestprojectfullmonitorcrprojectmembershipDC417137"
-      ],
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
-    },
-    "sagemakerprojectprojecttestprojectfullformCustomerMetadataFormformtype65A3D7D9": {
-      "Type": "Custom::DataZoneFormType",
-      "Properties": {
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "customDataZoneFormTypeproviderframeworkonEvent5E22B76E",
-            "Arn"
-          ]
-        },
-        "domainId": {
-          "Fn::GetAtt": [
-            "sagemakerprojectprojecttestprojectfullprojectC620150B",
-            "DomainId"
-          ]
-        },
-        "owningProjectId": {
-          "Fn::GetAtt": [
-            "sagemakerprojectprojecttestprojectfullprojectC620150B",
-            "Id"
-          ]
-        },
-        "formName": "CustomerMetadataForm",
-        "modelStructure": {
-          "Fn::Join": [
-            "",
-            [
-              "structure CustomerMetadataForm {\n    @documentation(\"Unique identifier for the customer account\")\n    @required\n    @amazon.datazone#searchable(modes:[\"TECHNICAL\"])\n    customerName: smithy.api#String\n    @amazon.datazone#searchable(modes:[\"LEXICAL\"])\n    @amazon.datazone#glossaryterm(\"test-glossary-id\")\n    tier: smithy.api#String\n    @amazon.datazone#glossaryterm(\"",
-              {
-                "Fn::GetAtt": [
-                  "sagemakerprojectprojecttestprojectfullglossaryCustomerGlossaryglossaryB95B33FB",
-                  "glossaryId"
-                ]
-              },
-              "\")\n    customerSegment: smithy.api#String\n    activeFlag: smithy.api#Boolean\n    recordCount: smithy.api#Integer\n    createdAt: smithy.api#Timestamp\n}"
-            ]
-          ]
-        },
-        "status": "ENABLED",
-        "description": "Customer governance metadata"
-      },
-      "DependsOn": [
-        "sagemakerprojectprojecttestprojectfullglossaryCustomerGlossarytermSegmentC7824B42",
-        "sagemakerprojectprojecttestprojectfullmonitorcrprojectmembershipDC417137"
-      ],
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
-    },
-    "sagemakerprojectprojecttestprojectfullformSimpleFormformtype891AB1C8": {
-      "Type": "Custom::DataZoneFormType",
-      "Properties": {
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "customDataZoneFormTypeproviderframeworkonEvent5E22B76E",
-            "Arn"
-          ]
-        },
-        "domainId": {
-          "Fn::GetAtt": [
-            "sagemakerprojectprojecttestprojectfullprojectC620150B",
-            "DomainId"
-          ]
-        },
-        "owningProjectId": {
-          "Fn::GetAtt": [
-            "sagemakerprojectprojecttestprojectfullprojectC620150B",
-            "Id"
-          ]
-        },
-        "formName": "SimpleForm",
-        "modelStructure": "structure SimpleForm {\n    @documentation(\"Free-form note about this asset\")\n    note: smithy.api#String\n    @required\n    priority: smithy.api#Integer\n    reviewedAt: smithy.api#Timestamp\n}",
-        "status": "ENABLED"
-      },
-      "DependsOn": [
-        "sagemakerprojectprojecttestprojectfullmonitorcrprojectmembershipDC417137"
-      ],
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
     },
     "sagemakerprojectprojecttestprojectminimalproject110A53D8": {
       "Type": "AWS::DataZone::Project",

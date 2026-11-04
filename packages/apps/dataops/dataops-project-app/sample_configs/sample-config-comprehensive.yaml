@@ -288,11 +288,52 @@ sagemaker:
       test-env:
         parameters:
           key1: value1
+    # (Optional) Default values for publishOnImport, enableSetting, schedule, recommendation,
+    # autoImportDataQualityResult, and filterExpressions, inherited by every Glue (databaseName)
+    # entry in dataSources below. A data source that sets one of these fields itself overrides
+    # the default for that field entirely (fields are not deep-merged); has no effect on an s3
+    # data source. See test-source below.
+    # Also applies, in this sagemaker (SMUS) mode, to this project's own database-backed
+    # data sources (databases.<db>.createSagemakerDatasource/createDatazoneDatasource below).
+    dataSourceDefaults:
+      # (Optional) Auto-publish imported assets to the project's catalog
+      publishOnImport: true
+      # (Optional) Enabled setting enum: ENABLED | DISABLED
+      enableSetting: ENABLED
+      # (Optional) Schedule the data source runs on
+      schedule:
+        # (Required) Cron expression for the run schedule
+        schedule: cron(0 6 * * ? *)
+        # (Optional) Timezone the schedule is evaluated in
+        timezone: UTC
+      # (Optional) Business name generation recommendation
+      recommendation:
+        # (Optional) Enable automatic business name generation
+        enableBusinessNameGeneration: true
     # Data sources for Glue databases not created by this DataOps Project
     dataSources:
       test-source:
         # Glue database name to use as the data source
         databaseName: non-project-database
+        # (Optional) Overrides dataSourceDefaults.publishOnImport (true, above) for this
+        # source only; unlike databases.<db>.createSagemakerDatasource/createDatazoneDatasource
+        # sources, which have no per-field overrides and always take dataSourceDefaults as-is
+        publishOnImport: false
+        # (Optional) Whether to auto-import AWS Glue Data Quality results
+        autoImportDataQualityResult: false
+        # (Optional) Limits imported tables to those matching these filter expressions.
+        # Controls catalog import only, not access: Lake Formation still grants read on
+        # every table in the database regardless of these filters.
+        filterExpressions:
+          - type: INCLUDE
+            expression: dim_*
+          - type: EXCLUDE
+            expression: tmp_*
+        # (Optional) Metadata forms (declared under this project's metadataForms, below) to
+        # attach to every asset this data source imports
+        metadataForms:
+          DataOpsGovernanceForm:
+            content: '{"owner":"data-team"}'
       test-s3-source:
         # S3 location to register as a data source, mutually exclusive with databaseName
         s3:

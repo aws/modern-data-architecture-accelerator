@@ -83,6 +83,14 @@ sagemaker-project: # Module Name can be customized
     - ./sagemaker-project.yaml # Filename/path can be customized
 ```
 
+### Data Sources
+
+A project's `dataSourceDefaults` supplies `publishOnImport`, `enableSetting`, `schedule`, `recommendation`, `autoImportDataQualityResult`, and `filterExpressions` values inherited by every Glue database (`databaseName`) entry in `dataSources`; an `s3` entry has no equivalent `AWS::DataZone::Connection` properties, so these defaults are silently not applied to it, and setting one of these fields directly on an `s3` entry itself (rather than inheriting it) fails synth with a clear error. A Glue database data source that sets one of these fields itself replaces the corresponding default entirely for that field — fields are not deep-merged, so a data source overriding `schedule` must supply the whole `schedule` object, not just the part that differs. There is no way for a data source to opt out of an inherited `schedule` other than setting its own `enableSetting` to `DISABLED`, which disables the whole data source.
+
+In the DataOps Project module's SMUS (`sagemaker`) mode, `sagemaker.project.dataSourceDefaults` also applies to the project's own database-backed data sources (`databases.<db>.createSagemakerDatasource`/`createDatazoneDatasource`), since those share this module's `SageMakerProjectProps` type; see that module's README.
+
+A Glue database data source's `metadataForms` attaches the project's own `metadataForms` (declared under the same project, in any order relative to `dataSources`) to every asset the data source imports, pre-populating form field values via `content`. The map key must match a key declared under the project's `metadataForms` and reference an `ENABLED` form; `content`, if set, must be valid JSON naming only fields the form declares, and every field the form declares `required: true` must be present (via `content` or otherwise). Any violation fails synth with a clear error. `metadataForms` only applies to Glue database data sources (`databaseName`) — setting it on an `s3` data source fails synth, since an `AWS::DataZone::Connection` has no equivalent property.
+
 ### Metadata Form Types
 
 Form and field names must be valid Smithy identifiers (letter or underscore first, then letters, digits, or underscores), and form names must be unique across the domain. Deleting a form type on stack teardown is best-effort: if DataZone rejects the delete (for example, because the form is still attached to assets), the form type is left in place. Existing deployments must redeploy the DataZone/SageMaker domain module before deploying a project with `metadataForms`, so that the domain grants form-type creation to the custom-resource role.

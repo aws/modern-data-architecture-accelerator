@@ -230,6 +230,63 @@ describe('DataOps Project Edge Cases', () => {
     expect(construct).toBeDefined();
   });
 
+  test("applies sagemaker.project.dataSourceDefaults to the project's own database-backed data source", () => {
+    const app = new MdaaTestApp();
+    const stack = new Stack(app, 'test-sagemaker-db-defaults-stack');
+    const roleHelper = new MdaaRoleHelper(
+      stack,
+      app.naming,
+      path.dirname(require.resolve('@aws-mdaa/iam-role-helper/package.json')),
+    );
+
+    const props: DataOpsProjectL3ConstructProps = {
+      naming: app.naming,
+      roleHelper,
+      projectExecutionRoleRefs: [testGlueRoleRef],
+      dataEngineerRoleRefs: [],
+      dataAdminRoleRefs: [],
+      sagemaker: {
+        domainConfigSSMParam: '/test/sagemaker/config',
+        project: {
+          profileName: 'test-profile',
+          dataSourceDefaults: {
+            publishOnImport: true,
+            enableSetting: 'ENABLED',
+            schedule: { schedule: 'cron(0 6 * * ? *)', timezone: 'UTC' },
+            recommendation: { enableBusinessNameGeneration: true },
+            autoImportDataQualityResult: false,
+            filterExpressions: [{ type: 'INCLUDE', expression: 'dim_*' }],
+          },
+        },
+      },
+      databases: {
+        'test-db': {
+          description: 'Test database',
+          createSagemakerDatasource: true,
+        },
+      },
+    };
+
+    const construct = new DataOpsProjectL3Construct(stack, 'test-construct', props);
+    expect(construct).toBeDefined();
+
+    const template = Template.fromStack(stack);
+    template.hasResourceProperties('AWS::DataZone::DataSource', {
+      PublishOnImport: true,
+      EnableSetting: 'ENABLED',
+      Schedule: { Schedule: 'cron(0 6 * * ? *)', Timezone: 'UTC' },
+      Recommendation: { EnableBusinessNameGeneration: true },
+      Configuration: {
+        GlueRunConfiguration: Match.objectLike({
+          AutoImportDataQualityResult: false,
+          RelationalFilterConfigurations: [
+            Match.objectLike({ FilterExpressions: [{ Type: 'INCLUDE', Expression: 'dim_*' }] }),
+          ],
+        }),
+      },
+    });
+  });
+
   test('should create SageMaker resources with createDataAdminOwners', () => {
     const stack = new Stack(testApp, 'test-sagemaker-owners-stack');
     const roleHelper = new MdaaRoleHelper(
@@ -351,6 +408,21 @@ describe('DataOps Project Edge Cases', () => {
       return typeof getAttTarget === 'string' && getAttTarget.toLowerCase().includes('dzuserrole');
     });
     expect(dzUserRoleGrants).toHaveLength(0);
+
+    // DataZone (non-SMUS) mode has no dataSourceDefaults to resolve, so the ?? true
+    // fallback must still apply, and the optional run/publish fields must stay absent.
+    template.hasResourceProperties('AWS::DataZone::DataSource', {
+      PublishOnImport: Match.absent(),
+      EnableSetting: Match.absent(),
+      Schedule: Match.absent(),
+      Recommendation: Match.absent(),
+      Configuration: Match.objectLike({
+        GlueRunConfiguration: Match.objectLike({
+          AutoImportDataQualityResult: true,
+          RelationalFilterConfigurations: [Match.objectLike({ FilterExpressions: Match.absent() })],
+        }),
+      }),
+    });
   });
 
   test('forwards datazone project nameOverride verbatim to the DataZone project', () => {

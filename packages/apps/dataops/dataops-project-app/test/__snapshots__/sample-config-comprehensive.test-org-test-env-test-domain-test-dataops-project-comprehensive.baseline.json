@@ -592,15 +592,149 @@
       "UpdateReplacePolicy": "Delete",
       "DeletionPolicy": "Delete"
     },
+    "constructsagemakerprojectdataopsglossaryGovernanceGlossaryglossary9DB72B85": {
+      "Type": "Custom::DataZoneGlossary",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customDataZoneGlossaryproviderframeworkonEvent73570884",
+            "Arn"
+          ]
+        },
+        "domainId": {
+          "Fn::GetAtt": [
+            "constructsagemakerprojectdataopsproject7423C7DC",
+            "DomainId"
+          ]
+        },
+        "owningProjectId": {
+          "Fn::GetAtt": [
+            "constructsagemakerprojectdataopsproject7423C7DC",
+            "Id"
+          ]
+        },
+        "glossaryName": "GovernanceGlossary",
+        "status": "ENABLED",
+        "description": "Governance terminology for DataOps projects"
+      },
+      "DependsOn": [
+        "constructsagemakerprojectdataopsmonitorcrprojectmembership399EEAD8"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "constructsagemakerprojectdataopsglossaryGovernanceGlossarytermDataOwner23DBCCE1": {
+      "Type": "Custom::DataZoneGlossaryTerm",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customDataZoneGlossaryTermproviderframeworkonEvent30A70716",
+            "Arn"
+          ]
+        },
+        "domainId": {
+          "Fn::GetAtt": [
+            "constructsagemakerprojectdataopsproject7423C7DC",
+            "DomainId"
+          ]
+        },
+        "glossaryId": {
+          "Fn::GetAtt": [
+            "constructsagemakerprojectdataopsglossaryGovernanceGlossaryglossary9DB72B85",
+            "glossaryId"
+          ]
+        },
+        "termName": "DataOwner",
+        "status": "ENABLED",
+        "shortDescription": "The team accountable for this project's data",
+        "longDescription": "The team or individual responsible for this project's data quality and access"
+      },
+      "DependsOn": [
+        "constructsagemakerprojectdataopsglossaryGovernanceGlossaryglossary9DB72B85",
+        "constructsagemakerprojectdataopsmonitorcrprojectmembership399EEAD8"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "constructsagemakerprojectdataopsformDataOpsGovernanceFormformtypeCC9BB443": {
+      "Type": "Custom::DataZoneFormType",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "customDataZoneFormTypeproviderframeworkonEvent5E22B76E",
+            "Arn"
+          ]
+        },
+        "domainId": {
+          "Fn::GetAtt": [
+            "constructsagemakerprojectdataopsproject7423C7DC",
+            "DomainId"
+          ]
+        },
+        "owningProjectId": {
+          "Fn::GetAtt": [
+            "constructsagemakerprojectdataopsproject7423C7DC",
+            "Id"
+          ]
+        },
+        "formName": "DataOpsGovernanceForm",
+        "modelStructure": {
+          "Fn::Join": [
+            "",
+            [
+              "structure DataOpsGovernanceForm {\n    @documentation(\"Team or individual accountable for this dataset\")\n    @required\n    @amazon.datazone#glossaryterm(\"",
+              {
+                "Fn::GetAtt": [
+                  "constructsagemakerprojectdataopsglossaryGovernanceGlossaryglossary9DB72B85",
+                  "glossaryId"
+                ]
+              },
+              "\")\n    owner: smithy.api#String\n    reviewedOn: smithy.api#Timestamp\n}"
+            ]
+          ]
+        },
+        "status": "ENABLED",
+        "description": "Project governance metadata"
+      },
+      "DependsOn": [
+        "constructsagemakerprojectdataopsglossaryGovernanceGlossarytermDataOwner23DBCCE1",
+        "constructsagemakerprojectdataopsmonitorcrprojectmembership399EEAD8"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
     "constructsagemakerprojectdataopstestsourcedatazonedatasource709228DC": {
       "Type": "AWS::DataZone::DataSource",
       "Properties": {
+        "AssetFormsInput": [
+          {
+            "Content": "{\"owner\":\"data-team\"}",
+            "FormName": "DataOpsGovernanceForm",
+            "TypeIdentifier": "DataOpsGovernanceForm",
+            "TypeRevision": {
+              "Fn::GetAtt": [
+                "constructsagemakerprojectdataopsformDataOpsGovernanceFormformtypeCC9BB443",
+                "revision"
+              ]
+            }
+          }
+        ],
         "Configuration": {
           "GlueRunConfiguration": {
-            "AutoImportDataQualityResult": true,
+            "AutoImportDataQualityResult": false,
             "RelationalFilterConfigurations": [
               {
-                "DatabaseName": "non-project-database"
+                "DatabaseName": "non-project-database",
+                "FilterExpressions": [
+                  {
+                    "Expression": "dim_*",
+                    "Type": "INCLUDE"
+                  },
+                  {
+                    "Expression": "tmp_*",
+                    "Type": "EXCLUDE"
+                  }
+                ]
               }
             ]
           }
@@ -617,12 +751,21 @@
             "DomainId"
           ]
         },
+        "EnableSetting": "ENABLED",
         "Name": "test-org-test-env-test-domain-test-dataops-project-comprehensive-test-source",
         "ProjectIdentifier": {
           "Fn::GetAtt": [
             "constructsagemakerprojectdataopsproject7423C7DC",
             "Id"
           ]
+        },
+        "PublishOnImport": false,
+        "Recommendation": {
+          "EnableBusinessNameGeneration": true
+        },
+        "Schedule": {
+          "Schedule": "cron(0 6 * * ? *)",
+          "Timezone": "UTC"
         },
         "Type": "glue"
       }
@@ -834,117 +977,6 @@
           ]
         }
       }
-    },
-    "constructsagemakerprojectdataopsglossaryGovernanceGlossaryglossary9DB72B85": {
-      "Type": "Custom::DataZoneGlossary",
-      "Properties": {
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "customDataZoneGlossaryproviderframeworkonEvent73570884",
-            "Arn"
-          ]
-        },
-        "domainId": {
-          "Fn::GetAtt": [
-            "constructsagemakerprojectdataopsproject7423C7DC",
-            "DomainId"
-          ]
-        },
-        "owningProjectId": {
-          "Fn::GetAtt": [
-            "constructsagemakerprojectdataopsproject7423C7DC",
-            "Id"
-          ]
-        },
-        "glossaryName": "GovernanceGlossary",
-        "status": "ENABLED",
-        "description": "Governance terminology for DataOps projects"
-      },
-      "DependsOn": [
-        "constructsagemakerprojectdataopsmonitorcrprojectmembership399EEAD8"
-      ],
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
-    },
-    "constructsagemakerprojectdataopsglossaryGovernanceGlossarytermDataOwner23DBCCE1": {
-      "Type": "Custom::DataZoneGlossaryTerm",
-      "Properties": {
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "customDataZoneGlossaryTermproviderframeworkonEvent30A70716",
-            "Arn"
-          ]
-        },
-        "domainId": {
-          "Fn::GetAtt": [
-            "constructsagemakerprojectdataopsproject7423C7DC",
-            "DomainId"
-          ]
-        },
-        "glossaryId": {
-          "Fn::GetAtt": [
-            "constructsagemakerprojectdataopsglossaryGovernanceGlossaryglossary9DB72B85",
-            "glossaryId"
-          ]
-        },
-        "termName": "DataOwner",
-        "status": "ENABLED",
-        "shortDescription": "The team accountable for this project's data",
-        "longDescription": "The team or individual responsible for this project's data quality and access"
-      },
-      "DependsOn": [
-        "constructsagemakerprojectdataopsglossaryGovernanceGlossaryglossary9DB72B85",
-        "constructsagemakerprojectdataopsmonitorcrprojectmembership399EEAD8"
-      ],
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
-    },
-    "constructsagemakerprojectdataopsformDataOpsGovernanceFormformtypeCC9BB443": {
-      "Type": "Custom::DataZoneFormType",
-      "Properties": {
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "customDataZoneFormTypeproviderframeworkonEvent5E22B76E",
-            "Arn"
-          ]
-        },
-        "domainId": {
-          "Fn::GetAtt": [
-            "constructsagemakerprojectdataopsproject7423C7DC",
-            "DomainId"
-          ]
-        },
-        "owningProjectId": {
-          "Fn::GetAtt": [
-            "constructsagemakerprojectdataopsproject7423C7DC",
-            "Id"
-          ]
-        },
-        "formName": "DataOpsGovernanceForm",
-        "modelStructure": {
-          "Fn::Join": [
-            "",
-            [
-              "structure DataOpsGovernanceForm {\n    @documentation(\"Team or individual accountable for this dataset\")\n    @required\n    @amazon.datazone#glossaryterm(\"",
-              {
-                "Fn::GetAtt": [
-                  "constructsagemakerprojectdataopsglossaryGovernanceGlossaryglossary9DB72B85",
-                  "glossaryId"
-                ]
-              },
-              "\")\n    owner: smithy.api#String\n    reviewedOn: smithy.api#Timestamp\n}"
-            ]
-          ]
-        },
-        "status": "ENABLED",
-        "description": "Project governance metadata"
-      },
-      "DependsOn": [
-        "constructsagemakerprojectdataopsglossaryGovernanceGlossarytermDataOwner23DBCCE1",
-        "constructsagemakerprojectdataopsmonitorcrprojectmembership399EEAD8"
-      ],
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
     },
     "constructsubscriptionroletaggerBF3C50FB": {
       "Type": "Custom::DataZoneProjectRoleTagger",
@@ -2686,12 +2718,21 @@
             "DomainId"
           ]
         },
+        "EnableSetting": "ENABLED",
         "Name": "test-org-test-env-test-domain-test-dataops-project-comprehensive-test-database-sus",
         "ProjectIdentifier": {
           "Fn::GetAtt": [
             "constructsagemakerprojectdataopsproject7423C7DC",
             "Id"
           ]
+        },
+        "PublishOnImport": true,
+        "Recommendation": {
+          "EnableBusinessNameGeneration": true
+        },
+        "Schedule": {
+          "Schedule": "cron(0 6 * * ? *)",
+          "Timezone": "UTC"
         },
         "Type": "glue"
       },
