@@ -1,0 +1,17 @@
+# Bedrock Settings with token usage alarms notifying an EXISTING SNS topic.
+# Demonstrates tokenUsageAlarms.notificationTopicArn; the comprehensive config shows
+# tokenUsageAlarms.createNotificationTopic instead.
+
+# Whether to enable Bedrock audit logging to CloudWatch
+enableAuditLoggingToCloudwatch: true
+# Whether to enable Bedrock audit logging to S3
+enableAuditLoggingToS3: false
+
+# Alarms on Bedrock model token use in this account and Region.
+tokenUsageAlarms:
+  # Notify an existing SNS topic instead of creating one
+  notificationTopicArn: 'arn:{{partition}}:sns:{{region}}:{{account}}:ai-platform-alerts'
+  # Alarms on the account-wide total across all models
+  accountTotal:
+    # Alarm when input tokens in one period exceed this
+    inputTokenThreshold: 50000000

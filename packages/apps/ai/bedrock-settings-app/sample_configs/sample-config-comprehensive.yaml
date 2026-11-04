@@ -1,6 +1,7 @@
 # Sample config for the Bedrock Settings module.
 # Configures audit logging for Bedrock model invocations to both
-# S3 (long-term retention) and CloudWatch (real-time monitoring).
+# S3 (long-term retention) and CloudWatch (real-time monitoring),
+# and alarms on model token use in the account.
 
 # Enables S3 audit logging for Bedrock model invocations.
 # Creates an encrypted S3 bucket for storing invocation logs.
@@ -11,3 +12,41 @@ enableAuditLoggingToS3: true
 # Creates an encrypted CloudWatch Log Group for real-time
 # monitoring and alerting. (default: false)
 enableAuditLoggingToCloudwatch: true
+
+# (Optional) Alarms on Bedrock model token use. Token metrics are
+# account-wide: they count every caller in the account and Region.
+tokenUsageAlarms:
+  # Create a topic encrypted with the module KMS key. Alternatively,
+  # set notificationTopicArn to an existing topic.
+  createNotificationTopic: true
+  # (Optional) Email addresses subscribed to the created topic. Each
+  # must confirm the SNS subscription before delivery begins.
+  notificationEmails:
+    - 'ai-platform-ops@example.com'
+  # (Optional) Per-model alarms, keyed by a name used in the alarm
+  # names.
+  models:
+    nova-micro:
+      # Every model and inference-profile ID callers use for this
+      # model (1-10). Calls under an ID not listed are not counted.
+      modelIds:
+        - 'amazon.nova-micro-v1:0'
+        - 'us.amazon.nova-micro-v1:0'
+      # (Optional) Alarm when input tokens in one period exceed this
+      inputTokenThreshold: 5000000
+      # (Optional) Alarm when output tokens in one period exceed this
+      outputTokenThreshold: 1000000
+  # (Optional) Alarms on the account-wide total across all models
+  accountTotal:
+    # (Optional) Alarm when input tokens in one period exceed this
+    inputTokenThreshold: 50000000
+    # (Optional) Alarm when output tokens in one period exceed this
+    outputTokenThreshold: 10000000
+  # (Optional) Alarm period in seconds. (default: 300)
+  periodSeconds: 3600
+  # (Optional) Number of periods compared to the threshold.
+  # (default: 1)
+  evaluationPeriods: 3
+  # (Optional) Breaching periods within evaluationPeriods required
+  # to alarm. (default: evaluationPeriods)
+  datapointsToAlarm: 2

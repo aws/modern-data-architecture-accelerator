@@ -469,10 +469,12 @@ feature_merge_starter_kit_test:
 
 # --- test stage ---
 
-# Validate package-level documentation for changed packages
+# Validate package-level documentation for changed packages. test:package-docs
+# depends on build, so nx rebuilds the changed packages' dependencies here
+# (3 in parallel by default, ~1.4GB each for jsii), which OOMKilled 4Gi.
 feature_merge_test_package_docs:
   extends:
-    - .size_medium
+    - .size_large
     - .retry_on_infra_failure
   interruptible: true
   tags:

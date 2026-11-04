@@ -5,12 +5,12 @@
 
 import { MdaaConstructProps } from '@aws-mdaa/construct';
 import {
-  grantCloudWatchAlarmsTopicAccess,
   MdaaAlarm,
+  resolveAlarmNotificationTopic,
+  validateAlarmNotificationTarget,
   validateAlarmPeriodSeconds,
 } from '@aws-mdaa/cloudwatch-constructs';
 import { MdaaSnsTopic } from '@aws-mdaa/sns-constructs';
-import { EmailSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
 import { IMdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { Construct } from 'constructs';
 
@@ -134,32 +134,10 @@ function buildDefaultDimensions(props: CreateAgentCoreAlarmsProps): { [key: stri
  * keep the guards together and the caller readable.
  */
 function validateAlarmsProps(props: CreateAgentCoreAlarmsProps): void {
-  if (!props.notificationTopicArn && !props.createNotificationTopic) {
-    throw new Error(
-      'Alarms require a notification target: set either alarms.notificationTopicArn ' +
-        '(existing topic) or alarms.createNotificationTopic: true.',
-    );
-  }
-  if (props.notificationTopicArn && props.createNotificationTopic) {
-    throw new Error(
-      'alarms.notificationTopicArn and alarms.createNotificationTopic are mutually exclusive. ' +
-        'Either reference an existing topic or have the module create one, not both.',
-    );
-  }
+  validateAlarmNotificationTarget(props);
   if (props.errorRateThreshold === undefined && props.throttleCountThreshold === undefined) {
     throw new Error(
       'Alarms require at least one threshold: set alarms.errorRateThreshold and/or alarms.throttleCountThreshold.',
-    );
-  }
-  // MDAA does not modify a topic it did not create. CDK would render the
-  // subscription against an imported ARN, but the deploying role holds no
-  // sns:Subscribe on an externally-owned topic, so it would fail at deploy instead
-  // of here. Reject at synth, where the message can say what to do.
-  if (props.notificationEmails?.length && props.notificationTopicArn) {
-    throw new Error(
-      'alarms.notificationEmails cannot be combined with alarms.notificationTopicArn. MDAA does not add ' +
-        'subscriptions to an SNS topic it does not create - subscribe the addresses on that existing topic ' +
-        'directly, or switch to alarms.createNotificationTopic: true.',
     );
   }
 }
@@ -169,6 +147,11 @@ function validateAlarmsProps(props: CreateAgentCoreAlarmsProps): void {
  * ARN, or a module-created CMK-encrypted topic with the subscriptions and service
  * grants it needs.
  *
+ * The grants are scoped to the alarm names this helper gives its alarms
+ * (`agentcore-<kind>-<resourceName>`, built below), so they cover only this resource's
+ * alarms rather than every alarm in the account. Callers that want the alarm topic on
+ * its own key can pass a dedicated `masterKey`.
+ *
  * @returns the created topic (absent when an existing ARN was referenced) and the
  * ARN the alarm actions publish to.
  */
@@ -176,50 +159,15 @@ function resolveNotificationTopic(
   container: Construct,
   props: CreateAgentCoreAlarmsProps,
 ): { topic?: MdaaSnsTopic; topicArn: string } {
-  if (props.notificationTopicArn) {
-    return { topicArn: props.notificationTopicArn };
-  }
-
-  const masterKey = props.masterKey;
-  if (!masterKey) {
-    throw new Error('A KMS key is required to create a CMK-encrypted alarm notification topic.');
-  }
-
-  const topic = new MdaaSnsTopic(container, 'AlarmTopic', {
-    topicName: `agentcore-alarms-${props.resourceName}`,
-    masterKey,
+  return resolveAlarmNotificationTopic(container, {
     naming: props.naming,
-  });
-
-  // Subscribe the configured addresses. Without a subscriber the topic receives
-  // alarm and EventBridge notifications and discards them. Matches the convention
-  // in dataops-project, datawarehouse, and opensearch (trimmed EmailSubscription).
-  props.notificationEmails?.forEach(email => {
-    topic.addSubscription(new EmailSubscription(email.trim()));
-  });
-
-  // Let the CloudWatch alarm service publish to the topic and use the CMK.
-  //
-  // Scoped to the alarm names this helper gives its alarms, so the grants cover only
-  // this resource's alarms rather than every alarm in the account. The names are
-  // deterministic (`agentcore-<kind>-<resourceName>`, built below), so the pattern is
-  // known here even though the alarms are constructed afterwards - which is required,
-  // since the alarms take the topic ARN as their action and granting afterwards would
-  // be a circular dependency.
-  //
-  // Security review note: this widens an MDAA-created key's policy to a second
-  // service principal, which AWS requires for CloudWatch to publish to a
-  // CMK-encrypted topic at all. See grantCloudWatchAlarmsTopicAccess for the
-  // reasoning and why the conditions here are correct (unlike the EventBridge case
-  // in eventbridge-rules.ts). Callers that want the alarm topic on its own key can
-  // pass a dedicated `masterKey`.
-  grantCloudWatchAlarmsTopicAccess(container, {
-    topic,
-    masterKey,
+    notificationTopicArn: props.notificationTopicArn,
+    createNotificationTopic: props.createNotificationTopic,
+    notificationEmails: props.notificationEmails,
+    topicName: `agentcore-alarms-${props.resourceName}`,
+    masterKey: props.masterKey,
     alarmNamePattern: `${AGENTCORE_ALARM_NAME_PREFIX}-*-${props.resourceName}`,
   });
-
-  return { topic, topicArn: topic.topicArn };
 }
 
 export interface CreateAgentCoreAlarmsProps extends MdaaConstructProps {

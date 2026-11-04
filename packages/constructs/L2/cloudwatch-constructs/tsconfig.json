@@ -41,6 +41,9 @@
       "path": "../../../utilities/mdaa-naming"
     },
     {
+      "path": "../sns-constructs"
+    },
+    {
       "path": "../../../utilities/mdaa-testing"
     }
   ],

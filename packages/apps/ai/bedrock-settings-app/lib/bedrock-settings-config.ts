@@ -4,6 +4,7 @@
  */
 
 import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from '@aws-mdaa/app';
+import { TokenUsageAlarmsProps } from '@aws-mdaa/bedrock-settings-l3-construct';
 import { Schema } from 'ajv';
 import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
@@ -38,6 +39,19 @@ export interface BedrockSettingsConfigContents extends MdaaBaseConfigContents {
    * @default false
    */
   enableAuditLoggingToCloudwatch: boolean;
+
+  /**
+   * Alarms on Amazon Bedrock model token use in this account and Region, per model and/or
+   * in total. Token metrics count every caller in the account, not only MDAA-deployed
+   * workloads, and a per-model alarm counts only the model IDs it lists.
+   *
+   * Use cases: token-spend spike alerting, runaway-agent detection, usage-pattern deviation alarms
+   *
+   * AWS: CloudWatch alarms on AWS/Bedrock InputTokenCount / OutputTokenCount + SNS notification
+   *
+   * Validation: Optional; TokenUsageAlarmsProps; requires a notification target and at least one threshold
+   */
+  tokenUsageAlarms?: TokenUsageAlarmsProps;
 }
 
 /**
@@ -56,6 +70,9 @@ export class BedrockSettingsConfigParser extends MdaaAppConfigParser<BedrockSett
   /** Flag indicating whether CloudWatch audit logging is enabled for Bedrock model invocations */
   public readonly enableAuditLoggingToCloudwatch: boolean;
 
+  /** Alarms on Bedrock model token use, when configured */
+  public readonly tokenUsageAlarms?: TokenUsageAlarmsProps;
+
   /**
    * Creates a new BedrockSettingsConfigParser instance.
    * @param stack - The CDK stack context
@@ -67,5 +84,6 @@ export class BedrockSettingsConfigParser extends MdaaAppConfigParser<BedrockSett
     // Extract audit logging configuration from parsed config
     this.enableAuditLoggingToS3 = this.configContents.enableAuditLoggingToS3;
     this.enableAuditLoggingToCloudwatch = this.configContents.enableAuditLoggingToCloudwatch;
+    this.tokenUsageAlarms = this.configContents.tokenUsageAlarms;
   }
 }

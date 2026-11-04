@@ -2,10 +2,11 @@
 # Deploys a customer support agent end to end: knowledge bases backed
 # by Aurora and OpenSearch vector stores, with S3/SharePoint data
 # sources and multiple parsing and chunking strategies; Lambda
-# functions; a guardrail; an AgentCore Gateway serving a Lambda tool
-# and a knowledge base; shared VPC endpoints; and an AgentCore Harness
-# with production settings (JWT auth, guardrail, tool allowlist,
-# private networking, PII masking, log retention, pinned endpoint).
+# functions; a guardrail with intervention alarms; an AgentCore
+# Gateway serving a Lambda tool and a knowledge base; shared VPC
+# endpoints; and an AgentCore Harness with production settings (JWT
+# auth, guardrail, tool allowlist, private networking, PII masking,
+# log retention, pinned endpoint).
 #
 # Alternatives to choices made here are shown elsewhere: an
 # existing kmsKeyArn (sample-config-kb-only.yaml); a
@@ -729,6 +730,36 @@ guardrails:
           # (Optional) Specifies whether to enable guardrail
           # evaluation on the output
           outputEnabled: true
+    # (Optional) Intervention alarms on this guardrail, across all
+    # its versions. Notifies the target set in guardrailAlarms below.
+    interventionAlarm:
+      # (Optional) Alarm when interventions in one period exceed this count
+      countThreshold: 25
+      # (Optional) Alarm when more than this percentage of guardrail
+      # evaluations in one period intervened
+      ratePercentThreshold: 15
+
+# (Optional) Notification target and timing for the guardrail
+# intervention alarms. Required when a guardrail sets
+# interventionAlarm.
+guardrailAlarms:
+  # Create a topic encrypted with the module KMS key. Alternatively,
+  # set notificationTopicArn to an existing security team topic.
+  createNotificationTopic: true
+  # (Optional) Email addresses subscribed to the created topic. Each
+  # must confirm the SNS subscription before delivery begins.
+  notificationEmails:
+    - 'security-team@example.com'
+  # (Optional) Alarm period in seconds; a multiple of 60, and
+  # periodSeconds x evaluationPeriods must not exceed 3 hours.
+  # (default: 300)
+  periodSeconds: 300
+  # (Optional) Number of periods compared to the threshold.
+  # (default: 1)
+  evaluationPeriods: 3
+  # (Optional) Breaching periods within evaluationPeriods required
+  # to alarm. (default: evaluationPeriods)
+  datapointsToAlarm: 2
 
 # (Optional) AgentCore Gateway target definitions (MCP tool
 # sources), keyed by target name. A gateway attaches a target by

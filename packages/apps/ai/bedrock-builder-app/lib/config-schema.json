@@ -320,6 +320,10 @@
                     "description": "Guardrail description",
                     "type": "string"
                 },
+                "interventionAlarm": {
+                    "$ref": "#/definitions/GuardrailInterventionAlarmProps",
+                    "description": "Intervention alarms on this guardrail, covering every guardrail version. Requires the\nmodule-level `guardrailAlarms` block, which sets the notification target and timing.\n\nUse cases: alerting on spikes in blocked content, intervention-rate monitoring\n\nAWS: CloudWatch alarms on AWS/Bedrock/Guardrails InvocationsIntervened\n\nValidation: Optional; GuardrailInterventionAlarmProps; at least one threshold"
+                },
                 "sensitiveInformationFilters": {
                     "$ref": "#/definitions/SensitiveInformationFilters",
                     "description": "Sensitive information filters for PII and custom patterns"
@@ -2115,6 +2119,97 @@
                 },
                 "relevance": {
                     "description": "Relevance threshold (0.0-1.0) for query relevance",
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "GuardrailAlarmsCreatedTopicProps": {
+            "additionalProperties": false,
+            "description": "Guardrail intervention alarms notifying a module-created SNS topic.\n\nUse cases: self-contained alerting without a pre-existing topic\n\nAWS: CloudWatch Metrics Insights alarms publishing to an MDAA-created CMK-encrypted SNS topic\n\nValidation: createNotificationTopic: true required; notificationTopicArn not allowed; not allowed with kmsKeyArn",
+            "properties": {
+                "createNotificationTopic": {
+                    "description": "Set to true to have MDAA create an SNS topic encrypted with the module KMS key, grant\nCloudWatch alarms in this module publish access, and export its ARN to SSM.\nMutually exclusive with `notificationTopicArn`. Not supported with `kmsKeyArn`:\nMDAA cannot grant CloudWatch use of an imported key, so the topic would never\nreceive a notification.\n\nUse cases: self-contained alerting without a pre-existing topic\n\nAWS: MDAA-created CMK-encrypted SNS topic\n\nValidation: Required; Boolean; must be true; mutually exclusive with notificationTopicArn; not allowed with kmsKeyArn",
+                    "type": "boolean"
+                },
+                "datapointsToAlarm": {
+                    "default": "evaluationPeriods",
+                    "description": "Number of breaching periods within `evaluationPeriods` required to alarm (an \"M of\nN\" alarm).\n\nUse cases: reducing false positives on low-traffic guardrails\n\nAWS: CloudWatch alarm datapointsToAlarm\n\nValidation: Optional; Number; between 1 and evaluationPeriods",
+                    "minimum": 1,
+                    "type": "integer"
+                },
+                "evaluationPeriods": {
+                    "default": 1,
+                    "description": "Number of periods over which interventions are compared to the threshold.\n\nUse cases: requiring sustained breaches before alarming\n\nAWS: CloudWatch alarm evaluation periods\n\nValidation: Optional; Number; periodSeconds x evaluationPeriods <= 10800",
+                    "minimum": 1,
+                    "type": "integer"
+                },
+                "notificationEmails": {
+                    "description": "Email addresses subscribed to the module-created notification topic. Each address\nreceives an SNS confirmation request and must confirm before delivery begins.\nWithout a subscriber the created topic discards every notification; MDAA warns at\nsynth in that case.\n\nUse cases: security team paging, routing alarms to a distribution list\n\nAWS: SNS email subscriptions on the created topic\n\nValidation: Optional; String[]; valid email addresses",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "periodSeconds": {
+                    "default": 300,
+                    "description": "Alarm period in seconds. Each period's interventions are compared to the\nthreshold. Must be a multiple of 60, and periodSeconds x evaluationPeriods must not\nexceed 10800 (3 hours): CloudWatch evaluates Metrics Insights alarms over the most\nrecent 3 hours only.\n\nUse cases: tuning alarm sensitivity vs. noise\n\nAWS: CloudWatch alarm period\n\nValidation: Optional; Number; multiple of 60; periodSeconds x evaluationPeriods <= 10800",
+                    "minimum": 60,
+                    "multipleOf": 60,
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "createNotificationTopic"
+            ],
+            "type": "object"
+        },
+        "GuardrailAlarmsExistingTopicProps": {
+            "additionalProperties": false,
+            "description": "Guardrail intervention alarms notifying an existing SNS topic.\n\nUse cases: routing guardrail intervention alarms to a central security or incident topic\n\nAWS: CloudWatch Metrics Insights alarms publishing to an existing SNS topic\n\nValidation: notificationTopicArn required; createNotificationTopic and notificationEmails not allowed",
+            "properties": {
+                "datapointsToAlarm": {
+                    "default": "evaluationPeriods",
+                    "description": "Number of breaching periods within `evaluationPeriods` required to alarm (an \"M of\nN\" alarm).\n\nUse cases: reducing false positives on low-traffic guardrails\n\nAWS: CloudWatch alarm datapointsToAlarm\n\nValidation: Optional; Number; between 1 and evaluationPeriods",
+                    "minimum": 1,
+                    "type": "integer"
+                },
+                "evaluationPeriods": {
+                    "default": 1,
+                    "description": "Number of periods over which interventions are compared to the threshold.\n\nUse cases: requiring sustained breaches before alarming\n\nAWS: CloudWatch alarm evaluation periods\n\nValidation: Optional; Number; periodSeconds x evaluationPeriods <= 10800",
+                    "minimum": 1,
+                    "type": "integer"
+                },
+                "notificationTopicArn": {
+                    "description": "ARN of an existing SNS topic to notify on alarm, e.g. a central security\nnotification topic. Mutually exclusive with `createNotificationTopic`.\n\nMDAA cannot verify or modify a topic it did not create: the topic should be\nencrypted with a customer-managed KMS key, must allow the `cloudwatch.amazonaws.com`\nservice principal to `sns:Publish` (and to use that key), and needs at least one\nsubscriber. MDAA emits a synth-time warning restating this.\n\nUse cases: routing alarms to an existing security or incident topic\n\nAWS: SNS topic ARN used as the CloudWatch alarm action\n\nValidation: Required; String; valid SNS topic ARN; mutually exclusive with createNotificationTopic",
+                    "type": "string"
+                },
+                "periodSeconds": {
+                    "default": 300,
+                    "description": "Alarm period in seconds. Each period's interventions are compared to the\nthreshold. Must be a multiple of 60, and periodSeconds x evaluationPeriods must not\nexceed 10800 (3 hours): CloudWatch evaluates Metrics Insights alarms over the most\nrecent 3 hours only.\n\nUse cases: tuning alarm sensitivity vs. noise\n\nAWS: CloudWatch alarm period\n\nValidation: Optional; Number; multiple of 60; periodSeconds x evaluationPeriods <= 10800",
+                    "minimum": 60,
+                    "multipleOf": 60,
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "notificationTopicArn"
+            ],
+            "type": "object"
+        },
+        "GuardrailInterventionAlarmProps": {
+            "additionalProperties": false,
+            "description": "Intervention alarms on one guardrail. Each threshold set creates one CloudWatch alarm on\na Metrics Insights query that aggregates the guardrail's `InvocationsIntervened` metric\nacross every version of the guardrail, `DRAFT` included, so the alarm counts traffic\nwhichever version a caller invokes. Notification target and timing come from the\nmodule-level `guardrailAlarms` block.\n\nUse cases: detecting a spike in blocked prompts or responses, prompt-attack bursts,\npolicy-violation trend alerting\n\nAWS: CloudWatch alarm on a Metrics Insights query over AWS/Bedrock/Guardrails InvocationsIntervened\n\nValidation: at least one of countThreshold or ratePercentThreshold; requires the module-level guardrailAlarms block",
+            "properties": {
+                "countThreshold": {
+                    "description": "Alarm when the number of guardrail interventions in one alarm period exceeds this\nvalue. Counts every evaluation that intervened, on input or output, for inline use\n(Converse, ConverseStream, InvokeModel with a guardrail) and `ApplyGuardrail` alike.\nOmit to skip the count alarm.\n\nUse cases: catching a burst of blocked content regardless of traffic volume\n\nAWS: CloudWatch alarm on SUM(InvocationsIntervened)\n\nValidation: Optional; Number; >= 0",
+                    "minimum": 0,
+                    "type": "number"
+                },
+                "ratePercentThreshold": {
+                    "description": "Alarm when the percentage of guardrail evaluations that intervened in one alarm\nperiod exceeds this value. An inline call is evaluated on its input and, if the input\npasses, again on its output, so the denominator is evaluations, not calls. Omit to\nskip the rate alarm.\n\nIn a period with few evaluations one intervention is a large share: one intervention\nin a period with a single evaluation is 100%. On a low-traffic guardrail, require\nseveral breaching periods with `datapointsToAlarm`, or use `countThreshold` instead.\n\nUse cases: intervention-rate alerting that scales with traffic, detecting policy drift\n\nAWS: CloudWatch alarm on AVG(InvocationsIntervened), the share of evaluations that\nintervened, with a threshold of ratePercentThreshold / 100\n\nValidation: Optional; Number; percentage, at least 0 and below 100",
+                    "exclusiveMaximum": 100,
+                    "minimum": 0,
                     "type": "number"
                 }
             },
@@ -5678,6 +5773,17 @@
         "gateways": {
             "$ref": "#/definitions/NamedGatewayProps",
             "description": "Bedrock AgentCore Gateway configurations (compliant MCP servers), keyed by gateway name.\nEach gateway references its tool targets by name from the sibling `gatewayTargets` map, and may\nreuse Lambdas from `lambdaFunctions` via `generated-function:<name>` references.\n\nUse cases: exposing a unified MCP tool surface with per-tool authorization, agent tool gateways\n\nAWS: Amazon Bedrock AgentCore Gateway\n\nValidation: Optional; NamedGatewayProps (map of gateway name to config)"
+        },
+        "guardrailAlarms": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/GuardrailAlarmsExistingTopicProps"
+                },
+                {
+                    "$ref": "#/definitions/GuardrailAlarmsCreatedTopicProps"
+                }
+            ],
+            "description": "Notification target and timing for the guardrail intervention alarms. Each guardrail\nopts in with its own `interventionAlarm` thresholds; every alarm in the module\nnotifies the one target set here.\n\nUse cases: routing guardrail intervention alarms to a security team, self-contained\nalerting with a module-created topic\n\nAWS: CloudWatch Metrics Insights alarms + SNS notification\n\nValidation: Optional; GuardrailAlarmsProps; required when any guardrail sets interventionAlarm"
         },
         "guardrails": {
             "$ref": "#/definitions/NamedGuardrailProps",

@@ -543,3 +543,31 @@ describe('Bedrock Guardrail L3 Construct Tests', () => {
     });
   });
 });
+
+describe('Bedrock Guardrail L3 Construct Intervention Alarm Compliance', () => {
+  const testApp = new MdaaTestApp();
+  new BedrockGuardrailL3Construct(testApp.testStack, 'test-guardrail-construct', {
+    guardrailName: 'test-guardrail',
+    guardrailConfig: {
+      contentFilters: { promptAttack: { inputStrength: 'HIGH', outputStrength: 'NONE' } },
+      interventionAlarm: { countThreshold: 25, ratePercentThreshold: 15 },
+    },
+    kmsKey: new Key(testApp.testStack, 'TestKey', { enableKeyRotation: true }),
+    roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+    naming: testApp.naming,
+    alarmSettings: {
+      alarmTopicArn: 'arn:test-partition:sns:test-region:test-account:security-alarms',
+      periodSeconds: 300,
+      evaluationPeriods: 1,
+    },
+  });
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('Intervention alarms notify the configured topic', () => {
+    template.resourceCountIs('AWS::CloudWatch::Alarm', 2);
+    template.allResourcesProperties('AWS::CloudWatch::Alarm', {
+      AlarmActions: ['arn:test-partition:sns:test-region:test-account:security-alarms'],
+    });
+  });
+});

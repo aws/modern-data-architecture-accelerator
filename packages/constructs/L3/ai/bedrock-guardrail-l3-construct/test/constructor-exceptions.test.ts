@@ -25,4 +25,23 @@ describe('BedrockGuardrailL3Construct Exception Tests', () => {
       ).toThrow(`promptAttack outputStrength must be NONE, got '${outputStrength}'`);
     },
   );
+
+  test('interventionAlarm without module alarm settings is rejected at synth', () => {
+    const testApp = new MdaaTestApp();
+    expect(
+      () =>
+        new BedrockGuardrailL3Construct(testApp.testStack, 'test-guardrail-alarm-construct', {
+          guardrailName: 'test-guardrail',
+          guardrailConfig: {
+            contentFilters: { hate: { inputStrength: 'HIGH', outputStrength: 'HIGH' } },
+            interventionAlarm: { countThreshold: 1 },
+          },
+          kmsKey: new Key(testApp.testStack, 'TestKey'),
+          roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+          naming: testApp.naming,
+        }),
+    ).toThrow(
+      "Guardrail 'test-guardrail' sets interventionAlarm, which requires the module-level guardrailAlarms block",
+    );
+  });
 });

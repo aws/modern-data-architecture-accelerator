@@ -4,3 +4,4 @@
  */
 
 export * from './bedrock-settings-l3-construct';
+export * from './token-usage-alarms';

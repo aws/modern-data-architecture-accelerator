@@ -16,6 +16,8 @@ This module deploys and integrates the following resources:
 - **Knowledge Base(s)** (Optional) — Bedrock Knowledge Bases with S3 and SharePoint data sources, multiple parsing strategies (default, BDA, Foundation Model, custom), and chunking configurations.
 - **Vector Store(s)** (Optional) — OpenSearch Serverless collections or Aurora Serverless clusters for Knowledge Base vector storage.
 - **Bedrock Guardrail** (Optional) — Content filters, contextual grounding, PII entity detection, and regex-based sensitive information filtering.
+- **Guardrail Intervention Alarms** (Optional) — CloudWatch alarms on the interventions of each guardrail that sets `interventionAlarm`, notifying an existing SNS topic or a module-created one, with SSM parameters for each alarm's name and ARN. See [Guardrail intervention alarms](#guardrail-intervention-alarms).
+- **Guardrail Alarm SNS Topic** (Optional) — With `guardrailAlarms.createNotificationTopic`, the SNS topic the guardrail alarms notify, with optional email subscriptions, its topic policy, and SSM parameters for its name and ARN.
 - **AgentCore Harness(es)** (Optional) — Declarative agent loops (model + system prompt + tools) on AgentCore.
 - **AgentCore Gateway(s)** (Optional) — MCP servers exposing Lambda functions and knowledge bases to harnesses and other gateway clients as tools.
 - **Knowledge Base Gateway Connector(s)** (Optional) — A Lambda connector per `knowledgeBase` gateway target, exposing a knowledge base to gateway clients as a `Retrieve` tool. See [Knowledge bases through a gateway](#knowledge-bases-through-a-gateway).
@@ -43,6 +45,7 @@ This module is designed in alignment with MDAA security/compliance principles an
   - Aurora Serverless clusters encrypted with KMS
   - AgentCore Harness log groups encrypted with a customer-managed KMS key
   - Knowledge base gateway connector environments and log groups encrypted with the module KMS key
+  - A module-created guardrail alarm topic is encrypted with the module KMS key
 - **Encryption in Transit**:
   - All Bedrock API communications use TLS
   - OpenSearch and Aurora connections encrypted in transit
@@ -53,6 +56,7 @@ This module is designed in alignment with MDAA security/compliance principles an
   - Each knowledge base gateway connector has its own role, allowed only `bedrock:Retrieve` on one knowledge base and log writes to its own log group
   - `lambda:InvokeFunction` on a knowledge base gateway connector is granted to the gateway role only
   - A VPC-bound knowledge base gateway connector's role also gets the EC2 network interface actions Lambda needs to attach it, denied to the function's own code
+  - CloudWatch's publish grant on a module-created guardrail alarm topic, and its use of the module KMS key, are limited to this module's guardrail alarms
 - **Network Isolation**:
   - Lambda functions and Aurora clusters can be VPC-bound with configurable security groups
   - Knowledge base gateway connectors run outside your VPC and call the regional `bedrock-agent-runtime` endpoint, unless `networkConfiguration` places them in your subnets, reaching Retrieve through a [VPC endpoint set](#vpc-endpoint-sets); a harness in a private VPC reaches them only through its gateway endpoint
@@ -64,6 +68,7 @@ This module is designed in alignment with MDAA security/compliance principles an
   - Guardrails provide content filters and contextual grounding checks
   - PII entity detection and regex-based sensitive information filtering
   - AgentCore Harness log groups apply an always-on PII masking floor, extensible via config
+  - Optional intervention count and rate alarms on each guardrail notify one SNS topic, such as a security team's
 
 ---
 
@@ -221,6 +226,34 @@ gatewayTargets:
 
 ---
 
+## Guardrail intervention alarms
+
+Set `interventionAlarm` on a guardrail to alarm when it intervenes more than expected, and the module-level `guardrailAlarms` block to say where every guardrail alarm in the module notifies:
+
+```yaml
+guardrails:
+  enterprise-guardrail:
+    contentFilters: { ... }
+    interventionAlarm:
+      countThreshold: 25 # interventions per period
+      ratePercentThreshold: 15 # percent of evaluations that intervened
+guardrailAlarms:
+  notificationTopicArn: 'arn:{{partition}}:sns:{{region}}:{{account}}:security-alerts'
+  periodSeconds: 300 # optional
+  evaluationPeriods: 3 # optional
+  datapointsToAlarm: 2 # optional
+```
+
+- **What is counted** - Bedrock publishes `InvocationsIntervened` in the `AWS/Bedrock/Guardrails` namespace per guardrail ARN and version. Each alarm aggregates every version of the guardrail, `DRAFT` included, with a CloudWatch Metrics Insights query, so it counts traffic whichever version a caller invokes. Inline use (Converse, ConverseStream, and InvokeModel with a guardrail) is counted as well as `ApplyGuardrail`, although the [AWS guardrail metrics documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/monitoring-guardrails-cw-metrics.html) describes the metric only in terms of `ApplyGuardrail`.
+- **Count and rate** - `countThreshold` is compared to the number of interventions in a period, and `ratePercentThreshold` to the percentage of guardrail evaluations that intervened. An inline call is evaluated on its input and, if the input passes, again on its output, so it is one or two evaluations. Set either or both.
+- **Low traffic** - in a period with few evaluations one intervention is a large share: one intervention in a period with a single evaluation is 100%. On a low-traffic guardrail, require several breaching periods with `datapointsToAlarm`, or use `countThreshold` instead of `ratePercentThreshold`.
+- **No per-direction or per-policy alarm** - Bedrock publishes the input/output and policy-type breakdowns only account-wide, so an alarm on one guardrail can't be limited to input-side interventions or to one policy type.
+- **Notification** - every guardrail alarm in the module notifies one target: an existing topic (`notificationTopicArn`), or a topic the module creates, encrypted with the module KMS key (`createNotificationTopic`, with `notificationEmails` to subscribe addresses). With `kmsKeyArn` set, use `notificationTopicArn`: the module can't grant CloudWatch use of an imported key, so `createNotificationTopic` is rejected at synth.
+- **Evaluation window** - `periodSeconds` must be a multiple of 60, and `periodSeconds` x `evaluationPeriods` must not exceed 3 hours, because CloudWatch evaluates Metrics Insights alarms over the most recent 3 hours only. Both are checked at synth.
+- **Quota** - each threshold is one Metrics Insights alarm. An account can have 200 Metrics Insights alarms per Region, and that quota can't be raised.
+
+---
+
 ## Configuration
 
 ### MDAA Config
@@ -251,7 +284,7 @@ Deploys a single AgentCore Harness - a declarative agent loop (foundation model 
 
 #### Comprehensive Configuration
 
-Deploys a customer support agent end to end: knowledge bases backed by Aurora and OpenSearch vector stores with S3/SharePoint data sources and multiple parsing and chunking strategies, Lambda functions, a guardrail, an AgentCore Gateway serving a Lambda tool and a knowledge base, shared VPC endpoints, and an AgentCore Harness with production settings - JWT auth, a guardrail, a tool allowlist, private networking, PII masking, log retention, and a pinned endpoint. Use this as a reference for a production deployment and for the full harness, knowledge base, and guardrail option surface.
+Deploys a customer support agent end to end: knowledge bases backed by Aurora and OpenSearch vector stores with S3/SharePoint data sources and multiple parsing and chunking strategies, Lambda functions, a guardrail with intervention alarms, an AgentCore Gateway serving a Lambda tool and a knowledge base, shared VPC endpoints, and an AgentCore Harness with production settings - JWT auth, a guardrail, a tool allowlist, private networking, PII masking, log retention, and a pinned endpoint. Use this as a reference for a production deployment and for the full harness, knowledge base, and guardrail option surface.
 
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
@@ -302,6 +335,17 @@ Deploys two gateways with CUSTOM_JWT (OIDC) inbound auth, for MCP clients that p
 ```yaml
 # Contents available via above link
 --8<-- "target/docs/packages/apps/ai/bedrock-builder-app/sample_configs/sample-config-gateway-jwt.yaml"
+```
+
+#### Guardrail Alarms with an Existing Notification Topic
+
+Deploys a guardrail whose intervention alarms notify an existing SNS topic through `guardrailAlarms.notificationTopicArn`, instead of a topic the module creates. Use this when you already manage a central security or incident topic. It has its own sample because `notificationTopicArn` and `createNotificationTopic` (used in the comprehensive configuration) are mutually exclusive. See [Guardrail intervention alarms](#guardrail-intervention-alarms).
+
+[sample-config-guardrail-alarms-existing-topic.yaml](sample_configs/sample-config-guardrail-alarms-existing-topic.yaml)
+
+```yaml
+# Contents available via above link
+--8<-- "target/docs/packages/apps/ai/bedrock-builder-app/sample_configs/sample-config-guardrail-alarms-existing-topic.yaml"
 ```
 
 ---

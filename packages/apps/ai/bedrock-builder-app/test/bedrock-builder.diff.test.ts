@@ -140,4 +140,31 @@ describe('Bedrock Builder Baseline Diff Tests', () => {
       },
     ),
   );
+
+  baselineDiffTestApp(
+    'Bedrock Builder Guardrail Alarms Existing Topic',
+    Create.appProvider(
+      context => {
+        const moduleApp = new BedrockBuilderApp({
+          context: {
+            ...context,
+            module_configs: path.join(
+              __dirname,
+              '..',
+              'sample_configs',
+              'sample-config-guardrail-alarms-existing-topic.yaml',
+            ),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-bedrock-builder-guardrail-alarms-existing-topic',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
 });

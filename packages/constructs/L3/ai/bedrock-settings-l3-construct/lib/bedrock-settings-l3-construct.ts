@@ -21,6 +21,7 @@ import { MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
+import { createTokenUsageAlarms, TokenUsageAlarmsProps } from './token-usage-alarms';
 
 // Lambda configuration constants for the custom resource
 const LAMBDA_RUNTIME = Runtime.PYTHON_3_14;
@@ -53,6 +54,18 @@ export interface BedrockSettingsL3ConstructProps extends MdaaL3ConstructProps {
    * Validation: Required; Boolean
    **/
   readonly enableAuditLoggingToCloudwatch: boolean;
+  /**
+   * Alarms on Amazon Bedrock model token use in this account and Region, per model and/or
+   * in total. Token metrics count every caller in the account, not only MDAA-deployed
+   * workloads, and a per-model alarm counts only the model IDs it lists.
+   *
+   * Use cases: token-spend spike alerting, runaway-agent detection, usage-pattern deviation alarms
+   *
+   * AWS: CloudWatch alarms on AWS/Bedrock InputTokenCount / OutputTokenCount + SNS notification
+   *
+   * Validation: Optional; TokenUsageAlarmsProps; requires a notification target and at least one threshold
+   **/
+  readonly tokenUsageAlarms?: TokenUsageAlarmsProps;
 }
 
 /**
@@ -94,6 +107,14 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
 
     // Configure Bedrock logging settings via custom resource
     this.createBedrockSettingsCustomResource(loggingBucket, logGroup, serviceRole);
+
+    if (this.props.tokenUsageAlarms) {
+      createTokenUsageAlarms(this, {
+        naming: this.props.naming,
+        alarms: this.props.tokenUsageAlarms,
+        masterKey: encryptionKey,
+      });
+    }
   }
 
   /**

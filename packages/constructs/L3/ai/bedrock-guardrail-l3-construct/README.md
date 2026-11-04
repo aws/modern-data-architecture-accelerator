@@ -8,6 +8,7 @@ This construct provides a high-level abstraction for creating Amazon Bedrock Gua
 - **Contextual Grounding**: Grounding and relevance threshold controls
 - **Custom Messages**: Configurable blocked input/output messages
 - **KMS Encryption**: Automatic encryption with customer-managed keys
+- **Intervention Alarms**: (Optional) CloudWatch alarms on the guardrail's intervention count and/or rate, across every guardrail version
 - **Flexible Configuration**: Support for all guardrail filter strengths
 
 ## Usage
@@ -51,6 +52,18 @@ const guardrail = new BedrockGuardrailL3Construct(this, 'MyGuardrail', {
 - `blockedInputMessaging`: Custom message for blocked inputs
 - `blockedOutputsMessaging`: Custom message for blocked outputs
 - `contextualGroundingFilters`: Grounding and relevance thresholds
+- `interventionAlarm`: (Optional) Intervention alarm thresholds; requires the `alarmSettings` construct prop
+
+### Construct Properties
+- `guardrailName`, `guardrailConfig`, `kmsKey`, `naming`: the guardrail, its configuration, the KMS key encrypting it, and the resource naming
+- `alarmSettings`: Notification topic ARN, period, evaluation periods, and optional `datapointsToAlarm` for the intervention alarms. Required when `guardrailConfig.interventionAlarm` is set. When `alarmNamePattern` is set, each alarm name must match it, so the topic's CloudWatch grants cover the alarms
+
+### Intervention Alarms
+Each threshold creates one CloudWatch alarm on a Metrics Insights query over the `AWS/Bedrock/Guardrails` `InvocationsIntervened` metric, aggregated across every version of the guardrail, `DRAFT` included:
+- `countThreshold`: alarm when the number of interventions in one period exceeds this value
+- `ratePercentThreshold`: alarm when the percentage of guardrail evaluations that intervened in one period exceeds this value (at least 0, below 100). One intervention in a period with a single evaluation is 100%, so on a low-traffic guardrail require several breaching periods with `datapointsToAlarm`, or use `countThreshold`
+
+The period must be a multiple of 60 seconds, and period x evaluation periods must not exceed 3 hours, the window CloudWatch evaluates Metrics Insights alarms over. A period with no evaluations is treated as not breaching.
 
 ### Content Filter Types
 - `hate`: Hate speech detection
@@ -104,5 +117,6 @@ contextualGroundingFilters: {
 ## Dependencies
 
 - `@aws-mdaa/l3-construct`
+- `@aws-mdaa/cloudwatch-constructs`
 - `aws-cdk-lib`
 - `constructs`

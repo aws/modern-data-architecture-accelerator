@@ -175,7 +175,7 @@ MDAA includes 40+ modules for governance, data lakes, pipelines, analytics, AI, 
 - [**SageMaker Model Monitoring**](packages/apps/ai/sagemaker-model-monitoring-app/README.md) - Continuous monitoring of production inference endpoints for drift, degradation, and bias.
 - [**Bedrock AgentCore Runtime**](packages/apps/ai/bedrock-agentcore-runtime-app/README.md) - Deploy Amazon Bedrock AgentCore Runtimes with custom Docker containers.
 - [**Bedrock Builder**](packages/apps/ai/bedrock-builder-app/README.md) - Deploy secure AgentCore Harnesses and Gateways, Knowledge Bases, and associated resources.
-- [**Bedrock Settings**](packages/apps/ai/bedrock-settings-app/README.md) - Configure Bedrock model invocation audit logging to S3 and CloudWatch.
+- [**Bedrock Settings**](packages/apps/ai/bedrock-settings-app/README.md) - Configure Bedrock model invocation audit logging to S3 and CloudWatch, and optional alarms on model token use.
 
 </details>
 

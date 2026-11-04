@@ -9,7 +9,12 @@ import { Topic } from 'aws-cdk-lib/aws-sns';
 import { SnsAction } from 'aws-cdk-lib/aws-cloudwatch-actions';
 import { Duration } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { convertComparisonOperator, convertTreatMissingData, validateAlarmPeriodSeconds } from './alarm-utils';
+import {
+  convertComparisonOperator,
+  convertTreatMissingData,
+  validateAlarmPeriodSeconds,
+  validateMetricsInsightsAlarmWindow,
+} from './alarm-utils';
 import { convertUnit } from './metric-utils';
 import { createSsmParamWithSuppression } from './ssm-utils';
 
@@ -59,8 +64,10 @@ export interface MetricDataQueryProps {
   readonly statistic?: string;
 
   /**
-   * The period for the metric in seconds
-   * @default - No period (use expression instead)
+   * The period in seconds. For a metric stat, the period of the metric. Required for a
+   * Metrics Insights query (an expression starting with `SELECT`). Ignored for a metric
+   * math expression, which takes its period from the metrics it references.
+   * @default - 300 for a metric stat; none for an expression
    */
   readonly period?: number;
 
@@ -321,13 +328,7 @@ export class MdaaAlarm extends Construct {
       const returnData = metric.returnData ?? false;
 
       if (metric.expression) {
-        // Metric math expression
-        return {
-          id: metric.id,
-          label: metric.label,
-          returnData,
-          expression: metric.expression,
-        };
+        return MdaaAlarm.buildExpressionQuery(metric, metric.expression, props.evaluationPeriods);
       } else {
         // Metric stat
         if (!metric.metricName || !metric.namespace || !metric.statistic) {
@@ -378,6 +379,48 @@ export class MdaaAlarm extends Construct {
       okActions: props.okActions,
       insufficientDataActions: props.insufficientDataActions,
     });
+  }
+
+  /**
+   * Builds the query for a metric math expression or a Metrics Insights query. Only the
+   * latter takes a period, so a period set on a metric math expression is not rendered.
+   */
+  private static buildExpressionQuery(
+    metric: MetricDataQueryProps,
+    expression: string,
+    evaluationPeriods: number,
+  ): CfnAlarm.MetricDataQueryProperty {
+    return {
+      id: metric.id,
+      label: metric.label,
+      returnData: metric.returnData ?? false,
+      expression,
+      period: MdaaAlarm.isMetricsInsightsQuery(expression)
+        ? MdaaAlarm.metricsInsightsQueryPeriod(metric, evaluationPeriods)
+        : undefined,
+    };
+  }
+
+  /** Every Metrics Insights query starts with SELECT; no metric math expression does. */
+  private static isMetricsInsightsQuery(expression: string): boolean {
+    return /^\s*SELECT\s/i.test(expression);
+  }
+
+  /**
+   * The validated period of a Metrics Insights query, which `PutMetricAlarm` requires on
+   * the query itself. Validated, with the alarm's evaluation window, because CDK passes
+   * the query through unvalidated and an invalid value would otherwise fail at deploy.
+   */
+  private static metricsInsightsQueryPeriod(metric: MetricDataQueryProps, evaluationPeriods: number): number {
+    if (metric.period === undefined) {
+      throw new Error(`Metric ${metric.id} is a Metrics Insights query, which requires a period in an alarm.`);
+    }
+    validateAlarmPeriodSeconds(metric.period, `metrics[${metric.id}].period`);
+    validateMetricsInsightsAlarmWindow(
+      { periodSeconds: metric.period, evaluationPeriods },
+      { period: `metrics[${metric.id}].period`, evaluationPeriods: 'evaluationPeriods' },
+    );
+    return metric.period;
   }
 
   /**

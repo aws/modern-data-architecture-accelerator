@@ -42,7 +42,11 @@ import {
   SharedVpcEndpointDetails,
   VectorIngestionConfiguration,
 } from '@aws-mdaa/bedrock-knowledge-base-l3-construct';
-import { BedrockGuardrailL3Construct, NamedGuardrailProps } from '@aws-mdaa/bedrock-guardrail-l3-construct';
+import {
+  BedrockGuardrailL3Construct,
+  GuardrailAlarmsProps,
+  NamedGuardrailProps,
+} from '@aws-mdaa/bedrock-guardrail-l3-construct';
 import {
   BedrockAgentcoreGatewayL3Construct,
   GatewayConfigProps,
@@ -78,6 +82,7 @@ import {
   KNOWLEDGE_BASE_CONFIG_REF_PREFIX,
   validateKnowledgeBaseTarget,
 } from './gateway-knowledge-base';
+import { resolveGuardrailAlarmSettings } from './guardrail-alarm-settings';
 
 // The connector bounds each Retrieve call, retries included, to 27 seconds (see kb_retrieve.py).
 const KNOWLEDGE_BASE_CONNECTOR_TIMEOUT_SECONDS = 30;
@@ -133,6 +138,15 @@ export interface LambdaFunctionProps {
 
 // Re-export the Named types for backward compatibility
 export { NamedKnowledgeBaseProps, NamedVectorStoreProps, NamedGuardrailProps };
+
+// Re-export the guardrail alarm config surface so the app config can import it from the builder package.
+export {
+  GuardrailAlarmsProps,
+  GuardrailAlarmsCommonProps,
+  GuardrailAlarmsCreatedTopicProps,
+  GuardrailAlarmsExistingTopicProps,
+  GuardrailInterventionAlarmProps,
+} from '@aws-mdaa/bedrock-guardrail-l3-construct';
 
 // Re-export the gateway config surface so the app config (and downstream consumers) can import the
 // gateway/target types from the builder package rather than reaching into the gateway L3 directly.
@@ -289,6 +303,19 @@ export interface BedrockBuilderL3ConstructProps extends MdaaL3ConstructProps {
    **/
   readonly guardrails?: NamedGuardrailProps;
   /**
+   * Notification target and timing for the guardrail intervention alarms. Each guardrail
+   * opts in with its own `interventionAlarm` thresholds; every alarm in the module
+   * notifies the one target set here.
+   *
+   * Use cases: routing guardrail intervention alarms to a security team, self-contained
+   * alerting with a module-created topic
+   *
+   * AWS: CloudWatch Metrics Insights alarms + SNS notification
+   *
+   * Validation: Optional; GuardrailAlarmsProps; required when any guardrail sets interventionAlarm
+   **/
+  readonly guardrailAlarms?: GuardrailAlarmsProps;
+  /**
    * Bedrock AgentCore Gateway configurations (MCP servers), keyed by gateway name. Each gateway
    * references its tool targets by name from the sibling `gatewayTargets` map.
    *
@@ -439,7 +466,8 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
       });
     });
 
-    // Create guardrails
+    // Create guardrails, with the intervention alarms of those that opt in
+    const guardrailAlarmSettings = resolveGuardrailAlarmSettings(this, { ...props, kmsKey });
     const guardrails: { [name: string]: bedrock.CfnGuardrail } = {};
     Object.entries(props.guardrails || {}).forEach(([guardrailName, guardrailConfig]) => {
       const guardrailConstruct = new BedrockGuardrailL3Construct(this, `bedrock-guardrail-${guardrailName}`, {
@@ -447,6 +475,7 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
         guardrailName,
         guardrailConfig,
         kmsKey,
+        alarmSettings: guardrailConfig.interventionAlarm ? guardrailAlarmSettings : undefined,
       });
       guardrails[guardrailName] = guardrailConstruct.guardrail;
     });

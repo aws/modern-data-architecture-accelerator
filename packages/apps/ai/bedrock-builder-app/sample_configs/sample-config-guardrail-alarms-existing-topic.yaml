@@ -1,0 +1,29 @@
+# Bedrock Builder guardrail with intervention alarms notifying an EXISTING SNS topic.
+# Demonstrates guardrailAlarms.notificationTopicArn; the comprehensive config shows
+# guardrailAlarms.createNotificationTopic instead.
+
+# See CONFIGURATION.md for role reference options (name, arn, id). Admin roles are granted
+# key-admin rights on the module's KMS key.
+dataAdminRoles:
+  - name: 'Admin'
+
+# Guardrail configurations, keyed by guardrail name.
+guardrails:
+  security-guardrail:
+    # Content filter configuration across safety categories
+    contentFilters:
+      # Prompt attack content filter. Evaluated on inputs only: outputStrength must be NONE
+      promptAttack:
+        inputStrength: 'HIGH'
+        outputStrength: 'NONE'
+    # Intervention alarms on this guardrail, across all its versions
+    interventionAlarm:
+      # Alarm when interventions in one period exceed this count
+      countThreshold: 25
+
+# Notification target for the guardrail intervention alarms.
+guardrailAlarms:
+  # Notify an existing SNS topic instead of creating one
+  notificationTopicArn: 'arn:{{partition}}:sns:{{region}}:{{account}}:security-alerts'
+  # (Optional) Alarm period in seconds; a multiple of 60. (default: 300)
+  periodSeconds: 600

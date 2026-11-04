@@ -341,6 +341,112 @@ describe('MDAA Alarm Compliance Tests - Metric Math Alarms', () => {
   });
 });
 
+describe('MDAA Alarm Compliance Tests - Metrics Insights Alarms', () => {
+  const testApp = new MdaaTestApp();
+  const query = 'SELECT SUM(Errors) FROM SCHEMA("Test/Namespace", ResourceArn) WHERE ResourceArn = \'arn\'';
+
+  new MdaaAlarm(testApp.testStack, 'test-metrics-insights-alarm', {
+    naming: testApp.naming,
+    alarmName: 'metrics-insights-errors',
+    evaluationPeriods: 1,
+    threshold: 5,
+    comparisonOperator: 'GreaterThanThreshold',
+    metrics: [{ id: 'errors', expression: query, period: 300, returnData: true }],
+  });
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  // A Metrics Insights query in an alarm requires a period on its MetricDataQuery.
+  test('MetricsInsightsQueryRendersPeriod', () => {
+    template.hasResourceProperties('AWS::CloudWatch::Alarm', {
+      AlarmName: 'metrics-insights-errors',
+      Metrics: [{ Id: 'errors', Expression: query, Period: 300, ReturnData: true }],
+    });
+  });
+
+  test('LowercaseIndentedMetricsInsightsQueryRendersPeriod', () => {
+    const lowercaseApp = new MdaaTestApp();
+    const lowercaseQuery = `  ${query.replace('SELECT', 'select')}`;
+    new MdaaAlarm(lowercaseApp.testStack, 'test-lowercase-query', {
+      naming: lowercaseApp.naming,
+      alarmName: 'lowercase-query',
+      evaluationPeriods: 1,
+      threshold: 5,
+      comparisonOperator: 'GreaterThanThreshold',
+      metrics: [{ id: 'errors', expression: lowercaseQuery, period: 300, returnData: true }],
+    });
+    const lowercaseTemplate = Template.fromStack(lowercaseApp.testStack);
+    lowercaseTemplate.hasResourceProperties('AWS::CloudWatch::Alarm', {
+      Metrics: [{ Id: 'errors', Expression: lowercaseQuery, Period: 300, ReturnData: true }],
+    });
+  });
+
+  // CloudWatch evaluates a Metrics Insights alarm over the most recent 3 hours only.
+  test('MetricsInsightsQueryOverThreeHoursThrows', () => {
+    const errorApp = new MdaaTestApp();
+    expect(
+      () =>
+        new MdaaAlarm(errorApp.testStack, 'test-long-window', {
+          naming: errorApp.naming,
+          alarmName: 'long-window',
+          evaluationPeriods: 4,
+          threshold: 5,
+          comparisonOperator: 'GreaterThanThreshold',
+          metrics: [{ id: 'errors', expression: query, period: 3600, returnData: true }],
+        }),
+    ).toThrow(/^metrics\[errors\]\.period x evaluationPeriods must not exceed 10800 seconds/);
+  });
+
+  test('MetricsInsightsQueryWithoutPeriodThrows', () => {
+    const errorApp = new MdaaTestApp();
+    expect(
+      () =>
+        new MdaaAlarm(errorApp.testStack, 'test-missing-period', {
+          naming: errorApp.naming,
+          alarmName: 'missing-period',
+          evaluationPeriods: 1,
+          threshold: 5,
+          comparisonOperator: 'GreaterThanThreshold',
+          metrics: [{ id: 'errors', expression: query, returnData: true }],
+        }),
+    ).toThrow('Metric errors is a Metrics Insights query, which requires a period in an alarm.');
+  });
+
+  // A metric math expression takes its period from the metrics it references, so a
+  // period set on it is not rendered.
+  test('MetricMathExpressionDoesNotRenderPeriod', () => {
+    const mathApp = new MdaaTestApp();
+    new MdaaAlarm(mathApp.testStack, 'test-math-period', {
+      naming: mathApp.naming,
+      alarmName: 'math-period',
+      evaluationPeriods: 1,
+      threshold: 5,
+      comparisonOperator: 'GreaterThanThreshold',
+      metrics: [
+        { id: 'm1', metricName: 'Errors', namespace: 'Test/Namespace', statistic: 'Sum', period: 300 },
+        { id: 'doubled', expression: '2 * m1', period: 300, returnData: true },
+      ],
+    });
+    const [alarm] = Object.values(Template.fromStack(mathApp.testStack).findResources('AWS::CloudWatch::Alarm'));
+    expect(alarm.Properties.Metrics[1]).toEqual({ Id: 'doubled', Expression: '2 * m1', ReturnData: true });
+  });
+
+  test('ExpressionWithInvalidPeriodThrows', () => {
+    const errorApp = new MdaaTestApp();
+    expect(
+      () =>
+        new MdaaAlarm(errorApp.testStack, 'test-invalid-period', {
+          naming: errorApp.naming,
+          alarmName: 'invalid-period',
+          evaluationPeriods: 1,
+          threshold: 5,
+          comparisonOperator: 'GreaterThanThreshold',
+          metrics: [{ id: 'errors', expression: query, period: 45, returnData: true }],
+        }),
+    ).toThrow(/^metrics\[errors\]\.period must be 1, 5, 10, 30, or a multiple of 60 seconds/);
+  });
+});
+
 describe('MDAA Alarm Compliance Tests - SSM Export', () => {
   test('AlarmExportsARNToSSM', () => {
     const testApp = new MdaaTestApp();

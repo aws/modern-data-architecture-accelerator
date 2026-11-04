@@ -47,6 +47,18 @@ export interface GrantCloudWatchAlarmsTopicAccessProps {
 }
 
 /**
+ * Result of {@link grantCloudWatchAlarmsTopicAccess}.
+ */
+export interface GrantCloudWatchAlarmsTopicAccessResult {
+  /**
+   * Whether the KMS grant was added to the key's policy. False when no `masterKey` was
+   * given, and when the key is imported, whose policy CDK cannot change: CloudWatch then
+   * cannot use the key, and alarms publishing to a topic encrypted with it are dropped.
+   */
+  readonly keyPolicyUpdated: boolean;
+}
+
+/**
  * Grants the CloudWatch alarm service principal what it needs to publish alarm
  * notifications to an SNS topic: `sns:Publish` on the topic and, when the topic is
  * CMK-encrypted, `kms:Decrypt` + `kms:GenerateDataKey*` on the key.
@@ -77,8 +89,12 @@ export interface GrantCloudWatchAlarmsTopicAccessProps {
  *
  * @param scope - Construct scope used to resolve the stack account and region
  * @param props - The topic, optional key, and alarm name pattern to scope the grants to
+ * @returns whether the key's policy was updated
  */
-export function grantCloudWatchAlarmsTopicAccess(scope: Construct, props: GrantCloudWatchAlarmsTopicAccessProps): void {
+export function grantCloudWatchAlarmsTopicAccess(
+  scope: Construct,
+  props: GrantCloudWatchAlarmsTopicAccessProps,
+): GrantCloudWatchAlarmsTopicAccessResult {
   const stack = Stack.of(scope);
   const alarmArnPattern = stack.formatArn({
     service: 'cloudwatch',
@@ -96,7 +112,7 @@ export function grantCloudWatchAlarmsTopicAccess(scope: Construct, props: GrantC
     },
   };
 
-  props.masterKey?.addToResourcePolicy(
+  const keyGrant = props.masterKey?.addToResourcePolicy(
     new PolicyStatement({
       sid: 'AllowCloudWatchAlarmsToUseKey',
       effect: Effect.ALLOW,
@@ -117,4 +133,51 @@ export function grantCloudWatchAlarmsTopicAccess(scope: Construct, props: GrantC
       conditions: confusedDeputyConditions,
     }),
   );
+
+  return { keyPolicyUpdated: keyGrant?.statementAdded ?? false };
+}
+
+/**
+ * Validates that an alarm name matches the name pattern a notification topic's CloudWatch
+ * grants are scoped to (see {@link GrantCloudWatchAlarmsTopicAccessProps.alarmNamePattern}).
+ *
+ * An alarm outside the pattern deploys cleanly and fires, but CloudWatch is denied
+ * `sns:Publish` and use of the key, so every notification is dropped. Callers that derive
+ * alarm names from a naming implementation should check each name, because a custom
+ * implementation need not keep the prefix the pattern assumes.
+ *
+ * @param alarmName - The alarm name
+ * @param alarmNamePattern - The grant pattern, in which `*` matches any characters
+ * @throws Error if the name does not match the pattern
+ */
+export function validateAlarmNameMatchesPattern(alarmName: string, alarmNamePattern: string): void {
+  if (!matchesWildcardPattern(alarmName, alarmNamePattern)) {
+    throw new Error(
+      `Alarm name '${alarmName}' does not match '${alarmNamePattern}', the alarm name pattern its ` +
+        "notification topic's CloudWatch grants are scoped to, so its notifications would be dropped. " +
+        'Use a naming implementation that keeps the alarm name prefix.',
+    );
+  }
+}
+
+/** Whether `value` matches `pattern`, in which `*` matches any run of characters. */
+function matchesWildcardPattern(value: string, pattern: string): boolean {
+  const [first, ...rest] = pattern.split('*');
+  if (rest.length === 0) {
+    return value === first;
+  }
+  const last = rest[rest.length - 1];
+  if (!value.startsWith(first) || !value.endsWith(last) || value.length < first.length + last.length) {
+    return false;
+  }
+  // Each middle segment must appear, in order, between the prefix and the suffix.
+  let cursor = first.length;
+  for (const segment of rest.slice(0, -1)) {
+    const index = value.indexOf(segment, cursor);
+    if (index === -1 || index + segment.length > value.length - last.length) {
+      return false;
+    }
+    cursor = index + segment.length;
+  }
+  return true;
 }

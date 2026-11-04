@@ -338,6 +338,9 @@ describe('createAgentCoreAlarms', () => {
       template.hasResourceProperties('AWS::SNS::Topic', {
         KmsMasterKeyId: Match.anyValue(),
       });
+      // The alarms notify the created topic.
+      const [topicId] = Object.keys(template.findResources('AWS::SNS::Topic'));
+      template.allResourcesProperties('AWS::CloudWatch::Alarm', { AlarmActions: [{ Ref: topicId }] });
     });
 
     test('grants the CloudWatch service principal publish access on the created topic', () => {

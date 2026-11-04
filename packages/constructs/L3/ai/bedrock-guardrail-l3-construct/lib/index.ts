@@ -4,3 +4,4 @@
  */
 
 export * from './bedrock-guardrail-l3-construct';
+export * from './guardrail-alarms';

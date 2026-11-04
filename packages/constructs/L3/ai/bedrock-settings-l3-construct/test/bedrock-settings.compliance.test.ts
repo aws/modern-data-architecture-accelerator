@@ -580,3 +580,65 @@ describe('Bedrock Settings L3 Construct Compliance Tests', () => {
     });
   });
 });
+
+describe('Bedrock Settings L3 Construct Token Usage Alarm Compliance', () => {
+  const testApp = new MdaaTestApp();
+  new BedrockSettingsL3Construct(testApp.testStack, 'bedrock-settings', {
+    enableAuditLoggingToS3: true,
+    enableAuditLoggingToCloudwatch: true,
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+    tokenUsageAlarms: {
+      createNotificationTopic: true,
+      notificationEmails: ['finops@example.com'],
+      models: {
+        'nova-micro': {
+          modelIds: ['amazon.nova-micro-v1:0', 'us.amazon.nova-micro-v1:0'],
+          inputTokenThreshold: 500000,
+          outputTokenThreshold: 200000,
+        },
+      },
+      accountTotal: { inputTokenThreshold: 10000000 },
+    },
+  });
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('Token usage alarm topic is encrypted with the module key', () => {
+    const [moduleKeyId] = Object.keys(template.findResources('AWS::KMS::Key'));
+    const [topicId] = Object.keys(template.findResources('AWS::SNS::Topic'));
+    template.resourceCountIs('AWS::KMS::Key', 1);
+    template.hasResourceProperties('AWS::SNS::Topic', { KmsMasterKeyId: { 'Fn::GetAtt': [moduleKeyId, 'Arn'] } });
+    template.resourceCountIs('AWS::CloudWatch::Alarm', 3);
+    template.allResourcesProperties('AWS::CloudWatch::Alarm', { AlarmActions: [{ Ref: topicId }] });
+  });
+});
+
+describe('Bedrock Settings L3 Construct Token Usage Alarm Compliance with an Existing Topic', () => {
+  const existingTopicArn = 'arn:test-partition:sns:test-region:test-account:ai-platform-alerts';
+  const testApp = new MdaaTestApp();
+  new BedrockSettingsL3Construct(testApp.testStack, 'bedrock-settings', {
+    enableAuditLoggingToS3: true,
+    enableAuditLoggingToCloudwatch: true,
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+    tokenUsageAlarms: {
+      notificationTopicArn: existingTopicArn,
+      models: {
+        'nova-micro': {
+          modelIds: ['amazon.nova-micro-v1:0', 'us.amazon.nova-micro-v1:0'],
+          inputTokenThreshold: 500000,
+        },
+      },
+      accountTotal: { inputTokenThreshold: 10000000 },
+    },
+  });
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('Token usage alarms notify the existing topic without creating one', () => {
+    template.resourceCountIs('AWS::SNS::Topic', 0);
+    template.resourceCountIs('AWS::CloudWatch::Alarm', 2);
+    template.allResourcesProperties('AWS::CloudWatch::Alarm', { AlarmActions: [existingTopicArn] });
+  });
+});

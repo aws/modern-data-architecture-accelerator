@@ -23,6 +23,12 @@
 
 - Added **declarative business glossaries** via a new `glossaries` property on each SageMaker project (`sagemaker.project` in the DataOps Project module), alongside `metadataForms`. Glossaries and their terms are created via the DataZone API, so a `metadataForms` field's `glossaryId` can name a declared glossary (`"<glossaryName>"` or `"<glossaryName>.<termName>"`) instead of a glossary ID created out-of-band; a literal, pre-existing glossary ID string continues to work unchanged. Glossaries/terms are created only when the property is set, but redeploy the DataZone/SageMaker domain module first (see DataZone/SMUS Modules below), or the domain won't yet have granted glossary creation to project owners. See the [SageMaker Project module README](packages/apps/governance/sagemaker-project-app/README.md) for the config surface.
 
+- Added optional guardrail intervention alarms: set `interventionAlarm` (`countThreshold`, `ratePercentThreshold`) on a guardrail and a module-level `guardrailAlarms` notification target. Each alarm covers every version of the guardrail. Off by default; existing configs are unchanged. See [Guardrail intervention alarms](packages/apps/ai/bedrock-builder-app/README.md#guardrail-intervention-alarms).
+
+#### Bedrock Settings Module
+
+- Added optional `tokenUsageAlarms`, alarming on Bedrock input and output token use per model (across the model and inference-profile IDs listed) and account-wide. Off by default; existing configs are unchanged. See [Token usage alarms](packages/apps/ai/bedrock-settings-app/README.md#token-usage-alarms).
+
 #### M2M API Module
 
 - Added opt-in `allowCallerKeyPath`, letting callers choose an upload's sub-path under `targetPrefix` and its filename through the `sub_path` and `filename` query parameters. Off by default; existing configs are unchanged. See [Caller-Chosen Object Keys](packages/apps/utility/m2m-api-app/README.md#caller-chosen-object-keys).

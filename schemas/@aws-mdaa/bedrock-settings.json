@@ -2292,6 +2292,43 @@
             ],
             "type": "object"
         },
+        "ModelTokenAlarmProps": {
+            "additionalProperties": false,
+            "description": "Token-use alarms for one model, summed across the model IDs listed. Bedrock publishes\ntoken metrics per `ModelId` for the whole account, keyed on the model or\ninference-profile ID exactly as the caller passed it, so the alarms count every\ncaller in the account that uses a listed ID - and none that uses an unlisted one,\nsuch as another inference profile for the same model.\n\nUse cases: per-model token-spend alerting, covering a base model and its cross-Region\ninference profiles in one alarm\n\nAWS: CloudWatch alarms on AWS/Bedrock InputTokenCount / OutputTokenCount by ModelId\n\nValidation: modelIds required (1-10, unique); at least one threshold",
+            "properties": {
+                "inputTokenThreshold": {
+                    "description": "Alarm when input tokens in one alarm period exceed this value. Omit to skip the\ninput-token alarm.\n\nUse cases: detecting oversized prompts or a surge in requests\n\nAWS: CloudWatch alarm on InputTokenCount (Sum)\n\nValidation: Optional; Number; >= 0",
+                    "minimum": 0,
+                    "type": "number"
+                },
+                "modelIds": {
+                    "description": "Model and inference-profile IDs whose token use the alarms sum, exactly as callers\npass them, e.g. `amazon.nova-micro-v1:0` and `us.amazon.nova-micro-v1:0`. CloudWatch\nmatches the `ModelId` dimension exactly, so traffic sent under an ID not listed here\nis not counted.\n\nUse cases: covering the base model ID and each inference-profile ID callers use\n\nAWS: AWS/Bedrock ModelId metric dimension\n\nValidation: Required; String[]; 1-10 unique IDs",
+                    "items": {
+                        "type": "string"
+                    },
+                    "maxItems": 10,
+                    "minItems": 1,
+                    "type": "array",
+                    "uniqueItems": true
+                },
+                "outputTokenThreshold": {
+                    "description": "Alarm when output tokens in one alarm period exceed this value. Omit to skip the\noutput-token alarm.\n\nUse cases: detecting runaway generation, output-token spend spikes\n\nAWS: CloudWatch alarm on OutputTokenCount (Sum)\n\nValidation: Optional; Number; >= 0",
+                    "minimum": 0,
+                    "type": "number"
+                }
+            },
+            "required": [
+                "modelIds"
+            ],
+            "type": "object"
+        },
+        "NamedModelTokenAlarmProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/ModelTokenAlarmProps"
+            },
+            "description": "Map of a model alarm name to its {@link ModelTokenAlarmProps}. The key names the\nalarms (`token-<input|output>-model-<key>`).",
+            "type": "object"
+        },
         "Node": {
             "additionalProperties": false,
             "description": "Represents the construct node in the scope tree.",
@@ -2810,6 +2847,112 @@
             ],
             "type": "object"
         },
+        "TokenThresholdsProps": {
+            "additionalProperties": false,
+            "description": "Input and output token thresholds. Each threshold set creates one alarm that fires\nwhen the token count summed over one alarm period exceeds it.\n\nUse cases: token-spend spike detection, runaway-agent detection\n\nAWS: CloudWatch alarms on AWS/Bedrock InputTokenCount and OutputTokenCount (Sum)\n\nValidation: at least one of inputTokenThreshold or outputTokenThreshold",
+            "properties": {
+                "inputTokenThreshold": {
+                    "description": "Alarm when input tokens in one alarm period exceed this value. Omit to skip the\ninput-token alarm.\n\nUse cases: detecting oversized prompts or a surge in requests\n\nAWS: CloudWatch alarm on InputTokenCount (Sum)\n\nValidation: Optional; Number; >= 0",
+                    "minimum": 0,
+                    "type": "number"
+                },
+                "outputTokenThreshold": {
+                    "description": "Alarm when output tokens in one alarm period exceed this value. Omit to skip the\noutput-token alarm.\n\nUse cases: detecting runaway generation, output-token spend spikes\n\nAWS: CloudWatch alarm on OutputTokenCount (Sum)\n\nValidation: Optional; Number; >= 0",
+                    "minimum": 0,
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "TokenUsageAlarmsCreatedTopicProps": {
+            "additionalProperties": false,
+            "description": "Token-use alarms notifying a module-created SNS topic.\n\nUse cases: self-contained token-use alerting without a pre-existing topic\n\nAWS: CloudWatch alarms on AWS/Bedrock token metrics publishing to an MDAA-created CMK-encrypted SNS topic\n\nValidation: createNotificationTopic: true required; notificationTopicArn not allowed",
+            "properties": {
+                "accountTotal": {
+                    "$ref": "#/definitions/TokenThresholdsProps",
+                    "description": "Token-use alarms on the account-wide total across all model IDs.\n\nUse cases: overall token-spend alerting without enumerating models\n\nAWS: CloudWatch alarms on the undimensioned AWS/Bedrock InputTokenCount / OutputTokenCount\n\nValidation: Optional; TokenThresholdsProps"
+                },
+                "createNotificationTopic": {
+                    "description": "Set to true to have MDAA create an SNS topic encrypted with the module's KMS key,\ngrant CloudWatch alarms in this module publish access, and export its ARN to SSM.\nMutually exclusive with `notificationTopicArn`.\n\nUse cases: self-contained alerting without a pre-existing topic\n\nAWS: MDAA-created CMK-encrypted SNS topic\n\nValidation: Required; Boolean; must be true; mutually exclusive with notificationTopicArn",
+                    "type": "boolean"
+                },
+                "datapointsToAlarm": {
+                    "default": "evaluationPeriods",
+                    "description": "Number of breaching periods within `evaluationPeriods` required to alarm (an \"M of\nN\" alarm).\n\nUse cases: ignoring a single burst while catching sustained token use\n\nAWS: CloudWatch alarm datapointsToAlarm\n\nValidation: Optional; Number; between 1 and evaluationPeriods",
+                    "minimum": 1,
+                    "type": "integer"
+                },
+                "evaluationPeriods": {
+                    "default": 1,
+                    "description": "Number of periods over which token use is compared to the threshold.\n\nUse cases: requiring sustained token use before alarming\n\nAWS: CloudWatch alarm evaluation periods\n\nValidation: Optional; Number; periodSeconds x evaluationPeriods at most 86400 for a\nperiod under 3600, at most 604800 otherwise",
+                    "minimum": 1,
+                    "type": "integer"
+                },
+                "models": {
+                    "$ref": "#/definitions/NamedModelTokenAlarmProps",
+                    "description": "Token-use alarms per model, keyed by a name for the model. Each entry lists every\nmodel and inference-profile ID callers use for that model.\n\nUse cases: per-model token-spend alerting\n\nAWS: CloudWatch alarms on AWS/Bedrock token metrics by ModelId\n\nValidation: Optional; NamedModelTokenAlarmProps"
+                },
+                "notificationEmails": {
+                    "description": "Email addresses subscribed to the module-created notification topic. Each address\nreceives an SNS confirmation request and must confirm before delivery begins.\nWithout a subscriber the created topic discards every notification; MDAA warns at\nsynth in that case.\n\nUse cases: operator paging, routing alarms to a distribution list\n\nAWS: SNS email subscriptions on the created topic\n\nValidation: Optional; String[]; valid email addresses",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "periodSeconds": {
+                    "default": 300,
+                    "description": "Alarm period in seconds. Each period's token count is compared to the threshold.\n\nUse cases: matching the alarm window to the token budget's granularity\n\nAWS: CloudWatch alarm period\n\nBedrock publishes token metrics at one-minute resolution, so the period is a whole\nnumber of minutes.\n\nValidation: Optional; Number; multiple of 60; periodSeconds x evaluationPeriods at most\n86400 for a period under 3600, at most 604800 otherwise",
+                    "minimum": 60,
+                    "multipleOf": 60,
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "createNotificationTopic"
+            ],
+            "type": "object"
+        },
+        "TokenUsageAlarmsExistingTopicProps": {
+            "additionalProperties": false,
+            "description": "Token-use alarms notifying an existing SNS topic.\n\nUse cases: routing token-use alarms to an existing operations or cost topic\n\nAWS: CloudWatch alarms on AWS/Bedrock token metrics publishing to an existing SNS topic\n\nValidation: notificationTopicArn required; createNotificationTopic and notificationEmails not allowed",
+            "properties": {
+                "accountTotal": {
+                    "$ref": "#/definitions/TokenThresholdsProps",
+                    "description": "Token-use alarms on the account-wide total across all model IDs.\n\nUse cases: overall token-spend alerting without enumerating models\n\nAWS: CloudWatch alarms on the undimensioned AWS/Bedrock InputTokenCount / OutputTokenCount\n\nValidation: Optional; TokenThresholdsProps"
+                },
+                "datapointsToAlarm": {
+                    "default": "evaluationPeriods",
+                    "description": "Number of breaching periods within `evaluationPeriods` required to alarm (an \"M of\nN\" alarm).\n\nUse cases: ignoring a single burst while catching sustained token use\n\nAWS: CloudWatch alarm datapointsToAlarm\n\nValidation: Optional; Number; between 1 and evaluationPeriods",
+                    "minimum": 1,
+                    "type": "integer"
+                },
+                "evaluationPeriods": {
+                    "default": 1,
+                    "description": "Number of periods over which token use is compared to the threshold.\n\nUse cases: requiring sustained token use before alarming\n\nAWS: CloudWatch alarm evaluation periods\n\nValidation: Optional; Number; periodSeconds x evaluationPeriods at most 86400 for a\nperiod under 3600, at most 604800 otherwise",
+                    "minimum": 1,
+                    "type": "integer"
+                },
+                "models": {
+                    "$ref": "#/definitions/NamedModelTokenAlarmProps",
+                    "description": "Token-use alarms per model, keyed by a name for the model. Each entry lists every\nmodel and inference-profile ID callers use for that model.\n\nUse cases: per-model token-spend alerting\n\nAWS: CloudWatch alarms on AWS/Bedrock token metrics by ModelId\n\nValidation: Optional; NamedModelTokenAlarmProps"
+                },
+                "notificationTopicArn": {
+                    "description": "ARN of an existing SNS topic to notify on alarm. Mutually exclusive with\n`createNotificationTopic`.\n\nMDAA cannot verify or modify a topic it did not create: the topic should be\nencrypted with a customer-managed KMS key, must allow the `cloudwatch.amazonaws.com`\nservice principal to `sns:Publish` (and to use that key), and needs at least one\nsubscriber. MDAA emits a synth-time warning restating this.\n\nUse cases: routing alarms to an existing operations or cost topic\n\nAWS: SNS topic ARN used as the CloudWatch alarm action\n\nValidation: Required; String; valid SNS topic ARN; mutually exclusive with createNotificationTopic",
+                    "type": "string"
+                },
+                "periodSeconds": {
+                    "default": 300,
+                    "description": "Alarm period in seconds. Each period's token count is compared to the threshold.\n\nUse cases: matching the alarm window to the token budget's granularity\n\nAWS: CloudWatch alarm period\n\nBedrock publishes token metrics at one-minute resolution, so the period is a whole\nnumber of minutes.\n\nValidation: Optional; Number; multiple of 60; periodSeconds x evaluationPeriods at most\n86400 for a period under 3600, at most 604800 otherwise",
+                    "minimum": 60,
+                    "multipleOf": 60,
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "notificationTopicArn"
+            ],
+            "type": "object"
+        },
         "TopicReference": {
             "additionalProperties": false,
             "description": "A reference to a Topic resource.",
@@ -3064,6 +3207,17 @@
         "service_catalog_product_config": {
             "$ref": "#/definitions/MdaaServiceCatalogProductConfig",
             "description": "Q-ENHANCED-PROPERTY\nOptional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.\n\nUse cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access\n\nAWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning\n\nValidation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode"
+        },
+        "tokenUsageAlarms": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/TokenUsageAlarmsExistingTopicProps"
+                },
+                {
+                    "$ref": "#/definitions/TokenUsageAlarmsCreatedTopicProps"
+                }
+            ],
+            "description": "Alarms on Amazon Bedrock model token use in this account and Region, per model and/or\nin total. Token metrics count every caller in the account, not only MDAA-deployed\nworkloads, and a per-model alarm counts only the model IDs it lists.\n\nUse cases: token-spend spike alerting, runaway-agent detection, usage-pattern deviation alarms\n\nAWS: CloudWatch alarms on AWS/Bedrock InputTokenCount / OutputTokenCount + SNS notification\n\nValidation: Optional; TokenUsageAlarmsProps; requires a notification target and at least one threshold"
         }
     },
     "required": [

@@ -7,7 +7,7 @@ import { MdaaTestApp } from '@aws-mdaa/testing';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { Topic } from 'aws-cdk-lib/aws-sns';
-import { grantCloudWatchAlarmsTopicAccess } from '../lib/alarm-topic-utils';
+import { grantCloudWatchAlarmsTopicAccess, validateAlarmNameMatchesPattern } from '../lib/alarm-topic-utils';
 
 describe('grantCloudWatchAlarmsTopicAccess', () => {
   let testApp: MdaaTestApp;
@@ -133,5 +133,67 @@ describe('grantCloudWatchAlarmsTopicAccess', () => {
         ]),
       }),
     });
+  });
+});
+
+describe('grantCloudWatchAlarmsTopicAccess result', () => {
+  test('reports the key policy updated for a key the stack owns', () => {
+    const testApp = new MdaaTestApp();
+    const masterKey = new Key(testApp.testStack, 'Key');
+    const result = grantCloudWatchAlarmsTopicAccess(testApp.testStack, {
+      topic: new Topic(testApp.testStack, 'Topic', { masterKey }),
+      masterKey,
+      alarmNamePattern: 'myapp-*',
+    });
+    expect(result).toEqual({ keyPolicyUpdated: true });
+  });
+
+  // CDK silently skips adding a statement to an imported key's policy.
+  test('reports the key policy not updated for an imported key', () => {
+    const testApp = new MdaaTestApp();
+    const masterKey = Key.fromKeyArn(testApp.testStack, 'Key', 'arn:test-partition:kms:test-region:test-account:key/k');
+    const result = grantCloudWatchAlarmsTopicAccess(testApp.testStack, {
+      topic: new Topic(testApp.testStack, 'Topic'),
+      masterKey,
+      alarmNamePattern: 'myapp-*',
+    });
+    expect(result).toEqual({ keyPolicyUpdated: false });
+  });
+
+  test('reports the key policy not updated when no key is given', () => {
+    const testApp = new MdaaTestApp();
+    const result = grantCloudWatchAlarmsTopicAccess(testApp.testStack, {
+      topic: new Topic(testApp.testStack, 'Topic'),
+      alarmNamePattern: 'myapp-*',
+    });
+    expect(result).toEqual({ keyPolicyUpdated: false });
+  });
+});
+
+describe('validateAlarmNameMatchesPattern', () => {
+  test.each([
+    ['org-env-guardrail-intervention-count-a', 'org-env-guardrail-*'],
+    ['agentcore-error-rate-runtime', 'agentcore-*-runtime'],
+    ['exact-name', 'exact-name'],
+    ['a-x-b-y-c', 'a-*-b-*-c'],
+  ])('accepts %s for %s', (alarmName, pattern) => {
+    expect(() => validateAlarmNameMatchesPattern(alarmName, pattern)).not.toThrow();
+  });
+
+  // An alarm outside the pattern fires, but CloudWatch is denied publish, so its
+  // notifications are dropped.
+  test.each([
+    ['custom-prefix-guardrail-intervention-count-a', 'org-env-guardrail-*'],
+    ['agentcore-error-rate-other', 'agentcore-*-runtime'],
+    ['other-name', 'exact-name'],
+    ['a-b', 'a-*-b-*-c'],
+    ['ab', 'ab*b'],
+    // Prefix and suffix match, but the middle segment is absent, or only found overlapping the suffix.
+    ['a-x-c', 'a-*-b-*-c'],
+    ['a-x-b-c', 'a-*-b-*-c'],
+  ])('rejects %s for %s', (alarmName, pattern) => {
+    expect(() => validateAlarmNameMatchesPattern(alarmName, pattern)).toThrow(
+      `Alarm name '${alarmName}' does not match '${pattern}'`,
+    );
   });
 });

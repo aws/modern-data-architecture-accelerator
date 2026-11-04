@@ -72,6 +72,7 @@ export enum MdaaResourceType {
   QUICKSIGHT_VPC_CONNECTION = 'quicksight-vpc',
   STEPFUNCTIONS = 'sfn',
   CLOUDWATCH_LOG_GROUP = 'logs',
+  CLOUDWATCH_ALARM = 'cw-alarm',
   LOGS_DELIVERY_SOURCE = 'logs-src',
   LOGS_DELIVERY_DESTINATION = 'logs-dest',
   CUSTOM_RESOURCE = 'custom',

@@ -136,6 +136,9 @@ describe('MdaaDefaultResourceNaming', () => {
     expect(naming.withResourceType(MdaaResourceType.DATAZONE_CONNECTION).resourceName('conn')).toBe(
       naming.resourceName('conn'),
     );
+    expect(naming.withResourceType(MdaaResourceType.CLOUDWATCH_ALARM).resourceName('alarm')).toBe(
+      naming.resourceName('alarm'),
+    );
   });
 
   test('ssmOrgPath', () => {

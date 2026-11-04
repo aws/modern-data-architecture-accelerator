@@ -9,6 +9,11 @@ import { aws_bedrock as bedrock } from 'aws-cdk-lib';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { Construct } from 'constructs';
 import { MdaaParamAndOutput } from '@aws-mdaa/construct';
+import {
+  createGuardrailInterventionAlarms,
+  GuardrailAlarmSettings,
+  GuardrailInterventionAlarmProps,
+} from './guardrail-alarms';
 
 // ---------------------------------------------
 // Guardrail Interfaces and Types
@@ -65,6 +70,17 @@ export interface BedrockGuardrailProps {
   readonly contextualGroundingFilters?: GroundingFilters;
   /** Sensitive information filters for PII and custom patterns */
   readonly sensitiveInformationFilters?: SensitiveInformationFilters;
+  /**
+   * Intervention alarms on this guardrail, covering every guardrail version. Requires the
+   * module-level `guardrailAlarms` block, which sets the notification target and timing.
+   *
+   * Use cases: alerting on spikes in blocked content, intervention-rate monitoring
+   *
+   * AWS: CloudWatch alarms on AWS/Bedrock/Guardrails InvocationsIntervened
+   *
+   * Validation: Optional; GuardrailInterventionAlarmProps; at least one threshold
+   */
+  readonly interventionAlarm?: GuardrailInterventionAlarmProps;
 }
 
 export interface NamedGuardrailProps {
@@ -76,6 +92,13 @@ export interface BedrockGuardrailL3ConstructProps extends MdaaL3ConstructProps {
   readonly guardrailName: string;
   readonly guardrailConfig: BedrockGuardrailProps;
   readonly kmsKey: IKey;
+  /**
+   * Notification target and timing for the guardrail's intervention alarms. Required when
+   * `guardrailConfig.interventionAlarm` is set.
+   *
+   * @default - no alarms; setting `interventionAlarm` without this throws
+   */
+  readonly alarmSettings?: GuardrailAlarmSettings;
 }
 
 // ---------------------------------------------
@@ -91,6 +114,23 @@ export class BedrockGuardrailL3Construct extends MdaaL3Construct {
     this.props = props;
 
     this.guardrail = this.createGuardrail(props.guardrailName, props.guardrailConfig, props.kmsKey);
+
+    const interventionAlarm = props.guardrailConfig.interventionAlarm;
+    if (interventionAlarm) {
+      if (!props.alarmSettings) {
+        throw new Error(
+          `Guardrail '${props.guardrailName}' sets interventionAlarm, which requires the module-level ` +
+            'guardrailAlarms block to set the notification target.',
+        );
+      }
+      createGuardrailInterventionAlarms(this, {
+        naming: props.naming,
+        guardrailName: props.guardrailName,
+        guardrailArn: this.guardrail.attrGuardrailArn,
+        alarm: interventionAlarm,
+        settings: props.alarmSettings,
+      });
+    }
   }
 
   private createGuardrail(guardrailName: string, config: BedrockGuardrailProps, kmsKey: IKey): bedrock.CfnGuardrail {

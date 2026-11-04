@@ -97,6 +97,26 @@
                 "Service": "logging.s3.amazonaws.com"
               },
               "Resource": "*"
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:GenerateDataKey*"
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account"
+                },
+                "ArnLike": {
+                  "aws:SourceArn": "arn:test-partition:cloudwatch:test-region:test-account:alarm:test-org-test-env-test-domain-test-bedrock-settings-app-token-*"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "cloudwatch.amazonaws.com"
+              },
+              "Resource": "*",
+              "Sid": "AllowCloudWatchAlarmsToUseKey"
             }
           ],
           "Version": "2012-10-17"
@@ -666,6 +686,621 @@
       },
       "UpdateReplacePolicy": "Delete",
       "DeletionPolicy": "Delete"
+    },
+    "constructtokenusagealarmsAlarmTopicA0FDC2BD": {
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "KmsMasterKeyId": {
+          "Fn::GetAtt": [
+            "constructbedrockkmskeyC65EDE8E",
+            "Arn"
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-settings"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-settings-app"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "TopicName": "test-org-test-env-test-domain-test-bedrock-settings-app-token-usage-alarms"
+      }
+    },
+    "constructtokenusagealarmsAlarmTopicPolicy0BE4CDFE": {
+      "Type": "AWS::SNS::TopicPolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sns:Publish",
+                "sns:RemovePermission",
+                "sns:SetTopicAttributes",
+                "sns:DeleteTopic",
+                "sns:ListSubscriptionsByTopic",
+                "sns:GetTopicAttributes",
+                "sns:Receive",
+                "sns:AddPermission",
+                "sns:Subscribe"
+              ],
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL"
+            },
+            {
+              "Action": "sns:Publish",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account"
+                },
+                "ArnLike": {
+                  "aws:SourceArn": "arn:test-partition:cloudwatch:test-region:test-account:alarm:test-org-test-env-test-domain-test-bedrock-settings-app-token-*"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "cloudwatch.amazonaws.com"
+              },
+              "Resource": {
+                "Ref": "constructtokenusagealarmsAlarmTopicA0FDC2BD"
+              },
+              "Sid": "AllowCloudWatchAlarmsToPublish"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Topics": [
+          {
+            "Ref": "constructtokenusagealarmsAlarmTopicA0FDC2BD"
+          }
+        ]
+      }
+    },
+    "constructtokenusagealarmsAlarmTopicTopictokenusagealarmsnamessmECFB1FAC": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-settings-app/topic/token-usage-alarms/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-settings",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-settings-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructtokenusagealarmsAlarmTopicA0FDC2BD",
+            "TopicName"
+          ]
+        }
+      }
+    },
+    "constructtokenusagealarmsAlarmTopicTopictokenusagealarmsarnssm580793C2": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-settings-app/topic/token-usage-alarms/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-settings",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-settings-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "constructtokenusagealarmsAlarmTopicA0FDC2BD"
+        }
+      }
+    },
+    "constructtokenusagealarmsAlarmTopicaiplatformopsexamplecomE918211B": {
+      "Type": "AWS::SNS::Subscription",
+      "Properties": {
+        "Endpoint": "ai-platform-ops@example.com",
+        "Protocol": "email",
+        "TopicArn": {
+          "Ref": "constructtokenusagealarmsAlarmTopicA0FDC2BD"
+        }
+      }
+    },
+    "constructtokenusagealarmsinputtokensmodelnovamicroAlarm5690A8C4": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "ActionsEnabled": true,
+        "AlarmActions": [
+          {
+            "Ref": "constructtokenusagealarmsAlarmTopicA0FDC2BD"
+          }
+        ],
+        "AlarmDescription": "Bedrock input tokens for model nova-micro (amazon.nova-micro-v1:0, us.amazon.nova-micro-v1:0) exceed 5000000 over 3600s",
+        "AlarmName": "test-org-test-env-test-domain-test-bedrock-settings-app-token-input-model-nova-micro",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "DatapointsToAlarm": 2,
+        "EvaluationPeriods": 3,
+        "Metrics": [
+          {
+            "Id": "m0",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "ModelId",
+                    "Value": "amazon.nova-micro-v1:0"
+                  }
+                ],
+                "MetricName": "InputTokenCount",
+                "Namespace": "AWS/Bedrock"
+              },
+              "Period": 3600,
+              "Stat": "Sum"
+            },
+            "ReturnData": false
+          },
+          {
+            "Id": "m1",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "ModelId",
+                    "Value": "us.amazon.nova-micro-v1:0"
+                  }
+                ],
+                "MetricName": "InputTokenCount",
+                "Namespace": "AWS/Bedrock"
+              },
+              "Period": 3600,
+              "Stat": "Sum"
+            },
+            "ReturnData": false
+          },
+          {
+            "Expression": "m0 + m1",
+            "Id": "tokens",
+            "Label": "InputTokenCount across 2 model IDs",
+            "ReturnData": true
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-settings"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-settings-app"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Threshold": 5000000,
+        "TreatMissingData": "notBreaching"
+      }
+    },
+    "constructtokenusagealarmsinputtokensmodelnovamicroalarmtestorgtestenvtestdomaintestbedrocksettingsapptokeninputmodelnovamicroarnssm099884AC": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-settings-app/alarm/test-org-test-env-test-domain-test-bedrock-settings-app-token-input-model-nova-micro/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-settings",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-settings-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructtokenusagealarmsinputtokensmodelnovamicroAlarm5690A8C4",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (alarm ARN); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructtokenusagealarmsinputtokensmodelnovamicroalarmtestorgtestenvtestdomaintestbedrocksettingsapptokeninputmodelnovamicronamessmDF12206D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-settings-app/alarm/test-org-test-env-test-domain-test-bedrock-settings-app-token-input-model-nova-micro/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-settings",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-settings-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-bedrock-settings-app-token-input-model-nova-micro"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (alarm name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructtokenusagealarmsoutputtokensmodelnovamicroAlarmC2A4C510": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "ActionsEnabled": true,
+        "AlarmActions": [
+          {
+            "Ref": "constructtokenusagealarmsAlarmTopicA0FDC2BD"
+          }
+        ],
+        "AlarmDescription": "Bedrock output tokens for model nova-micro (amazon.nova-micro-v1:0, us.amazon.nova-micro-v1:0) exceed 1000000 over 3600s",
+        "AlarmName": "test-org-test-env-test-domain-test-bedrock-settings-app-token-output-model-nova-micro",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "DatapointsToAlarm": 2,
+        "EvaluationPeriods": 3,
+        "Metrics": [
+          {
+            "Id": "m0",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "ModelId",
+                    "Value": "amazon.nova-micro-v1:0"
+                  }
+                ],
+                "MetricName": "OutputTokenCount",
+                "Namespace": "AWS/Bedrock"
+              },
+              "Period": 3600,
+              "Stat": "Sum"
+            },
+            "ReturnData": false
+          },
+          {
+            "Id": "m1",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "ModelId",
+                    "Value": "us.amazon.nova-micro-v1:0"
+                  }
+                ],
+                "MetricName": "OutputTokenCount",
+                "Namespace": "AWS/Bedrock"
+              },
+              "Period": 3600,
+              "Stat": "Sum"
+            },
+            "ReturnData": false
+          },
+          {
+            "Expression": "m0 + m1",
+            "Id": "tokens",
+            "Label": "OutputTokenCount across 2 model IDs",
+            "ReturnData": true
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-settings"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-settings-app"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Threshold": 1000000,
+        "TreatMissingData": "notBreaching"
+      }
+    },
+    "constructtokenusagealarmsoutputtokensmodelnovamicroalarmtestorgtestenvtestdomaintestbedrocksettingsapptokenoutputmodelnovamicroarnssmF317FED2": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-settings-app/alarm/test-org-test-env-test-domain-test-bedrock-settings-app-token-output-model-nova-micro/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-settings",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-settings-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructtokenusagealarmsoutputtokensmodelnovamicroAlarmC2A4C510",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (alarm ARN); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructtokenusagealarmsoutputtokensmodelnovamicroalarmtestorgtestenvtestdomaintestbedrocksettingsapptokenoutputmodelnovamicronamessmAE3338BB": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-settings-app/alarm/test-org-test-env-test-domain-test-bedrock-settings-app-token-output-model-nova-micro/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-settings",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-settings-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-bedrock-settings-app-token-output-model-nova-micro"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (alarm name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructtokenusagealarmsinputtokensaccounttotalAlarm0A44903C": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "ActionsEnabled": true,
+        "AlarmActions": [
+          {
+            "Ref": "constructtokenusagealarmsAlarmTopicA0FDC2BD"
+          }
+        ],
+        "AlarmDescription": "Bedrock input tokens across all models in the account exceed 50000000 over 3600s",
+        "AlarmName": "test-org-test-env-test-domain-test-bedrock-settings-app-token-input-account-total",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "DatapointsToAlarm": 2,
+        "EvaluationPeriods": 3,
+        "MetricName": "InputTokenCount",
+        "Namespace": "AWS/Bedrock",
+        "Period": 3600,
+        "Statistic": "Sum",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-settings"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-settings-app"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Threshold": 50000000,
+        "TreatMissingData": "notBreaching"
+      }
+    },
+    "constructtokenusagealarmsinputtokensaccounttotalalarmtestorgtestenvtestdomaintestbedrocksettingsapptokeninputaccounttotalarnssm7CC00ADB": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-settings-app/alarm/test-org-test-env-test-domain-test-bedrock-settings-app-token-input-account-total/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-settings",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-settings-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructtokenusagealarmsinputtokensaccounttotalAlarm0A44903C",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (alarm ARN); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructtokenusagealarmsinputtokensaccounttotalalarmtestorgtestenvtestdomaintestbedrocksettingsapptokeninputaccounttotalnamessm6641D460": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-settings-app/alarm/test-org-test-env-test-domain-test-bedrock-settings-app-token-input-account-total/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-settings",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-settings-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-bedrock-settings-app-token-input-account-total"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (alarm name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructtokenusagealarmsoutputtokensaccounttotalAlarmFCC9428C": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "ActionsEnabled": true,
+        "AlarmActions": [
+          {
+            "Ref": "constructtokenusagealarmsAlarmTopicA0FDC2BD"
+          }
+        ],
+        "AlarmDescription": "Bedrock output tokens across all models in the account exceed 10000000 over 3600s",
+        "AlarmName": "test-org-test-env-test-domain-test-bedrock-settings-app-token-output-account-total",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "DatapointsToAlarm": 2,
+        "EvaluationPeriods": 3,
+        "MetricName": "OutputTokenCount",
+        "Namespace": "AWS/Bedrock",
+        "Period": 3600,
+        "Statistic": "Sum",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-settings"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-settings-app"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Threshold": 10000000,
+        "TreatMissingData": "notBreaching"
+      }
+    },
+    "constructtokenusagealarmsoutputtokensaccounttotalalarmtestorgtestenvtestdomaintestbedrocksettingsapptokenoutputaccounttotalarnssm0AA7600F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-settings-app/alarm/test-org-test-env-test-domain-test-bedrock-settings-app-token-output-account-total/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-settings",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-settings-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "constructtokenusagealarmsoutputtokensaccounttotalAlarmFCC9428C",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (alarm ARN); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "constructtokenusagealarmsoutputtokensaccounttotalalarmtestorgtestenvtestdomaintestbedrocksettingsapptokenoutputaccounttotalnamessmFC87F542": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-settings-app/alarm/test-org-test-env-test-domain-test-bedrock-settings-app-token-output-account-total/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-settings",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-settings-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-bedrock-settings-app-token-output-account-total"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (alarm name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
     },
     "customlogsmodelinvocationhandlerroleEB4FB284": {
       "Type": "AWS::IAM::Role",
@@ -1452,6 +2087,25 @@
       },
       "Export": {
         "Name": "test-org:test-domain:test-bedrock-settings-app:bucket:logsmodelinvocation:arn"
+      }
+    },
+    "constructtokenusagealarmsAlarmTopicTopictokenusagealarmsnameoutE86CB919": {
+      "Value": {
+        "Fn::GetAtt": [
+          "constructtokenusagealarmsAlarmTopicA0FDC2BD",
+          "TopicName"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-settings-app:topic:tokenusagealarms:name"
+      }
+    },
+    "constructtokenusagealarmsAlarmTopicTopictokenusagealarmsarnoutCF1210DF": {
+      "Value": {
+        "Ref": "constructtokenusagealarmsAlarmTopicA0FDC2BD"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-settings-app:topic:tokenusagealarms:arn"
       }
     },
     "customlogsmodelinvocationhandlerfunctionlambdalogsmodelinvocationhandlernameout08DCF0FF": {

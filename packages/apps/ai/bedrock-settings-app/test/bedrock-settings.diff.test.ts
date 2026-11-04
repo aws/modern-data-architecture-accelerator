@@ -52,4 +52,31 @@ describe('Bedrock Settings Baseline Diff Tests', () => {
       },
     ),
   );
+
+  baselineDiffTestApp(
+    'Bedrock Settings Token Alarms Existing Topic',
+    Create.appProvider(
+      context => {
+        const moduleApp = new BedrockSettingsApp({
+          context: {
+            ...context,
+            module_configs: path.join(
+              __dirname,
+              '..',
+              'sample_configs',
+              'sample-config-token-alarms-existing-topic.yaml',
+            ),
+          },
+        });
+        moduleApp.generateStack();
+        return moduleApp;
+      },
+      {
+        module_name: 'test-bedrock-settings-token-alarms-existing-topic',
+        org: 'test-org',
+        env: 'test-env',
+        domain: 'test-domain',
+      },
+    ),
+  );
 });

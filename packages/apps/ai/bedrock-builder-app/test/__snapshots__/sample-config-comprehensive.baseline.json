@@ -7314,6 +7314,145 @@
         }
       }
     },
+    "bedrockbuilderguardrailalarmsAlarmTopic55E64AEA": {
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "KmsMasterKeyId": {
+          "Fn::GetAtt": [
+            "bedrockcmk710EFABC",
+            "Arn"
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-app"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "TopicName": "test-org-test-env-test-domain-test-bedrock-builder-app-guardrail-alarms"
+      }
+    },
+    "bedrockbuilderguardrailalarmsAlarmTopicPolicy19B10ACD": {
+      "Type": "AWS::SNS::TopicPolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sns:Publish",
+                "sns:RemovePermission",
+                "sns:SetTopicAttributes",
+                "sns:DeleteTopic",
+                "sns:ListSubscriptionsByTopic",
+                "sns:GetTopicAttributes",
+                "sns:Receive",
+                "sns:AddPermission",
+                "sns:Subscribe"
+              ],
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL"
+            },
+            {
+              "Action": "sns:Publish",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account"
+                },
+                "ArnLike": {
+                  "aws:SourceArn": "arn:test-partition:cloudwatch:test-region:test-account:alarm:test-org-test-env-test-domain-test-bedrock-builder-app-guardrail-*"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "cloudwatch.amazonaws.com"
+              },
+              "Resource": {
+                "Ref": "bedrockbuilderguardrailalarmsAlarmTopic55E64AEA"
+              },
+              "Sid": "AllowCloudWatchAlarmsToPublish"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Topics": [
+          {
+            "Ref": "bedrockbuilderguardrailalarmsAlarmTopic55E64AEA"
+          }
+        ]
+      }
+    },
+    "bedrockbuilderguardrailalarmsAlarmTopicTopicguardrailalarmsnamessm2B4C08FB": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-app/topic/guardrail-alarms/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderguardrailalarmsAlarmTopic55E64AEA",
+            "TopicName"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderguardrailalarmsAlarmTopicTopicguardrailalarmsarnssmA691E861": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-app/topic/guardrail-alarms/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockbuilderguardrailalarmsAlarmTopic55E64AEA"
+        }
+      }
+    },
+    "bedrockbuilderguardrailalarmsAlarmTopicsecurityteamexamplecomAD295C44": {
+      "Type": "AWS::SNS::Subscription",
+      "Properties": {
+        "Endpoint": "security-team@example.com",
+        "Protocol": "email",
+        "TopicArn": {
+          "Ref": "bedrockbuilderguardrailalarmsAlarmTopic55E64AEA"
+        }
+      }
+    },
     "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrail3B268BFF": {
       "Type": "AWS::Bedrock::Guardrail",
       "Properties": {
@@ -7461,6 +7600,242 @@
           "Fn::GetAtt": [
             "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrail3B268BFF",
             "GuardrailId"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockguardrailenterpriseguardrailinterventioncountalarmAlarm4034899D": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "ActionsEnabled": true,
+        "AlarmActions": [
+          {
+            "Ref": "bedrockbuilderguardrailalarmsAlarmTopic55E64AEA"
+          }
+        ],
+        "AlarmDescription": "Guardrail enterprise-guardrail intervened more than 25 times in 300s, across all guardrail versions",
+        "AlarmName": "test-org-test-env-test-domain-test-bedrock-builder-app-guardrail-intervention-count-enterprise-guardrail",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "DatapointsToAlarm": 2,
+        "EvaluationPeriods": 3,
+        "Metrics": [
+          {
+            "Expression": {
+              "Fn::Join": [
+                "",
+                [
+                  "SELECT SUM(InvocationsIntervened) FROM SCHEMA(\"AWS/Bedrock/Guardrails\", GuardrailArn, GuardrailVersion) WHERE GuardrailArn = '",
+                  {
+                    "Fn::GetAtt": [
+                      "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrail3B268BFF",
+                      "GuardrailArn"
+                    ]
+                  },
+                  "'"
+                ]
+              ]
+            },
+            "Id": "interventions",
+            "Label": "Guardrail interventions",
+            "Period": 300,
+            "ReturnData": true
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-app"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Threshold": 25,
+        "TreatMissingData": "notBreaching"
+      }
+    },
+    "bedrockbuilderbedrockguardrailenterpriseguardrailinterventioncountalarmalarmtestorgtestenvtestdomaintestbedrockbuilderappguardrailinterventioncountenterpriseguardrailarnssm823AE324": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-app/alarm/test-org-test-env-test-domain-test-bedrock-builder-app-guardrail-intervention-count-enterprise-guardrail/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockguardrailenterpriseguardrailinterventioncountalarmAlarm4034899D",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (alarm ARN); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockguardrailenterpriseguardrailinterventioncountalarmalarmtestorgtestenvtestdomaintestbedrockbuilderappguardrailinterventioncountenterpriseguardrailnamessm52A57D98": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-app/alarm/test-org-test-env-test-domain-test-bedrock-builder-app-guardrail-intervention-count-enterprise-guardrail/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-bedrock-builder-app-guardrail-intervention-count-enterprise-guardrail"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (alarm name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockguardrailenterpriseguardrailinterventionratealarmAlarmE2C6FA8B": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "ActionsEnabled": true,
+        "AlarmActions": [
+          {
+            "Ref": "bedrockbuilderguardrailalarmsAlarmTopic55E64AEA"
+          }
+        ],
+        "AlarmDescription": "Guardrail enterprise-guardrail intervened on more than 15% of evaluations in 300s, across all guardrail versions",
+        "AlarmName": "test-org-test-env-test-domain-test-bedrock-builder-app-guardrail-intervention-rate-enterprise-guardrail",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "DatapointsToAlarm": 2,
+        "EvaluationPeriods": 3,
+        "Metrics": [
+          {
+            "Expression": {
+              "Fn::Join": [
+                "",
+                [
+                  "SELECT AVG(InvocationsIntervened) FROM SCHEMA(\"AWS/Bedrock/Guardrails\", GuardrailArn, GuardrailVersion) WHERE GuardrailArn = '",
+                  {
+                    "Fn::GetAtt": [
+                      "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrail3B268BFF",
+                      "GuardrailArn"
+                    ]
+                  },
+                  "'"
+                ]
+              ]
+            },
+            "Id": "interventionShare",
+            "Label": "Share of guardrail evaluations that intervened",
+            "Period": 300,
+            "ReturnData": true
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-app"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "Threshold": 0.15,
+        "TreatMissingData": "notBreaching"
+      }
+    },
+    "bedrockbuilderbedrockguardrailenterpriseguardrailinterventionratealarmalarmtestorgtestenvtestdomaintestbedrockbuilderappguardrailinterventionrateenterpriseguardrailarnssmFD9E39D4": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-app/alarm/test-org-test-env-test-domain-test-bedrock-builder-app-guardrail-intervention-rate-enterprise-guardrail/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockguardrailenterpriseguardrailinterventionratealarmAlarmE2C6FA8B",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (alarm ARN); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockguardrailenterpriseguardrailinterventionratealarmalarmtestorgtestenvtestdomaintestbedrockbuilderappguardrailinterventionrateenterpriseguardrailnamessm0EECCF9F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-app/alarm/test-org-test-env-test-domain-test-bedrock-builder-app-guardrail-intervention-rate-enterprise-guardrail/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-bedrock-builder-app-guardrail-intervention-rate-enterprise-guardrail"
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/ssm-utils.ts] Parameter stores observability metadata (alarm name); not sensitive data.",
+              "id": "AwsSolutions-SSM4"
+            }
           ]
         }
       }
@@ -11204,6 +11579,26 @@
             },
             {
               "Action": [
+                "kms:Decrypt",
+                "kms:GenerateDataKey*"
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account"
+                },
+                "ArnLike": {
+                  "aws:SourceArn": "arn:test-partition:cloudwatch:test-region:test-account:alarm:test-org-test-env-test-domain-test-bedrock-builder-app-guardrail-*"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "cloudwatch.amazonaws.com"
+              },
+              "Resource": "*",
+              "Sid": "AllowCloudWatchAlarmsToUseKey"
+            },
+            {
+              "Action": [
                 "kms:GenerateDataKey",
                 "kms:Decrypt"
               ],
@@ -14466,6 +14861,25 @@
       },
       "Export": {
         "Name": "test-org:test-domain:test-bedrock-builder-app:managed-policy:kbdatasyncbedrockknowledgebaseroletestknowledgebase:name"
+      }
+    },
+    "bedrockbuilderguardrailalarmsAlarmTopicTopicguardrailalarmsnameout383B8481": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderguardrailalarmsAlarmTopic55E64AEA",
+          "TopicName"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-app:topic:guardrailalarms:name"
+      }
+    },
+    "bedrockbuilderguardrailalarmsAlarmTopicTopicguardrailalarmsarnout48F4D81D": {
+      "Value": {
+        "Ref": "bedrockbuilderguardrailalarmsAlarmTopic55E64AEA"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-app:topic:guardrailalarms:arn"
       }
     },
     "bedrockbuilderbedrockguardrailenterpriseguardrailguardrailenterpriseguardrailarnout2598FC36": {

@@ -10,6 +10,7 @@ import {
   NamedKnowledgeBaseProps,
   NamedVectorStoreProps,
   NamedGuardrailProps,
+  GuardrailAlarmsProps,
   NamedGatewayProps,
   NamedGatewayTargetProps,
   NamedHarnessProps,
@@ -90,6 +91,19 @@ export interface BedrockBuilderConfigContents extends MdaaBaseConfigContents {
    * Validation: Optional; NamedGuardrailProps (map of guardrail name to config)
    **/
   readonly guardrails?: NamedGuardrailProps;
+  /**
+   * Notification target and timing for the guardrail intervention alarms. Each guardrail
+   * opts in with its own `interventionAlarm` thresholds; every alarm in the module
+   * notifies the one target set here.
+   *
+   * Use cases: routing guardrail intervention alarms to a security team, self-contained
+   * alerting with a module-created topic
+   *
+   * AWS: CloudWatch Metrics Insights alarms + SNS notification
+   *
+   * Validation: Optional; GuardrailAlarmsProps; required when any guardrail sets interventionAlarm
+   **/
+  readonly guardrailAlarms?: GuardrailAlarmsProps;
   /**
    * Bedrock AgentCore Gateway configurations (compliant MCP servers), keyed by gateway name.
    * Each gateway references its tool targets by name from the sibling `gatewayTargets` map, and may
@@ -184,6 +198,11 @@ export class BedrockBuilderConfigParser extends MdaaAppConfigParser<BedrockBuild
   public readonly guardrails?: NamedGuardrailProps;
 
   /**
+   * (Optional) Notification target and timing for the guardrail intervention alarms
+   */
+  public readonly guardrailAlarms?: GuardrailAlarmsProps;
+
+  /**
    * (Optional) AgentCore Gateway configurations
    */
   public readonly gateways?: NamedGatewayProps;
@@ -207,6 +226,7 @@ export class BedrockBuilderConfigParser extends MdaaAppConfigParser<BedrockBuild
     this.lambdaFunctions = this.configContents.lambdaFunctions;
     this.knowledgeBases = this.configContents.knowledgeBases;
     this.guardrails = this.configContents.guardrails;
+    this.guardrailAlarms = this.configContents.guardrailAlarms;
     this.vectorStores = this.configContents.vectorStores;
     this.gateways = this.configContents.gateways;
     this.gatewayTargets = this.configContents.gatewayTargets;

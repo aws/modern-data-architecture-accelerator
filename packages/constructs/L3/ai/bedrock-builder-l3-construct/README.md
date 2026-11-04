@@ -29,6 +29,7 @@ The Bedrock Builder CDK L3 construct is used to configure and deploy a secure Be
       - No ingress allowed (not configurable)
 
 - **Bedrock Guardrail**: (Optional) Deploys Bedrock Guardrails, which a harness can reference by `config:<name>`.
+  - A guardrail that sets `interventionAlarm` gets CloudWatch alarms on its intervention count and/or rate, across every guardrail version. Every such alarm notifies the module-level `guardrailAlarms` target: an existing SNS topic, or a topic the module creates, encrypted with the module KMS key, with optional email subscriptions. See [Guardrail intervention alarms](../../../../apps/ai/bedrock-builder-app/README.md#guardrail-intervention-alarms).
 
 - **OpenSearch Serverless VPC Endpoints**: For OpenSearch Serverless vector stores, the construct automatically creates VPC endpoints for secure connectivity. If you already have an existing VPC endpoint for OpenSearch Serverless in your VPC, you can provide the endpoint ID and security group ID in the vector store configuration to reuse it instead of creating a new one. This prevents deployment failures when a VPC endpoint already exists.
 

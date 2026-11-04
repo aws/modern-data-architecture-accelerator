@@ -11,6 +11,8 @@ The Bedrock Settings CDK L3 construct is used to configure and deploy Amazon Bed
 * **KMS Key**: Encrypts Bedrock logging resources (S3 bucket and CloudWatch logs)
 * **IAM Service Role**: Allows Bedrock service to write logs to CloudWatch and S3
 * **Custom Resource**: Lambda-based custom resource that configures Bedrock logging settings via API calls
+* **Token Usage Alarms**: (Optional) CloudWatch alarms on Bedrock `InputTokenCount` and `OutputTokenCount`, per model (summed across the model IDs listed) and/or account-wide
+* **SNS Topic**: (Optional) Alarm notification topic encrypted with the module KMS key, with email subscriptions, a topic policy and key grant letting this module's token alarms publish, and SSM parameters for its name and ARN
 
 ## Configuration Options
 
@@ -18,6 +20,8 @@ The Bedrock Settings CDK L3 construct is used to configure and deploy Amazon Bed
 * **enableAuditLoggingToCloudwatch**: Enable CloudWatch Log Group creation and logging for model invocation audit logs
 
 At least one of these options must be enabled.
+
+* **tokenUsageAlarms**: (Optional) Alarms on model token use in the account: `models` (per model, up to 10 model IDs each) and/or `accountTotal`, each with `inputTokenThreshold` and/or `outputTokenThreshold`; a notification target (`notificationTopicArn`, or `createNotificationTopic` with `notificationEmails`); and `periodSeconds` (a multiple of 60), `evaluationPeriods`, and `datapointsToAlarm`. Token metrics count every caller in the account and Region.
 
 ## Logging Capabilities
 
@@ -47,4 +51,5 @@ When CloudWatch logging is enabled:
 - All resources encrypted with customer-managed KMS key
 - Least privilege IAM policies with resource-specific permissions
 - Service principals restricted to specific account and region
+- CloudWatch's publish grant on a module-created alarm topic, and its use of the KMS key, are limited to this module's token alarms
 - Bucket policies with condition-based access controls
