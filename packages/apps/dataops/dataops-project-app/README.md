@@ -30,6 +30,8 @@ This module deploys and integrates the following resources:
 
 **Subscription Role Authorization** (Optional) - Created when `subscriptionAuthorizedRoleGroups` is set: a Lambda-backed custom resource (`Custom::DataZoneProjectRoleTagger`, SageMaker path) that tags the listed roles with the project ID, and a managed policy (`subscription-catalog-key-access`) granting the listed roles decrypt on the domain's Glue catalog keys. On the DataZone path the roles are added to the project's subscription target instead of being tagged. See [Subscribed Asset Access for Project Roles](#subscribed-asset-access-for-project-roles).
 
+**Environment ID Resolution** - For each `sagemaker.project.environmentConfigs` entry (SageMaker path), a Lambda-backed custom resource (`Custom::EnvironmentIdResolver`) resolves the environment's live ID and publishes it to an SSM parameter at `<ssmPath>/project/dataops-env-<configKey>/environment-id` on every deploy, for use with the optional `environmentId` property. Setting `environmentId` is required to rename a project (or make any other change) once its environments are already `ACTIVE` - DataZone rejects such updates addressed by configuration name. See [RENAMING_PROJECTS.md](../../../constructs/L2/datazone-constructs/RENAMING_PROJECTS.md) for details.
+
 **SNS Failure Notification Topic** - SNS topic for publishing DataOps pipeline failure events, with optional email subscriptions.
 
 ![dataops-project](../../../constructs/L3/dataops/dataops-project-l3-construct/docs/dataops-project.png)

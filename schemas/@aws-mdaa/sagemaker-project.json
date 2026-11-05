@@ -2859,6 +2859,10 @@
         "ProjectEnvironmentConfiguration": {
             "additionalProperties": false,
             "properties": {
+                "environmentId": {
+                    "description": "ID of an already-provisioned DataZone environment to target for this configuration,\nin place of addressing it by its configuration name. Required once the environment\nexists, since DataZone rejects an update that still addresses it by configuration\nname alone.\n\nThe first deploy that creates this entry also resolves the environment's live ID and\npublishes it to an SSM parameter at\n`<naming.ssmPath>/project/<name>-env-<configKey>/environment-id`, within a short retry\nbudget - best-effort, and a one-time attempt: the underlying custom resource has no\nway to tell CloudFormation to invoke it again on a later deploy, since none of its\nown properties change between deploys. If the environment is still provisioning once\nthat budget runs out (environments commonly take several minutes), the parameter is\nleft holding a placeholder (`UNRESOLVED`) rather than a real ID, permanently, until\nsomething else (e.g. a config change prompting the resource to run again) causes a\nre-resolution. Check the parameter's actual value - or look the ID up directly via\n`aws datazone list-environments` - before pointing this property at it with an\n`ssm:<path>` config value. Leave unset for first-time environment provisioning.\n\nUse cases: Updating environment parameters, or making any other change (including\n`nameOverride`), on an already-deployed project whose environments are ACTIVE\n\nAWS: AWS::DataZone::Project UserParameters EnvironmentId\n\nValidation: Optional; leave unset for first-time environment provisioning, where\n`environmentConfigurationName` is required instead. Find the value via the\nDataZone/SMUS console, `aws datazone list-environments`, or the published SSM\nparameter described above.",
+                    "type": "string"
+                },
                 "parameters": {
                     "additionalProperties": {
                         "type": "string"

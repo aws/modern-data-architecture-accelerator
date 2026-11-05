@@ -22,6 +22,8 @@ This module deploys and integrates the following resources:
 
 **Glossaries** - Project-owned DataZone business glossaries and terms, defined declaratively. A metadata form field's `glossaryId` can reference a declared glossary or term, resolved to the glossary's deploy-time ID. See [Glossaries](#glossaries) below for the config surface and the domain-redeploy prerequisite.
 
+**Environment ID Resolution** - For each `environmentConfigs` entry, a Lambda-backed custom resource (`Custom::EnvironmentIdResolver`) resolves the environment's live ID and publishes it to an SSM parameter at `<ssmPath>/project/<key>-env-<configKey>/environment-id` on every deploy, for use with the optional `environmentId` property. Setting `environmentId` is required to rename a project (or make any other change) once its environments are already `ACTIVE` - DataZone rejects such updates addressed by configuration name. See [RENAMING_PROJECTS.md](../../../constructs/L2/datazone-constructs/RENAMING_PROJECTS.md) for details.
+
 ![datazone](../../../constructs/L3/governance/sagemaker-project-l3-construct/docs/SageMaker-Project.png)
 
 ---

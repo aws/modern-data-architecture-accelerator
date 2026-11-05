@@ -99,6 +99,11 @@ projects:
         # (Optional) Map of parameter name to value
         parameters:
           env-param-key: env-param-value
+      # (Optional) Apply this entry to a specific environment ID instead of looking it up by name
+      profile-specific-env:
+        environmentId: test-environment-id
+        parameters:
+          profile-param: pinned-value
     # (Optional) Default values for publishOnImport, enableSetting, schedule, recommendation,
     # autoImportDataQualityResult, and filterExpressions, inherited by every entry in
     # dataSources. A data source that sets one of these fields itself overrides the default

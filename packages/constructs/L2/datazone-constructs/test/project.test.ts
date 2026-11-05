@@ -302,6 +302,180 @@ describe('MdaaDatazoneProject', () => {
       });
     });
   });
+
+  describe('environmentConfigurations', () => {
+    it('addresses by environmentConfigurationName and omits projectProfileVersion when no environmentId is given', () => {
+      new MdaaDatazoneProject(testApp.testStack, 'test-project', {
+        naming: testApp.naming,
+        name: 'test-project',
+        domainConfig: testDomainConfig,
+        environmentConfigurations: {
+          Tooling: { parameters: { glueDbName: 'my_db' } },
+        },
+      });
+
+      const template = Template.fromStack(testApp.testStack);
+      template.hasResourceProperties('AWS::DataZone::Project', {
+        // Regression guard: an existing ACTIVE project whose entries have no environmentId
+        // yet must synth byte-identical to before this property existed - introducing it
+        // here would itself make CloudFormation call UpdateProject, with UserParameters
+        // still addressed by configuration name, which DataZone rejects once ACTIVE.
+        ProjectProfileVersion: Match.absent(),
+        UserParameters: [
+          Match.objectEquals({
+            EnvironmentConfigurationName: 'Tooling',
+            EnvironmentParameters: [{ Name: 'glueDbName', Value: 'my_db' }],
+          }),
+        ],
+      });
+    });
+
+    it('addresses by environmentId instead, when given', () => {
+      new MdaaDatazoneProject(testApp.testStack, 'test-project', {
+        naming: testApp.naming,
+        name: 'test-project',
+        domainConfig: testDomainConfig,
+        environmentConfigurations: {
+          Tooling: { parameters: { glueDbName: 'my_db' }, environmentId: 'abc123env' },
+        },
+      });
+
+      const template = Template.fromStack(testApp.testStack);
+      template.hasResourceProperties('AWS::DataZone::Project', {
+        ProjectProfileVersion: 'latest',
+        UserParameters: [
+          Match.objectEquals({
+            EnvironmentId: 'abc123env',
+            EnvironmentParameters: [{ Name: 'glueDbName', Value: 'my_db' }],
+          }),
+        ],
+      });
+    });
+
+    it('omits UserParameters/ProjectProfileVersion entirely when no environmentConfigurations are set', () => {
+      new MdaaDatazoneProject(testApp.testStack, 'test-project', {
+        naming: testApp.naming,
+        name: 'test-project',
+        domainConfig: testDomainConfig,
+      });
+
+      const template = Template.fromStack(testApp.testStack);
+      template.hasResourceProperties('AWS::DataZone::Project', {
+        UserParameters: Match.absent(),
+        ProjectProfileVersion: Match.absent(),
+      });
+      template.resourceCountIs('Custom::EnvironmentIdResolver', 0);
+    });
+
+    it('creates a resolver per environment configuration, after the project, publishing the resolved ID to SSM', () => {
+      new MdaaDatazoneProject(testApp.testStack, 'test-project', {
+        naming: testApp.naming,
+        name: 'test-project',
+        domainConfig: testDomainConfig,
+        environmentConfigurations: {
+          Tooling: { parameters: { glueDbName: 'my_db' } },
+        },
+      });
+
+      const template = Template.fromStack(testApp.testStack);
+      template.resourceCountIs('Custom::EnvironmentIdResolver', 1);
+      template.hasResourceProperties('Custom::EnvironmentIdResolver', { envConfigName: 'Tooling' });
+
+      const resolvers = template.findResources('Custom::EnvironmentIdResolver');
+      const [resolver] = Object.values(resolvers);
+      const projects = template.findResources('AWS::DataZone::Project');
+      const [projectLogicalId] = Object.keys(projects);
+      expect(resolver.DependsOn).toContain(projectLogicalId);
+
+      template.hasResourceProperties('AWS::SSM::Parameter', {
+        Name: Match.stringLikeRegexp('project/test-project-env-tooling/environment-id'),
+      });
+    });
+
+    it('still publishes a resolver for an entry that already has an explicit environmentId', () => {
+      new MdaaDatazoneProject(testApp.testStack, 'test-project', {
+        naming: testApp.naming,
+        name: 'test-project',
+        domainConfig: testDomainConfig,
+        environmentConfigurations: {
+          Tooling: { environmentId: 'abc123env' },
+        },
+      });
+
+      const template = Template.fromStack(testApp.testStack);
+      template.resourceCountIs('Custom::EnvironmentIdResolver', 1);
+    });
+
+    it('falls back to generatedProjectName for the published SSM path when name is omitted', () => {
+      new MdaaDatazoneProject(testApp.testStack, 'test-project', {
+        naming: testApp.naming,
+        domainConfig: testDomainConfig,
+        nameOverride: 'customer360',
+        environmentConfigurations: {
+          Tooling: { parameters: { glueDbName: 'my_db' } },
+        },
+      });
+
+      const template = Template.fromStack(testApp.testStack);
+      template.hasResourceProperties('AWS::SSM::Parameter', {
+        Name: Match.stringLikeRegexp('project/customer360-env-tooling/environment-id'),
+      });
+    });
+
+    it('sanitizes a nameOverride fallback containing spaces for the published SSM path', () => {
+      new MdaaDatazoneProject(testApp.testStack, 'test-project', {
+        naming: testApp.naming,
+        domainConfig: testDomainConfig,
+        nameOverride: 'Customer 360 Analytics',
+        environmentConfigurations: {
+          Tooling: { parameters: { glueDbName: 'my_db' } },
+        },
+      });
+
+      const template = Template.fromStack(testApp.testStack);
+      template.hasResourceProperties('AWS::SSM::Parameter', {
+        Name: Match.stringLikeRegexp('project/customer-360-analytics-env-tooling/environment-id'),
+      });
+    });
+
+    it('sanitizes an environment configuration key containing spaces for the published SSM path', () => {
+      new MdaaDatazoneProject(testApp.testStack, 'test-project', {
+        naming: testApp.naming,
+        name: 'test-project',
+        domainConfig: testDomainConfig,
+        environmentConfigurations: {
+          'Lakehouse Database': { parameters: { glueDbName: 'my_db' } },
+        },
+      });
+
+      const template = Template.fromStack(testApp.testStack);
+      template.hasResourceProperties('AWS::SSM::Parameter', {
+        Name: Match.stringLikeRegexp('project/test-project-env-lakehouse-database/environment-id'),
+      });
+    });
+
+    it('addresses mixed entries independently: explicit environmentId wins for its own entry only', () => {
+      new MdaaDatazoneProject(testApp.testStack, 'test-project', {
+        naming: testApp.naming,
+        name: 'test-project',
+        domainConfig: testDomainConfig,
+        environmentConfigurations: {
+          Tooling: { environmentId: 'abc123env' },
+          DataLake: {},
+        },
+      });
+
+      const template = Template.fromStack(testApp.testStack);
+      template.resourceCountIs('Custom::EnvironmentIdResolver', 2);
+      template.hasResourceProperties('AWS::DataZone::Project', {
+        ProjectProfileVersion: 'latest',
+        UserParameters: Match.arrayWith([
+          Match.objectEquals({ EnvironmentId: 'abc123env', EnvironmentParameters: [] }),
+          Match.objectEquals({ EnvironmentConfigurationName: 'DataLake', EnvironmentParameters: [] }),
+        ]),
+      });
+    });
+  });
 });
 
 describe('MdaaSageMakerProject', () => {
@@ -360,6 +534,37 @@ describe('MdaaSageMakerProject', () => {
     });
 
     expect(construct.toolingEnvId).toBeDefined();
+  });
+
+  it('depends the environment ID resolver on project membership, not just the project', () => {
+    // Regression guard: ListEnvironments requires the custom-resource role to already be
+    // a project member. Without this dependency, the resolver could run before
+    // crRoleProjectMembership exists on a brand-new project and be denied permanently
+    // (the resolver only runs once).
+    new MdaaSageMakerProject(testApp.testStack, 'test-sm-project', {
+      naming: testApp.naming,
+      name: 'test-sm-project',
+      domainConfig: testDomainConfig,
+      environmentConfigurations: {
+        Tooling: { parameters: { glueDbName: 'my_db' } },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    const resolvers = template.findResources('Custom::EnvironmentIdResolver');
+    const resolverIds = Object.keys(resolvers);
+    expect(resolverIds.length).toBeGreaterThan(0);
+
+    const memberships = template.findResources('AWS::DataZone::ProjectMembership', {
+      Properties: { Designation: 'PROJECT_OWNER' },
+    });
+    const membershipIds = Object.keys(memberships);
+    expect(membershipIds.length).toBeGreaterThan(0);
+
+    resolverIds.forEach(resolverId => {
+      const dependsOn: string[] = resolvers[resolverId].DependsOn ?? [];
+      expect(membershipIds.some(membershipId => dependsOn.includes(membershipId))).toBe(true);
+    });
   });
 
   it('should expose glue connection ID', () => {

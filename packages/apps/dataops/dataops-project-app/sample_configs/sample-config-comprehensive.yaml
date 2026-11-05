@@ -288,6 +288,11 @@ sagemaker:
       test-env:
         parameters:
           key1: value1
+      # (Optional) Apply this entry to a specific environment ID instead of looking it up by name
+      test-env-2:
+        environmentId: test-environment-id
+        parameters:
+          key2: value2
     # (Optional) Default values for publishOnImport, enableSetting, schedule, recommendation,
     # autoImportDataQualityResult, and filterExpressions, inherited by every Glue (databaseName)
     # entry in dataSources below. A data source that sets one of these fields itself overrides

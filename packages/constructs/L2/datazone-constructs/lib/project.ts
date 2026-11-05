@@ -15,6 +15,36 @@ import { DomainConfig } from './domain_config';
 
 export interface ProjectEnvironmentConfiguration {
   readonly parameters?: { [name: string]: string };
+  /**
+   * ID of an already-provisioned DataZone environment to target for this configuration,
+   * in place of addressing it by its configuration name. Required once the environment
+   * exists, since DataZone rejects an update that still addresses it by configuration
+   * name alone.
+   *
+   * The first deploy that creates this entry also resolves the environment's live ID and
+   * publishes it to an SSM parameter at
+   * `<naming.ssmPath>/project/<name>-env-<configKey>/environment-id`, within a short retry
+   * budget - best-effort, and a one-time attempt: the underlying custom resource has no
+   * way to tell CloudFormation to invoke it again on a later deploy, since none of its
+   * own properties change between deploys. If the environment is still provisioning once
+   * that budget runs out (environments commonly take several minutes), the parameter is
+   * left holding a placeholder (`UNRESOLVED`) rather than a real ID, permanently, until
+   * something else (e.g. a config change prompting the resource to run again) causes a
+   * re-resolution. Check the parameter's actual value - or look the ID up directly via
+   * `aws datazone list-environments` - before pointing this property at it with an
+   * `ssm:<path>` config value. Leave unset for first-time environment provisioning.
+   *
+   * Use cases: Updating environment parameters, or making any other change (including
+   * `nameOverride`), on an already-deployed project whose environments are ACTIVE
+   *
+   * AWS: AWS::DataZone::Project UserParameters EnvironmentId
+   *
+   * Validation: Optional; leave unset for first-time environment provisioning, where
+   * `environmentConfigurationName` is required instead. Find the value via the
+   * DataZone/SMUS console, `aws datazone list-environments`, or the published SSM
+   * parameter described above.
+   */
+  readonly environmentId?: string;
 }
 
 export interface MdaaDatazoneProjectProps extends MdaaConstructProps {
@@ -69,12 +99,30 @@ export class MdaaDatazoneProject extends Construct {
   public readonly project: CfnProject;
   protected props: MdaaDatazoneProjectProps;
   public generatedProjectName: string;
+  /**
+   * The EnvironmentIdResolver custom resource created for each entry in
+   * `environmentConfigurations`, in the same order. A subclass that establishes its
+   * custom-resource role's project membership separately from project creation
+   * (required for the resolver's `ListEnvironments` call) must depend each of these on
+   * that membership - see `MdaaSageMakerProject`.
+   */
+  protected readonly environmentIdResolvers: MdaaCustomResource[];
   private readonly _customResourceRole: IRole;
   /** The domain custom-resource role (a project owner), used for privileged DataZone API calls. */
   public get customResourceRole(): IRole {
     return this._customResourceRole;
   }
   private static readonly NAME_OVERRIDE_PATTERN = /^[\w -]+$/;
+  private static readonly SSM_PATH_UNSAFE_CHARS = /[^a-zA-Z0-9_.-]+/g;
+  /**
+   * Replaces any character not valid in an SSM parameter name segment
+   * (`[a-zA-Z0-9_.-]`) with a hyphen, so a value with spaces or other
+   * punctuation - a `nameOverride` or a free-form environment configuration
+   * key - can't produce an invalid parameter name.
+   */
+  private static sanitizeForSsmPath(value: string): string {
+    return value.replace(MdaaDatazoneProject.SSM_PATH_UNSAFE_CHARS, '-');
+  }
   /**
    * Returns the verbatim DataZone project name for a `nameOverride`, after checking it
    * against the constraints of `AWS::DataZone::Project` `Name` (Pattern `^[\w -]+$`,
@@ -120,9 +168,23 @@ export class MdaaDatazoneProject extends Construct {
       name: this.generatedProjectName,
       domainUnitId: props.domainUnit ? this.domainConfig.getDomainUnitId(props.domainUnit) : undefined,
       projectProfileId: props.projectProfileId,
+      // DataZone's UpdateProject requires projectProfileVersion whenever userParameters is
+      // set ("Cannot provide userParameters without also providing projectProfileVersion");
+      // CreateProject has no such field at all. Gated on an entry actually being addressed
+      // by ID, not merely on environmentConfigurations being set: an existing ACTIVE
+      // project whose entries have no environmentId yet must synth byte-identical
+      // UserParameters/ProjectProfileVersion to before this property existed, or
+      // introducing it here would itself make CloudFormation call UpdateProject - with
+      // UserParameters still addressed by configuration name, which is exactly the error
+      // this property exists to avoid. "latest" is the only value DataZone accepts here.
+      projectProfileVersion: Object.values(props.environmentConfigurations ?? {}).some(c => c.environmentId)
+        ? 'latest'
+        : undefined,
       userParameters: props.environmentConfigurations
         ? Object.entries(props.environmentConfigurations).map(([configName, configProps]) => ({
-            environmentConfigurationName: configName,
+            ...(configProps.environmentId
+              ? { environmentId: configProps.environmentId }
+              : { environmentConfigurationName: configName }),
             environmentParameters: Object.entries(configProps.parameters || {}).map(([name, value]) => {
               return { name: name, value: value };
             }),
@@ -150,6 +212,13 @@ export class MdaaDatazoneProject extends Construct {
     Object.entries(this.props.groups || {}).forEach(([id, groupIdentifier]) => {
       this.addGroup(id, groupIdentifier);
     });
+
+    // Best-effort: publish each configured environment's resolved ID to SSM, for reuse
+    // via `environmentId` on a later deploy. Never blocks this deploy - see
+    // resolve_environment_id.py.
+    this.environmentIdResolvers = Object.keys(props.environmentConfigurations || {}).map(configName =>
+      this.publishEnvironmentId(configName),
+    );
 
     new MdaaParamAndOutput(
       this,
@@ -257,6 +326,56 @@ export class MdaaDatazoneProject extends Construct {
 
     return new MdaaCustomResource(this, `user-profile-manager-${id}`, crProps);
   }
+
+  /**
+   * Resolves the given environment configuration's live environment ID and publishes it
+   * to SSM, so a later deploy can address it via `environmentId` instead of
+   * `environmentConfigurationName` (see `ProjectEnvironmentConfiguration.environmentId`).
+   * Best-effort: never fails this deploy if the environment isn't resolvable yet - the
+   * Lambda writes a non-empty placeholder in that case, since `AWS::SSM::Parameter`
+   * rejects an empty `Value` (see `resolve_environment_id.py`). Returns the resolver so a
+   * subclass can depend it on project membership - see `environmentIdResolvers`.
+   */
+  protected publishEnvironmentId(envConfigName: string): MdaaCustomResource {
+    const crProps: MdaaCustomResourceProps = {
+      resourceType: 'EnvironmentIdResolver',
+      code: Code.fromAsset(`${__dirname}/../src/lambda/resolve_environment_id`),
+      runtime: Runtime.PYTHON_3_14,
+      handler: 'resolve_environment_id.lambda_handler',
+      handlerRole: this.customResourceRole,
+      handlerProps: {
+        domainId: this.domainConfig.domainId,
+        projectId: this.project.attrId,
+        envConfigName: envConfigName,
+      },
+      naming: this.props.naming,
+      pascalCaseProperties: false,
+      handlerTimeout: Duration.seconds(120),
+      environment: {
+        LOG_LEVEL: 'INFO',
+      },
+    };
+    const resolver = new MdaaCustomResource(this, `env-id-resolver-${envConfigName}`, crProps);
+    resolver.node.addDependency(this.project);
+
+    // `name` is the SSM-safe identifier by convention; nameOverride/generatedProjectName
+    // may contain spaces or mixed case, which are invalid in an SSM parameter name.
+    // envConfigName is an arbitrary user-chosen map key with no such convention, so it
+    // needs the same sanitization.
+    const projectKey = MdaaDatazoneProject.sanitizeForSsmPath(this.props.name ?? this.generatedProjectName);
+    new MdaaParamAndOutput(
+      this,
+      {
+        ...this.props,
+        resourceType: 'project',
+        resourceId: `${projectKey}-env-${MdaaDatazoneProject.sanitizeForSsmPath(envConfigName)}`,
+        name: 'environment-id',
+        value: resolver.getAttString('environmentId'),
+      },
+      this.node.scope,
+    );
+    return resolver;
+  }
 }
 
 /**
@@ -276,6 +395,10 @@ export class MdaaSageMakerProject extends MdaaDatazoneProject {
     super(scope, id, props);
 
     this.crRoleProjectMembership = this.createCrRoleProjectMembership();
+    // The base constructor's environmentIdResolvers run before this membership exists,
+    // so without this they could call ListEnvironments before the custom-resource role
+    // is a project owner and be denied - permanently, since the resolver only runs once.
+    this.environmentIdResolvers.forEach(resolver => resolver.node.addDependency(this.crRoleProjectMembership));
     const envDeploymentMonitor = this.getSagemakerEnvironmentDeploymentMonitor(
       this,
       'env-deployment-monitor',
