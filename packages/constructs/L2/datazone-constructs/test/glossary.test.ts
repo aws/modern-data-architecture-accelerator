@@ -83,8 +83,8 @@ describe('MdaaDatazoneGlossary', () => {
       testApp.testStack,
       'test-glossary',
       baseProps({
-        CustomerLifetimeValue: { shortDescription: 'CLV', status: 'ENABLED' },
-        ChurnRisk: { longDescription: 'Likelihood a customer churns' },
+        CustomerLifetimeValue: { description: 'CLV', status: 'ENABLED' },
+        ChurnRisk: { readme: 'Likelihood a customer churns' },
       }),
     );
 
@@ -106,7 +106,7 @@ describe('MdaaDatazoneGlossary', () => {
     new MdaaDatazoneGlossary(
       testApp.testStack,
       'test-glossary',
-      baseProps({ CustomerLifetimeValue: { shortDescription: 'CLV' } }),
+      baseProps({ CustomerLifetimeValue: { description: 'CLV' } }),
     );
 
     const template = Template.fromStack(testApp.testStack);
@@ -120,7 +120,7 @@ describe('MdaaDatazoneGlossary', () => {
     const glossary = new MdaaDatazoneGlossary(
       testApp.testStack,
       'test-glossary',
-      baseProps({ CustomerLifetimeValue: { shortDescription: 'CLV' } }),
+      baseProps({ CustomerLifetimeValue: { description: 'CLV' } }),
     );
 
     expect(glossary.glossary).toBeDefined();
@@ -135,7 +135,7 @@ describe('MdaaDatazoneGlossary', () => {
 
   it('should throw when a term name is empty', () => {
     expect(
-      () => new MdaaDatazoneGlossary(testApp.testStack, 'test-glossary', baseProps({ '': { shortDescription: 'x' } })),
+      () => new MdaaDatazoneGlossary(testApp.testStack, 'test-glossary', baseProps({ '': { description: 'x' } })),
     ).toThrow(/has a term with an empty name/);
   });
 
@@ -148,34 +148,75 @@ describe('MdaaDatazoneGlossary', () => {
   it('should throw when a term name contains a period', () => {
     expect(
       () =>
-        new MdaaDatazoneGlossary(
-          testApp.testStack,
-          'test-glossary',
-          baseProps({ 'Churn.Risk': { shortDescription: 'x' } }),
-        ),
+        new MdaaDatazoneGlossary(testApp.testStack, 'test-glossary', baseProps({ 'Churn.Risk': { description: 'x' } })),
     ).toThrow(/Term name 'Churn.Risk'.*must not contain '\.'/);
   });
 
-  it('should throw when a term shortDescription exceeds 1024 characters', () => {
+  it('should throw when a term description exceeds 1024 characters', () => {
     expect(
       () =>
         new MdaaDatazoneGlossary(
           testApp.testStack,
           'test-glossary',
-          baseProps({ CustomerLifetimeValue: { shortDescription: 'x'.repeat(1025) } }),
+          baseProps({ CustomerLifetimeValue: { description: 'x'.repeat(1025) } }),
         ),
-    ).toThrow(/shortDescription for term 'CustomerLifetimeValue'.*exceeds 1024 characters/);
+    ).toThrow(/description for term 'CustomerLifetimeValue'.*exceeds 1024 characters/);
   });
 
-  it('should throw when a term longDescription exceeds 4096 characters', () => {
+  it('should throw when a term readme exceeds 4096 characters', () => {
     expect(
       () =>
         new MdaaDatazoneGlossary(
           testApp.testStack,
           'test-glossary',
-          baseProps({ CustomerLifetimeValue: { longDescription: 'x'.repeat(4097) } }),
+          baseProps({ CustomerLifetimeValue: { readme: 'x'.repeat(4097) } }),
         ),
-    ).toThrow(/longDescription for term 'CustomerLifetimeValue'.*exceeds 4096 characters/);
+    ).toThrow(/readme for term 'CustomerLifetimeValue'.*exceeds 4096 characters/);
+  });
+
+  it('should throw when relatesTo has more than 10 entries', () => {
+    expect(
+      () =>
+        new MdaaDatazoneGlossary(
+          testApp.testStack,
+          'test-glossary',
+          baseProps({
+            CustomerLifetimeValue: { relatesTo: Array.from({ length: 11 }, (_, i) => `Term${i}`) },
+          }),
+        ),
+    ).toThrow(/relatesTo for term 'CustomerLifetimeValue'.*declares 11 entries.*exceeds the maximum of 10/);
+  });
+
+  it('accepts exactly MAX_RELATES_TO entries', () => {
+    const relatesTo = Array.from({ length: 10 }, (_, i) => `Term${i}`);
+    new MdaaDatazoneGlossary(testApp.testStack, 'test-glossary', baseProps({ CustomerLifetimeValue: { relatesTo } }));
+
+    const template = Template.fromStack(testApp.testStack);
+    template.hasResourceProperties('Custom::DataZoneGlossaryTerm', {
+      termName: 'CustomerLifetimeValue',
+    });
+  });
+
+  it('should throw when relatesTo references the term itself (bare name)', () => {
+    expect(
+      () =>
+        new MdaaDatazoneGlossary(
+          testApp.testStack,
+          'test-glossary',
+          baseProps({ CustomerLifetimeValue: { relatesTo: ['CustomerLifetimeValue'] } }),
+        ),
+    ).toThrow(/relatesTo for term 'CustomerLifetimeValue'.*must not reference itself/);
+  });
+
+  it('should throw when relatesTo references the term itself (dotted glossary.term)', () => {
+    expect(
+      () =>
+        new MdaaDatazoneGlossary(
+          testApp.testStack,
+          'test-glossary',
+          baseProps({ CustomerLifetimeValue: { relatesTo: ['CustomerGlossary.CustomerLifetimeValue'] } }),
+        ),
+    ).toThrow(/relatesTo for term 'CustomerLifetimeValue'.*must not reference itself/);
   });
 
   it('grants the handler role CloudWatch Logs access scoped to both handlers log groups', () => {
@@ -187,7 +228,7 @@ describe('MdaaDatazoneGlossary', () => {
     // role reference instead, to actually exercise the grant.
     const sameAccountRole = Role.fromRoleName(testApp.testStack, 'same-account-cr-role', 'cr-role');
     new MdaaDatazoneGlossary(testApp.testStack, 'test-glossary', {
-      ...baseProps({ CustomerLifetimeValue: { shortDescription: 'CLV' } }),
+      ...baseProps({ CustomerLifetimeValue: { description: 'CLV' } }),
       handlerRole: sameAccountRole,
     });
 
@@ -218,12 +259,12 @@ describe('MdaaDatazoneGlossary', () => {
     // without the test noticing.
     const roleA = Role.fromRoleName(testApp.testStack, 'cr-role-a', 'cr-role');
     const roleB = Role.fromRoleName(testApp.testStack, 'cr-role-b', 'cr-role');
-    const shared = baseProps({ CustomerLifetimeValue: { shortDescription: 'CLV' } });
+    const shared = baseProps({ CustomerLifetimeValue: { description: 'CLV' } });
     new MdaaDatazoneGlossary(testApp.testStack, 'test-glossary-1', { ...shared, handlerRole: roleA });
     new MdaaDatazoneGlossary(testApp.testStack, 'test-glossary-2', {
       ...shared,
       glossaryName: 'ProductGlossary',
-      terms: { ChurnRisk: { shortDescription: 'Churn' } },
+      terms: { ChurnRisk: { description: 'Churn' } },
       handlerRole: roleB,
     });
 

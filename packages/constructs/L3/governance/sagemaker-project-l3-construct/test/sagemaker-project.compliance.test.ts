@@ -31,7 +31,8 @@ describe('MDAA Compliance Stack Tests', () => {
             CustomerGlossary: {
               description: 'Standard business terms',
               terms: {
-                Segment: { shortDescription: 'Customer segment classification' },
+                Segment: { description: 'Customer segment classification' },
+                ChurnRisk: { description: 'Likelihood a customer churns', relatesTo: ['Segment'] },
               },
             },
           },

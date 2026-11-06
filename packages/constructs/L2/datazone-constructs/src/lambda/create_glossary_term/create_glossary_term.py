@@ -73,11 +73,13 @@ def update_term(term_id, resource_config):
         "identifier": term_id,
         "name": term_name,
         "status": resource_config.get("status", "ENABLED"),
-        # Always sent (even empty) so a description removed from config is cleared in
-        # DataZone too, instead of leaving the previous value stale.
-        "shortDescription": resource_config.get("shortDescription", ""),
-        "longDescription": resource_config.get("longDescription", ""),
     }
+    short_description = resource_config.get("shortDescription")
+    if short_description:
+        kwargs["shortDescription"] = short_description
+    long_description = resource_config.get("longDescription")
+    if long_description:
+        kwargs["longDescription"] = long_description
 
     response = datazone_client.update_glossary_term(**kwargs)
     logger.info(f"Updated glossary term {term_id}")

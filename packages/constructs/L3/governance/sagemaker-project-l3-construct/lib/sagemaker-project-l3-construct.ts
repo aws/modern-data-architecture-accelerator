@@ -9,6 +9,7 @@ import {
   GlossaryTermProps,
   MdaaDatazoneFormType,
   MdaaDatazoneGlossary,
+  MdaaDatazoneGlossaryTermRelations,
   MdaaDatazoneProjectProps,
   MdaaDatazoneS3Connection,
   MdaaDatazoneS3ConnectionProps,
@@ -638,6 +639,24 @@ interface ResolveDataSourceMetadataFormsOptions {
   readonly declaredForms: { [formName: string]: DeclaredMetadataForm };
 }
 
+/** A term declared under some project glossary, keyed `"<glossaryName>.<termName>"`. */
+interface DeclaredTerm {
+  readonly glossaryName: string;
+  readonly termName: string;
+  readonly termProps: GlossaryTermProps;
+}
+
+/** A resolved `relatesTo` entry: either another declared term, or a literal term ID. */
+type ResolvedEdge = { readonly targetKey: string } | { readonly literalId: string };
+
+/** Internal, non-jsii-exported context shared by the `relatesTo` resolution helpers. */
+interface RelatesToContext {
+  readonly projectName: string;
+  readonly glossaries: { [glossaryName: string]: GlossaryProps };
+  readonly declaredTerms: Map<string, DeclaredTerm>;
+  readonly glossaryKeyOwners: Map<string, string>;
+}
+
 /**
  * Data source fields that only apply to a Glue (`databaseName`) data source. An
  * `AWS::DataZone::Connection` (the `s3` entry's resource) has no equivalent properties.
@@ -1021,6 +1040,14 @@ export class SagemakerProjectL3Construct extends MdaaL3Construct {
         return [glossaryName, this.createGlossary(project, glossaryName, glossaryProps)];
       }),
     );
+    // Resolved after every glossary/term in the project exists, since a term's relatesTo may
+    // reference a term in a different (sibling) glossary.
+    this.createTermRelations(project, createdGlossaries, {
+      projectName,
+      glossaries: projectProps.glossaries || {},
+      declaredTerms: SagemakerProjectL3Construct.buildDeclaredTerms(projectProps.glossaries || {}),
+      glossaryKeyOwners,
+    });
 
     // Created before dataSources, since a data source's metadataForms reference these by name.
     const createdMetadataForms: { [formName: string]: DeclaredMetadataForm } = Object.fromEntries(
@@ -1073,6 +1100,215 @@ export class SagemakerProjectL3Construct extends MdaaL3Construct {
     });
     glossary.node.addDependency(project.crRoleProjectMembership);
     return glossary;
+  }
+
+  /** Flattens every declared term across a project's glossaries, keyed `"<glossaryName>.<termName>"`. */
+  private static buildDeclaredTerms(glossaries: { [glossaryName: string]: GlossaryProps }): Map<string, DeclaredTerm> {
+    const declaredTerms = new Map<string, DeclaredTerm>();
+    Object.entries(glossaries).forEach(([glossaryName, glossaryProps]) => {
+      Object.entries(glossaryProps.terms || {}).forEach(([termName, termProps]) => {
+        declaredTerms.set(`${glossaryName}.${termName}`, { glossaryName, termName, termProps });
+      });
+    });
+    return declaredTerms;
+  }
+
+  /** De-duplicates resolved `relatesTo` edges, preserving first-occurrence order. */
+  private static dedupeEdges(edges: ResolvedEdge[]): ResolvedEdge[] {
+    const seen = new Set<string>();
+    return edges.filter(edge => {
+      const key = 'targetKey' in edge ? `target:${edge.targetKey}` : `literal:${edge.literalId}`;
+      if (seen.has(key)) {
+        return false;
+      }
+      seen.add(key);
+      return true;
+    });
+  }
+
+  /**
+   * Resolves every declared term's `relatesTo` entries (bare `"<termName>"` for the same
+   * glossary, `"<glossaryName>.<termName>"` for another glossary in this project, or a
+   * literal pre-existing term ID otherwise - same convention as `resolveFieldGlossaryId`)
+   * and wires one `MdaaDatazoneGlossaryTermRelations` per term that declares at least one,
+   * depending on that term and every term it relates to so DataZone always sees the related
+   * term(s) already exist.
+   */
+  private createTermRelations(
+    project: MdaaSageMakerProject,
+    createdGlossaries: { [glossaryName: string]: MdaaDatazoneGlossary },
+    context: RelatesToContext,
+  ): void {
+    const { declaredTerms } = context;
+
+    const edgesByTerm = new Map<string, ResolvedEdge[]>();
+    declaredTerms.forEach((declared, sourceKey) => {
+      const relatesTo = declared.termProps.relatesTo ?? [];
+      const edges = relatesTo.map(ref => this.resolveRelatesToEntry(context, sourceKey, ref));
+      edgesByTerm.set(sourceKey, SagemakerProjectL3Construct.dedupeEdges(edges));
+    });
+
+    this.detectRelatesToCycles(context.projectName, edgesByTerm);
+    this.rejectExcessHasTypes(context.projectName, edgesByTerm);
+
+    edgesByTerm.forEach((edges, sourceKey) => {
+      if (edges.length === 0) {
+        return;
+      }
+      // sourceKey is always a declaredTerms key: edgesByTerm was built from exactly those keys.
+      const declared = declaredTerms.get(sourceKey) as DeclaredTerm;
+      const sourceTerm = createdGlossaries[declared.glossaryName].terms[declared.termName];
+      const relatedTermIds = edges.map(edge =>
+        'literalId' in edge
+          ? edge.literalId
+          : this.termFor(createdGlossaries, declaredTerms, edge.targetKey).getAttString('termId'),
+      );
+      const relations = new MdaaDatazoneGlossaryTermRelations(project, `term-relations-${sourceKey}`, {
+        naming: this.props.naming,
+        domainIdentifier: project.project.attrDomainId,
+        termId: sourceTerm.getAttString('termId'),
+        relatedTermIds: relatedTermIds,
+        handlerRole: project.customResourceRole,
+      });
+      relations.node.addDependency(sourceTerm);
+      edges.forEach(edge => {
+        if ('targetKey' in edge) {
+          relations.node.addDependency(this.termFor(createdGlossaries, declaredTerms, edge.targetKey));
+        }
+      });
+    });
+  }
+
+  private termFor(
+    createdGlossaries: { [glossaryName: string]: MdaaDatazoneGlossary },
+    declaredTerms: Map<string, DeclaredTerm>,
+    key: string,
+  ): CustomResource {
+    const declared = declaredTerms.get(key);
+    if (!declared) {
+      throw new Error(`Internal error: term key '${key}' not found in declaredTerms`);
+    }
+    return createdGlossaries[declared.glossaryName].terms[declared.termName];
+  }
+
+  private resolveRelatesToEntry(context: RelatesToContext, sourceKey: string, ref: string): ResolvedEdge {
+    const { projectName, glossaries, declaredTerms, glossaryKeyOwners } = context;
+    // sourceKey is always a declaredTerms key: the only caller iterates declaredTerms itself.
+    const declared = declaredTerms.get(sourceKey) as DeclaredTerm;
+
+    const dotIndex = ref.indexOf('.');
+    if (dotIndex === -1) {
+      const candidateKey = `${declared.glossaryName}.${ref}`;
+      if (declaredTerms.has(candidateKey)) {
+        return { targetKey: candidateKey };
+      }
+      // A term of this name declared under a sibling glossary is almost always the fix for a
+      // missing glossary-name prefix, so suggest it by name instead of a generic typo nudge.
+      const siblingMatch = Array.from(declaredTerms.keys()).find(
+        key => key !== candidateKey && key.endsWith(`.${ref}`),
+      );
+      Annotations.of(this).addWarning(
+        `relatesTo '${ref}' on term '${sourceKey}' in project '${projectName}' does not match any term ` +
+          'declared in this glossary.' +
+          (siblingMatch
+            ? ` Did you mean '${siblingMatch}'?`
+            : ' If this is meant to reference one of them, check for a typo;') +
+          ' Otherwise it is treated as a literal, pre-existing term ID.',
+      );
+      return { literalId: ref };
+    }
+
+    if (declaredTerms.has(ref)) {
+      return { targetKey: ref };
+    }
+    const refGlossaryName = ref.slice(0, dotIndex);
+    if (Object.prototype.hasOwnProperty.call(glossaries, refGlossaryName)) {
+      throw new Error(
+        `relatesTo '${ref}' on term '${sourceKey}' in project '${projectName}' references an undeclared ` +
+          `term. Declare it under glossaries.${refGlossaryName}.terms, or use a literal, pre-existing ` +
+          'term ID (which may not contain a period).',
+      );
+    }
+    // DataZone term IDs never contain a period, so a dotted value whose glossary segment
+    // isn't declared (in this or another project) can never be a valid literal term ID
+    // either - unlike a bare entry, there's no literal-ID interpretation to fall back to.
+    const otherOwner = glossaryKeyOwners.get(refGlossaryName);
+    if (otherOwner && otherOwner !== projectName) {
+      throw new Error(
+        `relatesTo '${ref}' on term '${sourceKey}' in project '${projectName}' references a glossary ` +
+          `declared by project '${otherOwner}'. A relatesTo reference only resolves within its declaring ` +
+          `project; declare '${refGlossaryName}' under this project's glossaries, or use a literal, ` +
+          'pre-existing term ID (which may not contain a period).',
+      );
+    }
+    throw new Error(
+      `relatesTo '${ref}' on term '${sourceKey}' in project '${projectName}' does not match any glossary ` +
+        "declared under this project's glossaries, and DataZone term IDs may not contain a period. " +
+        `Declare '${refGlossaryName}' under this project's glossaries, or use a literal, pre-existing term ` +
+        'ID without a period.',
+    );
+  }
+
+  private detectRelatesToCycles(projectName: string, edgesByTerm: Map<string, ResolvedEdge[]>): void {
+    const graph = new Map<string, string[]>();
+    edgesByTerm.forEach((edges, sourceKey) => {
+      graph.set(
+        sourceKey,
+        edges.filter((e): e is { targetKey: string } => 'targetKey' in e).map(e => e.targetKey),
+      );
+    });
+
+    const state = new Map<string, 'visiting' | 'done'>();
+    const stack: string[] = [];
+
+    const visit = (node: string): void => {
+      if (state.get(node) === 'done') {
+        return;
+      }
+      if (state.get(node) === 'visiting') {
+        const cycleStart = stack.indexOf(node);
+        const cycle = [...stack.slice(cycleStart), node];
+        throw new Error(
+          `Circular relatesTo reference in project '${projectName}': ${cycle.join(' -> ')}. A term cannot ` +
+            "be both directly and indirectly 'a type of' itself; break the cycle in the glossary config.",
+        );
+      }
+      state.set(node, 'visiting');
+      stack.push(node);
+      // Every targetKey is a declaredTerms key, and graph has an entry for every one of those.
+      (graph.get(node) as string[]).forEach(visit);
+      stack.pop();
+      state.set(node, 'done');
+    };
+
+    Array.from(graph.keys()).forEach(visit);
+  }
+
+  /**
+   * DataZone caps a term's `isA` at `MdaaDatazoneGlossary.MAX_RELATES_TO`, but relationships
+   * are bidirectional (SageMaker Unified Studio shows the inverse "Has Types" automatically),
+   * so the same cap applies to how many *other* declared terms may name one term in their own
+   * `relatesTo`. A literal, pre-existing term ID target can't be counted here (it isn't a
+   * declared term), so this only catches the declared-term case.
+   */
+  private rejectExcessHasTypes(projectName: string, edgesByTerm: Map<string, ResolvedEdge[]>): void {
+    const sourcesByTarget = new Map<string, Set<string>>();
+    edgesByTerm.forEach((edges, sourceKey) => {
+      edges.forEach(edge => {
+        if ('targetKey' in edge) {
+          const sources = sourcesByTarget.get(edge.targetKey) ?? new Set<string>();
+          sourcesByTarget.set(edge.targetKey, sources.add(sourceKey));
+        }
+      });
+    });
+    sourcesByTarget.forEach((sources, targetKey) => {
+      if (sources.size > MdaaDatazoneGlossary.MAX_RELATES_TO) {
+        throw new Error(
+          `Term '${targetKey}' in project '${projectName}' is named in the relatesTo of ${sources.size} terms; ` +
+            `DataZone allows at most ${MdaaDatazoneGlossary.MAX_RELATES_TO} "Has Types" relationships per term.`,
+        );
+      }
+    });
   }
 
   private createMetadataForm(

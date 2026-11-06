@@ -6,7 +6,7 @@
 import { MdaaNagSuppressions } from '@aws-mdaa/construct';
 import { IMdaaResourceNaming, MdaaResourceType } from '@aws-mdaa/naming';
 import { Stack } from 'aws-cdk-lib';
-import { IRole, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { IRole, Policy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 
 /**
@@ -15,6 +15,14 @@ import { Construct } from 'constructs';
  * via MdaaLambdaRole), and every custom resource of these types in a stack shares the same
  * handler(s) and log group(s), so granting more than once would only duplicate the same policy
  * statement on the shared role.
+ *
+ * Grants via an explicitly-named, module-unique `Policy` (not `handlerRole.addToPrincipalPolicy`,
+ * which attaches to the imported role's *default* policy). handlerRole is typically imported with
+ * `Role.fromRoleName` - the same role name, hence the same imported default policy name, in every
+ * stack that reuses this handlerRole - so an unnamed default policy would upsert over any other
+ * stack's own grant on the same role (`PutRolePolicy` replaces the named policy wholesale), each
+ * deploy silently dropping the other's log-group statements, and deleting either stack removing
+ * the policy (and the surviving stack's handlers' logs access) entirely.
  */
 export function grantHandlerLogs(
   scope: Construct,
@@ -27,7 +35,6 @@ export function grantHandlerLogs(
   if (stack.node.tryFindChild(markerId)) {
     return;
   }
-  new Construct(stack, markerId);
 
   const logGroupArns = resourceTypes.map(resourceType => {
     // Computed rather than read from the function: its name is a token, and a policy referencing
@@ -38,18 +45,23 @@ export function grantHandlerLogs(
     return `arn:${stack.partition}:logs:${stack.region}:${stack.account}:log-group:/aws/lambda/${handlerFunctionName}*`;
   });
 
-  // No-op when the role is in another account (CDK returns an immutable role).
-  handlerRole.addToPrincipalPolicy(
-    new PolicyStatement({
-      resources: logGroupArns,
-      actions: ['logs:CreateLogGroup', 'logs:CreateLogStream', 'logs:PutLogEvents'],
-    }),
-  );
+  const policy = new Policy(stack, markerId, {
+    policyName: naming.withResourceType(MdaaResourceType.IAM_POLICY).resourceName(markerId, 128),
+    statements: [
+      new PolicyStatement({
+        resources: logGroupArns,
+        actions: ['logs:CreateLogGroup', 'logs:CreateLogStream', 'logs:PutLogEvents'],
+      }),
+    ],
+  });
+  // No-op when the role is in another account (CDK returns an immutable role, which silently
+  // drops attachInlinePolicy - same as the addToPrincipalPolicy no-op this replaces).
+  handlerRole.attachInlinePolicy(policy);
 
   const handlerPossessive = resourceTypes.length > 1 ? "these handlers'" : "this handler's";
   const logGroupNoun = resourceTypes.length > 1 ? 'log groups' : 'log group';
   MdaaNagSuppressions.addCodeResourceSuppressions(
-    handlerRole,
+    policy,
     [
       {
         id: 'AwsSolutions-IAM5',

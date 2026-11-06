@@ -44,6 +44,9 @@ create_glossary_src_path = os.path.join(
 create_glossary_term_src_path = os.path.join(
     os.path.dirname(__file__), '..', 'src', 'lambda', 'create_glossary_term'
 )
+update_glossary_term_relations_src_path = os.path.join(
+    os.path.dirname(__file__), '..', 'src', 'lambda', 'update_glossary_term_relations'
+)
 sys.path.insert(0, check_user_profiles_src_path)
 sys.path.insert(0, create_project_membership_src_path)
 sys.path.insert(0, domain_config_src_path)
@@ -54,6 +57,7 @@ sys.path.insert(0, create_form_type_src_path)
 sys.path.insert(0, tag_project_roles_src_path)
 sys.path.insert(0, create_glossary_src_path)
 sys.path.insert(0, create_glossary_term_src_path)
+sys.path.insert(0, update_glossary_term_relations_src_path)
 
 
 @pytest.fixture

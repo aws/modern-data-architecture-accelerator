@@ -80,11 +80,10 @@ class TestCreateGlossaryTerm:
             name="TestTerm",
             status="ENABLED",
             shortDescription="Updated",
-            longDescription="",
         )
         mock_dz.create_glossary_term.assert_not_called()
 
-    def test_update_clears_descriptions_when_removed(self, mock_dz, lambda_context):
+    def test_update_omits_descriptions_when_removed(self, mock_dz, lambda_context):
         mock_dz.update_glossary_term.return_value = {"id": "trm123"}
         event = {
             "RequestType": "Update",
@@ -99,8 +98,8 @@ class TestCreateGlossaryTerm:
 
         create_glossary_term.lambda_handler(event, lambda_context)
 
-        assert mock_dz.update_glossary_term.call_args.kwargs["shortDescription"] == ""
-        assert mock_dz.update_glossary_term.call_args.kwargs["longDescription"] == ""
+        assert "shortDescription" not in mock_dz.update_glossary_term.call_args.kwargs
+        assert "longDescription" not in mock_dz.update_glossary_term.call_args.kwargs
 
     def test_update_glossary_change_creates_replacement(self, mock_dz, lambda_context):
         # A term can't move to a different glossary in place; CloudFormation deletes the old
@@ -167,8 +166,6 @@ class TestCreateGlossaryTerm:
             identifier="trm_old",
             name="TestTerm",
             status="ENABLED",
-            shortDescription="",
-            longDescription="",
         )
 
     def test_delete(self, mock_dz, lambda_context):

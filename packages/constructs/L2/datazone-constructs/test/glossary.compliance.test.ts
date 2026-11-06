@@ -20,8 +20,8 @@ describe('MDAA Compliance Stack Tests', () => {
       glossaryName: 'CustomerGlossary',
       description: 'Standard business terms',
       terms: {
-        CustomerLifetimeValue: { shortDescription: 'CLV' },
-        ChurnRisk: { longDescription: 'Likelihood a customer churns', status: 'DISABLED' },
+        CustomerLifetimeValue: { description: 'CLV' },
+        ChurnRisk: { readme: 'Likelihood a customer churns', status: 'DISABLED' },
       },
       // A same-account role reference (not Role.fromRoleArn with a foreign account) is required
       // so grantHandlerLogs' addToPrincipalPolicy actually synthesizes the inline logs policy;

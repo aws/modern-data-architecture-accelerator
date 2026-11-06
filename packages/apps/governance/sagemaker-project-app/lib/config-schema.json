@@ -1140,13 +1140,23 @@
         "GlossaryTermProps": {
             "additionalProperties": false,
             "properties": {
-                "longDescription": {
-                    "description": "Longer-form definition of the term, with more context than shortDescription.\n\nValidation: Optional; string; max 4096 chars",
+                "description": {
+                    "description": "Short, business-facing definition of the term. Maps to the DataZone API's\n`shortDescription` field.\n\nValidation: Optional; string; max 1024 chars",
+                    "maxLength": 1024,
                     "type": "string"
                 },
-                "shortDescription": {
-                    "description": "Short, business-facing definition of the term.\n\nValidation: Optional; string; max 1024 chars",
+                "readme": {
+                    "description": "Longer-form Markdown documentation for the term (calculation methodology, data\nsources, usage guidelines, etc.), shown as the term's README in SageMaker Unified\nStudio. Maps to the DataZone API's `longDescription` field.\n\nValidation: Optional; string; max 4096 chars",
+                    "maxLength": 4096,
                     "type": "string"
+                },
+                "relatesTo": {
+                    "description": "Other declared terms this term \"is a type of\" (DataZone's `termRelations.isA`).\nEach entry is a bare `\"<termName>\"` for a term in this same glossary, or\n`\"<glossaryName>.<termName>\"` for a term in another glossary declared by the same\nproject; a bare entry matching no declared term is passed through as a literal,\npre-existing term ID. SageMaker Unified Studio shows the inverse relationship\n(\"Has Types\") on the related term automatically.\n\nThis `MdaaDatazoneGlossary` construct only validates this field (count,\nself-reference) - it never resolves a reference or creates the DataZone\nrelationship itself. Resolving names and creating the relationship (via a\nfollow-up `MdaaDatazoneGlossaryTermRelations`, since a related term may belong to\na different, independently-constructed glossary) is done by the L3 layer\n(`SagemakerProjectL3Construct`); a plain `MdaaDatazoneGlossary` consumer that sets\n`relatesTo` directly gets no relationship in DataZone unless it also builds that\nwiring itself.\n\nValidation: Optional; array of string; max 10 entries; no self-reference; rejects\ncycles across declared terms (enforced by the L3 layer)",
+                    "items": {
+                        "type": "string"
+                    },
+                    "maxItems": 10,
+                    "type": "array"
                 },
                 "status": {
                     "default": "ENABLED",

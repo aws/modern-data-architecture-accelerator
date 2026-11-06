@@ -19,17 +19,47 @@ const HANDLER_LOGS_GRANT_ID = 'glossary-handler-logs-grant';
 
 export interface GlossaryTermProps {
   /**
-   * Short, business-facing definition of the term.
+   * Short, business-facing definition of the term. Maps to the DataZone API's
+   * `shortDescription` field.
    *
    * Validation: Optional; string; max 1024 chars
+   *
+   * @maxLength 1024
    */
-  readonly shortDescription?: string;
+  readonly description?: string;
   /**
-   * Longer-form definition of the term, with more context than shortDescription.
+   * Longer-form Markdown documentation for the term (calculation methodology, data
+   * sources, usage guidelines, etc.), shown as the term's README in SageMaker Unified
+   * Studio. Maps to the DataZone API's `longDescription` field.
    *
    * Validation: Optional; string; max 4096 chars
+   *
+   * @maxLength 4096
    */
-  readonly longDescription?: string;
+  readonly readme?: string;
+  /**
+   * Other declared terms this term "is a type of" (DataZone's `termRelations.isA`).
+   * Each entry is a bare `"<termName>"` for a term in this same glossary, or
+   * `"<glossaryName>.<termName>"` for a term in another glossary declared by the same
+   * project; a bare entry matching no declared term is passed through as a literal,
+   * pre-existing term ID. SageMaker Unified Studio shows the inverse relationship
+   * ("Has Types") on the related term automatically.
+   *
+   * This `MdaaDatazoneGlossary` construct only validates this field (count,
+   * self-reference) - it never resolves a reference or creates the DataZone
+   * relationship itself. Resolving names and creating the relationship (via a
+   * follow-up `MdaaDatazoneGlossaryTermRelations`, since a related term may belong to
+   * a different, independently-constructed glossary) is done by the L3 layer
+   * (`SagemakerProjectL3Construct`); a plain `MdaaDatazoneGlossary` consumer that sets
+   * `relatesTo` directly gets no relationship in DataZone unless it also builds that
+   * wiring itself.
+   *
+   * Validation: Optional; array of string; max 10 entries; no self-reference; rejects
+   * cycles across declared terms (enforced by the L3 layer)
+   *
+   * @maxItems 10
+   */
+  readonly relatesTo?: string[];
   /**
    * Term status. DISABLED terms are retained but not attachable to assets or fields.
    *
@@ -89,6 +119,9 @@ export interface MdaaDatazoneGlossaryProps extends MdaaConstructProps {
  * so dependents can wait for it to exist.
  */
 export class MdaaDatazoneGlossary extends Construct {
+  // DataZone/SageMaker Unified Studio allows at most 10 relationships per relationship type.
+  public static readonly MAX_RELATES_TO = 10;
+
   public readonly glossary: CustomResource;
   public readonly terms: { [termName: string]: CustomResource } = {};
 
@@ -133,8 +166,8 @@ export class MdaaDatazoneGlossary extends Construct {
           glossaryId: glossaryId,
           termName: termName,
           status: termProps.status ?? 'ENABLED',
-          ...(termProps.shortDescription ? { shortDescription: termProps.shortDescription } : {}),
-          ...(termProps.longDescription ? { longDescription: termProps.longDescription } : {}),
+          ...(termProps.description ? { shortDescription: termProps.description } : {}),
+          ...(termProps.readme ? { longDescription: termProps.readme } : {}),
         },
         naming: props.naming,
         pascalCaseProperties: false,
@@ -170,20 +203,32 @@ export class MdaaDatazoneGlossary extends Construct {
       throw new Error(`Glossary name '${glossaryName}' must not contain '.'`);
     }
     Object.entries(terms).forEach(([termName, termProps]) => {
-      if (termName.length === 0) {
-        throw new Error(`Glossary '${glossaryName}' has a term with an empty name`);
-      }
-      if (termName.includes('.')) {
-        throw new Error(`Term name '${termName}' in glossary '${glossaryName}' must not contain '.'`);
-      }
-      if (termProps.shortDescription && termProps.shortDescription.length > 1024) {
-        throw new Error(
-          `shortDescription for term '${termName}' in glossary '${glossaryName}' exceeds 1024 characters`,
-        );
-      }
-      if (termProps.longDescription && termProps.longDescription.length > 4096) {
-        throw new Error(`longDescription for term '${termName}' in glossary '${glossaryName}' exceeds 4096 characters`);
-      }
+      MdaaDatazoneGlossary.validateTerm(glossaryName, termName, termProps);
     });
+  }
+
+  private static validateTerm(glossaryName: string, termName: string, termProps: GlossaryTermProps): void {
+    if (termName.length === 0) {
+      throw new Error(`Glossary '${glossaryName}' has a term with an empty name`);
+    }
+    if (termName.includes('.')) {
+      throw new Error(`Term name '${termName}' in glossary '${glossaryName}' must not contain '.'`);
+    }
+    if (termProps.description && termProps.description.length > 1024) {
+      throw new Error(`description for term '${termName}' in glossary '${glossaryName}' exceeds 1024 characters`);
+    }
+    if (termProps.readme && termProps.readme.length > 4096) {
+      throw new Error(`readme for term '${termName}' in glossary '${glossaryName}' exceeds 4096 characters`);
+    }
+    const relatesTo = termProps.relatesTo ?? [];
+    if (relatesTo.length > MdaaDatazoneGlossary.MAX_RELATES_TO) {
+      throw new Error(
+        `relatesTo for term '${termName}' in glossary '${glossaryName}' declares ${relatesTo.length} entries, ` +
+          `which exceeds the maximum of ${MdaaDatazoneGlossary.MAX_RELATES_TO}`,
+      );
+    }
+    if (relatesTo.includes(termName) || relatesTo.includes(`${glossaryName}.${termName}`)) {
+      throw new Error(`relatesTo for term '${termName}' in glossary '${glossaryName}' must not reference itself`);
+    }
   }
 }

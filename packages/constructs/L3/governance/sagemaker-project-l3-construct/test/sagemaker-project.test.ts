@@ -5,7 +5,7 @@
 
 import { MdaaResourceType } from '@aws-mdaa/naming';
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Match, Template } from 'aws-cdk-lib/assertions';
+import { Annotations, Match, Template } from 'aws-cdk-lib/assertions';
 import { DomainConfig } from '@aws-mdaa/datazone-constructs';
 import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
 import { SagemakerProjectL3Construct } from '../lib';
@@ -1284,7 +1284,7 @@ describe('SagemakerProjectL3Construct', () => {
             CustomerGlossary: {
               description: 'Standard business terms',
               terms: {
-                CustomerLifetimeValue: { shortDescription: 'CLV' },
+                CustomerLifetimeValue: { description: 'CLV' },
               },
             },
           },
@@ -1329,7 +1329,7 @@ describe('SagemakerProjectL3Construct', () => {
             RetiredGlossary: {
               status: 'DISABLED',
               terms: {
-                LegacyTerm: { shortDescription: 'No longer used' },
+                LegacyTerm: { description: 'No longer used' },
               },
             },
           },
@@ -1342,6 +1342,299 @@ describe('SagemakerProjectL3Construct', () => {
       glossaryName: 'RetiredGlossary',
       status: 'DISABLED',
     });
+  });
+
+  it("resolves a term's relatesTo referencing another term in the same glossary", () => {
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-relates-to-same-glossary', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        'relates-to-profile': { environments: { DefaultDataLake: {} } },
+      },
+      projects: {
+        'relates-to-project': {
+          profileName: 'relates-to-profile',
+          glossaries: {
+            CustomerGlossary: {
+              terms: {
+                CreditCard: { description: 'Credit card payment', relatesTo: ['PaymentMethod'] },
+                PaymentMethod: { description: 'A way to pay' },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    template.resourceCountIs('Custom::DataZoneGlossaryTermRelations', 1);
+    const terms = template.findResources('Custom::DataZoneGlossaryTerm');
+    const paymentMethodLogicalId = Object.entries(terms).find(
+      ([, resource]) => resource.Properties.termName === 'PaymentMethod',
+    )?.[0];
+    const relations = Object.values(template.findResources('Custom::DataZoneGlossaryTermRelations'))[0];
+    expect(JSON.stringify(relations.Properties.relatedTermIds)).toContain(paymentMethodLogicalId);
+  });
+
+  it("resolves a term's relatesTo referencing a term in a different glossary in the same project", () => {
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-relates-to-cross-glossary', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        'relates-to-profile': { environments: { DefaultDataLake: {} } },
+      },
+      projects: {
+        'relates-to-project': {
+          profileName: 'relates-to-profile',
+          glossaries: {
+            PaymentGlossary: {
+              terms: { CreditCard: { relatesTo: ['FinanceGlossary.PaymentMethod'] } },
+            },
+            FinanceGlossary: {
+              terms: { PaymentMethod: { description: 'A way to pay' } },
+            },
+          },
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    const terms = template.findResources('Custom::DataZoneGlossaryTerm');
+    const logicalIdFor = (name: string) =>
+      Object.entries(terms).find(([, resource]) => resource.Properties.termName === name)?.[0];
+    const creditCardLogicalId = logicalIdFor('CreditCard');
+    const paymentMethodLogicalId = logicalIdFor('PaymentMethod');
+
+    template.resourceCountIs('Custom::DataZoneGlossaryTermRelations', 1);
+    const relations = Object.values(template.findResources('Custom::DataZoneGlossaryTermRelations'))[0];
+
+    expect(relations.Properties.relatedTermIds).toEqual([{ 'Fn::GetAtt': [paymentMethodLogicalId, 'termId'] }]);
+    // Both the owning term and the cross-glossary related term must exist first - not just
+    // "two dependencies from somewhere", but specifically these two.
+    expect(relations.DependsOn).toHaveLength(2);
+    expect(relations.DependsOn).toEqual(expect.arrayContaining([creditCardLogicalId, paymentMethodLogicalId]));
+  });
+
+  it("resolves a term's relatesTo mixing a bare name, a cross-glossary reference, and a literal ID, in order", () => {
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-relates-to-mixed', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        'relates-to-profile': { environments: { DefaultDataLake: {} } },
+      },
+      projects: {
+        'relates-to-project': {
+          profileName: 'relates-to-profile',
+          glossaries: {
+            CustomerGlossary: {
+              terms: {
+                CreditCard: { relatesTo: ['PaymentMethod', 'FinanceGlossary.Loan', 'trm-pre-existing-123'] },
+                PaymentMethod: {},
+              },
+            },
+            FinanceGlossary: {
+              terms: { Loan: {} },
+            },
+          },
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    const terms = template.findResources('Custom::DataZoneGlossaryTerm');
+    const logicalIdFor = (name: string) =>
+      Object.entries(terms).find(([, resource]) => resource.Properties.termName === name)?.[0];
+    const paymentMethodLogicalId = logicalIdFor('PaymentMethod');
+    const loanLogicalId = logicalIdFor('Loan');
+    const creditCardLogicalId = logicalIdFor('CreditCard');
+
+    template.resourceCountIs('Custom::DataZoneGlossaryTermRelations', 1);
+    const relations = Object.values(template.findResources('Custom::DataZoneGlossaryTermRelations'))[0];
+
+    expect(relations.Properties.relatedTermIds).toEqual([
+      { 'Fn::GetAtt': [paymentMethodLogicalId, 'termId'] },
+      { 'Fn::GetAtt': [loanLogicalId, 'termId'] },
+      'trm-pre-existing-123',
+    ]);
+    // One DependsOn per declared target (PaymentMethod, Loan) plus the owning term
+    // (CreditCard); the literal ID contributes none.
+    expect(relations.DependsOn).toHaveLength(3);
+    expect(relations.DependsOn).toEqual(
+      expect.arrayContaining([paymentMethodLogicalId, loanLogicalId, creditCardLogicalId]),
+    );
+  });
+
+  it('throws on a circular relatesTo reference, naming the full cross-glossary cycle path', () => {
+    expect(
+      () =>
+        new SagemakerProjectL3Construct(testApp.testStack, 'test-relates-to-cycle', {
+          naming: testApp.naming,
+          roleHelper,
+          domainConfig,
+          projectProfiles: {
+            'relates-to-profile': { environments: { DefaultDataLake: {} } },
+          },
+          projects: {
+            'relates-to-project': {
+              profileName: 'relates-to-profile',
+              glossaries: {
+                CustomerGlossary: {
+                  terms: {
+                    A: { relatesTo: ['FinanceGlossary.B'] },
+                  },
+                },
+                FinanceGlossary: {
+                  terms: {
+                    B: { relatesTo: ['CustomerGlossary.A'] },
+                  },
+                },
+              },
+            },
+          },
+        }),
+    ).toThrow(
+      /Circular relatesTo reference.*CustomerGlossary\.A -> FinanceGlossary\.B -> CustomerGlossary\.A.*cannot be both directly and indirectly/,
+    );
+  });
+
+  it('throws when more than MAX_RELATES_TO terms declare the same relatesTo target', () => {
+    const terms = Object.fromEntries(Array.from({ length: 11 }, (_, i) => [`Child${i}`, { relatesTo: ['Parent'] }]));
+    expect(
+      () =>
+        new SagemakerProjectL3Construct(testApp.testStack, 'test-relates-to-excess-has-types', {
+          naming: testApp.naming,
+          roleHelper,
+          domainConfig,
+          projectProfiles: {
+            'relates-to-profile': { environments: { DefaultDataLake: {} } },
+          },
+          projects: {
+            'relates-to-project': {
+              profileName: 'relates-to-profile',
+              glossaries: {
+                CustomerGlossary: {
+                  terms: { ...terms, Parent: {} },
+                },
+              },
+            },
+          },
+        }),
+    ).toThrow(/Term 'CustomerGlossary.Parent'.*is named in the relatesTo of 11 terms.*at most 10 "Has Types"/);
+  });
+
+  it('throws when relatesTo references an undeclared term on a declared glossary', () => {
+    expect(
+      () =>
+        new SagemakerProjectL3Construct(testApp.testStack, 'test-relates-to-undeclared-term', {
+          naming: testApp.naming,
+          roleHelper,
+          domainConfig,
+          projectProfiles: {
+            'relates-to-profile': { environments: { DefaultDataLake: {} } },
+          },
+          projects: {
+            'relates-to-project': {
+              profileName: 'relates-to-profile',
+              glossaries: {
+                CustomerGlossary: {
+                  terms: { CreditCard: { relatesTo: ['CustomerGlossary.Missing'] } },
+                },
+              },
+            },
+          },
+        }),
+    ).toThrow(/relatesTo 'CustomerGlossary.Missing'.*references an undeclared term/);
+  });
+
+  it('passes through an unresolved bare relatesTo entry as a literal, pre-existing term ID', () => {
+    new SagemakerProjectL3Construct(testApp.testStack, 'test-relates-to-literal', {
+      naming: testApp.naming,
+      roleHelper,
+      domainConfig,
+      projectProfiles: {
+        'relates-to-profile': { environments: { DefaultDataLake: {} } },
+      },
+      projects: {
+        'relates-to-project': {
+          profileName: 'relates-to-profile',
+          glossaries: {
+            CustomerGlossary: {
+              terms: { CreditCard: { relatesTo: ['trm-pre-existing-123'] } },
+            },
+          },
+        },
+      },
+    });
+
+    const template = Template.fromStack(testApp.testStack);
+    template.hasResourceProperties('Custom::DataZoneGlossaryTermRelations', {
+      relatedTermIds: ['trm-pre-existing-123'],
+    });
+    Annotations.fromStack(testApp.testStack).hasWarning(
+      '*',
+      Match.stringLikeRegexp("relatesTo 'trm-pre-existing-123'.*does not match any term declared"),
+    );
+  });
+
+  it('throws when a dotted relatesTo entry references a glossary not declared by any project', () => {
+    // DataZone term IDs never contain a period, so a dotted value whose glossary segment
+    // isn't declared anywhere can never be a valid literal term ID either.
+    expect(
+      () =>
+        new SagemakerProjectL3Construct(testApp.testStack, 'test-relates-to-dotted-unowned', {
+          naming: testApp.naming,
+          roleHelper,
+          domainConfig,
+          projectProfiles: {
+            'relates-to-profile': { environments: { DefaultDataLake: {} } },
+          },
+          projects: {
+            'relates-to-project': {
+              profileName: 'relates-to-profile',
+              glossaries: {
+                CustomerGlossary: {
+                  terms: { CreditCard: { relatesTo: ['NobodyGlossary.SomeTerm'] } },
+                },
+              },
+            },
+          },
+        }),
+    ).toThrow(
+      /relatesTo 'NobodyGlossary.SomeTerm'.*does not match any glossary declared under this project's glossaries/,
+    );
+  });
+
+  it('throws when a dotted relatesTo entry references a glossary declared by another project', () => {
+    expect(
+      () =>
+        new SagemakerProjectL3Construct(testApp.testStack, 'test-relates-to-dotted-cross-project', {
+          naming: testApp.naming,
+          roleHelper,
+          domainConfig,
+          projectProfiles: {
+            'relates-to-profile': { environments: { DefaultDataLake: {} } },
+          },
+          projects: {
+            'relates-to-project': {
+              profileName: 'relates-to-profile',
+              glossaries: {
+                CustomerGlossary: {
+                  terms: { CreditCard: { relatesTo: ['OtherProjectGlossary.SomeTerm'] } },
+                },
+              },
+            },
+            'other-project': {
+              profileName: 'relates-to-profile',
+              glossaries: {
+                OtherProjectGlossary: { terms: { SomeTerm: {} } },
+              },
+            },
+          },
+        }),
+    ).toThrow(/relatesTo 'OtherProjectGlossary.SomeTerm'.*references a glossary declared by project 'other-project'/);
   });
 
   it("resolves a form field's glossaryId referencing a declared glossary term", () => {
@@ -1361,7 +1654,7 @@ describe('SagemakerProjectL3Construct', () => {
           profileName: 'linked-profile',
           glossaries: {
             CustomerGlossary: {
-              terms: { Tier: { shortDescription: 'Customer tier' } },
+              terms: { Tier: { description: 'Customer tier' } },
             },
           },
           metadataForms: {
@@ -1440,7 +1733,7 @@ describe('SagemakerProjectL3Construct', () => {
               profileName: 'missing-term-profile',
               glossaries: {
                 CustomerGlossary: {
-                  terms: { Segment: { shortDescription: 'Customer segment' } },
+                  terms: { Segment: { description: 'Customer segment' } },
                 },
               },
               metadataForms: {
@@ -1476,7 +1769,7 @@ describe('SagemakerProjectL3Construct', () => {
               profileName: 'multi-period-profile',
               glossaries: {
                 CustomerGlossary: {
-                  terms: { Tier: { shortDescription: 'Customer tier' } },
+                  terms: { Tier: { description: 'Customer tier' } },
                 },
               },
               metadataForms: {
@@ -1514,7 +1807,7 @@ describe('SagemakerProjectL3Construct', () => {
             // A glossary can be referenced directly by name even when it has terms: the field
             // accepts any term from the glossary, not just this one.
             ProductGlossary: {
-              terms: { Sku: { shortDescription: 'Product SKU' } },
+              terms: { Sku: { description: 'Product SKU' } },
             },
           },
           metadataForms: {
@@ -1561,7 +1854,7 @@ describe('SagemakerProjectL3Construct', () => {
               profileName: 'prototype-profile',
               glossaries: {
                 CustomerGlossary: {
-                  terms: { Tier: { shortDescription: 'Customer tier' } },
+                  terms: { Tier: { description: 'Customer tier' } },
                 },
               },
               metadataForms: {
@@ -1598,13 +1891,13 @@ describe('SagemakerProjectL3Construct', () => {
             'dup-project-a': {
               profileName: 'dup-profile',
               glossaries: {
-                SharedGlossary: { terms: { Tier: { shortDescription: 'Tier' } } },
+                SharedGlossary: { terms: { Tier: { description: 'Tier' } } },
               },
             },
             'dup-project-b': {
               profileName: 'dup-profile',
               glossaries: {
-                SharedGlossary: { terms: { Tier: { shortDescription: 'Tier' } } },
+                SharedGlossary: { terms: { Tier: { description: 'Tier' } } },
               },
             },
           },

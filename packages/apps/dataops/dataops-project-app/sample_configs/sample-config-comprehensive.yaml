@@ -354,9 +354,18 @@ sagemaker:
         status: ENABLED
         terms:
           DataOwner:
-            shortDescription: The team accountable for this project's data
-            longDescription: The team or individual responsible for this project's data quality and access
+            description: The team accountable for this project's data
+            # (Optional) Longer-form Markdown documentation, shown as the term's README in
+            # SageMaker Unified Studio
+            readme: The team or individual responsible for this project's data quality and access
             status: ENABLED
+          ExecutiveDataOwner:
+            description: A data owner with executive sign-off authority for sensitive datasets
+            # (Optional) Other declared terms this term "is a type of"; a bare name
+            # references a term in this same glossary. An ExecutiveDataOwner is a more
+            # specific kind of DataOwner, with added sign-off authority.
+            relatesTo:
+              - DataOwner
     # (Optional) Metadata form types owned by this project. MDAA assembles the
     # Smithy model; the form name is used verbatim as the structure name.
     metadataForms:

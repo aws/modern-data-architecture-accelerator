@@ -184,14 +184,28 @@ projects:
         terms:
           Segment:
             # (Optional) Short, business-facing definition
-            shortDescription: Customer segment classification
-            # (Optional) Longer-form definition with more context
-            longDescription: The marketing segment a customer has been classified into
+            description: Customer segment classification
+            # (Optional) Longer-form Markdown documentation, shown as the term's README in
+            # SageMaker Unified Studio
+            readme: The marketing segment a customer has been classified into
             status: ENABLED
-          ChurnRisk:
-            shortDescription: Likelihood a customer churns
-      # Minimal glossary with no terms declared yet
-      ProductGlossary: {}
+          HighValueSegment:
+            description: A customer segment with disproportionately high lifetime value
+            # (Optional) Other declared terms this term "is a type of". A bare name
+            # references a term in this same glossary; "<glossaryName>.<termName>"
+            # references a term in another glossary declared by this project. A
+            # HighValueSegment is a more specific kind of Segment.
+            relatesTo:
+              - Segment
+      # Glossary demonstrating a cross-glossary relatesTo reference into CustomerGlossary
+      ComplianceGlossary:
+        terms:
+          AuditedSegment:
+            description: A customer segment that has passed internal compliance review
+            # An AuditedSegment is a more specific kind of HighValueSegment, declared
+            # under a different glossary than the term it relates to.
+            relatesTo:
+              - CustomerGlossary.HighValueSegment
     # (Optional) Metadata form types owned by this project. MDAA assembles the
     # Smithy model; the form name is used verbatim as the structure name.
     metadataForms:

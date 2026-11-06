@@ -10131,35 +10131,92 @@ Validation: Optional; map of term name to GlossaryTermProps
 | **Additional properties** | Not allowed                     |
 | **Defined in**            | #/definitions/GlossaryTermProps |
 
-| Property                                                                                                              | Pattern | Type             | Deprecated | Definition | Title/Description                                                                                                                         |
-| --------------------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| - [longDescription](#sagemaker_project_glossaries_additionalProperties_terms_additionalProperties_longDescription )   | No      | string           | No         | -          | Longer-form definition of the term, with more context than shortDescription.<br /><br />Validation: Optional; string; max 4096 chars      |
-| - [shortDescription](#sagemaker_project_glossaries_additionalProperties_terms_additionalProperties_shortDescription ) | No      | string           | No         | -          | Short, business-facing definition of the term.<br /><br />Validation: Optional; string; max 1024 chars                                    |
-| - [status](#sagemaker_project_glossaries_additionalProperties_terms_additionalProperties_status )                     | No      | enum (of string) | No         | -          | Term status. DISABLED terms are retained but not attachable to assets or fields.<br /><br />Validation: Optional; 'ENABLED' \| 'DISABLED' |
+| Property                                                                                                    | Pattern | Type             | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ----------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [description](#sagemaker_project_glossaries_additionalProperties_terms_additionalProperties_description ) | No      | string           | No         | -          | Short, business-facing definition of the term. Maps to the DataZone API's<br />\`shortDescription\` field.<br /><br />Validation: Optional; string; max 1024 chars                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [readme](#sagemaker_project_glossaries_additionalProperties_terms_additionalProperties_readme )           | No      | string           | No         | -          | Longer-form Markdown documentation for the term (calculation methodology, data<br />sources, usage guidelines, etc.), shown as the term's README in SageMaker Unified<br />Studio. Maps to the DataZone API's \`longDescription\` field.<br /><br />Validation: Optional; string; max 4096 chars                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| - [relatesTo](#sagemaker_project_glossaries_additionalProperties_terms_additionalProperties_relatesTo )     | No      | array of string  | No         | -          | Other declared terms this term "is a type of" (DataZone's \`termRelations.isA\`).<br />Each entry is a bare \`"<termName>"\` for a term in this same glossary, or<br />\`"<glossaryName>.<termName>"\` for a term in another glossary declared by the same<br />project; a bare entry matching no declared term is passed through as a literal,<br />pre-existing term ID. SageMaker Unified Studio shows the inverse relationship<br />("Has Types") on the related term automatically.<br /><br />This \`MdaaDatazoneGlossary\` construct only validates this field (count,<br />self-reference) - it never resolves a reference or creates the DataZone<br />relationship itself. Resolving names and creating the relationship (via a<br />follow-up \`MdaaDatazoneGlossaryTermRelations\`, since a related term may belong to<br />a different, independently-constructed glossary) is done by the L3 layer<br />(\`SagemakerProjectL3Construct\`); a plain \`MdaaDatazoneGlossary\` consumer that sets<br />\`relatesTo\` directly gets no relationship in DataZone unless it also builds that<br />wiring itself.<br /><br />Validation: Optional; array of string; max 10 entries; no self-reference; rejects<br />cycles across declared terms (enforced by the L3 layer) |
+| - [status](#sagemaker_project_glossaries_additionalProperties_terms_additionalProperties_status )           | No      | enum (of string) | No         | -          | Term status. DISABLED terms are retained but not attachable to assets or fields.<br /><br />Validation: Optional; 'ENABLED' \| 'DISABLED'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 
-###### <a name="sagemaker_project_glossaries_additionalProperties_terms_additionalProperties_longDescription"></a>14.4.5.1.3.1.1. Property `root > sagemaker > project > glossaries > additionalProperties > terms > additionalProperties > longDescription`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Longer-form definition of the term, with more context than shortDescription.
-
-Validation: Optional; string; max 4096 chars
-
-###### <a name="sagemaker_project_glossaries_additionalProperties_terms_additionalProperties_shortDescription"></a>14.4.5.1.3.1.2. Property `root > sagemaker > project > glossaries > additionalProperties > terms > additionalProperties > shortDescription`
+###### <a name="sagemaker_project_glossaries_additionalProperties_terms_additionalProperties_description"></a>14.4.5.1.3.1.1. Property `root > sagemaker > project > glossaries > additionalProperties > terms > additionalProperties > description`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Short, business-facing definition of the term.
+**Description:** Short, business-facing definition of the term. Maps to the DataZone API's
+`shortDescription` field.
 
 Validation: Optional; string; max 1024 chars
 
-###### <a name="sagemaker_project_glossaries_additionalProperties_terms_additionalProperties_status"></a>14.4.5.1.3.1.3. Property `root > sagemaker > project > glossaries > additionalProperties > terms > additionalProperties > status`
+| Restrictions   |      |
+| -------------- | ---- |
+| **Max length** | 1024 |
+
+###### <a name="sagemaker_project_glossaries_additionalProperties_terms_additionalProperties_readme"></a>14.4.5.1.3.1.2. Property `root > sagemaker > project > glossaries > additionalProperties > terms > additionalProperties > readme`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Longer-form Markdown documentation for the term (calculation methodology, data
+sources, usage guidelines, etc.), shown as the term's README in SageMaker Unified
+Studio. Maps to the DataZone API's `longDescription` field.
+
+Validation: Optional; string; max 4096 chars
+
+| Restrictions   |      |
+| -------------- | ---- |
+| **Max length** | 4096 |
+
+###### <a name="sagemaker_project_glossaries_additionalProperties_terms_additionalProperties_relatesTo"></a>14.4.5.1.3.1.3. Property `root > sagemaker > project > glossaries > additionalProperties > terms > additionalProperties > relatesTo`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+**Description:** Other declared terms this term "is a type of" (DataZone's `termRelations.isA`).
+Each entry is a bare `"<termName>"` for a term in this same glossary, or
+`"<glossaryName>.<termName>"` for a term in another glossary declared by the same
+project; a bare entry matching no declared term is passed through as a literal,
+pre-existing term ID. SageMaker Unified Studio shows the inverse relationship
+("Has Types") on the related term automatically.
+
+This `MdaaDatazoneGlossary` construct only validates this field (count,
+self-reference) - it never resolves a reference or creates the DataZone
+relationship itself. Resolving names and creating the relationship (via a
+follow-up `MdaaDatazoneGlossaryTermRelations`, since a related term may belong to
+a different, independently-constructed glossary) is done by the L3 layer
+(`SagemakerProjectL3Construct`); a plain `MdaaDatazoneGlossary` consumer that sets
+`relatesTo` directly gets no relationship in DataZone unless it also builds that
+wiring itself.
+
+Validation: Optional; array of string; max 10 entries; no self-reference; rejects
+cycles across declared terms (enforced by the L3 layer)
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | 10                 |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                                  | Description |
+| ---------------------------------------------------------------------------------------------------------------- | ----------- |
+| [relatesTo items](#sagemaker_project_glossaries_additionalProperties_terms_additionalProperties_relatesTo_items) | -           |
+
+###### <a name="sagemaker_project_glossaries_additionalProperties_terms_additionalProperties_relatesTo_items"></a>14.4.5.1.3.1.3.1. root > sagemaker > project > glossaries > additionalProperties > terms > additionalProperties > relatesTo > relatesTo items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="sagemaker_project_glossaries_additionalProperties_terms_additionalProperties_status"></a>14.4.5.1.3.1.4. Property `root > sagemaker > project > glossaries > additionalProperties > terms > additionalProperties > status`
 
 |              |                    |
 | ------------ | ------------------ |
