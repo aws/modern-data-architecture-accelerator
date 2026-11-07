@@ -1,6 +1,6 @@
 # Change Log
 
-## [NEXT_RELEASE_VERSION] - NEXT_RELEASE_DATE
+## [1.10.0] - 2026-11-06
 
 ### Starter Kit Changes
 
