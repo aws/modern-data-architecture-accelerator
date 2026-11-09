@@ -179,6 +179,46 @@
     "constructbedrockinvocationlogsA1428BD0": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
+        "DataProtectionPolicy": {
+          "Name": "bedrock-invocation-data-protection",
+          "Version": "2021-06-01",
+          "Statement": [
+            {
+              "Sid": "audit-policy",
+              "DataIdentifier": [
+                "arn:aws:dataprotection::aws:data-identifier/EmailAddress",
+                "arn:aws:dataprotection::aws:data-identifier/CreditCardNumber",
+                "arn:aws:dataprotection::aws:data-identifier/Ssn-US",
+                "arn:aws:dataprotection::aws:data-identifier/Name",
+                "arn:aws:dataprotection::aws:data-identifier/Address",
+                "arn:aws:dataprotection::aws:data-identifier/PhoneNumber-US",
+                "arn:aws:dataprotection::aws:data-identifier/IpAddress"
+              ],
+              "Operation": {
+                "Audit": {
+                  "FindingsDestination": {}
+                }
+              }
+            },
+            {
+              "Sid": "redact-policy",
+              "DataIdentifier": [
+                "arn:aws:dataprotection::aws:data-identifier/EmailAddress",
+                "arn:aws:dataprotection::aws:data-identifier/CreditCardNumber",
+                "arn:aws:dataprotection::aws:data-identifier/Ssn-US",
+                "arn:aws:dataprotection::aws:data-identifier/Name",
+                "arn:aws:dataprotection::aws:data-identifier/Address",
+                "arn:aws:dataprotection::aws:data-identifier/PhoneNumber-US",
+                "arn:aws:dataprotection::aws:data-identifier/IpAddress"
+              ],
+              "Operation": {
+                "Deidentify": {
+                  "MaskConfig": {}
+                }
+              }
+            }
+          ]
+        },
         "KmsKeyId": {
           "Fn::GetAtt": [
             "constructbedrockkmskeyC65EDE8E",

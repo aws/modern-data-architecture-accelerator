@@ -11,6 +11,7 @@ Opinionated implementation of the Layer 2 CDK Construct for CloudWatch.
 * Enforces KMS CMK Encryption of LogGroup
 * Enforces specification of LogGroup Retention
 * Enforces LogGroup retention on stack deletion
+* Optionally masks PII on ingestion with a CloudWatch Logs data protection policy (`dataProtection`), built from a fixed identifier floor plus any additional identifiers
 
 ### CloudWatch Alarms
 * Validates the alarm period against the values CloudWatch accepts (1, 5, 10, 30, or a

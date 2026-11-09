@@ -6,14 +6,10 @@
 import { DataIdentifier } from 'aws-cdk-lib/aws-logs';
 
 /**
- * Built-in set of AWS-managed data identifiers that are always masked on the AgentCore
- * service-created log groups. This is the mandatory compliance floor - it is applied to every
- * deployment and cannot be reduced. Configuration may only add identifiers on top of this set.
- *
- * Shared by the AgentCore Runtime and Harness L3 constructs so both apply the identical PII floor
- * to their service-created log groups.
+ * Built-in set of AWS-managed data identifiers that MDAA always masks on the log groups it protects.
+ * This is the compliance floor: configuration may add identifiers on top of it, but never remove one.
  */
-export const BUILTIN_DATA_IDENTIFIERS: DataIdentifier[] = [
+export const BUILTIN_DATA_IDENTIFIERS: readonly DataIdentifier[] = [
   DataIdentifier.EMAILADDRESS,
   DataIdentifier.CREDITCARDNUMBER,
   DataIdentifier.SSN_US,
@@ -24,15 +20,11 @@ export const BUILTIN_DATA_IDENTIFIERS: DataIdentifier[] = [
 ];
 
 /**
- * CloudWatch Data Protection configuration for the AgentCore service-created log groups.
+ * CloudWatch Logs data protection (PII masking) configuration. The module always masks a built-in
+ * set of sensitive data types (emails, SSNs, credit card numbers, etc.) in log events on ingestion;
+ * this configuration only tightens that posture by adding identifiers, and can never reduce it.
  *
- * Data Protection (PII masking) and customer-managed KMS encryption are always-on, built-in
- * behavior for the AgentCore modules and cannot be disabled - sensitive data (emails, SSNs, credit
- * card numbers, etc.) is automatically masked in log events on ingestion. This optional
- * configuration only allows tightening the posture (adding identifiers); it can never reduce the
- * built-in compliance baseline.
- *
- * Use cases: extending PII masking with additional identifiers, future protection options
+ * Use cases: extending PII masking with additional identifiers, organization-specific masking requirements
  *
  * AWS: CloudWatch Logs Data Protection Policy
  *
@@ -58,12 +50,12 @@ export interface DataProtectionProperty {
 }
 
 /**
- * Builds the always-on CloudWatch Logs data protection policy. The built-in identifier floor
+ * Builds a CloudWatch Logs data protection policy document. The built-in identifier floor
  * ({@link BUILTIN_DATA_IDENTIFIERS}) is always masked; any `additionalIdentifiers` supplied via
  * config are added on top (deduplicated). This is additive only - the floor can never be reduced.
  *
  * @param policyName - the CloudWatch data-protection policy `Name` (per-module, e.g.
- *   `agentcore-runtime-data-protection` / `agentcore-harness-data-protection`)
+ *   `agentcore-runtime-data-protection` / `bedrock-invocation-data-protection`)
  * @param dataProtection - optional config adding identifiers on top of the built-in floor
  * @returns a CloudWatch Logs data protection policy document (audit + redact statements)
  */

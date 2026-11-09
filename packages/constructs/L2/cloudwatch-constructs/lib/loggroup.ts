@@ -5,9 +5,19 @@
 
 import { MdaaConstructProps, MdaaNagSuppressions, MdaaParamAndOutput } from '@aws-mdaa/construct'; //NOSONAR
 import { IKey } from 'aws-cdk-lib/aws-kms';
-import { ILogGroup, LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { CfnLogGroup, ILogGroup, LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
+import { buildDataProtectionPolicy, DataProtectionProperty } from './data-protection';
 import { updateProps } from './loggroup-utils';
+
+/**
+ * PII masking for an {@link MdaaLogGroup}: a CloudWatch Logs data protection policy masking the
+ * built-in identifier floor plus any additional identifiers.
+ */
+export interface MdaaLogGroupDataProtection extends DataProtectionProperty {
+  /** The data protection policy `Name`, unique per module (e.g. `bedrock-invocation-data-protection`). */
+  readonly policyName: string;
+}
 
 export interface MdaaLogGroupProps extends MdaaConstructProps {
   readonly encryptionKey: IKey;
@@ -20,6 +30,11 @@ export interface MdaaLogGroupProps extends MdaaConstructProps {
    */
   readonly verbatimLogGroupName?: boolean;
   readonly retention: RetentionDays;
+  /**
+   * Masks PII in log events on ingestion with a CloudWatch Logs data protection policy.
+   * @default - no data protection policy
+   */
+  readonly dataProtection?: MdaaLogGroupDataProtection;
 }
 
 /**
@@ -33,6 +48,14 @@ export type IMdaaLogGroup = ILogGroup;
 export class MdaaLogGroup extends LogGroup implements IMdaaLogGroup {
   constructor(scope: Construct, id: string, props: MdaaLogGroupProps) {
     super(scope, id, updateProps(props));
+    if (props.dataProtection) {
+      // The L2 dataProtectionPolicy prop takes a DataProtectionPolicy class; the built policy document
+      // is set on the L1 resource instead.
+      (this.node.defaultChild as CfnLogGroup).dataProtectionPolicy = buildDataProtectionPolicy(
+        props.dataProtection.policyName,
+        props.dataProtection,
+      );
+    }
     if (props.retention == RetentionDays.INFINITE) {
       MdaaNagSuppressions.addCodeResourceSuppressions(
         this,

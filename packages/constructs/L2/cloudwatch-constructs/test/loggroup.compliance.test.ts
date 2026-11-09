@@ -4,7 +4,7 @@
  */
 
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { MdaaLogGroup, MdaaLogGroupProps } from '../lib';
@@ -33,6 +33,11 @@ describe('MDAA Construct Compliance Tests', () => {
     logGroupNamePathPrefix: '/aws/lambda',
     logGroupName: 'test-org-test-env-test-domain-test-module-function',
     verbatimLogGroupName: true,
+  });
+  new MdaaLogGroup(testApp.testStack, 'test-construct-masked', {
+    ...testContstructProps,
+    logGroupName: 'masked',
+    dataProtection: { policyName: 'test-data-protection', additionalIdentifiers: ['DriversLicense-US'] },
   });
   testApp.checkCdkNagCompliance(testApp.testStack);
   const template = Template.fromStack(testApp.testStack);
@@ -67,5 +72,28 @@ describe('MDAA Construct Compliance Tests', () => {
 
   test('RetentionDays', () => {
     template.resourcePropertiesCountIs('AWS::Logs::LogGroup', 'RetentionInDays', 0);
+  });
+
+  test('DataProtectionPolicy', () => {
+    const maskedIdentifiers = Match.arrayWith([
+      'arn:aws:dataprotection::aws:data-identifier/EmailAddress',
+      'arn:aws:dataprotection::aws:data-identifier/DriversLicense-US',
+    ]);
+    template.hasResourceProperties('AWS::Logs::LogGroup', {
+      LogGroupName: '/test/prefix/test-org-test-env-test-domain-test-module-masked',
+      DataProtectionPolicy: {
+        Name: 'test-data-protection',
+        Statement: [
+          { Sid: 'audit-policy', DataIdentifier: maskedIdentifiers },
+          { Sid: 'redact-policy', DataIdentifier: maskedIdentifiers },
+        ],
+      },
+    });
+  });
+
+  test('NoDataProtectionPolicyByDefault', () => {
+    const logGroups = Object.values(template.findResources('AWS::Logs::LogGroup'));
+    expect(logGroups).toHaveLength(3);
+    expect(logGroups.filter(logGroup => logGroup.Properties.DataProtectionPolicy)).toHaveLength(1);
   });
 });

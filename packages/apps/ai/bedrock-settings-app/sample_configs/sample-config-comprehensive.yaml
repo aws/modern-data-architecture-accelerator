@@ -1,10 +1,11 @@
 # Sample config for the Bedrock Settings module.
 # Configures audit logging for Bedrock model invocations to both
 # S3 (long-term retention) and CloudWatch (real-time monitoring),
+# with extra PII identifiers masked, retention set for both,
 # and alarms on model token use in the account.
 
-# Enables S3 audit logging for Bedrock model invocations.
-# Creates an encrypted S3 bucket for storing invocation logs.
+# Enables S3 audit logging for Bedrock model invocations,
+# delivered to the module's encrypted bucket.
 # (default: false)
 enableAuditLoggingToS3: true
 
@@ -50,3 +51,16 @@ tokenUsageAlarms:
   # (Optional) Breaching periods within evaluationPeriods required
   # to alarm. (default: evaluationPeriods)
   datapointsToAlarm: 2
+
+# (Optional) Extra PII identifiers to mask in the CloudWatch invocation log group,
+# on top of the built-in set (emails, SSNs, credit card numbers, names, etc.).
+logDataProtection:
+  # (Optional) AWS-managed data identifier names to add, e.g. DriversLicense-US or PassportNumber-US.
+  additionalIdentifiers:
+    - DriversLicense-US
+
+# (Optional) Days to keep CloudWatch invocation logs. 9999 never expires. (default: 9999)
+logRetentionDays: 365
+
+# (Optional) Days to keep invocation log objects in S3. Omit to never expire.
+s3RetentionDays: 365

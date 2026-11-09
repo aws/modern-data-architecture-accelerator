@@ -11,11 +11,13 @@ Configures Amazon Bedrock model invocation audit logging to S3 and/or CloudWatch
 This module deploys and integrates the following resources:
 
 - **KMS Encryption Key**: Custom KMS key for encrypting Bedrock audit logs
-- **S3 Bucket** (Optional): S3 bucket for storing Bedrock model invocation audit logs
-- **CloudWatch Log Group** (Optional): CloudWatch Log Group for real-time monitoring of Bedrock model invocations with configurable retention policies
+- **S3 Bucket**: S3 bucket for storing Bedrock model invocation audit logs, and for the CloudWatch destination's large-data overflow, with optional expiration (`s3RetentionDays`)
+- **CloudWatch Log Group** (Optional): CloudWatch Log Group for real-time monitoring of Bedrock model invocations, with optional retention (`logRetentionDays`)
+- **CloudWatch Data Protection Policy** (with the log group): PII masking policy always applied to the invocation log group on ingestion. Extendable via `logDataProtection.additionalIdentifiers`.
 - **IAM Service Role**: Dedicated service role for Bedrock logging operations
 - **IAM Managed Policy**: Custom policy granting permissions for Bedrock to write audit logs to the configured destinations
-- **Custom Resource Lambda**: Lambda function that configures Bedrock's global model invocation logging settings through AWS APIs
+- **Custom Resource Lambda**: Lambda function that configures Bedrock's account-wide model invocation logging settings through AWS APIs (see [Account-Wide Logging Configuration](#account-wide-logging-configuration))
+- **Custom Resource Handler Role**: Execution role for the custom resource Lambda, allowed to put, get and delete the invocation logging configuration
 - **Bucket Policy**: Resource-based policy allowing Bedrock service to write audit logs to the S3 bucket
 - **KMS Key Policy**: Key policy allowing Bedrock, CloudWatch Logs, and S3 services to use the encryption key
 - **Token Usage Alarms** (Optional): CloudWatch alarms on model input and output token counts, per model and/or account-wide, with SSM parameters for each alarm's name and ARN. See [Token usage alarms](#token-usage-alarms)
@@ -49,10 +51,53 @@ This module is designed in alignment with MDAA security/compliance principles an
 - **Logging & Audit**:
   - Supports real-time monitoring via CloudWatch for Bedrock model invocation audit logs
   - Supports long-term storage via S3 for Bedrock model invocation audit logs
-  - Configurable log retention policies for compliance requirements
+  - CloudWatch Data Protection always masks a built-in set of PII identifiers in the invocation log group on ingestion (extendable via `logDataProtection.additionalIdentifiers`)
+  - Optional CloudWatch (`logRetentionDays`) and S3 (`s3RetentionDays`) retention; logs never expire by default
 - **Monitoring**:
   - Optional token usage alarms notify an existing SNS topic, or a module-created topic encrypted with the module KMS key
   - CloudWatch's publish grant on a module-created topic, and its use of the KMS key, are limited to this module's token alarms
+
+### Account-Wide Logging Configuration
+
+Bedrock has a single model invocation logging configuration per account and Region, covering every Bedrock caller in it, not only the workloads MDAA deploys:
+
+- **Deploying** this module overwrites any invocation logging configuration already in place, such as one set by a central team.
+- **Deleting** the stack deletes the configuration, which switches invocation logging off for the whole account and Region. GuardDuty reports this as `DefenseEvasion:IAMUser/BedrockLoggingDisabled`.
+
+Deploy the module once per account and Region. To stop anyone else changing or deleting the configuration, protect the two APIs with an SCP that exempts this module's custom-resource handler role, which calls them on deploy and on stack deletion:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ProtectBedrockInvocationLogging",
+      "Effect": "Deny",
+      "Action": [
+        "bedrock:PutModelInvocationLoggingConfiguration",
+        "bedrock:DeleteModelInvocationLoggingConfiguration"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "ArnNotLike": {
+          "aws:PrincipalArn": "arn:aws:iam::*:role/<handler role name>"
+        }
+      }
+    }
+  ]
+}
+```
+
+The handler role is named `<org>-<env>-<domain>-<module>-logs-model-invocation-handler`, shortened with a hash suffix when it would be 64 characters or more. Take the exact name from the synthesized template (the `AWS::IAM::Role` whose logical ID starts with `customlogsmodelinvocationhandlerrole`).
+
+### Masking and Retention
+
+- **Masking is always applied** to the CloudWatch invocation log group, which holds the full text of every prompt and completion. Masked values appear in CloudWatch Logs Insights, metric filters and subscription filters; principals with `logs:Unmask` (including the `CloudWatchLogsFullAccess` managed policy) can still view them in clear text, which is the break-glass route for incident response.
+- **Masking is not retroactive.** Events ingested before the policy was applied stay unmasked until they expire.
+- **The S3 copies are not masked.** CloudWatch data protection does not reach S3, so the S3 destination and the large-data overflow (bodies over 100 KB and binary data) keep prompts in clear text. Restrict who can read the bucket and decrypt with the module's KMS key.
+- **Retention defaults to never-expire** for both destinations, so upgrading never deletes existing invocation logs, and how long to keep prompts, which often contain personal data, stays your decision. Set `logRetentionDays` and `s3RetentionDays` to bound it. `s3RetentionDays` applies to the whole bucket, including the overflow, so a value shorter than `logRetentionDays` removes overflow bodies before the CloudWatch events that point to them.
+- **`s3RetentionDays` also limits version recovery.** The bucket is versioned, and setting `s3RetentionDays` expires every noncurrent object version 1 day after it becomes noncurrent, including versions already in the bucket. An overwritten or deleted object can then be recovered for 1 day only.
+- **On accounts governed by Landing Zone Accelerator**, LZA sets its account-wide `cloudwatchLogRetentionInDays` on new log groups about 10 minutes after they are created, replacing `logRetentionDays`. The effective CloudWatch retention there is LZA's.
 
 ---
 
@@ -114,7 +159,7 @@ Enables audit logging to both CloudWatch and S3 with default settings. Start her
 
 #### Comprehensive Configuration
 
-Configures audit logging for Bedrock model invocations to both S3 (long-term retention) and CloudWatch (real-time monitoring), and alarms on token use per model and account-wide. Use this as a reference when you need full control over log retention, encryption, dual-destination audit configuration, and token usage alerting.
+Configures audit logging for Bedrock model invocations to both S3 (long-term retention) and CloudWatch (real-time monitoring), with additional PII identifiers masked, retention set for both destinations, and alarms on token use per model and account-wide. Use this as a reference when you need control over masking, log retention, encryption, dual-destination audit configuration, and token usage alerting.
 
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 

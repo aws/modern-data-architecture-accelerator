@@ -16,9 +16,8 @@ describe('validateLogRetentionDays', () => {
   });
 
   it('accepts the INFINITE sentinel (9999) as an explicit never-expire choice', () => {
-    // 9999 is an accepted, lockable never-expire value across all three AgentCore constructs; the
-    // constructs apply no retention policy for it (never sending the sentinel to PutRetentionPolicy),
-    // so it validates cleanly at synth and yields the same never-expire result as omission.
+    // 9999 is an accepted, lockable never-expire value; callers apply no retention policy for it
+    // (never sending the sentinel to PutRetentionPolicy), so it yields the same result as omission.
     expect(() => validateLogRetentionDays(RetentionDays.INFINITE, 'logRetentionDays')).not.toThrow();
   });
 

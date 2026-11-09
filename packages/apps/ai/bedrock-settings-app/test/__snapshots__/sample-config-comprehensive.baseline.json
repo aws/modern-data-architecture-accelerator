@@ -199,6 +199,48 @@
     "constructbedrockinvocationlogsA1428BD0": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
+        "DataProtectionPolicy": {
+          "Name": "bedrock-invocation-data-protection",
+          "Version": "2021-06-01",
+          "Statement": [
+            {
+              "Sid": "audit-policy",
+              "DataIdentifier": [
+                "arn:aws:dataprotection::aws:data-identifier/EmailAddress",
+                "arn:aws:dataprotection::aws:data-identifier/CreditCardNumber",
+                "arn:aws:dataprotection::aws:data-identifier/Ssn-US",
+                "arn:aws:dataprotection::aws:data-identifier/Name",
+                "arn:aws:dataprotection::aws:data-identifier/Address",
+                "arn:aws:dataprotection::aws:data-identifier/PhoneNumber-US",
+                "arn:aws:dataprotection::aws:data-identifier/IpAddress",
+                "arn:aws:dataprotection::aws:data-identifier/DriversLicense-US"
+              ],
+              "Operation": {
+                "Audit": {
+                  "FindingsDestination": {}
+                }
+              }
+            },
+            {
+              "Sid": "redact-policy",
+              "DataIdentifier": [
+                "arn:aws:dataprotection::aws:data-identifier/EmailAddress",
+                "arn:aws:dataprotection::aws:data-identifier/CreditCardNumber",
+                "arn:aws:dataprotection::aws:data-identifier/Ssn-US",
+                "arn:aws:dataprotection::aws:data-identifier/Name",
+                "arn:aws:dataprotection::aws:data-identifier/Address",
+                "arn:aws:dataprotection::aws:data-identifier/PhoneNumber-US",
+                "arn:aws:dataprotection::aws:data-identifier/IpAddress",
+                "arn:aws:dataprotection::aws:data-identifier/DriversLicense-US"
+              ],
+              "Operation": {
+                "Deidentify": {
+                  "MaskConfig": {}
+                }
+              }
+            }
+          ]
+        },
         "KmsKeyId": {
           "Fn::GetAtt": [
             "constructbedrockkmskeyC65EDE8E",
@@ -206,6 +248,7 @@
           ]
         },
         "LogGroupName": "/aws/bedrock/model-invocation-logs/test-org-test-env-test-domain-test-bedrock-settings-app-bedrock-model-invocation",
+        "RetentionInDays": 365,
         "Tags": [
           {
             "Key": "mdaa_cdk_app",
@@ -230,25 +273,7 @@
         ]
       },
       "UpdateReplacePolicy": "Retain",
-      "DeletionPolicy": "Retain",
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
-              "id": "NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
-              "id": "HIPAA.Security-CloudWatchLogGroupRetentionPeriod"
-            },
-            {
-              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts] LogGroup retention is set to RetentionDays.INFINITE.",
-              "id": "PCI.DSS.321-CloudWatchLogGroupRetentionPeriod"
-            }
-          ]
-        }
-      }
+      "DeletionPolicy": "Retain"
     },
     "constructbedrockinvocationlogsloggroupbedrockmodelinvocationnamessm12CC8B2A": {
       "Type": "AWS::SSM::Parameter",
@@ -285,6 +310,18 @@
           ]
         },
         "BucketName": "test-org-test-env-test-domain-test-bedrock-settings-ap-46229cb9",
+        "LifecycleConfiguration": {
+          "Rules": [
+            {
+              "ExpirationInDays": 365,
+              "Id": "expire-model-invocation-logs",
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 1
+              },
+              "Status": "Enabled"
+            }
+          ]
+        },
         "PublicAccessBlockConfiguration": {
           "BlockPublicAcls": true,
           "BlockPublicPolicy": true,

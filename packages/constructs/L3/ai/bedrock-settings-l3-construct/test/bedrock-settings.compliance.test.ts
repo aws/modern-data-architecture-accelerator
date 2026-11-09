@@ -579,6 +579,53 @@ describe('Bedrock Settings L3 Construct Compliance Tests', () => {
       },
     });
   });
+  describe('Invocation Log Masking and Retention', () => {
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+
+    const props: BedrockSettingsL3ConstructProps = {
+      enableAuditLoggingToS3: true,
+      enableAuditLoggingToCloudwatch: true,
+      logRetentionDays: 365,
+      s3RetentionDays: 365,
+      naming: testApp.naming,
+      roleHelper,
+    };
+
+    new BedrockSettingsL3Construct(testApp.testStack, 'bedrock-settings', props);
+    testApp.checkCdkNagCompliance(testApp.testStack);
+    const template = Template.fromStack(testApp.testStack);
+
+    test('Invocation log group masks PII on ingestion', () => {
+      const maskedIdentifiers = Match.arrayWith([
+        'arn:aws:dataprotection::aws:data-identifier/EmailAddress',
+        'arn:aws:dataprotection::aws:data-identifier/CreditCardNumber',
+        'arn:aws:dataprotection::aws:data-identifier/Ssn-US',
+      ]);
+      template.hasResourceProperties('AWS::Logs::LogGroup', {
+        RetentionInDays: 365,
+        DataProtectionPolicy: {
+          Statement: [
+            { Sid: 'audit-policy', DataIdentifier: maskedIdentifiers },
+            {
+              Sid: 'redact-policy',
+              DataIdentifier: maskedIdentifiers,
+              Operation: { Deidentify: { MaskConfig: {} } },
+            },
+          ],
+        },
+      });
+    });
+
+    test('Bucket expires current and noncurrent object versions', () => {
+      // Expiring a version-enabled bucket's objects also requires expiring the noncurrent versions
+      template.hasResourceProperties('AWS::S3::Bucket', {
+        LifecycleConfiguration: {
+          Rules: [{ Status: 'Enabled', ExpirationInDays: 365, NoncurrentVersionExpiration: { NoncurrentDays: 1 } }],
+        },
+      });
+    });
+  });
 });
 
 describe('Bedrock Settings L3 Construct Token Usage Alarm Compliance', () => {

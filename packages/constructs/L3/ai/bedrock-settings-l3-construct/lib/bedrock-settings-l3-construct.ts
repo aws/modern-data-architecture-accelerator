@@ -11,11 +11,13 @@ import {
   PolicyStatement,
   ServicePrincipal,
 } from 'aws-cdk-lib/aws-iam';
+import { Duration } from 'aws-cdk-lib';
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { LifecycleRule } from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
 
-import { MdaaLogGroup } from '@aws-mdaa/cloudwatch-constructs';
+import { DataProtectionProperty, MdaaLogGroup, validateLogRetentionDays } from '@aws-mdaa/cloudwatch-constructs';
 import { MdaaCustomResource, MdaaCustomResourceProps } from '@aws-mdaa/custom-constructs';
 import { MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
@@ -28,13 +30,16 @@ const LAMBDA_RUNTIME = Runtime.PYTHON_3_14;
 const LAMBDA_HANDLER = 'bedrock_settings.lambda_handler';
 const LAMBDA_SRC_DIR = '../src/python/bedrock-settings';
 
+// Re-exported so the app config can use the shared types without depending on cloudwatch-constructs.
+export { DataProtectionProperty, LogRetentionDays } from '@aws-mdaa/cloudwatch-constructs';
+
 /**
  * Configuration properties for the Bedrock Settings L3 Construct
  */
 export interface BedrockSettingsL3ConstructProps extends MdaaL3ConstructProps {
   /**
-   * Enables S3 bucket creation for model invocation audit logs.
-   * Creates an encrypted S3 bucket with Bedrock service permissions and KMS key policies for long-term audit retention.
+   * Enables the S3 destination for model invocation audit logs, in the module's encrypted bucket.
+   * The bucket is created either way, because it also receives the CloudWatch large-data overflow.
    *
    * Use cases: Regulatory compliance auditing, long-term log retention, security monitoring, governance
    *
@@ -45,7 +50,7 @@ export interface BedrockSettingsL3ConstructProps extends MdaaL3ConstructProps {
   readonly enableAuditLoggingToS3: boolean;
   /**
    * Enables CloudWatch Log Group creation for model invocation audit logs.
-   * Creates an encrypted CloudWatch Log Group with infinite retention for real-time monitoring and alerting.
+   * Creates an encrypted CloudWatch Log Group with PII masking for real-time monitoring and alerting.
    *
    * Use cases: Real-time AI usage monitoring, automated alerting, performance tracking, cost analysis
    *
@@ -66,6 +71,41 @@ export interface BedrockSettingsL3ConstructProps extends MdaaL3ConstructProps {
    * Validation: Optional; TokenUsageAlarmsProps; requires a notification target and at least one threshold
    **/
   readonly tokenUsageAlarms?: TokenUsageAlarmsProps;
+  /**
+   * CloudWatch Logs data protection for the invocation log group. A built-in set of PII identifiers
+   * is always masked; this only adds identifiers. Requires enableAuditLoggingToCloudwatch.
+   *
+   * Use cases: extending PII masking of prompts and completions with additional identifiers
+   *
+   * AWS: CloudWatch Logs Data Protection Policy
+   *
+   * Validation: Optional; DataProtectionProperty; additive only
+   **/
+  readonly logDataProtection?: DataProtectionProperty;
+  /**
+   * Retention period for the invocation log group, in days. `9999` or omission means never-expire.
+   * Requires enableAuditLoggingToCloudwatch.
+   *
+   * Use cases: limiting how long prompts are kept, cost management, compliance retention requirements
+   *
+   * AWS: CloudWatch Logs log group retention
+   *
+   * Validation: Optional; Number; must be a valid RetentionDays value
+   * @default 9999
+   **/
+  readonly logRetentionDays?: number;
+  /**
+   * Number of days to keep invocation log objects in the S3 bucket, including the CloudWatch
+   * large-data overflow. Noncurrent object versions expire 1 day after becoming noncurrent.
+   * Omission means never-expire.
+   *
+   * Use cases: limiting how long prompts are kept, cost management, compliance retention requirements
+   *
+   * AWS: S3 lifecycle expiration
+   *
+   * Validation: Optional; Number; positive integer
+   **/
+  readonly s3RetentionDays?: number;
 }
 
 /**
@@ -77,6 +117,8 @@ export interface BedrockSettingsL3ConstructProps extends MdaaL3ConstructProps {
  * - Creates encrypted storage resources (S3 bucket and/or CloudWatch Log Group)
  * - Configures appropriate IAM roles and policies for Bedrock service access
  * - Implements security best practices with KMS encryption
+ * - Always masks PII in the CloudWatch invocation log group with a data protection policy
+ * - Applies optional CloudWatch and S3 retention (never-expire by default)
  * - Uses custom resource to configure Bedrock logging settings * new BedrockSettingsL3Construct(this, 'BedrockSettings', {
  *   enableAuditLoggingToS3: true,
  *   enableAuditLoggingToCloudwatch: true,
@@ -118,12 +160,31 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
   }
 
   /**
-   * Validates the construct properties to ensure at least one logging destination is enabled
-   * @throws Error if both logging options are disabled
+   * Validates the construct properties
+   * @throws Error if both logging options are disabled, a CloudWatch-only setting is used without
+   *   CloudWatch logging, or a retention value is invalid
    */
   private validateProps(): void {
     if (!this.props.enableAuditLoggingToCloudwatch && !this.props.enableAuditLoggingToS3) {
       throw new Error('At least one of enableAuditLoggingToCloudwatch or enableAuditLoggingToS3 must be true.');
+    }
+    if (!this.props.enableAuditLoggingToCloudwatch) {
+      const cloudwatchOnlySettings = {
+        logRetentionDays: this.props.logRetentionDays,
+        logDataProtection: this.props.logDataProtection,
+      };
+      for (const [field, value] of Object.entries(cloudwatchOnlySettings)) {
+        if (value !== undefined) {
+          throw new Error(
+            `${field} configures the CloudWatch invocation log group and requires enableAuditLoggingToCloudwatch: true.`,
+          );
+        }
+      }
+    }
+    validateLogRetentionDays(this.props.logRetentionDays, 'logRetentionDays');
+    const s3RetentionDays = this.props.s3RetentionDays;
+    if (s3RetentionDays !== undefined && (!Number.isInteger(s3RetentionDays) || s3RetentionDays < 1)) {
+      throw new Error(`Invalid s3RetentionDays '${s3RetentionDays}'. Must be a positive integer number of days.`);
     }
   }
 
@@ -226,10 +287,11 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
 
     return new MdaaLogGroup(this, 'bedrock-invocation-logs', {
       logGroupName: 'bedrock-model-invocation',
-      retention: RetentionDays.INFINITE, // Retain logs indefinitely for audit purposes
+      retention: this.props.logRetentionDays ?? RetentionDays.INFINITE,
       encryptionKey,
       logGroupNamePathPrefix: '/aws/bedrock/model-invocation-logs',
       naming: this.props.naming,
+      dataProtection: { ...this.props.logDataProtection, policyName: 'bedrock-invocation-data-protection' },
     });
   }
 
@@ -243,12 +305,33 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
       bucketName: 'logs-model-invocation',
       encryptionKey,
       naming: this.props.naming,
+      lifecycleRules: this.createLifecycleRules(),
     });
 
     // Add bucket policy to allow Bedrock service access
     this.addBucketPolicy(loggingBucket);
 
     return loggingBucket;
+  }
+
+  /**
+   * Creates the bucket-wide expiration rule for s3RetentionDays. The bucket holds only invocation
+   * logs (the S3 destination and the CloudWatch large-data overflow), so no prefix is needed.
+   * @returns The lifecycle rules, or undefined to keep objects indefinitely
+   */
+  private createLifecycleRules(): LifecycleRule[] | undefined {
+    if (this.props.s3RetentionDays === undefined) {
+      return undefined;
+    }
+    return [
+      {
+        id: 'expire-model-invocation-logs',
+        expiration: Duration.days(this.props.s3RetentionDays),
+        // The bucket is versioned, so expiration only adds a delete marker; the data is removed
+        // when the resulting noncurrent version expires.
+        noncurrentVersionExpiration: Duration.days(1),
+      },
+    ];
   }
 
   /**

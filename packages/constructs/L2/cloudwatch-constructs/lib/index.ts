@@ -12,3 +12,5 @@ export * from './dashboard';
 export * from './alarm-utils';
 export * from './alarm-topic-utils';
 export * from './alarm-notification';
+export * from './data-protection';
+export * from './log-retention';

@@ -2,191 +2,124 @@
 # SPDX-License-Identifier: MIT-0
 
 """
-AWS Lambda function for managing Amazon Bedrock model invocation logging configuration.
+CloudFormation custom resource handler for the account's Amazon Bedrock model invocation logging
+configuration (one setting per account and Region).
 
-This module provides a CloudFormation custom resource handler that configures
-Bedrock logging to S3 and/or CloudWatch based on the provided parameters.
-Supports Create, Update, and Delete operations for logging configurations.
+Runs under the CDK Provider framework, which sends the CloudFormation response: the handler returns
+on success and raises on failure. It never returns a PhysicalResourceId, so the framework keeps the
+existing ID on every update and CloudFormation never sees a replacement (which would send Delete
+and switch logging off).
 """
 
-from __future__ import print_function
 import json
+import logging
+import os
+
 import boto3
-import urllib3
 
-# CloudFormation response constants
-SUCCESS = "SUCCESS"
-FAILED = "FAILED"
+logger = logging.getLogger()
+logger.setLevel(os.environ.get('LOG_LEVEL', 'INFO'))
 
-# HTTP client for CloudFormation responses
-http = urllib3.PoolManager()
+# Data types delivered to every enabled destination
+BASE_LOGGING_CONFIG = {
+    'textDataDeliveryEnabled': True,
+    'imageDataDeliveryEnabled': True,
+    'embeddingDataDeliveryEnabled': True,
+    'videoDataDeliveryEnabled': True,
+}
 
 
-def lambda_handler(event, context):
+def lambda_handler(event: dict, context: object) -> None:
     """
-    Main Lambda handler for Bedrock logging configuration custom resource.
-    
-    Processes CloudFormation custom resource events (Create/Update/Delete) to
-    configure Amazon Bedrock model invocation logging to S3 and/or CloudWatch.
-    
+    Applies (Create/Update) or removes (Delete) the Bedrock model invocation logging configuration.
+
     Args:
-        event (dict): CloudFormation custom resource event containing:
-            - RequestType: 'Create', 'Update', or 'Delete'
-            - ResourceProperties: Configuration parameters including:
-                - enableAuditLoggingToS3: 'true'/'false'
-                - enableAuditLoggingToCloudwatch: 'true'/'false'
-                - s3Config: S3 bucket and prefix configuration
-                - cloudwatchConfig: CloudWatch log group and role configuration
-        context: Lambda context object
-    
-    Returns:
-        None: Sends response directly to CloudFormation via HTTP
+        event: CloudFormation custom resource event. Create and Update read ResourceProperties:
+            - enableAuditLoggingToS3 / enableAuditLoggingToCloudwatch: 'true' or 'false'
+            - s3Config: s3Bucket and s3Prefix (when S3 logging is enabled)
+            - cloudwatchConfig: cloudwatchLogGroupName, cloudwatchLoggingRoleArn and
+              largeDataDeliveryS3Config (s3Bucket, s3Prefix) (when CloudWatch logging is enabled)
+        context: Lambda context object (unused)
+
+    Raises:
+        KeyError: a required event or ResourceProperties key is missing
+        ValueError: the request type or a destination flag is invalid
+        botocore.exceptions.ClientError: the Bedrock API call failed
     """
-    print("Received event: " + json.dumps(event))
-    
-    # Base logging configuration - enables all data types by default
-    logging_config = {
-        'textDataDeliveryEnabled': True,
-        'imageDataDeliveryEnabled': True,
-        'embeddingDataDeliveryEnabled': True,
-        'videoDataDeliveryEnabled': True,
-    }
-    try:
-        # Configure S3 logging if enabled
-        if event.get('ResourceProperties').get('enableAuditLoggingToS3') == 'true':
-            bucket_name = event.get('ResourceProperties').get('s3Config').get('s3Bucket')
-            prefix = event.get('ResourceProperties').get('s3Config').get('s3Prefix')
-            s3_config = {
-                'bucketName': bucket_name,
-                'keyPrefix': prefix
-            }
-            logging_config['s3Config'] = s3_config
-        
-        # Configure CloudWatch logging if enabled
-        if event.get('ResourceProperties').get('enableAuditLoggingToCloudwatch') == 'true':
-            log_group_name = event.get('ResourceProperties').get('cloudwatchConfig').get('cloudwatchLogGroupName')
-            cloudwatch_role_arn = event.get('ResourceProperties').get('cloudwatchConfig').get('cloudwatchLoggingRoleArn')
-            large_data_bucket_name = event.get('ResourceProperties').get('cloudwatchConfig').get('largeDataDeliveryS3Config').get('s3Bucket')
-            large_data_prefix = event.get('ResourceProperties').get('cloudwatchConfig').get('largeDataDeliveryS3Config').get('s3Prefix')
+    # The ResponseURL is a pre-signed URL that can submit this resource's CloudFormation response.
+    logger.info('Received event: %s', json.dumps({**event, 'ResponseURL': '...'}))
 
-            cloudwatch_config = {
-                'logGroupName': log_group_name,
-                'roleArn': cloudwatch_role_arn,
-                'largeDataDeliveryS3Config': {
-                    'bucketName': large_data_bucket_name,
-                    'keyPrefix': large_data_prefix
-                }
-            }
-            logging_config['cloudWatchConfig'] = cloudwatch_config
+    request_type = event['RequestType']
+    client = boto3.client('bedrock')
 
-        request_type = event['RequestType'] if event.get('ResourceProperties').get('enableAuditLoggingToS3') != 'false' or event.get('ResourceProperties').get('enableAuditLoggingToCloudwatch') != 'false' else 'Delete'
-
-        bedrock_logging(logging_config, request_type, event, context)
-
-    except (KeyError, AttributeError, TypeError) as e:
-        print(f"Configuration parsing error: {e}")
-        response_data = {'message': f'Configuration parsing failed: {str(e)}'}
-        send(event, context, FAILED, response_data)
-
-def bedrock_logging(logging_config, request_type, event, context):
-    """
-    Configure Amazon Bedrock model invocation logging.
-    
-    Handles Create/Update operations by setting logging configuration and
-    Delete operations by removing logging configuration.
-    
-    Args:
-        logging_config (dict): Bedrock logging configuration including S3 and/or CloudWatch settings
-        request_type (str): CloudFormation request type ('Create', 'Update', or 'Delete')
-        event (dict): Original CloudFormation event
-        context: Lambda context object
-    
-    Returns:
-        None: Sends response to CloudFormation via send() function
-    """
-    import os
-    
-    # Get AWS region from environment or default to us-east-1
-    region = os.environ.get('AWS_REGION', 'us-east-1')
-    print(f"Using AWS region: {region}")
-    print(f"Logging configuration: {json.dumps(logging_config)}")
-    print(f"Request type: {request_type}")
-    
-    # Initialize Bedrock client for the specified region
-    client = boto3.client('bedrock', region_name=region)
-    
-    if request_type == 'Create' or request_type == 'Update':
-        # Enable or update Bedrock model invocation logging
-        response = client.put_model_invocation_logging_configuration(
-            loggingConfig=logging_config
-        )
-        message = f'Successfully {request_type.lower()}d Bedrock logging configuration'
-        
+    if request_type in ('Create', 'Update'):
+        logging_config = build_logging_config(event['ResourceProperties'])
+        logger.info('Applying logging configuration: %s', json.dumps(logging_config))
+        client.put_model_invocation_logging_configuration(loggingConfig=logging_config)
     elif request_type == 'Delete':
-        # Disable Bedrock model invocation logging
-        response = client.delete_model_invocation_logging_configuration()
-        message = 'Successfully disabled Bedrock logging configuration'
-        
+        # Delete needs no destination config, so a malformed property cannot block stack deletion.
+        client.delete_model_invocation_logging_configuration()
+        logger.info('Deleted logging configuration')
     else:
-        # Unsupported request type
-        error_msg = f'Unsupported CloudFormation request type: {request_type}'
-        print(error_msg)
-        send(event, context, FAILED, {'message': error_msg})
-        return
-    
-    # Check response status and send appropriate result to CloudFormation
-    status = SUCCESS if response['ResponseMetadata']['HTTPStatusCode'] == 200 else FAILED
-    print(f"Bedrock API response status: {response['ResponseMetadata']['HTTPStatusCode']}")
-    send(event, context, status, {'message': message})
+        raise ValueError(f'Unsupported CloudFormation request type: {request_type}')
 
 
-def send(event, context, response_status, response_data, physical_resource_id=None, no_echo=False, reason=None):
+def build_logging_config(props: dict) -> dict:
     """
-    Send response back to CloudFormation custom resource.
-    
-    Constructs and sends an HTTP PUT request to the CloudFormation response URL
-    with the operation result and any associated data.
-    
+    Builds the PutModelInvocationLoggingConfiguration loggingConfig from the resource properties.
+
     Args:
-        event (dict): Original CloudFormation event containing ResponseURL and identifiers
-        context: Lambda context object providing log stream name
-        response_status (str): SUCCESS or FAILED
-        response_data (dict): Data to return to CloudFormation
-        physical_resource_id (str, optional): Physical resource identifier
-        no_echo (bool, optional): Whether to mask response data in CloudFormation logs
-        reason (str, optional): Custom reason for the response status
-    
+        props: the custom resource's ResourceProperties
+
     Returns:
-        None: Sends HTTP response directly to CloudFormation
+        The loggingConfig request parameter
+
+    Raises:
+        KeyError: a destination flag, or a key required by an enabled destination, is missing
+        ValueError: a destination flag is not 'true'/'false', or no destination is enabled
     """
-    response_url = event['ResponseURL']
-    print(f"Sending response to CloudFormation: {response_url}")
-    
-    # Construct CloudFormation custom resource response
-    response_body = {
-        'Status': response_status,
-        'Reason': reason or f"See CloudWatch Log Stream: {context.log_stream_name}",
-        'PhysicalResourceId': physical_resource_id or context.log_stream_name,
-        'StackId': event['StackId'],
-        'RequestId': event['RequestId'],
-        'LogicalResourceId': event['LogicalResourceId'],
-        'NoEcho': no_echo,
-        'Data': response_data
-    }
-    
-    json_response_body = json.dumps(response_body)
-    print("CloudFormation response body:")
-    print(json_response_body)
-    
-    # Prepare HTTP headers for the response
-    headers = {
-        'content-type': '',
-        'content-length': str(len(json_response_body))
-    }
-    
-    try:
-        # Send HTTP PUT response to CloudFormation
-        response = http.request('PUT', response_url, headers=headers, body=json_response_body)
-        print(f"CloudFormation response status code: {response.status}")
-    except (urllib3.exceptions.HTTPError, OSError) as e:
-        print(f"Failed to send response to CloudFormation: {e}")
+    s3_enabled = is_enabled(props, 'enableAuditLoggingToS3')
+    cloudwatch_enabled = is_enabled(props, 'enableAuditLoggingToCloudwatch')
+    if not s3_enabled and not cloudwatch_enabled:
+        raise ValueError('At least one of enableAuditLoggingToS3 or enableAuditLoggingToCloudwatch must be true')
+
+    logging_config = dict(BASE_LOGGING_CONFIG)
+    if s3_enabled:
+        s3_config = props['s3Config']
+        logging_config['s3Config'] = {
+            'bucketName': s3_config['s3Bucket'],
+            'keyPrefix': s3_config['s3Prefix'],
+        }
+    if cloudwatch_enabled:
+        cloudwatch_config = props['cloudwatchConfig']
+        large_data_config = cloudwatch_config['largeDataDeliveryS3Config']
+        logging_config['cloudWatchConfig'] = {
+            'logGroupName': cloudwatch_config['cloudwatchLogGroupName'],
+            'roleArn': cloudwatch_config['cloudwatchLoggingRoleArn'],
+            'largeDataDeliveryS3Config': {
+                'bucketName': large_data_config['s3Bucket'],
+                'keyPrefix': large_data_config['s3Prefix'],
+            },
+        }
+    return logging_config
+
+
+def is_enabled(props: dict, key: str) -> bool:
+    """
+    Reads a destination flag. CloudFormation delivers boolean properties as strings.
+
+    Args:
+        props: the custom resource's ResourceProperties
+        key: the flag's property name
+
+    Returns:
+        True for 'true', False for 'false'
+
+    Raises:
+        KeyError: the flag is missing
+        ValueError: the flag is neither 'true' nor 'false'
+    """
+    value = props[key]
+    if value not in ('true', 'false'):
+        raise ValueError(f"{key} must be 'true' or 'false', got {value!r}")
+    return value == 'true'

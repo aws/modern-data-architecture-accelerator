@@ -437,4 +437,175 @@ describe('BedrockSettingsL3Construct Unit Tests', () => {
       template.resourceCountIs('AWS::KMS::Key', 2); // Each instance creates its own key
     });
   });
+  describe('Invocation Log Data Protection', () => {
+    const arnFor = (name: string) => `arn:aws:dataprotection::aws:data-identifier/${name}`;
+    const builtInArns = [
+      'EmailAddress',
+      'CreditCardNumber',
+      'Ssn-US',
+      'Name',
+      'Address',
+      'PhoneNumber-US',
+      'IpAddress',
+    ].map(arnFor);
+
+    const dataProtectionPolicy = (template: Template): Record<string, unknown> => {
+      const logGroups = Object.values(template.findResources('AWS::Logs::LogGroup'));
+      expect(logGroups).toHaveLength(1);
+      return logGroups[0].Properties.DataProtectionPolicy;
+    };
+
+    test('should always mask the built-in identifiers', () => {
+      new BedrockSettingsL3Construct(testApp.testStack, 'bedrock-settings', {
+        enableAuditLoggingToS3: true,
+        enableAuditLoggingToCloudwatch: true,
+        naming: testApp.naming,
+        roleHelper,
+      });
+      const policy = dataProtectionPolicy(Template.fromStack(testApp.testStack));
+
+      expect(policy).toEqual({
+        Name: 'bedrock-invocation-data-protection',
+        Version: '2021-06-01',
+        Statement: [
+          {
+            Sid: 'audit-policy',
+            DataIdentifier: builtInArns,
+            Operation: { Audit: { FindingsDestination: {} } },
+          },
+          {
+            Sid: 'redact-policy',
+            DataIdentifier: builtInArns,
+            Operation: { Deidentify: { MaskConfig: {} } },
+          },
+        ],
+      });
+    });
+
+    test('should add configured identifiers without removing built-in ones', () => {
+      new BedrockSettingsL3Construct(testApp.testStack, 'bedrock-settings', {
+        enableAuditLoggingToS3: false,
+        enableAuditLoggingToCloudwatch: true,
+        logDataProtection: { additionalIdentifiers: ['DriversLicense-US'] },
+        naming: testApp.naming,
+        roleHelper,
+      });
+      const policy = dataProtectionPolicy(Template.fromStack(testApp.testStack));
+
+      const statements = policy.Statement as Array<{ DataIdentifier: string[] }>;
+      expect(statements).toHaveLength(2);
+      statements.forEach(statement => {
+        expect(statement.DataIdentifier).toEqual([...builtInArns, arnFor('DriversLicense-US')]);
+      });
+    });
+
+    test('should reject logDataProtection when CloudWatch logging is disabled', () => {
+      expect(() => {
+        new BedrockSettingsL3Construct(testApp.testStack, 'bedrock-settings', {
+          enableAuditLoggingToS3: true,
+          enableAuditLoggingToCloudwatch: false,
+          logDataProtection: { additionalIdentifiers: ['DriversLicense-US'] },
+          naming: testApp.naming,
+          roleHelper,
+        });
+      }).toThrow(
+        'logDataProtection configures the CloudWatch invocation log group and requires enableAuditLoggingToCloudwatch: true.',
+      );
+    });
+  });
+
+  describe('CloudWatch Log Retention', () => {
+    const createWithRetention = (logRetentionDays?: number) =>
+      new BedrockSettingsL3Construct(testApp.testStack, 'bedrock-settings', {
+        enableAuditLoggingToS3: true,
+        enableAuditLoggingToCloudwatch: true,
+        logRetentionDays,
+        naming: testApp.naming,
+        roleHelper,
+      });
+
+    test('should apply a configured retention period', () => {
+      createWithRetention(90);
+      const template = Template.fromStack(testApp.testStack);
+      template.hasResourceProperties('AWS::Logs::LogGroup', {
+        RetentionInDays: 90,
+      });
+    });
+
+    test.each([undefined, 9999])('should never expire logs when retention is %s', logRetentionDays => {
+      createWithRetention(logRetentionDays);
+      const template = Template.fromStack(testApp.testStack);
+      template.hasResourceProperties('AWS::Logs::LogGroup', {
+        RetentionInDays: Match.absent(),
+      });
+    });
+
+    test('should reject a value CloudWatch Logs does not accept', () => {
+      expect(() => createWithRetention(45)).toThrow("Invalid logRetentionDays '45'.");
+    });
+
+    test('should reject logRetentionDays when CloudWatch logging is disabled', () => {
+      expect(() => {
+        new BedrockSettingsL3Construct(testApp.testStack, 'bedrock-settings', {
+          enableAuditLoggingToS3: true,
+          enableAuditLoggingToCloudwatch: false,
+          logRetentionDays: 90,
+          naming: testApp.naming,
+          roleHelper,
+        });
+      }).toThrow(
+        'logRetentionDays configures the CloudWatch invocation log group and requires enableAuditLoggingToCloudwatch: true.',
+      );
+    });
+  });
+
+  describe('S3 Log Retention', () => {
+    const createWithS3Retention = (s3RetentionDays?: number, options: { enableAuditLoggingToS3?: boolean } = {}) =>
+      new BedrockSettingsL3Construct(testApp.testStack, 'bedrock-settings', {
+        enableAuditLoggingToS3: options.enableAuditLoggingToS3 ?? true,
+        enableAuditLoggingToCloudwatch: true,
+        s3RetentionDays,
+        naming: testApp.naming,
+        roleHelper,
+      });
+
+    const expectedRules = [
+      {
+        Id: 'expire-model-invocation-logs',
+        Status: 'Enabled',
+        ExpirationInDays: 365,
+        NoncurrentVersionExpiration: { NoncurrentDays: 1 },
+      },
+    ];
+
+    test('should expire current and noncurrent versions bucket-wide', () => {
+      createWithS3Retention(365);
+      const template = Template.fromStack(testApp.testStack);
+      template.hasResourceProperties('AWS::S3::Bucket', {
+        LifecycleConfiguration: { Rules: expectedRules },
+      });
+    });
+
+    test('should expire the large-data overflow when only CloudWatch logging is enabled', () => {
+      createWithS3Retention(365, { enableAuditLoggingToS3: false });
+      const template = Template.fromStack(testApp.testStack);
+      template.hasResourceProperties('AWS::S3::Bucket', {
+        LifecycleConfiguration: { Rules: expectedRules },
+      });
+    });
+
+    test('should keep objects indefinitely when no retention is configured', () => {
+      createWithS3Retention(undefined);
+      const template = Template.fromStack(testApp.testStack);
+      template.hasResourceProperties('AWS::S3::Bucket', {
+        LifecycleConfiguration: Match.absent(),
+      });
+    });
+
+    test.each([0, -1, 1.5])('should reject s3RetentionDays %s', s3RetentionDays => {
+      expect(() => createWithS3Retention(s3RetentionDays)).toThrow(
+        `Invalid s3RetentionDays '${s3RetentionDays}'. Must be a positive integer number of days.`,
+      );
+    });
+  });
 });

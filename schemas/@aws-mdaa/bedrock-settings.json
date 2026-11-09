@@ -573,6 +573,20 @@
             ],
             "type": "object"
         },
+        "DataProtectionProperty": {
+            "additionalProperties": false,
+            "description": "CloudWatch Logs data protection (PII masking) configuration. The module always masks a built-in\nset of sensitive data types (emails, SSNs, credit card numbers, etc.) in log events on ingestion;\nthis configuration only tightens that posture by adding identifiers, and can never reduce it.\n\nUse cases: extending PII masking with additional identifiers, organization-specific masking requirements\n\nAWS: CloudWatch Logs Data Protection Policy\n\nValidation: Optional; additionalIdentifiers only adds to the built-in identifier set",
+            "properties": {
+                "additionalIdentifiers": {
+                    "description": "Additional AWS-managed data identifiers to mask, on top of the built-in\ncomprehensive set (EmailAddress, CreditCardNumber, Ssn-US, Name, Address,\nPhoneNumber-US, IpAddress). Each entry is a name matching an AWS-managed data\nidentifier (e.g., \"DriversLicense-US\", \"PassportNumber-US\").\n\nThis field is additive only - it cannot remove or override the built-in\nidentifiers, so it can never reduce the masking baseline.\n\nUse cases: stricter PII masking, organization-specific identifier requirements\n\nAWS: CloudWatch Logs managed data identifiers\n\nValidation: Optional; String[]; must be valid AWS data identifier names",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
         "DockerImage": {
             "additionalProperties": false,
             "description": "A Docker image",
@@ -3188,17 +3202,56 @@
     "properties": {
         "enableAuditLoggingToCloudwatch": {
             "default": false,
-            "description": "Enables CloudWatch audit logging for Bedrock model invocations.\nCreates an encrypted CloudWatch Log Group for real-time monitoring and alerting. At least one logging destination must be enabled.\n\nUse cases: Real-time AI usage monitoring, automated alerting, performance tracking, cost analysis\n\nAWS: Amazon Bedrock ModelInvocationLogging with CloudWatch Logs destination\n\nValidation: Required; Boolean",
+            "description": "Enables CloudWatch audit logging for Bedrock model invocations.\nCreates an encrypted CloudWatch Log Group for real-time monitoring and alerting, with PII always masked.\nAt least one logging destination must be enabled.\n\nUse cases: Real-time AI usage monitoring, automated alerting, performance tracking, cost analysis\n\nAWS: Amazon Bedrock ModelInvocationLogging with CloudWatch Logs destination\n\nValidation: Required; Boolean",
             "type": "boolean"
         },
         "enableAuditLoggingToS3": {
             "default": false,
-            "description": "Enables S3 audit logging for Bedrock model invocations.\nCreates an encrypted S3 bucket for storing invocation logs. At least one logging destination must be enabled.\n\nUse cases: Regulatory compliance auditing, long-term log retention, security monitoring of AI usage\n\nAWS: Amazon Bedrock ModelInvocationLogging with S3 destination\n\nValidation: Required; Boolean",
+            "description": "Enables S3 audit logging for Bedrock model invocations, delivered to the module's encrypted bucket.\nThe bucket is created either way, because it also receives the CloudWatch large-data overflow.\nAt least one logging destination must be enabled.\n\nUse cases: Regulatory compliance auditing, long-term log retention, security monitoring of AI usage\n\nAWS: Amazon Bedrock ModelInvocationLogging with S3 destination\n\nValidation: Required; Boolean",
             "type": "boolean"
+        },
+        "logDataProtection": {
+            "$ref": "#/definitions/DataProtectionProperty",
+            "description": "CloudWatch Logs data protection for the invocation log group, which receives the full text of every\nprompt and completion.\n\nPII masking is always applied to the invocation log group: sensitive data (emails, SSNs, credit card\nnumbers, etc.) is masked in log events on ingestion. Users with the logs:Unmask permission can still\nview unmasked data. Masking is not retroactive, and does not reach the S3 copies of the logs. This\noptional configuration only adds identifiers to the built-in set; it can never reduce it.\n\nUse cases: extending PII masking of prompts and completions with additional identifiers\n\nAWS: CloudWatch Logs Data Protection Policy\n\nValidation: Optional; DataProtectionProperty; additive only; requires enableAuditLoggingToCloudwatch: true"
+        },
+        "logRetentionDays": {
+            "default": 9999,
+            "description": "CloudWatch Logs retention period for the invocation log group, in days. `9999` means never-expire and\ncan be set explicitly to lock indefinite retention into config; omitting the field is equivalent.\nOn accounts governed by Landing Zone Accelerator, LZA's account-wide log retention replaces this value.\n\nUse cases: limiting how long prompts are kept, cost management, compliance retention requirements\n\nAWS: CloudWatch Logs log group retention\n\nValidation: Optional; Number; must be a valid RetentionDays value (1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1096, 1827, 2192, 2557, 2922, 3288, 3653, 9999); requires enableAuditLoggingToCloudwatch: true",
+            "enum": [
+                1,
+                1096,
+                120,
+                14,
+                150,
+                180,
+                1827,
+                2192,
+                2557,
+                2922,
+                3,
+                30,
+                3288,
+                365,
+                3653,
+                400,
+                5,
+                545,
+                60,
+                7,
+                731,
+                90,
+                9999
+            ],
+            "type": "number"
         },
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",
             "description": "Q-ENHANCED-PROPERTY\nOptional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.\n\nUse cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions\n\nAWS: CDK Nag suppressions for compliance rule management and security exception documentation\n\nValidation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management"
+        },
+        "s3RetentionDays": {
+            "description": "Number of days to keep invocation log objects in the S3 bucket. Applies to the whole bucket: the S3\ndestination and the CloudWatch large-data overflow (bodies over 100 KB), so a value shorter than\nlogRetentionDays removes overflow bodies before the CloudWatch events that point to them. Omit to keep\nobjects indefinitely.\n\nUse cases: limiting how long prompts are kept, cost management, compliance retention requirements\n\nSetting it also expires every noncurrent object version 1 day after it becomes noncurrent, across the\nwhole bucket, so versioning can recover an overwritten or deleted object for 1 day only.\n\nAWS: S3 lifecycle expiration (current and noncurrent object versions)\n\nValidation: Optional; Integer; positive",
+            "minimum": 1,
+            "type": "integer"
         },
         "sagemakerBlueprint": {
             "$ref": "#/definitions/MdaaSageMakerCustomBluePrintConfig",

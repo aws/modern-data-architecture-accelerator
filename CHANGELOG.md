@@ -2,9 +2,19 @@
 
 ## [NEXT_RELEASE_VERSION] - NEXT_RELEASE_DATE
 
+### New Features
+
+#### Bedrock Settings Module
+
+- The model invocation log group now always masks PII with a CloudWatch data protection policy, extendable via `logDataProtection.additionalIdentifiers`. `Upgrade impact:` readers of the log group see masked values unless they hold `logs:Unmask`; events logged before the deploy stay unmasked. See [Masking and Retention](packages/apps/ai/bedrock-settings-app/README.md#masking-and-retention).
+- Added optional `logRetentionDays` and `s3RetentionDays` for the invocation logs. Logs still never expire by default, so existing configs are unchanged. See [Masking and Retention](packages/apps/ai/bedrock-settings-app/README.md#masking-and-retention).
+
 ### Bug Fixes
 
 - Fixed GAIA v2 UI distributions without a custom domain emitting `minimumProtocolVersionWithoutCertificate` and `sslSupportMethodWithoutCertificate` synth warnings. The TLS 1.2 minimum is now set only with a custom certificate, and the `AwsSolutions-CFR4` suppression reason now states that the default CloudFront certificate allows TLSv1; set `domainName` and `acmCertArn` to enforce TLS 1.2. Deployed distributions are unchanged.
+
+- Fixed the Bedrock Settings module reporting a deploy with a malformed configuration as successful, leaving invocation logging unconfigured. `Upgrade impact:` a malformed configuration now fails the deploy.
+- Fixed the Bedrock Settings module logging a URL that anyone able to read its logs could use to report a false result for its deployment.
 
 ### General Changes
 
