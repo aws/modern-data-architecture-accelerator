@@ -161,14 +161,17 @@ function createDistribution(config: DistributionConfig): Distribution {
         },
       ],
     },
-    minimumProtocolVersion: SecurityPolicyProtocol.TLS_V1_2_2021,
     defaultRootObject: 'index.html',
     priceClass: props.cloudFrontPriceClass ?? PriceClass.PRICE_CLASS_100,
     httpVersion: HttpVersion.HTTP2_AND_3,
     webAclId: props.webACLId ? props.webACLId : undefined,
     domainNames: props.domainName ? [props.domainName] : undefined,
-    sslSupportMethod: SSLMethod.SNI,
-    ...(certificate && { certificate }),
+    // TLS settings apply only to a custom certificate; the default *.cloudfront.net certificate ignores them.
+    ...(certificate && {
+      certificate,
+      minimumProtocolVersion: SecurityPolicyProtocol.TLS_V1_2_2021,
+      sslSupportMethod: SSLMethod.SNI,
+    }),
     logBucket: logBucket,
     logFilePrefix: logFilePrefix,
     logIncludesCookies: false,
@@ -301,9 +304,9 @@ function applyNagSuppressions(
           id: 'AwsSolutions-CFR4',
           reason:
             'When no custom domain or ACM certificate is configured, CloudFront uses the default *.cloudfront.net certificate. ' +
-            'The distribution still enforces TLS 1.2 minimum via SecurityPolicyProtocol.TLS_V1_2_2021 set on the viewer ' +
-            'certificate, so in-transit encryption is not weakened. Custom domain with ACM certificate is recommended for ' +
-            'production deployments; configure via the domainName and acmCertArn properties on AdminUiProps / ClientUiProps.',
+            'Its security policy is fixed by CloudFront and allows TLSv1 viewer connections. A TLS 1.2 minimum ' +
+            '(TLSv1.2_2021) requires a custom domain with an ACM certificate; configure both domainName and acmCertArn on ' +
+            'AdminUiProps / ClientUiProps for production deployments.',
         },
       ],
       true,

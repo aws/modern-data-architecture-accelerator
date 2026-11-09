@@ -1,5 +1,15 @@
 # Change Log
 
+## [NEXT_RELEASE_VERSION] - NEXT_RELEASE_DATE
+
+### Bug Fixes
+
+- Fixed GAIA v2 UI distributions without a custom domain emitting `minimumProtocolVersionWithoutCertificate` and `sslSupportMethodWithoutCertificate` synth warnings. The TLS 1.2 minimum is now set only with a custom certificate, and the `AwsSolutions-CFR4` suppression reason now states that the default CloudFront certificate allows TLSv1; set `domainName` and `acmCertArn` to enforce TLS 1.2. Deployed distributions are unchanged.
+
+### General Changes
+
+- Updated `aws-cdk-lib` to 2.265.0 to address a CVE in its bundled `brace-expansion`.
+
 ## [1.10.0] - 2026-11-06
 
 ### Starter Kit Changes

@@ -41,7 +41,7 @@
     "@aws-mdaa/s3-constructs": "1.10.0",
     "@aws-mdaa/s3-helpers": "1.10.0",
     "ajv": "8.18.0",
-    "aws-cdk-lib": "2.263.0",
+    "aws-cdk-lib": "2.265.0",
     "cdk-nag": "2.37.55",
     "constructs": "10.6.0",
     "source-map-support": "0.5.21",

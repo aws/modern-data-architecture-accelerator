@@ -37,6 +37,10 @@
 #     - Scoped to every package with a diff test, not just app packages, and not
 #       subject to .baseline-coverage-ignore: that list exempts a package from
 #       needing a diff test, not from maintaining the one it already has
+#   Property 11: All packages under packages/ pin the same aws-cdk-lib version
+#     - Every aws-cdk-lib entry (dependencies, devDependencies, peerDependencies,
+#       optionalDependencies) in every git-tracked packages/**/package.json must be
+#       identical; packages off the most common version are reported
 #
 # Usage: ./scripts/quality/validate_packages.sh
 # Exit code: 0 if all packages pass, 1 if any deviations found
@@ -379,6 +383,35 @@ for pkg_dir in $(discover_packages); do
     fail "$pkg_dir" "Property 9 - .npmignore must contain '!*.js' to include compiled JavaScript"
   fi
 done
+
+# Property 11: All packages under packages/ pin the same aws-cdk-lib version. A mis-resolved
+# merge conflict can leave some packages on an old pin while the rest move on.
+# Captured with $(...) rather than read from <(...) so that, under set -e, a git or node
+# failure aborts the script instead of silently reporting no mismatches.
+_cdk_report=$(git ls-files -- ':(glob)packages/**/package.json' | node -e "
+  const fs = require('fs');
+  const pins = [];
+  for (const file of fs.readFileSync(0, 'utf8').split('\\n').filter(Boolean)) {
+    const pkg = JSON.parse(fs.readFileSync(file, 'utf8'));
+    for (const section of ['dependencies', 'devDependencies', 'peerDependencies', 'optionalDependencies']) {
+      const spec = (pkg[section] || {})['aws-cdk-lib'];
+      if (spec !== undefined) pins.push({ dir: file.replace(/\\/package\\.json$/, ''), section, spec });
+    }
+  }
+  const counts = {};
+  for (const p of pins) counts[p.spec] = (counts[p.spec] || 0) + 1;
+  const versions = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+  if (versions.length <= 1) process.exit(0);
+  const expected = versions[0];
+  const found = versions.map(v => v + ' (' + counts[v] + ')').join(', ');
+  for (const p of pins.filter(p => p.spec !== expected)) {
+    console.log(p.dir + '\\t' + p.section + ' aws-cdk-lib is \"' + p.spec + '\", expected \"' + expected + '\"; versions found: ' + found);
+  }
+")
+while IFS= read -r _cdk_mismatch; do
+  [ -z "$_cdk_mismatch" ] && continue
+  fail "${_cdk_mismatch%%$'\t'*}" "Property 11 - ${_cdk_mismatch#*$'\t'}"
+done <<< "$_cdk_report"
 
 echo ""
 echo "Checked $CHECKED packages, found $ERRORS error(s)."

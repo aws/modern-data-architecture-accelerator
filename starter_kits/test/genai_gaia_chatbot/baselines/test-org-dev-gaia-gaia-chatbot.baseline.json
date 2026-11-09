@@ -6994,7 +6994,7 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/ai/gaia-v2-l3-construct/lib/utils/utils.ts] When no custom domain or ACM certificate is configured, CloudFront uses the default *.cloudfront.net certificate. The distribution still enforces TLS 1.2 minimum via SecurityPolicyProtocol.TLS_V1_2_2021 set on the viewer certificate, so in-transit encryption is not weakened. Custom domain with ACM certificate is recommended for production deployments; configure via the domainName and acmCertArn properties on AdminUiProps / ClientUiProps.",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-v2-l3-construct/lib/utils/utils.ts] When no custom domain or ACM certificate is configured, CloudFront uses the default *.cloudfront.net certificate. Its security policy is fixed by CloudFront and allows TLSv1 viewer connections. A TLS 1.2 minimum (TLSv1.2_2021) requires a custom domain with an ACM certificate; configure both domainName and acmCertArn on AdminUiProps / ClientUiProps for production deployments.",
               "id": "AwsSolutions-CFR4"
             }
           ]
@@ -7169,7 +7169,7 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/ai/gaia-v2-l3-construct/lib/utils/utils.ts] When no custom domain or ACM certificate is configured, CloudFront uses the default *.cloudfront.net certificate. The distribution still enforces TLS 1.2 minimum via SecurityPolicyProtocol.TLS_V1_2_2021 set on the viewer certificate, so in-transit encryption is not weakened. Custom domain with ACM certificate is recommended for production deployments; configure via the domainName and acmCertArn properties on AdminUiProps / ClientUiProps.",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-v2-l3-construct/lib/utils/utils.ts] When no custom domain or ACM certificate is configured, CloudFront uses the default *.cloudfront.net certificate. Its security policy is fixed by CloudFront and allows TLSv1 viewer connections. A TLS 1.2 minimum (TLSv1.2_2021) requires a custom domain with an ACM certificate; configure both domainName and acmCertArn on AdminUiProps / ClientUiProps for production deployments.",
               "id": "AwsSolutions-CFR4"
             }
           ]
@@ -7912,7 +7912,7 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/ai/gaia-v2-l3-construct/lib/utils/utils.ts] When no custom domain or ACM certificate is configured, CloudFront uses the default *.cloudfront.net certificate. The distribution still enforces TLS 1.2 minimum via SecurityPolicyProtocol.TLS_V1_2_2021 set on the viewer certificate, so in-transit encryption is not weakened. Custom domain with ACM certificate is recommended for production deployments; configure via the domainName and acmCertArn properties on AdminUiProps / ClientUiProps.",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-v2-l3-construct/lib/utils/utils.ts] When no custom domain or ACM certificate is configured, CloudFront uses the default *.cloudfront.net certificate. Its security policy is fixed by CloudFront and allows TLSv1 viewer connections. A TLS 1.2 minimum (TLSv1.2_2021) requires a custom domain with an ACM certificate; configure both domainName and acmCertArn on AdminUiProps / ClientUiProps for production deployments.",
               "id": "AwsSolutions-CFR4"
             }
           ]
@@ -8087,7 +8087,7 @@
         "cdk_nag": {
           "rules_to_suppress": [
             {
-              "reason": "[MDAA:@aws-mdaa/ai/gaia-v2-l3-construct/lib/utils/utils.ts] When no custom domain or ACM certificate is configured, CloudFront uses the default *.cloudfront.net certificate. The distribution still enforces TLS 1.2 minimum via SecurityPolicyProtocol.TLS_V1_2_2021 set on the viewer certificate, so in-transit encryption is not weakened. Custom domain with ACM certificate is recommended for production deployments; configure via the domainName and acmCertArn properties on AdminUiProps / ClientUiProps.",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-v2-l3-construct/lib/utils/utils.ts] When no custom domain or ACM certificate is configured, CloudFront uses the default *.cloudfront.net certificate. Its security policy is fixed by CloudFront and allows TLSv1 viewer connections. A TLS 1.2 minimum (TLSv1.2_2021) requires a custom domain with an ACM certificate; configure both domainName and acmCertArn on AdminUiProps / ClientUiProps for production deployments.",
               "id": "AwsSolutions-CFR4"
             }
           ]
