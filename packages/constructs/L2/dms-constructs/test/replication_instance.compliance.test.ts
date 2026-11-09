@@ -27,7 +27,7 @@ describe('Replication Instance Compliance Tests', () => {
     kmsKey: testKey,
     replicationInstanceClass: 'dms.t3.micro',
     naming: testApp.naming,
-    replicationSubnetGroupIdentifier: subnetGroup.attrId,
+    replicationSubnetGroupIdentifier: subnetGroup.ref,
   };
 
   new MdaaReplicationInstance(testApp.testStack, 'test-rep-isntance', replicationInstanceProps);
@@ -81,7 +81,7 @@ describe('Replication Instance Long Name Tests', () => {
     kmsKey: testKey,
     replicationInstanceClass: 'dms.t3.micro',
     naming: testApp.naming,
-    replicationSubnetGroupIdentifier: subnetGroup.attrId,
+    replicationSubnetGroupIdentifier: subnetGroup.ref,
   };
 
   new MdaaReplicationInstance(testApp.testStack, 'test-rep-isntance', replicationInstanceProps);

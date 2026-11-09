@@ -314,7 +314,7 @@ export class DataZoneAuthorizationConstruct extends Construct {
   private createPolicyGrantDetail(
     props: DataZoneAuthorizationConstructProps,
     policy: AuthorizationPolicy,
-  ): CfnPolicyGrant.PolicyGrantDetailProperty | undefined {
+  ): CfnPolicyGrant.PolicyGrantDetailProperty {
     if (this.isBlueprintPolicy(props.entityType, policy.policyType)) {
       return this.createBlueprintAuthorizationDetail(policy.policyType);
     }
@@ -477,7 +477,7 @@ export class DataZoneAuthorizationConstruct extends Construct {
   private mapPolicyDetailFromFlattened(
     policyType: PolicyType,
     policy: AuthorizationPolicy,
-  ): CfnPolicyGrant.PolicyGrantDetailProperty | undefined {
+  ): CfnPolicyGrant.PolicyGrantDetailProperty {
     const propertyName = this.getPolicyDetailPropertyName(policyType);
 
     const detailValue: PolicyDetailValue = {};
@@ -486,10 +486,6 @@ export class DataZoneAuthorizationConstruct extends Construct {
 
     // Note: domainUnitId is handled in createBlueprintPrincipal for blueprint policies
     // and should not be in the detail object
-
-    if (Object.keys(detailValue).length === 0) {
-      return undefined;
-    }
 
     return { [propertyName]: detailValue };
   }
