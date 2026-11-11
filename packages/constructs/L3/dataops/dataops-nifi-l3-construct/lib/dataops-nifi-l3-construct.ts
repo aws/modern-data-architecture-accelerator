@@ -398,7 +398,6 @@ export class NifiL3Construct extends MdaaL3Construct {
     Object.entries(nifiClusters).forEach(nifiClusterEntry => {
       const nifiClusterName = nifiClusterEntry[0];
       const nifiCluster = nifiClusterEntry[1];
-      nifiCluster.cluster.node.addDependency(addClusterProps.zkK8sChart);
       addClusterProps.zkSecurityGroup.connections.allowFrom(nifiCluster.cluster.securityGroup, Port.tcp(2181));
       nifiCluster.options.peerClusters?.forEach(peerClusterName => {
         const peerCluster = nifiClusters[peerClusterName];
@@ -828,7 +827,6 @@ export class NifiL3Construct extends MdaaL3Construct {
     });
     const zkManifest = eksCluster.addCdk8sChart('zookeeper', zkK8sChart);
     zkManifest.node.addDependency(zkNamespaceManifest);
-    zkManifest.node.addDependency(caIssuerCdk8sChart);
     const restartNifiCmdProps: KubernetesCmdProps = {
       cluster: eksCluster,
       namespace: NifiL3Construct.ZOOKEEPER_NAMESPACE,

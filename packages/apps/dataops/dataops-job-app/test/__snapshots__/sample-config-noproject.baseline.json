@@ -344,6 +344,9 @@
     "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
+        "Architectures": [
+          "arm64"
+        ],
         "Code": {
           "S3Bucket": "mock-bucket",
           "S3Key": "mock-key"
@@ -359,6 +362,7 @@
             "Ref": "jobdeploymentPythonJobOneAwsCliLayer54E463EA"
           }
         ],
+        "MemorySize": 1024,
         "Role": "arn:test-partition:iam::test-account:role/test-deployment-role",
         "Runtime": "python3.13",
         "Tags": [

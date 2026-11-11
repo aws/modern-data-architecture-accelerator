@@ -5,7 +5,9 @@
 
 import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
+import { CfnResource, Stack } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
+import { KubernetesManifest } from 'aws-cdk-lib/aws-eks';
 import { NifiL3Construct, NifiL3ConstructProps } from '../lib';
 import { NifiClusterOptions } from '../lib';
 
@@ -290,4 +292,57 @@ describe('Registry Optional Compliance Stack Tests', () => {
   Template.fromStack(testApp.testStack);
 
   // console.log( JSON.stringify( template, undefined, 2 ) )
+});
+
+describe('Nifi Deployment Ordering Tests', () => {
+  const testApp = new MdaaTestApp();
+  const stack = testApp.testStack;
+
+  const constructProps: NifiL3ConstructProps = {
+    roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+    naming: testApp.naming,
+    kmsArn: 'arn:test-partition:kms:test-region:test-acct:key/test-key-id',
+    nifi: {
+      vpcId: 'test-vpc-id',
+      subnetIds: {
+        'test-subnet-1': 'test-subnet-id',
+      },
+      adminRoles: [
+        {
+          id: 'testing',
+        },
+      ],
+      clusters: {
+        'test-cluster1': {
+          saml: {
+            idpMetadataUrl: 'testing-url',
+          },
+          adminIdentities: ['testing'],
+        },
+      },
+    },
+  };
+
+  new NifiL3Construct(stack, 'teststack', constructProps);
+  const resources = Template.fromStack(stack).toJSON().Resources;
+
+  const manifestLogicalId = (manifestId: string): string => {
+    const manifest = stack.node
+      .findAll()
+      .find((c): c is KubernetesManifest => c instanceof KubernetesManifest && c.node.id === manifestId);
+    if (!manifest) {
+      throw new Error(`KubernetesManifest '${manifestId}' not found`);
+    }
+    return Stack.of(manifest).getLogicalId(manifest.node.defaultChild as CfnResource);
+  };
+
+  const dependsOn = (manifestId: string): string[] => resources[manifestLogicalId(manifestId)].DependsOn ?? [];
+
+  test('ZooKeeper manifest deploys after the CA issuer manifest', () => {
+    expect(dependsOn('zookeeper')).toContain(manifestLogicalId('ca-issuer'));
+  });
+
+  test('NiFi cluster manifest deploys after the CA issuer manifest', () => {
+    expect(dependsOn('nifi-test-cluster1')).toContain(manifestLogicalId('ca-issuer'));
+  });
 });

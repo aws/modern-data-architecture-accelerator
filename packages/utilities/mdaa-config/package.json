@@ -34,7 +34,7 @@
   "dependencies": {
     "@aws-mdaa/construct": "1.10.0",
     "@aws-mdaa/naming": "1.10.0",
-    "aws-cdk-lib": "2.265.0",
+    "aws-cdk-lib": "2.273.0",
     "constructs": "10.6.0",
     "xregexp": "5.1.1"
   },

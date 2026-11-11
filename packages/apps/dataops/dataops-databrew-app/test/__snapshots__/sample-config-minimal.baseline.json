@@ -143,7 +143,8 @@
         "Type": "PROFILE"
       },
       "DependsOn": [
-        "jobsmydatasetD1B5E445"
+        "jobsmydatasetD1B5E445",
+        "jobsmydatasetDatasetmydatasetmydatasetssmFFB4124B"
       ]
     },
     "jobsmyprofilejobJobmyprofilejobmyprofilejobssm94D6BFC0": {
@@ -159,7 +160,11 @@
         },
         "Type": "String",
         "Value": "test-org-test-env-test-domain-test-databrew-minimal-my-profile-job"
-      }
+      },
+      "DependsOn": [
+        "jobsmydatasetD1B5E445",
+        "jobsmydatasetDatasetmydatasetmydatasetssmFFB4124B"
+      ]
     }
   },
   "Outputs": {

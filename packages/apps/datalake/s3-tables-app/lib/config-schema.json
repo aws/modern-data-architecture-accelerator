@@ -2817,6 +2817,9 @@
                     },
                     "type": "array"
                 },
+                "azLiteralWarningSilenced": {
+                    "description": "Silencing a specific diagnostic, should only do this once."
+                },
                 "bundlingRequired": {
                     "description": "Indicates whether the stack requires bundling or not",
                     "type": "boolean"
@@ -2935,6 +2938,7 @@
                 "addPermissionsBoundaryAspect",
                 "artifactId",
                 "availabilityZones",
+                "azLiteralWarningSilenced",
                 "bundlingRequired",
                 "dependencies",
                 "env",

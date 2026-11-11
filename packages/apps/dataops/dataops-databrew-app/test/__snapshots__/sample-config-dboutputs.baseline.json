@@ -237,7 +237,9 @@
       },
       "DependsOn": [
         "jobsmdaadbdatasetCEC3D8B0",
-        "jobsmdaadbrecipe9EF4E85B"
+        "jobsmdaadbdatasetDatasetmdaadbdatasetmdaadbdatasetssm179BB659",
+        "jobsmdaadbrecipe9EF4E85B",
+        "jobsmdaadbrecipeRecipemdaadbrecipemdaadbrecipessm40F14A21"
       ]
     },
     "jobstestcatalogoutputjobJobtestcatalogoutputjobtestcatalogoutputjobssm7652E628": {
@@ -253,7 +255,13 @@
         },
         "Type": "String",
         "Value": "test-org-test-env-test-domain-test-databrew-dboutputs-test-catalog-output-job"
-      }
+      },
+      "DependsOn": [
+        "jobsmdaadbdatasetCEC3D8B0",
+        "jobsmdaadbdatasetDatasetmdaadbdatasetmdaadbdatasetssm179BB659",
+        "jobsmdaadbrecipe9EF4E85B",
+        "jobsmdaadbrecipeRecipemdaadbrecipemdaadbrecipessm40F14A21"
+      ]
     },
     "jobstestdatabaseoutputjob058511D8": {
       "Type": "AWS::DataBrew::Job",
@@ -314,7 +322,9 @@
       },
       "DependsOn": [
         "jobsmdaadbdatasetCEC3D8B0",
-        "jobsmdaadbrecipe9EF4E85B"
+        "jobsmdaadbdatasetDatasetmdaadbdatasetmdaadbdatasetssm179BB659",
+        "jobsmdaadbrecipe9EF4E85B",
+        "jobsmdaadbrecipeRecipemdaadbrecipemdaadbrecipessm40F14A21"
       ]
     },
     "jobstestdatabaseoutputjobJobtestdatabaseoutputjobtestdatabaseoutputjobssm94E078CD": {
@@ -330,7 +340,13 @@
         },
         "Type": "String",
         "Value": "test-org-test-env-test-domain-test-databrew-dboutputs-test-database-output-job"
-      }
+      },
+      "DependsOn": [
+        "jobsmdaadbdatasetCEC3D8B0",
+        "jobsmdaadbdatasetDatasetmdaadbdatasetmdaadbdatasetssm179BB659",
+        "jobsmdaadbrecipe9EF4E85B",
+        "jobsmdaadbrecipeRecipemdaadbrecipemdaadbrecipessm40F14A21"
+      ]
     }
   },
   "Outputs": {

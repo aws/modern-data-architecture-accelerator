@@ -8144,8 +8144,6 @@
         },
         "Model": {
           "BedrockModelConfig": {
-            "ApiFormat": "converse_stream",
-            "ModelId": "arn:test-partition:bedrock:test-region::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0",
             "AdditionalParams": {
               "guardrailConfig": {
                 "guardrailIdentifier": {
@@ -8162,7 +8160,9 @@
                 },
                 "trace": "enabled"
               }
-            }
+            },
+            "ApiFormat": "converse_stream",
+            "ModelId": "arn:test-partition:bedrock:test-region::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0"
           }
         },
         "SystemPrompt": [

@@ -659,7 +659,10 @@
         "Value": {
           "Ref": "dmsreplicationinstancetestinstanceCD0A619E"
         }
-      }
+      },
+      "DependsOn": [
+        "dmsreplicationsubnetgrouptestinstance162D08A6"
+      ]
     },
     "dmsreplicationinstancetestinstancereplicationInstancetestinstanceipssmE8599E88": {
       "Type": "AWS::SSM::Parameter",
@@ -679,7 +682,10 @@
             "ReplicationInstancePrivateIpAddresses"
           ]
         }
-      }
+      },
+      "DependsOn": [
+        "dmsreplicationsubnetgrouptestinstance162D08A6"
+      ]
     },
     "dmsendpointtestsourcesqlserver96BC5EAA": {
       "Type": "AWS::DMS::Endpoint",

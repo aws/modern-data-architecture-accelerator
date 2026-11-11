@@ -119,6 +119,28 @@
               "Fn::Base64": "export ASSETS_DIR=/tmp/lifecycle-assets/onStart\naws s3 cp --recursive s3://some-bucket-name/sagemaker/assets/onStart/ $ASSETS_DIR\necho \"testing onStart\"\nsh $ASSETS_DIR/testing/test.sh"
             }
           }
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sm-notebook"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-notebook-app"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
         ]
       }
     },
@@ -556,6 +578,9 @@
     "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C512MiB6723FB92": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
+        "Architectures": [
+          "arm64"
+        ],
         "Code": {
           "S3Bucket": "mock-bucket",
           "S3Key": "mock-key"

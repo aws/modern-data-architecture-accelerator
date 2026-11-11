@@ -11229,6 +11229,13 @@
             ],
             "SubnetId": "subnet-123abc456def"
           }
+        },
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-comprehensive",
+          "mdaa_org": "test-org"
         }
       }
     },
@@ -11267,6 +11274,13 @@
             ],
             "SubnetId": "subnet-09ba402b76a346ffb"
           }
+        },
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-comprehensive",
+          "mdaa_org": "test-org"
         }
       }
     },
@@ -11304,6 +11318,13 @@
             ],
             "SubnetId": "subnet-123abc456def"
           }
+        },
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-comprehensive",
+          "mdaa_org": "test-org"
         }
       }
     },
@@ -11344,6 +11365,13 @@
             ],
             "SubnetId": "subnet-123abc456def"
           }
+        },
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-comprehensive",
+          "mdaa_org": "test-org"
         }
       }
     },
@@ -11380,6 +11408,13 @@
             ],
             "SubnetId": "subnet-123abc456def"
           }
+        },
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-comprehensive",
+          "mdaa_org": "test-org"
         }
       }
     },

@@ -387,7 +387,8 @@
         ]
       },
       "DependsOn": [
-        "jobsmdaajdbcdataset9CDFD681"
+        "jobsmdaajdbcdataset9CDFD681",
+        "jobsmdaajdbcdatasetDatasetmdaajdbcdatasetmdaajdbcdatasetssm64E05312"
       ]
     },
     "jobsmdaatestprojectProjectmdaatestprojectmdaatestprojectssmF4BC23A9": {
@@ -403,7 +404,11 @@
         },
         "Type": "String",
         "Value": "test-org-test-env-test-domain-test-databrew-noproject-mdaa-test-project"
-      }
+      },
+      "DependsOn": [
+        "jobsmdaajdbcdataset9CDFD681",
+        "jobsmdaajdbcdatasetDatasetmdaajdbcdatasetmdaajdbcdatasetssm64E05312"
+      ]
     },
     "jobsmdaatestprojectProjecttestorgtestenvtestdomaintestdatabrewnoprojectmdaajdbcdatasetmdaatestprojectssmCC5043B8": {
       "Type": "AWS::SSM::Parameter",
@@ -418,7 +423,11 @@
         },
         "Type": "String",
         "Value": "test-org-test-env-test-domain-test-databrew-noproject-mdaa-jdbc-dataset"
-      }
+      },
+      "DependsOn": [
+        "jobsmdaajdbcdataset9CDFD681",
+        "jobsmdaajdbcdatasetDatasetmdaajdbcdatasetmdaajdbcdatasetssm64E05312"
+      ]
     },
     "jobsmdaatestprojectProjectorgdevdataopsdatabrewmdaas3recipemdaatestprojectssmD0FD76CE": {
       "Type": "AWS::SSM::Parameter",
@@ -433,7 +442,11 @@
         },
         "Type": "String",
         "Value": "org-dev-data-ops-databrew-mdaa-s3-recipe"
-      }
+      },
+      "DependsOn": [
+        "jobsmdaajdbcdataset9CDFD681",
+        "jobsmdaajdbcdatasetDatasetmdaajdbcdatasetmdaajdbcdatasetssm64E05312"
+      ]
     },
     "jobstestrecipejob6B5777AFD": {
       "Type": "AWS::DataBrew::Job",
@@ -488,7 +501,10 @@
         "Type": "RECIPE"
       },
       "DependsOn": [
-        "jobsmdaatestproject3CBB5534"
+        "jobsmdaatestproject3CBB5534",
+        "jobsmdaatestprojectProjectmdaatestprojectmdaatestprojectssmF4BC23A9",
+        "jobsmdaatestprojectProjectorgdevdataopsdatabrewmdaas3recipemdaatestprojectssmD0FD76CE",
+        "jobsmdaatestprojectProjecttestorgtestenvtestdomaintestdatabrewnoprojectmdaajdbcdatasetmdaatestprojectssmCC5043B8"
       ]
     },
     "jobstestrecipejob6Jobtestrecipejob6testrecipejob6ssmA5CC3240": {
@@ -504,7 +520,13 @@
         },
         "Type": "String",
         "Value": "test-org-test-env-test-domain-test-databrew-noproject-test-recipe-job6"
-      }
+      },
+      "DependsOn": [
+        "jobsmdaatestproject3CBB5534",
+        "jobsmdaatestprojectProjectmdaatestprojectmdaatestprojectssmF4BC23A9",
+        "jobsmdaatestprojectProjectorgdevdataopsdatabrewmdaas3recipemdaatestprojectssmD0FD76CE",
+        "jobsmdaatestprojectProjecttestorgtestenvtestdomaintestdatabrewnoprojectmdaajdbcdatasetmdaatestprojectssmCC5043B8"
+      ]
     },
     "jobsmdaatestjobschedule2A766AB8": {
       "Type": "AWS::DataBrew::Schedule",
@@ -538,7 +560,8 @@
         ]
       },
       "DependsOn": [
-        "jobstestrecipejob6B5777AFD"
+        "jobstestrecipejob6B5777AFD",
+        "jobstestrecipejob6Jobtestrecipejob6testrecipejob6ssmA5CC3240"
       ]
     },
     "jobsmdaatestjobscheduleSchedulemdaatestjobschedulemdaatestjobschedulessm865B09C1": {
@@ -554,7 +577,11 @@
         },
         "Type": "String",
         "Value": "test-org-test-env-test-domain-test-databrew-noproject-mdaa-test-job-schedule"
-      }
+      },
+      "DependsOn": [
+        "jobstestrecipejob6B5777AFD",
+        "jobstestrecipejob6Jobtestrecipejob6testrecipejob6ssmA5CC3240"
+      ]
     },
     "jobstestprofilejob1C3C79CD": {
       "Type": "AWS::DataBrew::Job",
@@ -599,7 +626,8 @@
         "Type": "PROFILE"
       },
       "DependsOn": [
-        "jobsmdaajdbcdataset9CDFD681"
+        "jobsmdaajdbcdataset9CDFD681",
+        "jobsmdaajdbcdatasetDatasetmdaajdbcdatasetmdaajdbcdatasetssm64E05312"
       ]
     },
     "jobstestprofilejobJobtestprofilejobtestprofilejobssm316D044C": {
@@ -615,7 +643,11 @@
         },
         "Type": "String",
         "Value": "test-org-test-env-test-domain-test-databrew-noproject-test-profile-job"
-      }
+      },
+      "DependsOn": [
+        "jobsmdaajdbcdataset9CDFD681",
+        "jobsmdaajdbcdatasetDatasetmdaajdbcdatasetmdaajdbcdatasetssm64E05312"
+      ]
     },
     "jobsmdaatestprofileschedule54C6EDC4": {
       "Type": "AWS::DataBrew::Schedule",
@@ -649,7 +681,8 @@
         ]
       },
       "DependsOn": [
-        "jobstestprofilejob1C3C79CD"
+        "jobstestprofilejob1C3C79CD",
+        "jobstestprofilejobJobtestprofilejobtestprofilejobssm316D044C"
       ]
     },
     "jobsmdaatestprofilescheduleSchedulemdaatestprofileschedulemdaatestprofileschedulessm164B61E0": {
@@ -665,7 +698,11 @@
         },
         "Type": "String",
         "Value": "test-org-test-env-test-domain-test-databrew-noproject-mdaa-test-profil--1c329f80"
-      }
+      },
+      "DependsOn": [
+        "jobstestprofilejob1C3C79CD",
+        "jobstestprofilejobJobtestprofilejobtestprofilejobssm316D044C"
+      ]
     }
   },
   "Outputs": {

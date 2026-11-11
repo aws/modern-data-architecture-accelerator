@@ -562,6 +562,10 @@
                     "description": "A value that indicates the last time that a file was modified (that is, a file was written to) before the PREPARING phase.\n\nThis option is required for cases when you need to run the same task more than one time.\n\nDefault value: `PRESERVE`\n\n`PRESERVE` : Preserve original `Mtime` (recommended)\n\n`NONE` : Ignore `Mtime` .\n\n> If `Mtime` is set to `PRESERVE` , `Atime` must be set to `BEST_EFFORT` .\n>\n> If `Mtime` is set to `NONE` , `Atime` must also be set to `NONE` .",
                     "type": "string"
                 },
+                "objectMetadata": {
+                    "description": "A value that determines whether source object metadata should be copied to the destination.\n\nPRESERVE copies metadata; NONE copies only file-mtime.",
+                    "type": "string"
+                },
                 "objectTags": {
                     "description": "Specifies whether you want DataSync to `PRESERVE` object tags (default behavior) when transferring between object storage systems.\n\nIf you want your DataSync task to ignore object tags, specify the `NONE` value.",
                     "type": "string"
@@ -2952,6 +2956,9 @@
                     },
                     "type": "array"
                 },
+                "azLiteralWarningSilenced": {
+                    "description": "Silencing a specific diagnostic, should only do this once."
+                },
                 "bundlingRequired": {
                     "description": "Indicates whether the stack requires bundling or not",
                     "type": "boolean"
@@ -3070,6 +3077,7 @@
                 "addPermissionsBoundaryAspect",
                 "artifactId",
                 "availabilityZones",
+                "azLiteralWarningSilenced",
                 "bundlingRequired",
                 "dependencies",
                 "env",

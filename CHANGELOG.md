@@ -11,14 +11,17 @@
 
 ### Bug Fixes
 
-- Fixed GAIA v2 UI distributions without a custom domain emitting `minimumProtocolVersionWithoutCertificate` and `sslSupportMethodWithoutCertificate` synth warnings. The TLS 1.2 minimum is now set only with a custom certificate, and the `AwsSolutions-CFR4` suppression reason now states that the default CloudFront certificate allows TLSv1; set `domainName` and `acmCertArn` to enforce TLS 1.2. Deployed distributions are unchanged.
-
 - Fixed the Bedrock Settings module reporting a deploy with a malformed configuration as successful, leaving invocation logging unconfigured. `Upgrade impact:` a malformed configuration now fails the deploy.
 - Fixed the Bedrock Settings module logging a URL that anyone able to read its logs could use to report a false result for its deployment.
 
 ### General Changes
 
-- Updated `aws-cdk-lib` to 2.265.0 to address a CVE in its bundled `brace-expansion`.
+- Updated `aws-cdk-lib` to 2.273.0 to address a CVE in its bundled `brace-expansion`. `Upgrade impact:` redeploying updates some resources in place; none are replaced:
+  - The CDK bucket-deployment Lambda now runs on `arm64` with 1024 MB memory by default.
+  - Glue connections and SageMaker notebook lifecycle configs now get the `mdaa_*` tags; the deploy role needs `glue:TagResource` and `sagemaker:AddTags`.
+  - DataBrew and DMS stacks get extra CloudFormation dependency ordering only.
+  - GAIA v2 UIs without a custom domain no longer emit TLS synth warnings (no deployed change); they allow TLSv1, so set `domainName` and `acmCertArn` to enforce TLS 1.2.
+  - DataSync task `options` now accepts `objectMetadata` (`PRESERVE` or `NONE`).
 
 ## [1.10.0] - 2026-11-06
 

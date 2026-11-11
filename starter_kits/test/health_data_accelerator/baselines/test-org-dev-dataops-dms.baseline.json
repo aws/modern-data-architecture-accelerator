@@ -276,6 +276,9 @@
           "Ref": "dmsreplicationinstancetestinstanceCD0A619E"
         }
       },
+      "DependsOn": [
+        "dmsreplicationsubnetgrouptestinstance162D08A6"
+      ],
       "Metadata": {
         "aws:cdk:path": "test-org-dev-dataops-dms/dms/replication-instance-test-instance/replicationInstance-test-instance-identifier/ssm/Resource"
       }
@@ -301,6 +304,9 @@
           ]
         }
       },
+      "DependsOn": [
+        "dmsreplicationsubnetgrouptestinstance162D08A6"
+      ],
       "Metadata": {
         "aws:cdk:path": "test-org-dev-dataops-dms/dms/replication-instance-test-instance/replicationInstance-test-instance-ip/ssm/Resource"
       }

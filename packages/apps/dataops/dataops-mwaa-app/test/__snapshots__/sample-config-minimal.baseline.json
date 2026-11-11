@@ -716,6 +716,9 @@
     "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
+        "Architectures": [
+          "arm64"
+        ],
         "Code": {
           "S3Bucket": "mock-bucket",
           "S3Key": "mock-key"
@@ -731,6 +734,7 @@
             "Ref": "dagdeploymentpipelineAwsCliLayerDBD65C54"
           }
         ],
+        "MemorySize": 1024,
         "Role": {
           "Ref": "SsmParameterValuetestorgtestdomaindataopsprojectsampledeploymentRoledefaultC96584B6F00A464EAD1953AFF4B05118Parameter"
         },
