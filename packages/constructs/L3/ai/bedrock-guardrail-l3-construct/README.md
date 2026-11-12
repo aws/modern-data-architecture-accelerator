@@ -13,6 +13,7 @@ This construct provides a high-level abstraction for creating Amazon Bedrock Gua
 - **Custom Messages**: Configurable blocked input/output messages
 - **KMS Encryption**: Automatic encryption with customer-managed keys
 - **Intervention Alarms**: (Optional) CloudWatch alarms on the guardrail's intervention count and/or rate, across every guardrail version
+- **Version Publishing**: Optional immutable, numbered guardrail versions, republished when the configuration changes
 - **Flexible Configuration**: Support for all guardrail filter strengths
 
 ## Usage
@@ -61,6 +62,7 @@ const guardrail = new BedrockGuardrailL3Construct(this, 'MyGuardrail', {
 - `deniedTopics`: Topics to deny, evaluated in the order given
 - `wordFilters`: Custom words and phrases, and the profanity list
 - `interventionAlarm`: (Optional) Intervention alarm thresholds; requires the `alarmSettings` construct prop
+- `versionPublishing`: Publishes a numbered version of the guardrail (see [Version Publishing](#version-publishing))
 
 ### Construct Properties
 
@@ -183,6 +185,24 @@ contextualGroundingFilters: {
   relevance: 0.8   // High relevance requirement
 }
 ```
+
+## Version Publishing
+
+Without `versionPublishing`, only the guardrail's mutable `DRAFT` exists. With it, the construct also deploys an `AWS::Bedrock::GuardrailVersion` and publishes it to SSM beside `arn` and `id`: its number as `guardrail/<name>/version`, and its versioned ARN (`<guardrail ARN>:<number>`) as `guardrail/<name>/version-arn`:
+
+```typescript
+versionPublishing: {
+  retainVersions: false // optional, default false
+}
+```
+
+- `referenceVersion` is the version consumers should use: the published number, or `DRAFT` when no version is published.
+- The version's description carries a hash of the guardrail's properties as they render into the template, including property overrides and CDK aspects applied after construction but not tags. A change to them replaces the version, publishing a new one from the updated guardrail.
+- IAM `bedrock:GuardrailIdentifier` conditions take the versioned ARN; the bare guardrail ARN matches only `DRAFT`. Account-level enforcement and a harness `guardrail.version` take the number.
+- Read both from SSM. The stack output exports change with every new version, and CloudFormation refuses to change an export another stack imports.
+- By default, a superseded version is deleted, so it suits guardrails whose version consumers all follow `referenceVersion` within the same stack; anything pinned to a number, such as a harness endpoint with a `targetVersion`, needs `retainVersions`. A harness version that references a guardrail version does not prevent its deletion; if Bedrock does refuse a delete, CloudFormation leaves the version behind outside the stack during update cleanup.
+- `retainVersions: true` keeps superseded versions, and the published one when publishing is turned off, for consumers outside the stack (`UpdateReplacePolicy: Retain`, `DeletionPolicy: RetainExceptOnCreate`, so a version whose creating deploy rolls back is still deleted). Retained versions count against the Bedrock quota of 20 versions per guardrail and must be deleted manually once unused.
+- CloudFormation creates and deletes the version as the stack's CloudFormation execution role, which need `kms:CreateGrant` and `kms:Decrypt` on `kmsKey` to publish it and `kms:RetireGrant` to delete it. A key policy that delegates to IAM needs no change; otherwise it must allow these actions for that role.
 
 ## Dependencies
 

@@ -15,7 +15,7 @@ This module deploys and integrates the following resources:
 - **Lambda Layers** (Optional) — Shared code layers for Lambda functions.
 - **Knowledge Base(s)** (Optional) — Bedrock Knowledge Bases with S3 and SharePoint data sources, multiple parsing strategies (default, BDA, Foundation Model, custom), and chunking configurations.
 - **Vector Store(s)** (Optional) — OpenSearch Serverless collections or Aurora Serverless clusters for Knowledge Base vector storage.
-- **Bedrock Guardrail** (Optional) — Content filters, denied topics, word filters, contextual grounding, PII entity detection, and regex-based sensitive information filtering.
+- **Bedrock Guardrail** (Optional) — Content filters, denied topics, word filters, contextual grounding, PII entity detection, and regex-based sensitive information filtering, with optional immutable numbered versions. See [Guardrail versions](#guardrail-versions).
 - **Guardrail Intervention Alarms** (Optional) — CloudWatch alarms on the interventions of each guardrail that sets `interventionAlarm`, notifying an existing SNS topic or a module-created one, with SSM parameters for each alarm's name and ARN. See [Guardrail intervention alarms](#guardrail-intervention-alarms).
 - **Guardrail Alarm SNS Topic** (Optional) — With `guardrailAlarms.createNotificationTopic`, the SNS topic the guardrail alarms notify, with optional email subscriptions, its topic policy, and SSM parameters for its name and ARN.
 - **AgentCore Harness(es)** (Optional) — Declarative agent loops (model + system prompt + tools) on AgentCore.
@@ -256,6 +256,40 @@ guardrailAlarms:
 
 ---
 
+## Guardrail versions
+
+A guardrail's `DRAFT` is its one mutable working copy: every configuration change reaches every consumer at once. Set `versionPublishing` to also publish an immutable, numbered version:
+
+```yaml
+guardrails:
+  enterprise-guardrail:
+    contentFilters:
+      hate: { inputStrength: 'HIGH', outputStrength: 'HIGH' }
+    versionPublishing:
+      retainVersions: false # optional, default false
+```
+
+- **SSM** - beside `arn` and `id`, the version is published as `guardrail/<name>/version` (the number) and `guardrail/<name>/version-arn` (`<guardrail ARN>:<number>`). Read them from SSM, not with `Fn::ImportValue` on the stack outputs: the exports' values change with every new version, and CloudFormation refuses to change an export another stack imports.
+  - IAM `bedrock:GuardrailIdentifier` conditions take `version-arn`, for example `ssm-domain:/<module>/guardrail/<name>/version-arn` in a Deny with `StringNotEquals`. The bare `arn` matches only `DRAFT`. See [Enforce the use of specific guardrails](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-permissions-id.html). A role with such a Deny is pinned to the number its stack read at its last deploy: update that stack after every deploy that publishes a version. Until then, callers it governs that already moved, such as this module's `config:` harnesses, are denied.
+  - Account-level guardrail enforcement and a harness `guardrail.version` take `version`.
+- **Harnesses** - a harness `guardrail.id: config:<name>` reference uses the published version instead of `DRAFT`, so turning publishing on moves that guardrail's harnesses to it. Set the harness `guardrail.version` to pin an older version; it stays available only with `retainVersions: true`.
+- **Configuration changes** - a deploy that changes the guardrail as rendered, including through MDAA custom aspects, publishes a new version and moves this module's floating harnesses to it. Tag changes do not publish a version. An MDAA upgrade that changes a guardrail default also publishes a new version; the CHANGELOG says when.
+- **Superseded versions (default)** - the previous version is deleted after this module's floating harnesses have moved to the new one. Use the default only when nothing pins a version number:
+  - consumers outside this stack cannot move first, because the new number does not exist until the deploy creates it;
+  - a harness `endpoint` with a `targetVersion` stays on that harness version, which references the guardrail version that was current when it was created;
+  - a harness `guardrail.version` names a fixed number.
+- **Deleting a pinned version** - a consumer pinned to the deleted number fails at runtime; a harness version that references it does not prevent the delete. If Bedrock does refuse a delete, CloudFormation leaves the version behind outside the stack during update cleanup, so the update still completes, and the version counts against the quota below until you delete it. Synth warns when a harness in this module pins a version of a guardrail that does not retain them.
+- **`retainVersions: true`** - for anything pinned to a version number: consumers outside this stack, harness endpoints with a `targetVersion`, and harnesses with a `guardrail.version`. Superseded versions are kept, outside the stack, and count against the Bedrock quota of [20 versions per guardrail](https://docs.aws.amazon.com/general/latest/gr/bedrock.html#limits_bedrock), which cannot be raised; once it is reached, publishing fails. After each deploy that publishes a new version:
+  1. Read the new number from `guardrail/<name>/version`.
+  2. Move every consumer of the old number to the new one: outside consumers, harnesses whose `guardrail.version` names it, and harness endpoints whose `targetVersion` is a harness version created with it.
+  3. Once nothing uses the old version, delete it: `aws bedrock delete-guardrail --guardrail-identifier <id> --guardrail-version <n>`.
+
+  A version whose creating deploy rolls back is deleted, not retained. After any failed deploy, `aws bedrock list-guardrails --guardrail-identifier <id>` lists the guardrail's versions; one that SSM does not name and nothing uses can be deleted the same way.
+- **Turning publishing off** - removes the `version` and `version-arn` parameters, and deletes the published version unless `retainVersions` is set. Consumers pinned to its number then fail, and those reading `ssm:.../version` or `ssm:.../version-arn` fail at their next deploy. Move them to another version or to `DRAFT` first.
+- **KMS** - CloudFormation creates and deletes versions as the stack's CloudFormation execution role (with the default CDK bootstrap, `cdk-<qualifier>-cfn-exec-role-<account>-<region>`), which needs `kms:CreateGrant` and `kms:Decrypt` on the guardrail's key to publish a version, as it already does to create the guardrail, and `kms:RetireGrant` to delete one. The key this module creates delegates to IAM, so the role's IAM permissions are enough. With `kmsKeyArn`, a key policy that does not delegate to IAM must allow these actions, `kms:RetireGrant` included, for that role. A missing `kms:RetireGrant` does not fail the deploy: superseded versions are deleted during update cleanup, so they would be left behind unnoticed.
+
+---
+
 ## Configuration
 
 ### MDAA Config
@@ -286,7 +320,7 @@ Deploys a single AgentCore Harness - a declarative agent loop (foundation model 
 
 #### Comprehensive Configuration
 
-Deploys a customer support agent end to end: knowledge bases backed by Aurora and OpenSearch vector stores with S3/SharePoint data sources and multiple parsing and chunking strategies, Lambda functions, a guardrail with intervention alarms, an AgentCore Gateway serving a Lambda tool and a knowledge base, shared VPC endpoints, and an AgentCore Harness with production settings - JWT auth, a guardrail, a tool allowlist, private networking, PII masking, log retention, and a pinned endpoint. Use this as a reference for a production deployment and for the full harness, knowledge base, and guardrail option surface.
+Deploys a customer support agent end to end: knowledge bases backed by Aurora and OpenSearch vector stores with S3/SharePoint data sources and multiple parsing and chunking strategies, Lambda functions, a versioned guardrail with intervention alarms, an AgentCore Gateway serving a Lambda tool and a knowledge base, shared VPC endpoints, and an AgentCore Harness with production settings - JWT auth, a guardrail, a tool allowlist, private networking, PII masking, log retention, and a pinned endpoint. Use this as a reference for a production deployment and for the full harness, knowledge base, and guardrail option surface.
 
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 

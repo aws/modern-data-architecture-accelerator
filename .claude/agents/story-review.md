@@ -64,8 +64,8 @@ Spawn these in parallel using the Agent tool:
 | Compliance | `agent_rules/review-compliance.md` | L2/L3 construct `lib/` files |
 | Architecture | `agent_rules/review-architecture.md` | All `lib/` files, `package.json`, `tsconfig.json` |
 | Testing | `agent_rules/review-testing-standards.md` | Test files, their corresponding source files, AND new L3 construct `lib/` files (to verify required test files exist) |
-| Module Quality | `agent_rules/review-module-quality.md` | App module files (config, README, sample configs, schema), L3 construct `lib/` files, and any `docs/*.drawio` or `docs/*.png` |
-| Documentation | `agent_rules/review-documentation.md` | CHANGELOG.md, SCHEMA.md, mkdocs.yml, markdown files + summary of user-impacting code changes (even when no docs files are in the diff) |
+| Module Quality | `agent_rules/review-module-quality.md` | App module files (config, README, sample configs, schema), L3 construct `lib/` files |
+| Documentation | `agent_rules/review-documentation.md` | CHANGELOG.md, SCHEMA.md, mkdocs.yml, markdown files, L3 construct `lib/` files and any `docs/*.drawio` or `docs/*.png` + summary of user-impacting code changes (even when no docs files are in the diff) |
 | Diff Risk | `agent_rules/review-diff-risk.md` | Baseline `.json` files |
 | Coding Standards | `agent_rules/developer-coding-standards.md` | All changed `.ts`, `.py`, `requirements.txt`, `package.json` files |
 | Code Review | `agent_rules/developer-code-review.md` + language-specific file (see below) | All changed `.ts`, `.py` files |
@@ -93,8 +93,6 @@ Spawn these in parallel using the Agent tool:
 >
 > Check whether the README is still accurate and complete given the changes (new sample configs referenced, Deployed Resources up to date, Security/Compliance section current).
 >
-> Also apply the steering file's "Architecture Diagram Currency" section. Run `git diff origin/main --stat -- packages/constructs/L3/{category}/{module}-l3-construct/docs/` to see which diagram files this branch changed (a re-exported PNG shows as `Bin` or `Binary files differ`), and `grep -o 'value="[^"]*"' <module>.drawio` to see what the diagram depicts. Then judge two things: if the `.drawio` changed, was the sibling `.png` re-exported alongside it; and if this branch adds or re-wires AWS resources in the L3 construct, does the diagram already depict them.
->
 > Apply ONLY the rules from the steering file. Report findings as a list with: risk level (HIGH/MEDIUM/LOW), file path, line number if possible, and one-sentence detail. If no issues found, say "No findings."
 
 **Testing sub-agent additional instruction:**
@@ -104,6 +102,8 @@ Spawn these in parallel using the Agent tool:
 **Documentation sub-agent:** When no documentation files appear in the diff, this agent still receives the list of user-impacting code changes (new/changed config properties, new modules, bug fixes) and checks whether CHANGELOG.md, SCHEMA.md, README, or mkdocs.yml *should* have been updated. Its prompt should be:
 
 > You are reviewing documentation completeness. Read the steering file at `agent_rules/review-documentation.md` completely. The following user-impacting code changes were made on this branch: {summary of new config properties, modules, or bug fixes}. The following documentation files were changed (if any): {doc_file_list}. Run `git diff origin/main -- CHANGELOG.md SCHEMA.md mkdocs.yml` to see what documentation was updated. Also check whether CHANGELOG.md, SCHEMA.md, and mkdocs.yml *exist* and whether they *should* have been updated given the code changes.
+>
+> Also apply the steering file's "Architecture Diagrams" section. Run `git diff origin/main --stat -- packages/constructs/L3/{category}/{module}-l3-construct/docs/` to see which diagram files this branch changed (a re-exported PNG shows as `Bin` or `Binary files differ`), and `grep -o 'value="[^"]*"' <module>.drawio` to see what the diagram depicts. Then judge two things: if the `.drawio` changed, was the sibling `.png` re-exported alongside it; and if this branch adds or re-wires AWS resources in the L3 construct, does the diagram already depict them.
 >
 > Apply ONLY the rules from the steering file. Report findings as a list with: risk level (HIGH/MEDIUM/LOW), file path, and one-sentence detail. Flag both issues in changed documentation AND missing documentation updates. If no issues found, say "No findings."
 

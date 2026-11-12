@@ -5,7 +5,9 @@
 
 import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
+import { Aspects, Tags } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
+import { CfnGuardrail } from 'aws-cdk-lib/aws-bedrock';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { BedrockGuardrailL3Construct, BedrockGuardrailL3ConstructProps, BedrockGuardrailProps } from '../lib';
 
@@ -727,6 +729,167 @@ describe('Bedrock Guardrail L3 Construct Tests', () => {
           Match.exact({ Type: 'NAME', Action: 'ANONYMIZE', InputAction: 'ANONYMIZE', OutputAction: 'BLOCK' }),
         ],
       },
+    });
+  });
+
+  describe('Version Publishing', () => {
+    const VERSION_TYPE = 'AWS::Bedrock::GuardrailVersion';
+
+    const synthGuardrail = (
+      guardrailConfig: BedrockGuardrailProps,
+      customize?: (construct: BedrockGuardrailL3Construct) => void,
+    ) => {
+      const testApp = new MdaaTestApp();
+      const construct = new BedrockGuardrailL3Construct(testApp.testStack, 'test-guardrail-construct', {
+        guardrailName: 'test-guardrail',
+        guardrailConfig,
+        kmsKey: new Key(testApp.testStack, 'TestKey'),
+        roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+        naming: testApp.naming,
+      });
+      customize?.(construct);
+      return { testApp, construct, template: Template.fromStack(testApp.testStack) };
+    };
+
+    const ssmParamValues = (template: Template, suffix: string): unknown[] =>
+      Object.values(template.findResources('AWS::SSM::Parameter'))
+        .filter(param => String(param.Properties.Name).endsWith(suffix))
+        .map(param => param.Properties.Value);
+
+    const singleVersion = (template: Template) => {
+      const versions = Object.entries(template.findResources(VERSION_TYPE));
+      expect(versions).toHaveLength(1);
+      const [logicalId, resource] = versions[0];
+      return { logicalId, resource };
+    };
+
+    const published: BedrockGuardrailProps = { ...basicGuardrail, versionPublishing: {} };
+
+    test('No version is published without versionPublishing', () => {
+      const { testApp, construct, template } = synthGuardrail(basicGuardrail);
+
+      template.resourceCountIs(VERSION_TYPE, 0);
+      expect(ssmParamValues(template, '/guardrail/test-guardrail/version')).toHaveLength(0);
+      expect(ssmParamValues(template, '/guardrail/test-guardrail/version-arn')).toHaveLength(0);
+      expect(construct.guardrailVersion).toBeUndefined();
+      expect(testApp.testStack.resolve(construct.referenceVersion)).toEqual({
+        'Fn::GetAtt': [testApp.testStack.getLogicalId(construct.guardrail), 'Version'],
+      });
+    });
+
+    test('Publishes one version of the guardrail and its number to SSM', () => {
+      const { testApp, construct, template } = synthGuardrail(published);
+
+      const { logicalId, resource } = singleVersion(template);
+      const guardrailLogicalId = testApp.testStack.getLogicalId(construct.guardrail);
+      expect(resource.Properties.GuardrailIdentifier).toEqual({ 'Fn::GetAtt': [guardrailLogicalId, 'GuardrailId'] });
+      expect(resource.Properties.Description).toMatch(
+        /^Published by MDAA from guardrail configuration hash [0-9a-f]{64}$/,
+      );
+      expect(resource.DeletionPolicy).toBeUndefined();
+      expect(resource.UpdateReplacePolicy).toBeUndefined();
+
+      const versionRef = { 'Fn::GetAtt': [logicalId, 'Version'] };
+      expect(ssmParamValues(template, '/guardrail/test-guardrail/version')).toEqual([versionRef]);
+      expect(ssmParamValues(template, '/guardrail/test-guardrail/version-arn')).toEqual([
+        { 'Fn::Join': [':', [{ 'Fn::GetAtt': [guardrailLogicalId, 'GuardrailArn'] }, versionRef]] },
+      ]);
+      expect(ssmParamValues(template, '/guardrail/test-guardrail/arn')).toHaveLength(1);
+      expect(ssmParamValues(template, '/guardrail/test-guardrail/id')).toHaveLength(1);
+      expect(testApp.testStack.resolve(construct.referenceVersion)).toEqual(versionRef);
+    });
+
+    test('An unchanged configuration renders an identical version across synths', () => {
+      const first = singleVersion(synthGuardrail(published).template);
+      const second = singleVersion(synthGuardrail(published).template);
+
+      expect(second).toEqual(first);
+    });
+
+    test('A configuration change changes the version description, replacing the version', () => {
+      const original = singleVersion(synthGuardrail(published).template);
+      const changed = singleVersion(
+        synthGuardrail({ ...published, blockedInputMessaging: 'Changed input blocked message' }).template,
+      );
+
+      expect(changed.logicalId).toEqual(original.logicalId);
+      expect(changed.resource.Properties.Description).not.toEqual(original.resource.Properties.Description);
+    });
+
+    test('A property override applied after construction replaces the version', () => {
+      const original = singleVersion(synthGuardrail(published).template);
+      const overridden = singleVersion(
+        synthGuardrail(published, construct =>
+          construct.guardrail.addPropertyOverride('BlockedInputMessaging', 'Overridden input blocked message'),
+        ).template,
+      );
+
+      expect(overridden.resource.Properties.Description).not.toEqual(original.resource.Properties.Description);
+    });
+
+    test('A CDK aspect that mutates the guardrail replaces the version', () => {
+      const original = singleVersion(synthGuardrail(published).template);
+      const mutated = singleVersion(
+        synthGuardrail(published, construct =>
+          Aspects.of(construct).add({
+            visit: node => {
+              if (node instanceof CfnGuardrail) {
+                node.blockedOutputsMessaging = 'Aspect output blocked message';
+              }
+            },
+          }),
+        ).template,
+      );
+
+      expect(mutated.resource.Properties.Description).not.toEqual(original.resource.Properties.Description);
+    });
+
+    test('A tag change leaves the version unchanged', () => {
+      const original = synthGuardrail(published);
+      const tagged = synthGuardrail(published, construct => Tags.of(construct).add('cost-center', 'changed'));
+
+      tagged.template.hasResourceProperties('AWS::Bedrock::Guardrail', {
+        Tags: Match.arrayWith([{ Key: 'cost-center', Value: 'changed' }]),
+      });
+      expect(singleVersion(tagged.template)).toEqual(singleVersion(original.template));
+    });
+
+    test('retainVersions retains superseded and removed versions, but not one whose creation rolled back', () => {
+      const { template } = synthGuardrail({ ...basicGuardrail, versionPublishing: { retainVersions: true } });
+
+      const { resource } = singleVersion(template);
+      expect(resource.DeletionPolicy).toBe('RetainExceptOnCreate');
+      expect(resource.UpdateReplacePolicy).toBe('Retain');
+    });
+
+    // The version hash reads this internal aws-cdk-lib rendering, so a CDK upgrade that changes it
+    // must fail here rather than silently hash something else.
+    test('The guardrail renders the internal shape the version hash reads', () => {
+      const { testApp, construct } = synthGuardrail(published);
+
+      const rendered = testApp.testStack.resolve(construct.guardrail._toCloudFormation());
+      expect(Object.keys(rendered)).toEqual(['Resources']);
+      const resources = Object.values(rendered.Resources) as {
+        Type: string;
+        Properties: { [name: string]: unknown };
+      }[];
+      expect(resources).toHaveLength(1);
+      expect(resources[0].Type).toBe('AWS::Bedrock::Guardrail');
+      expect(resources[0].Properties).toEqual(
+        expect.objectContaining({
+          Name: expect.any(String),
+          BlockedInputMessaging: 'Your input contains content that is not allowed.',
+          ContentPolicyConfig: expect.any(Object),
+        }),
+      );
+    });
+
+    test('An unreadable guardrail rendering fails synth instead of hashing it', () => {
+      expect(() =>
+        synthGuardrail(published, construct => {
+          jest.spyOn(construct.guardrail, '_toCloudFormation').mockReturnValue({});
+        }),
+      ).toThrow(/cannot read the guardrail's rendered properties/);
     });
   });
 });

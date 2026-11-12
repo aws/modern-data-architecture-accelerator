@@ -23,7 +23,13 @@ import { MdaaLambdaRole } from '@aws-mdaa/lambda-constructs';
 import { MdaaAuroraPgVector } from '@aws-mdaa/rds-constructs';
 import { MdaaOpensearchServerlessCollection } from '@aws-mdaa/opensearch-constructs';
 
-import { aws_bedrock as bedrock, aws_kms as kms, aws_opensearchserverless as aoss, Stack } from 'aws-cdk-lib';
+import {
+  Annotations,
+  aws_bedrock as bedrock,
+  aws_kms as kms,
+  aws_opensearchserverless as aoss,
+  Stack,
+} from 'aws-cdk-lib';
 
 import { Effect, PolicyStatement, ServicePrincipal, ArnPrincipal, IRole } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
@@ -198,6 +204,9 @@ export interface NamedGatewayTargetProps {
   [targetName: string]: BuilderGatewayTargetProps;
 }
 
+/** Prefix of a harness `guardrail.id` that references a guardrail in this module's `guardrails` map. */
+const GUARDRAIL_CONFIG_REF_PREFIX = 'config:';
+
 /** What gateway target resolution needs besides the target references themselves. */
 interface GatewayTargetResolutionContext {
   readonly gatewayTargets: NamedGatewayTargetProps;
@@ -209,7 +218,7 @@ interface GatewayTargetResolutionContext {
 /** What gateway and harness creation need besides the module props and the CMK. */
 interface AgentcoreResourceContext {
   readonly knowledgeBases: { [kbName: string]: bedrock.CfnKnowledgeBase };
-  readonly guardrails: { [name: string]: bedrock.CfnGuardrail };
+  readonly guardrails: { [name: string]: BedrockGuardrailL3Construct };
   readonly endpointsBySet: Map<string, ResolvedVpcEndpointAccess>;
 }
 
@@ -468,16 +477,15 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
 
     // Create guardrails, with the intervention alarms of those that opt in
     const guardrailAlarmSettings = resolveGuardrailAlarmSettings(this, { ...props, kmsKey });
-    const guardrails: { [name: string]: bedrock.CfnGuardrail } = {};
+    const guardrails: { [name: string]: BedrockGuardrailL3Construct } = {};
     Object.entries(props.guardrails || {}).forEach(([guardrailName, guardrailConfig]) => {
-      const guardrailConstruct = new BedrockGuardrailL3Construct(this, `bedrock-guardrail-${guardrailName}`, {
+      guardrails[guardrailName] = new BedrockGuardrailL3Construct(this, `bedrock-guardrail-${guardrailName}`, {
         ...props,
         guardrailName,
         guardrailConfig,
         kmsKey,
         alarmSettings: guardrailConfig.interventionAlarm ? guardrailAlarmSettings : undefined,
       });
-      guardrails[guardrailName] = guardrailConstruct.guardrail;
     });
 
     // Create the VPC endpoint sets, before their consumers: the harnesses and the knowledge base
@@ -530,6 +538,7 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
     const resolvedGuardrails = this.resolveHarnessGuardrailRefs(context.guardrails);
 
     harnessEntries.forEach(([harnessName, harnessConfig]) => {
+      this.warnOnUnretainedPinnedGuardrailVersion(harnessName, harnessConfig, props.guardrails ?? {});
       new BedrockAgentcoreHarnessL3Construct(this, `bedrock-harness-${harnessName}`, {
         ...props,
         ...harnessConfig,
@@ -616,15 +625,45 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
   }
 
   /**
+   * Warns when a harness pins a version of its `config:` guardrail - with an explicit
+   * `guardrail.version` or an `endpoint.targetVersion` - that the guardrail's next change deletes,
+   * because it publishes versions without `retainVersions`. A warning, not an error, so a deliberate
+   * pin still deploys.
+   */
+  private warnOnUnretainedPinnedGuardrailVersion(
+    harnessName: string,
+    harness: HarnessConfigProps,
+    guardrails: NamedGuardrailProps,
+  ): void {
+    const id = harness.guardrail?.id ?? '';
+    if (!id.startsWith(GUARDRAIL_CONFIG_REF_PREFIX)) {
+      return;
+    }
+    const guardrailName = id.slice(GUARDRAIL_CONFIG_REF_PREFIX.length).trim();
+    const publishing = guardrails[guardrailName]?.versionPublishing;
+    const version = harness.guardrail?.version;
+    const pinned = version !== 'DRAFT' && (version !== undefined || harness.endpoint?.targetVersion !== undefined);
+    if (publishing && !publishing.retainVersions && pinned) {
+      Annotations.of(this).addWarningV2(
+        '@aws-mdaa/bedrock-builder:pinnedGuardrailVersionNotRetained',
+        `Harness '${harnessName}' pins a version of guardrail '${guardrailName}' that its next change deletes; ` +
+          `set versionPublishing.retainVersions: true on '${guardrailName}'.`,
+      );
+    }
+  }
+
+  /**
    * Builds the harness-facing {@link ResolvedGuardrailRefMap} from the module's guardrail
    * constructs, so a harness's `guardrail.id: config:<name>` reference resolves to the live
-   * `attrGuardrailId`/`attrVersion`.
+   * guardrail id and its published version, or `DRAFT` when the guardrail publishes no version.
    */
-  private resolveHarnessGuardrailRefs(guardrails: { [name: string]: bedrock.CfnGuardrail }): ResolvedGuardrailRefMap {
+  private resolveHarnessGuardrailRefs(guardrails: {
+    [name: string]: BedrockGuardrailL3Construct;
+  }): ResolvedGuardrailRefMap {
     return Object.fromEntries(
-      Object.entries(guardrails).map(([name, guardrail]) => [
+      Object.entries(guardrails).map(([name, construct]) => [
         name,
-        { guardrailId: guardrail.attrGuardrailId, guardrailVersion: guardrail.attrVersion },
+        { guardrailId: construct.guardrail.attrGuardrailId, guardrailVersion: construct.referenceVersion },
       ]),
     );
   }

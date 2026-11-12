@@ -53,6 +53,8 @@ def to_codequality_json(entries: list[dict], agent_name: str = "review") -> str:
             # Determine file and line
             file_path = finding.get("file", "")
             line = finding.get("line", 0)
+            # Doc-quality findings may omit the line or give null or "n/a"; GitLab needs an integer.
+            line = int(line) if str(line).isdigit() else 0
 
             # Baseline findings use "source" field instead of file/line
             if not file_path and finding.get("source"):

@@ -4,6 +4,7 @@ Post documentation quality review results as MR discussion threads.
 
 Tier 1 — Summary thread (resolved): Documentation quality overview.
 Tier 2 — Per-file threads (unresolved): One per documentation file with findings.
+  An L3 architecture diagram's thread is keyed by its .drawio path.
 
 Requires environment variables:
   CI_API_V4_URL, CI_PROJECT_ID, CI_MERGE_REQUEST_IID, PROJECT_ACCESS_TOKEN
@@ -21,16 +22,18 @@ import os
 import re
 import sys
 from pathlib import Path
+from collections.abc import Callable
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
+from review.lib.diagram import thread_source_hash
 from review.lib.gitlab_threads import (
     get_mr_discussions, compute_hash, _build_diff_position,
 )
+from review.lib.nx_graph import PROJECT_ROOT
 from review.lib.thread_lifecycle import (
     _steering_link,
     _action_context,
-    compute_file_source_hash,
     post_or_update_summary,
     post_detail_threads,
     resolve_orphaned_threads,
@@ -65,7 +68,7 @@ def build_file_groups(entries: list[dict]) -> dict[str, dict]:
                 "file": file_path,
                 "risk_level": entry.get("risk_level", "UNKNOWN"),
                 "findings": [],
-                "source_hash": entry.get("source_hash", compute_file_source_hash(file_path)),
+                "source_hash": entry.get("source_hash", thread_source_hash(file_path, PROJECT_ROOT)),
             }
 
         # Merge findings (in case multiple entries target the same file, e.g. CHANGELOG)
@@ -108,7 +111,7 @@ def format_summary_body(entries: list[dict]) -> str:
         SUMMARY_MARKER, "",
         "## Repo Documentation Quality Review Summary", "",
         "_Reviews CHANGELOG updates, SCHEMA.md regeneration, starter kit docs, "
-        "MkDocs nav, and cross-document links. "
+        "MkDocs nav, cross-document links, and L3 architecture diagram currency. "
         "Does not review per-module documentation (covered by Module Quality agent). "
         f"[Steering file]({_steering_link('review-documentation.md')})_", "",
         f"**Files reviewed:** {files_reviewed}",
@@ -128,9 +131,16 @@ def format_summary_body(entries: list[dict]) -> str:
 
 
 def _file_link(file_path: str) -> str:
-    """Build a markdown link to the file in the MR diff."""
+    """Build a markdown link to the file in the MR diff.
+
+    A .drawio links to the file on the branch instead, since a stale diagram is
+    usually unchanged and so absent from the diff.
+    """
     project_url = os.environ.get("CI_PROJECT_URL", "")
     mr_iid = os.environ.get("CI_MERGE_REQUEST_IID", "")
+    if project_url and file_path.endswith(".drawio"):
+        branch = os.environ.get("CI_COMMIT_REF_NAME", "main")
+        return f"[`{file_path}`]({project_url}/-/blob/{branch}/{file_path})"
     if project_url and mr_iid:
         path_hash = hashlib.sha1(file_path.encode()).hexdigest()
         return f"[`{file_path}`]({project_url}/-/merge_requests/{mr_iid}/diffs#diff-content-{path_hash})"
@@ -158,7 +168,8 @@ def format_file_thread(file_path: str, group: dict, content_hash: str, is_update
         risk = finding.get("risk", "UNKNOWN")
         cat = finding.get("category", "")
         detail = escape_markdown_math(finding.get("detail", ""))
-        lines.append(f"- **{risk}** [{cat}]: {detail}")
+        source = _finding_source(file_path, finding)
+        lines.append(f"- **{risk}** [{cat}]: {detail}" + (f" ({source})" if source else ""))
     lines.append("")
     lines.append(_format_thread_footer())
     return "\n".join(lines)
@@ -173,9 +184,55 @@ def _compute_hash(file_path: str, group: dict) -> str:
     return compute_hash(json.dumps(structural, sort_keys=True))
 
 
-def _get_position(file_path: str) -> dict | None:
-    """Try to position the thread inline on the MR diff."""
-    return _build_diff_position(file_path, 1)
+def _finding_source(file_path: str, finding: dict) -> str:
+    """Render where a finding points when that is not the thread's own file.
+
+    Diagram findings cite the construct source line that made the diagram stale.
+    """
+    source = finding.get("file", "")
+    if not source or source == file_path:
+        return ""
+    line = str(finding.get("line", ""))
+    return f"`{source}:{line}`" if line.isdigit() else f"`{source}`"
+
+
+def _make_get_position(groups: dict[str, dict]) -> Callable[[str], dict | None]:
+    """Build the callback that positions each thread inline on the MR diff.
+
+    A markdown thread sits on line 1 of its file. A diagram thread sits on the construct
+    source line its first located finding cites, because an unchanged .drawio is not in
+    the diff; it falls back to line 1 of the .drawio when the diagram itself changed.
+    """
+    def _get_position(file_path: str) -> dict | None:
+        if file_path.endswith(".drawio"):
+            for finding in groups.get(file_path, {}).get("findings", []):
+                source, line = finding.get("file", ""), str(finding.get("line", ""))
+                if source and line.isdigit():
+                    position = _build_diff_position(source, int(line))
+                    if position:
+                        return position
+        return _build_diff_position(file_path, 1)
+    return _get_position
+
+
+def _source_file_resolver(key: str) -> str | None:
+    """The file whose change may have fixed a thread's finding; ``None`` falls back to the source-hash map.
+
+    The doc-quality thread key is the file path itself. A diagram thread's finding comes from its
+    construct's lib/, so it is compared by source hash instead of by the .drawio alone.
+    """
+    return None if key.endswith(".drawio") else key
+
+
+def _source_hashes(groups: dict[str, dict], discussions: list[dict]) -> dict[str, str]:
+    """Map each thread key to its current source hash, including diagram threads with no finding this run."""
+    source_hashes = {key: group.get("source_hash", "") for key, group in groups.items()}
+    for discussion in discussions:
+        notes = discussion.get("notes", [])
+        match = FILE_PATTERN.search(notes[0].get("body", "")) if notes else None
+        if match and match.group(1).endswith(".drawio") and match.group(1) not in source_hashes:
+            source_hashes[match.group(1)] = thread_source_hash(match.group(1), PROJECT_ROOT)
+    return source_hashes
 
 
 def main():
@@ -218,7 +275,7 @@ def main():
     if groups:
         processed_keys = post_detail_threads(
             project_id, mr_iid, token, discussions, groups,
-            FILE_PATTERN, format_file_thread, _compute_hash, _get_position,
+            FILE_PATTERN, format_file_thread, _compute_hash, _make_get_position(groups),
         )
     else:
         print("  No documentation findings to post.")
@@ -226,12 +283,11 @@ def main():
     # Re-fetch after mutations, resolve orphans (runs even with no findings
     # so previously-opened threads get auto-resolved when gaps are fixed)
     discussions = get_mr_discussions(project_id, mr_iid, token)
-    source_hashes = {key: group.get("source_hash", "") for key, group in groups.items()}
+    source_hashes = _source_hashes(groups, discussions)
     resolve_orphaned_threads(
         project_id, mr_iid, token, discussions, FILE_PATTERN, processed_keys,
         source_hashes=source_hashes,
-        # The doc-quality thread key is the file path itself.
-        source_file_resolver=lambda key: key,
+        source_file_resolver=_source_file_resolver,
     )
 
     try:

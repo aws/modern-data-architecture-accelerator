@@ -71,3 +71,11 @@ class TestToCodequalityJson:
         r1 = json.loads(to_codequality_json(entries, agent_name="compliance"))
         r2 = json.loads(to_codequality_json(entries, agent_name="compliance"))
         assert r1[0]["fingerprint"] == r2[0]["fingerprint"]
+
+    def test_non_integer_lines_become_line_one(self):
+        entries = [{"file": "README.md", "findings": [
+            {"file": "README.md", "line": None, "risk": "LOW", "category": "cross_reference", "detail": "a"},
+            {"file": "README.md", "line": "n/a", "risk": "LOW", "category": "cross_reference", "detail": "b"},
+        ]}]
+        result = json.loads(to_codequality_json(entries, agent_name="documentation"))
+        assert [issue["location"]["lines"]["begin"] for issue in result] == [1, 1]

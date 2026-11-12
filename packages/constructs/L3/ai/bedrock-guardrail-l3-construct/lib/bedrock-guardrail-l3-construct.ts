@@ -5,7 +5,7 @@
 
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaResourceType } from '@aws-mdaa/naming';
-import { aws_bedrock as bedrock } from 'aws-cdk-lib';
+import { aws_bedrock as bedrock, Fn, Lazy, RemovalPolicy, Stack } from 'aws-cdk-lib';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { Construct } from 'constructs';
 import { MdaaParamAndOutput } from '@aws-mdaa/construct';
@@ -14,6 +14,7 @@ import {
   GuardrailAlarmSettings,
   GuardrailInterventionAlarmProps,
 } from './guardrail-alarms';
+import { createHash } from 'node:crypto';
 
 // ---------------------------------------------
 // Guardrail Interfaces and Types
@@ -242,6 +243,71 @@ export interface BedrockGuardrailProps {
    * Validation: Optional; at least one of words or profanity is required
    */
   readonly wordFilters?: WordFilters;
+  /**
+   * Publishes an immutable, numbered version of the guardrail to SSM, beside `arn` and `id`, as
+   * `guardrail/<name>/version` (the number) and `guardrail/<name>/version-arn` (the versioned ARN,
+   * `<guardrail ARN>:<number>`). Presence of this block opts in (an empty object accepts all
+   * defaults); omit it to publish only the mutable `DRAFT`. Read both from SSM: the stack output
+   * exports change on every new version, and importing one from another stack blocks publishing the
+   * next one.
+   *
+   * A new version is published whenever the guardrail properties change as rendered, including
+   * through custom CDK aspects but not through tags, and harnesses that reference this guardrail by
+   * `config:<name>` move to it. Turning publishing off removes the SSM `version` and `version-arn`
+   * parameters and, unless `retainVersions` is set, deletes the published version.
+   *
+   * IAM `bedrock:GuardrailIdentifier` conditions take the versioned ARN; the bare guardrail ARN
+   * matches only `DRAFT`. Account-level enforcement and a harness `guardrail.version` take the number.
+   *
+   * Use cases: Pinning agents to a reviewed guardrail configuration; staging guardrail changes;
+   * IAM `bedrock:GuardrailIdentifier` conditions and account-level enforcement, which need a
+   * numbered version
+   *
+   * AWS: AWS::Bedrock::GuardrailVersion
+   *
+   * Validation: Optional; GuardrailVersionPublishingProps; presence opts in
+   */
+  readonly versionPublishing?: GuardrailVersionPublishingProps;
+}
+
+/**
+ * Configuration for publishing numbered versions of a guardrail. Presence of this configuration
+ * opts in to version publishing; an empty object accepts all defaults.
+ *
+ * Use cases: Pinning agents to a reviewed guardrail configuration; staging guardrail changes
+ *
+ * AWS: AWS::Bedrock::GuardrailVersion
+ *
+ * Validation: presence of this configuration opts in to version publishing
+ */
+export interface GuardrailVersionPublishingProps {
+  /**
+   * Keeps a published version when a configuration change supersedes it or when publishing is
+   * turned off, so consumers outside the stack pinned to its number keep working until they move
+   * to the new one. Retained versions are no longer managed by the stack and count against the
+   * Bedrock quota of 20 versions per guardrail, which cannot be raised; once it is reached,
+   * publishing fails until old versions are deleted with `DeleteGuardrail`.
+   *
+   * When false, a superseded version is deleted after the stack has moved its floating harnesses
+   * to the new one, so use it only when nothing pins a version number: consumers outside the stack
+   * cannot move before the deploy that creates the new number, and a harness endpoint with a
+   * `targetVersion` stays on a harness version that references the old guardrail version, which
+   * does not prevent its deletion. A version Bedrock refuses to delete is left behind outside the
+   * stack.
+   *
+   * A version whose creating deploy rolls back is deleted either way (`DeletionPolicy:
+   * RetainExceptOnCreate`).
+   *
+   * Use cases: Consumers outside this module pinned to a specific version number; harness endpoints
+   * pinned with `targetVersion`; harnesses pinned to an older version with `guardrail.version`
+   *
+   * AWS: UpdateReplacePolicy (Retain) and DeletionPolicy (RetainExceptOnCreate) of
+   * AWS::Bedrock::GuardrailVersion
+   *
+   * Validation: Optional; Boolean
+   * @default false
+   */
+  readonly retainVersions?: boolean;
 }
 
 export interface NamedGuardrailProps {
@@ -260,6 +326,11 @@ export interface BedrockGuardrailL3ConstructProps extends MdaaL3ConstructProps {
    * @default - no alarms; setting `interventionAlarm` without this throws
    */
   readonly alarmSettings?: GuardrailAlarmSettings;
+}
+
+/** A resolved template fragment for the guardrail, whose required name and messages always render `Properties`. */
+interface RenderedTemplate {
+  readonly Resources?: { [logicalId: string]: { readonly Properties?: { readonly [name: string]: unknown } } };
 }
 
 // ---------------------------------------------
@@ -306,8 +377,17 @@ function findDuplicate(values: string[], key: (value: string) => string = value 
 // Bedrock Guardrails L3 Construct
 // ---------------------------------------------
 
+/**
+ * Deploys a KMS-encrypted Bedrock guardrail and, when `versionPublishing` is configured, an
+ * immutable numbered version of it. Publishes the guardrail ARN and id, and the version number
+ * when one is published, to SSM.
+ */
 export class BedrockGuardrailL3Construct extends MdaaL3Construct {
   public readonly guardrail: bedrock.CfnGuardrail;
+  /** The published version, when `versionPublishing` is configured. */
+  public readonly guardrailVersion?: bedrock.CfnGuardrailVersion;
+  /** The version consumers should reference: the published version number, otherwise `DRAFT`. */
+  public readonly referenceVersion: string;
   protected readonly props: BedrockGuardrailL3ConstructProps;
 
   constructor(scope: Construct, id: string, props: BedrockGuardrailL3ConstructProps) {
@@ -315,6 +395,10 @@ export class BedrockGuardrailL3Construct extends MdaaL3Construct {
     this.props = props;
 
     this.guardrail = this.createGuardrail(props.guardrailName, props.guardrailConfig, props.kmsKey);
+    this.guardrailVersion = props.guardrailConfig.versionPublishing
+      ? this.createGuardrailVersion(props.guardrailName, props.guardrailConfig.versionPublishing)
+      : undefined;
+    this.referenceVersion = this.guardrailVersion?.attrVersion ?? this.guardrail.attrVersion;
 
     const interventionAlarm = props.guardrailConfig.interventionAlarm;
     if (interventionAlarm) {
@@ -468,6 +552,76 @@ export class BedrockGuardrailL3Construct extends MdaaL3Construct {
       wordsConfig: words.length > 0 ? words.map(text => ({ text, ...controls })) : undefined,
       managedWordListsConfig: wordFilters.profanity ? [{ type: 'PROFANITY', ...controls }] : undefined,
     };
+  }
+
+  /**
+   * A version is a snapshot that does not follow later guardrail edits, and `Description` is
+   * create-only, so a hash of the guardrail properties in it makes CloudFormation replace the
+   * version - publishing a new one from the updated guardrail - whenever the configuration changes.
+   * Bedrock rejects concurrent version creation on one guardrail, so there is exactly one version
+   * resource per guardrail.
+   */
+  private createGuardrailVersion(
+    guardrailName: string,
+    publishing: GuardrailVersionPublishingProps,
+  ): bedrock.CfnGuardrailVersion {
+    const guardrailVersion = new bedrock.CfnGuardrailVersion(this, `${guardrailName}-guardrail-version`, {
+      guardrailIdentifier: this.guardrail.attrGuardrailId,
+      description: Lazy.uncachedString({
+        produce: () => `Published by MDAA from guardrail configuration hash ${this.renderedGuardrailHash()}`,
+      }),
+    });
+    if (publishing.retainVersions) {
+      // Not RETAIN: a version kept after its creating deploy rolled back is named by no SSM parameter,
+      // so nothing finds it to prune, and it still counts against the 20-version quota.
+      guardrailVersion.applyRemovalPolicy(RemovalPolicy.RETAIN_ON_UPDATE_OR_DELETE);
+    }
+
+    new MdaaParamAndOutput(this, {
+      resourceType: 'guardrail',
+      resourceId: guardrailName,
+      name: 'version',
+      value: guardrailVersion.attrVersion,
+      ...this.props,
+    });
+    // The form `bedrock:GuardrailIdentifier` carries for a numbered version. MDAA `ssm-*:` references
+    // replace a whole config value, so consumers cannot join it from `arn` and `version` themselves.
+    new MdaaParamAndOutput(this, {
+      resourceType: 'guardrail',
+      resourceId: guardrailName,
+      name: 'version-arn',
+      value: Fn.join(':', [this.guardrail.attrGuardrailArn, guardrailVersion.attrVersion]),
+      ...this.props,
+    });
+
+    return guardrailVersion;
+  }
+
+  /**
+   * Hashes the guardrail's properties as they render into the template, so property overrides and
+   * CDK aspects applied after construction (MDAA custom aspects among them) are covered. Tags are
+   * left out: they are not part of what a version captures, and a tag change in the MDAA config
+   * would otherwise publish a version. The properties are hashed resolved: token strings differ
+   * between synths and would publish a new version on every deploy.
+   */
+  private renderedGuardrailHash(): string {
+    // CfnResource has no public accessor for its rendered properties including overrides. The
+    // rendered resource is itself a token, so it is resolved before its properties are read.
+    // A CDK upgrade that changes this internal shape fails synth here instead of hashing something
+    // else, which would republish a version on every deploy or stop noticing configuration changes.
+    const resolved: RenderedTemplate = Stack.of(this).resolve(this.guardrail._toCloudFormation());
+    const resources = Object.values(resolved?.Resources ?? {});
+    const properties = resources[0]?.Properties;
+    if (resources.length !== 1 || typeof properties?.['Name'] !== 'string') {
+      throw new Error(
+        `Guardrail '${this.props.guardrailName}': cannot read the guardrail's rendered properties to ` +
+          'hash its version; the aws-cdk-lib CfnResource rendering has changed.',
+      );
+    }
+    const untagged = Object.fromEntries(Object.entries(properties).filter(([name]) => name !== 'Tags'));
+    return createHash('sha256')
+      .update(JSON.stringify([untagged]))
+      .digest('hex');
   }
 
   private createContextualGroundingConfig(

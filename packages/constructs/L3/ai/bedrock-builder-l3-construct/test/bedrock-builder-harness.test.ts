@@ -5,7 +5,7 @@
 
 import { MdaaRoleHelper, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Match, Template } from 'aws-cdk-lib/assertions';
+import { Annotations, Match, Template } from 'aws-cdk-lib/assertions';
 import {
   BedrockBuilderL3Construct,
   BedrockBuilderL3ConstructProps,
@@ -35,6 +35,9 @@ const customJwt = {
 // networkConfiguration is required on every harness (MDAA enforces VPC mode), so each harness entry
 // under test supplies a minimal valid VPC config.
 const NET = { securityGroups: ['sg-test'], subnets: ['subnet-test'] };
+
+// A guardrail needs at least one policy.
+const HATE_FILTER = { hate: { inputStrength: 'HIGH', outputStrength: 'HIGH' } } as const;
 
 function template(props: {
   harnesses?: NamedHarnessProps;
@@ -201,6 +204,97 @@ describe('BedrockBuilderL3Construct AgentCore harness wiring', () => {
       PolicyDocument: {
         Statement: Match.arrayWith([Match.objectLike({ Sid: 'AllowApplyBedrockGuardrail' })]),
       },
+    });
+  });
+
+  describe('pinning a version of a config:<name> guardrail that publishes versions', () => {
+    const WARNING = /pins a version of guardrail 'enterprise-guardrail' that its next change deletes/;
+
+    const annotations = (
+      versionPublishing: NamedGuardrailProps[string]['versionPublishing'],
+      harness: Partial<NamedHarnessProps[string]>,
+    ) => {
+      const testApp = new MdaaTestApp();
+      new BedrockBuilderL3Construct(testApp.testStack, 'test-construct', {
+        dataAdminRoles: [dataAdminRoleRef],
+        roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+        naming: testApp.naming,
+        guardrails: { 'enterprise-guardrail': { contentFilters: HATE_FILTER, versionPublishing } },
+        harnesses: {
+          'guardrail-harness': {
+            modelId: 'anthropic.claude-sonnet-4-6-20250514-v1:0',
+            systemPrompt: 'Be helpful.',
+            networkConfiguration: NET,
+            guardrail: { id: 'config:enterprise-guardrail' },
+            ...harness,
+          },
+        },
+      });
+      return Annotations.fromStack(testApp.testStack);
+    };
+
+    test('warns for an explicit guardrail.version when versions are not retained', () => {
+      annotations({}, { guardrail: { id: 'config:enterprise-guardrail', version: '1' } }).hasWarning(
+        '*',
+        Match.stringLikeRegexp(WARNING.source),
+      );
+    });
+
+    test('warns for an endpoint targetVersion when versions are not retained', () => {
+      annotations({}, { endpoint: { name: 'prod', targetVersion: '1' } }).hasWarning(
+        '*',
+        Match.stringLikeRegexp(WARNING.source),
+      );
+    });
+
+    test('does not warn when versions are retained', () => {
+      annotations({ retainVersions: true }, { endpoint: { name: 'prod', targetVersion: '1' } }).hasNoWarning(
+        '*',
+        Match.stringLikeRegexp(WARNING.source),
+      );
+    });
+
+    test('does not warn for guardrail.version DRAFT', () => {
+      annotations({}, { guardrail: { id: 'config:enterprise-guardrail', version: 'DRAFT' } }).hasNoWarning(
+        '*',
+        Match.stringLikeRegexp(WARNING.source),
+      );
+    });
+  });
+
+  describe('harness guardrail.id config:<name> reference to a guardrail that publishes versions', () => {
+    const harnessGuardrailConfig = (guardrailVersion?: string) => {
+      const t = template({
+        guardrails: {
+          'enterprise-guardrail': { contentFilters: HATE_FILTER, versionPublishing: {} },
+        },
+        harnesses: {
+          'guardrail-harness': {
+            modelId: 'anthropic.claude-sonnet-4-6-20250514-v1:0',
+            systemPrompt: 'Be helpful.',
+            networkConfiguration: NET,
+            guardrail: { id: 'config:enterprise-guardrail', version: guardrailVersion },
+          },
+        },
+      });
+      const harness = Object.values(t.findResources('AWS::BedrockAgentCore::Harness'))[0];
+      return {
+        versionLogicalId: Object.keys(t.findResources('AWS::Bedrock::GuardrailVersion'))[0],
+        guardrailConfig: harness.Properties.Model.BedrockModelConfig.AdditionalParams.guardrailConfig,
+      };
+    };
+
+    test('resolves to the published version, not DRAFT', () => {
+      const { versionLogicalId, guardrailConfig } = harnessGuardrailConfig();
+
+      expect(versionLogicalId).toBeDefined();
+      expect(guardrailConfig.guardrailVersion).toEqual({ 'Fn::GetAtt': [versionLogicalId, 'Version'] });
+    });
+
+    test('an explicit harness guardrail.version still pins that version', () => {
+      const { guardrailConfig } = harnessGuardrailConfig('3');
+
+      expect(guardrailConfig.guardrailVersion).toBe('3');
     });
   });
 

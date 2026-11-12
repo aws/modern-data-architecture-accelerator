@@ -337,6 +337,10 @@
                     "$ref": "#/definitions/SensitiveInformationFilters",
                     "description": "Sensitive information filters for PII and custom patterns"
                 },
+                "versionPublishing": {
+                    "$ref": "#/definitions/GuardrailVersionPublishingProps",
+                    "description": "Publishes an immutable, numbered version of the guardrail to SSM, beside `arn` and `id`, as\n`guardrail/<name>/version` (the number) and `guardrail/<name>/version-arn` (the versioned ARN,\n`<guardrail ARN>:<number>`). Presence of this block opts in (an empty object accepts all\ndefaults); omit it to publish only the mutable `DRAFT`. Read both from SSM: the stack output\nexports change on every new version, and importing one from another stack blocks publishing the\nnext one.\n\nA new version is published whenever the guardrail properties change as rendered, including\nthrough custom CDK aspects but not through tags, and harnesses that reference this guardrail by\n`config:<name>` move to it. Turning publishing off removes the SSM `version` and `version-arn`\nparameters and, unless `retainVersions` is set, deletes the published version.\n\nIAM `bedrock:GuardrailIdentifier` conditions take the versioned ARN; the bare guardrail ARN\nmatches only `DRAFT`. Account-level enforcement and a harness `guardrail.version` take the number.\n\nUse cases: Pinning agents to a reviewed guardrail configuration; staging guardrail changes;\nIAM `bedrock:GuardrailIdentifier` conditions and account-level enforcement, which need a\nnumbered version\n\nAWS: AWS::Bedrock::GuardrailVersion\n\nValidation: Optional; GuardrailVersionPublishingProps; presence opts in"
+                },
                 "wordFilters": {
                     "$ref": "#/definitions/WordFilters",
                     "description": "Custom word and phrase filters, and the AWS-managed profanity list. A match with action\nBLOCK returns the guardrail's blocked input or output messaging.\n\nUse cases: Blocking competitor or trademarked names; Blocking confidential codenames; Profanity filtering\n\nAWS: Bedrock Guardrail wordPolicyConfig\n\nValidation: Optional; at least one of words or profanity is required"
@@ -2313,6 +2317,18 @@
             },
             "type": "object"
         },
+        "GuardrailVersionPublishingProps": {
+            "additionalProperties": false,
+            "description": "Configuration for publishing numbered versions of a guardrail. Presence of this configuration\nopts in to version publishing; an empty object accepts all defaults.\n\nUse cases: Pinning agents to a reviewed guardrail configuration; staging guardrail changes\n\nAWS: AWS::Bedrock::GuardrailVersion\n\nValidation: presence of this configuration opts in to version publishing",
+            "properties": {
+                "retainVersions": {
+                    "default": false,
+                    "description": "Keeps a published version when a configuration change supersedes it or when publishing is\nturned off, so consumers outside the stack pinned to its number keep working until they move\nto the new one. Retained versions are no longer managed by the stack and count against the\nBedrock quota of 20 versions per guardrail, which cannot be raised; once it is reached,\npublishing fails until old versions are deleted with `DeleteGuardrail`.\n\nWhen false, a superseded version is deleted after the stack has moved its floating harnesses\nto the new one, so use it only when nothing pins a version number: consumers outside the stack\ncannot move before the deploy that creates the new number, and a harness endpoint with a\n`targetVersion` stays on a harness version that references the old guardrail version, which\ndoes not prevent its deletion. A version Bedrock refuses to delete is left behind outside the\nstack.\n\nA version whose creating deploy rolls back is deleted either way (`DeletionPolicy:\nRetainExceptOnCreate`).\n\nUse cases: Consumers outside this module pinned to a specific version number; harness endpoints\npinned with `targetVersion`; harnesses pinned to an older version with `guardrail.version`\n\nAWS: UpdateReplacePolicy (Retain) and DeletionPolicy (RetainExceptOnCreate) of\nAWS::Bedrock::GuardrailVersion\n\nValidation: Optional; Boolean",
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
+        },
         "HarnessAgentCoreGatewayToolProperty": {
             "additionalProperties": false,
             "description": "AgentCore Gateway tool: wires the Harness to an existing Bedrock AgentCore Gateway's tool\nsurface. MDAA supports only `AWS_IAM` outbound auth (the gateway invoked with the Harness's own\nexecution role) - `oauth`/`none` are not yet exposed.\n\nUse cases: exposing gateway-fronted Lambda/OpenAPI/Smithy tools to the agent loop\n\nAWS: `HarnessTool` with `type: agentcore_gateway`, `config.agentCoreGateway`\n\nValidation: gatewayArn required",
@@ -2471,7 +2487,7 @@
         },
         "HarnessGuardrailAssociation": {
             "additionalProperties": false,
-            "description": "Guardrail association for a Harness: a `config:<name>` reference into a sibling `guardrails` map,\nor a literal guardrail id.\n\nUse cases: content filtering, responsible-AI controls on the Harness's model calls\n\nAWS: `Model.BedrockModelConfig.AdditionalParams.guardrailConfig` (escape hatch - see class doc)\n\nValidation: `id` required; `version` required unless `id` is a `config:<name>` reference (the\nreferenced guardrail's live version is used)",
+            "description": "Guardrail association for a Harness: a `config:<name>` reference into a sibling `guardrails` map,\nor a literal guardrail id.\n\nUse cases: content filtering, responsible-AI controls on the Harness's model calls\n\nAWS: `Model.BedrockModelConfig.AdditionalParams.guardrailConfig` (escape hatch - see class doc)\n\nValidation: `id` required; `version` required unless `id` is a `config:<name>` reference (the\nreferenced guardrail's published version is used, or `DRAFT` when it publishes none)",
             "properties": {
                 "id": {
                     "description": "Guardrail identifier: a `config:<name>` reference into a sibling `guardrails` map, or a literal\nguardrail id.\n\nUse cases: referencing a module-managed guardrail, referencing an externally created guardrail\n\nAWS: `GuardrailConfig.GuardrailIdentifier`\n\nValidation: Required; String",
@@ -2488,7 +2504,7 @@
                     "type": "string"
                 },
                 "version": {
-                    "description": "Guardrail version. Required unless `id` is a `config:<name>` reference (the referenced\nguardrail's live version is used automatically).\n\nUse cases: pinning a specific guardrail version\n\nAWS: `GuardrailConfig.GuardrailVersion`\n\nValidation: Optional when `id` is a `config:` reference; otherwise Required; String",
+                    "description": "Guardrail version. Required unless `id` is a `config:<name>` reference, which uses the\nreferenced guardrail's published version (see `versionPublishing`), or `DRAFT` when it\npublishes none. Setting it with a `config:` reference pins an older published version, which\nstays available only when that guardrail sets `versionPublishing.retainVersions`.\n\nUse cases: pinning a specific guardrail version\n\nAWS: `GuardrailConfig.GuardrailVersion`\n\nValidation: Optional when `id` is a `config:` reference; otherwise Required; String",
                     "type": "string"
                 }
             },

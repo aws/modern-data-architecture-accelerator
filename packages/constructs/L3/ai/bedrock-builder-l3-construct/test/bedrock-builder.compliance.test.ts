@@ -2775,6 +2775,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
           contentFilters: { hate: { inputStrength: 'HIGH', outputStrength: 'HIGH' } },
           blockedInputMessaging: 'blocked',
           blockedOutputsMessaging: 'blocked',
+          versionPublishing: {},
         },
       },
       gateways: {

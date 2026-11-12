@@ -92,7 +92,7 @@ export enum HarnessGuardrailTrace {
  * AWS: `Model.BedrockModelConfig.AdditionalParams.guardrailConfig` (escape hatch - see class doc)
  *
  * Validation: `id` required; `version` required unless `id` is a `config:<name>` reference (the
- * referenced guardrail's live version is used)
+ * referenced guardrail's published version is used, or `DRAFT` when it publishes none)
  */
 export interface HarnessGuardrailAssociation {
   /**
@@ -107,8 +107,10 @@ export interface HarnessGuardrailAssociation {
    **/
   readonly id: string;
   /**
-   * Guardrail version. Required unless `id` is a `config:<name>` reference (the referenced
-   * guardrail's live version is used automatically).
+   * Guardrail version. Required unless `id` is a `config:<name>` reference, which uses the
+   * referenced guardrail's published version (see `versionPublishing`), or `DRAFT` when it
+   * publishes none. Setting it with a `config:` reference pins an older published version, which
+   * stays available only when that guardrail sets `versionPublishing.retainVersions`.
    *
    * Use cases: pinning a specific guardrail version
    *

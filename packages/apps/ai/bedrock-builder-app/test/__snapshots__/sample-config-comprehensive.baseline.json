@@ -7670,6 +7670,73 @@
         }
       }
     },
+    "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrailversion019F8E53": {
+      "Type": "AWS::Bedrock::GuardrailVersion",
+      "Properties": {
+        "Description": "Published by MDAA from guardrail configuration hash 0a60c4b90ffcf0abb48cccb08ffffd486d1487c038b5460b4aaa8d0ccc498d6d",
+        "GuardrailIdentifier": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrail3B268BFF",
+            "GuardrailId"
+          ]
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "RetainExceptOnCreate"
+    },
+    "bedrockbuilderbedrockguardrailenterpriseguardrailguardrailenterpriseguardrailversionssm334F96F8": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-app/guardrail/enterprise-guardrail/version",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrailversion019F8E53",
+            "Version"
+          ]
+        }
+      }
+    },
+    "bedrockbuilderbedrockguardrailenterpriseguardrailguardrailenterpriseguardrailversionarnssmE61BDC7D": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-app/guardrail/enterprise-guardrail/version-arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-app",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            ":",
+            [
+              {
+                "Fn::GetAtt": [
+                  "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrail3B268BFF",
+                  "GuardrailArn"
+                ]
+              },
+              {
+                "Fn::GetAtt": [
+                  "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrailversion019F8E53",
+                  "Version"
+                ]
+              }
+            ]
+          ]
+        }
+      }
+    },
     "bedrockbuilderbedrockguardrailenterpriseguardrailinterventioncountalarmAlarm4034899D": {
       "Type": "AWS::CloudWatch::Alarm",
       "Properties": {
@@ -11159,11 +11226,6 @@
         },
         "Model": {
           "BedrockModelConfig": {
-            "ApiFormat": "converse_stream",
-            "MaxTokens": 2048,
-            "ModelId": "arn:test-partition:bedrock:test-region:test-account:inference-profile/us.anthropic.claude-sonnet-4-5-20250929-v1:0",
-            "Temperature": 0.2,
-            "TopP": 0.9,
             "AdditionalParams": {
               "guardrailConfig": {
                 "guardrailIdentifier": {
@@ -11174,13 +11236,18 @@
                 },
                 "guardrailVersion": {
                   "Fn::GetAtt": [
-                    "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrail3B268BFF",
+                    "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrailversion019F8E53",
                     "Version"
                   ]
                 },
                 "trace": "enabled"
               }
-            }
+            },
+            "ApiFormat": "converse_stream",
+            "MaxTokens": 2048,
+            "ModelId": "arn:test-partition:bedrock:test-region:test-account:inference-profile/us.anthropic.claude-sonnet-4-5-20250929-v1:0",
+            "Temperature": 0.2,
+            "TopP": 0.9
           }
         },
         "Skills": [
@@ -14968,6 +15035,41 @@
       },
       "Export": {
         "Name": "test-org:test-domain:test-bedrock-builder-app:guardrail:enterpriseguardrail:id"
+      }
+    },
+    "bedrockbuilderbedrockguardrailenterpriseguardrailguardrailenterpriseguardrailversionoutC7485EA5": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrailversion019F8E53",
+          "Version"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-app:guardrail:enterpriseguardrail:version"
+      }
+    },
+    "bedrockbuilderbedrockguardrailenterpriseguardrailguardrailenterpriseguardrailversionarnoutD7B9D07A": {
+      "Value": {
+        "Fn::Join": [
+          ":",
+          [
+            {
+              "Fn::GetAtt": [
+                "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrail3B268BFF",
+                "GuardrailArn"
+              ]
+            },
+            {
+              "Fn::GetAtt": [
+                "bedrockbuilderbedrockguardrailenterpriseguardrailenterpriseguardrailguardrailversion019F8E53",
+                "Version"
+              ]
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-app:guardrail:enterpriseguardrail:version-arn"
       }
     },
     "bedrockbuildervpcendpointsagentcoreprivatebedrockruntimesecuritygroupsecuritygroupvpcendpointagentcoreprivatebedrockruntimeidout74A78801": {
