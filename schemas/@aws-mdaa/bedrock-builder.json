@@ -310,11 +310,20 @@
                 },
                 "contentFilters": {
                     "$ref": "#/definitions/ContentFilters",
-                    "description": "Content filter configuration across safety categories"
+                    "description": "Content filter configuration across safety categories. May be empty ({}) when the guardrail\nconfigures another policy, such as denied topics or word filters."
                 },
                 "contextualGroundingFilters": {
                     "$ref": "#/definitions/GroundingFilters",
                     "description": "Contextual grounding filters for response accuracy"
+                },
+                "deniedTopics": {
+                    "description": "Topics the guardrail denies. Bedrock evaluates topics in the order given, and the order\ncan change whether a borderline prompt is blocked.\n\nUse cases: Keeping an assistant within its intended scope; Regulated advice restrictions\n\nAWS: Bedrock Guardrail topicPolicyConfig\n\nValidation: Optional; 1-30 topics with unique names",
+                    "items": {
+                        "$ref": "#/definitions/DeniedTopic"
+                    },
+                    "maxItems": 30,
+                    "minItems": 1,
+                    "type": "array"
                 },
                 "description": {
                     "description": "Guardrail description",
@@ -327,6 +336,10 @@
                 "sensitiveInformationFilters": {
                     "$ref": "#/definitions/SensitiveInformationFilters",
                     "description": "Sensitive information filters for PII and custom patterns"
+                },
+                "wordFilters": {
+                    "$ref": "#/definitions/WordFilters",
+                    "description": "Custom word and phrase filters, and the AWS-managed profanity list. A match with action\nBLOCK returns the guardrail's blocked input or output messaging.\n\nUse cases: Blocking competitor or trademarked names; Blocking confidential codenames; Profanity filtering\n\nAWS: Bedrock Guardrail wordPolicyConfig\n\nValidation: Optional; at least one of words or profanity is required"
                 }
             },
             "required": [
@@ -1140,9 +1153,37 @@
         "ContentFilterConfig": {
             "additionalProperties": false,
             "properties": {
+                "inputAction": {
+                    "default": "BLOCK",
+                    "description": "Action taken when the policy detects content in a prompt. NONE runs the policy in\ndetect-only mode, so it can be tuned against guardrail traces before it blocks anything.\n\nUse cases: Detect-only rollout of a new policy; Enforcing a policy on prompts\n\nAWS: inputAction on the Bedrock Guardrail policy entry\n\nValidation: Optional; BLOCK or NONE",
+                    "enum": [
+                        "BLOCK",
+                        "NONE"
+                    ],
+                    "type": "string"
+                },
+                "inputEnabled": {
+                    "default": true,
+                    "description": "Whether the policy evaluates prompts. Set false to skip evaluation of prompts entirely.\n\nUse cases: Applying a policy to responses only\n\nAWS: inputEnabled on the Bedrock Guardrail policy entry\n\nValidation: Optional; Boolean",
+                    "type": "boolean"
+                },
                 "inputStrength": {
                     "$ref": "#/definitions/Strength",
                     "description": "Filter strength for user inputs (NONE, LOW, MEDIUM, HIGH)"
+                },
+                "outputAction": {
+                    "default": "BLOCK",
+                    "description": "Action taken when the policy detects content in a model response. NONE runs the policy\nin detect-only mode.\n\nUse cases: Detect-only rollout of a new policy; Enforcing a policy on responses\n\nAWS: outputAction on the Bedrock Guardrail policy entry\n\nValidation: Optional; BLOCK or NONE",
+                    "enum": [
+                        "BLOCK",
+                        "NONE"
+                    ],
+                    "type": "string"
+                },
+                "outputEnabled": {
+                    "default": true,
+                    "description": "Whether the policy evaluates model responses. Set false to skip evaluation of responses entirely.\n\nUse cases: Applying a policy to prompts only\n\nAWS: outputEnabled on the Bedrock Guardrail policy entry\n\nValidation: Optional; Boolean",
+                    "type": "boolean"
                 },
                 "outputStrength": {
                     "$ref": "#/definitions/Strength",
@@ -1253,6 +1294,63 @@
                     "type": "array"
                 }
             },
+            "type": "object"
+        },
+        "DeniedTopic": {
+            "additionalProperties": false,
+            "properties": {
+                "definition": {
+                    "description": "What the topic covers, stated as a definition rather than an instruction. Avoid negative\ndefinitions and exceptions (\"anything except ...\"), and use word filters, not topics, to\ncatch specific names or terms.\n\nUse cases: Keeping an assistant out of investment advice, medical diagnosis or legal advice\n\nAWS: Bedrock Guardrail topicPolicyConfig.topicsConfig[].definition\n\nValidation: Required; 1-200 characters (Classic safeguard tier limit)",
+                    "maxLength": 200,
+                    "minLength": 1,
+                    "type": "string"
+                },
+                "examples": {
+                    "description": "Sample prompts or responses that belong to the topic, used to improve detection.\n\nUse cases: Sharpening detection of a broad topic\n\nAWS: Bedrock Guardrail topicPolicyConfig.topicsConfig[].examples\n\nValidation: Optional; up to 5 phrases of 1-100 characters each",
+                    "items": {
+                        "type": "string"
+                    },
+                    "maxItems": 5,
+                    "type": "array"
+                },
+                "inputAction": {
+                    "default": "BLOCK",
+                    "description": "Action taken when the policy detects content in a prompt. NONE runs the policy in\ndetect-only mode, so it can be tuned against guardrail traces before it blocks anything.\n\nUse cases: Detect-only rollout of a new policy; Enforcing a policy on prompts\n\nAWS: inputAction on the Bedrock Guardrail policy entry\n\nValidation: Optional; BLOCK or NONE",
+                    "enum": [
+                        "BLOCK",
+                        "NONE"
+                    ],
+                    "type": "string"
+                },
+                "inputEnabled": {
+                    "default": true,
+                    "description": "Whether the policy evaluates prompts. Set false to skip evaluation of prompts entirely.\n\nUse cases: Applying a policy to responses only\n\nAWS: inputEnabled on the Bedrock Guardrail policy entry\n\nValidation: Optional; Boolean",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Name of the topic, as a noun or noun phrase (for example 'Investment Advice'). Must be\nunique within the guardrail.\n\nUse cases: Identifying the topic in guardrail traces\n\nAWS: Bedrock Guardrail topicPolicyConfig.topicsConfig[].name\n\nValidation: Required; 1-100 characters; letters, digits, spaces and - _ ! ? .",
+                    "pattern": "^[0-9a-zA-Z_ !?.-]{1,100}$",
+                    "type": "string"
+                },
+                "outputAction": {
+                    "default": "BLOCK",
+                    "description": "Action taken when the policy detects content in a model response. NONE runs the policy\nin detect-only mode.\n\nUse cases: Detect-only rollout of a new policy; Enforcing a policy on responses\n\nAWS: outputAction on the Bedrock Guardrail policy entry\n\nValidation: Optional; BLOCK or NONE",
+                    "enum": [
+                        "BLOCK",
+                        "NONE"
+                    ],
+                    "type": "string"
+                },
+                "outputEnabled": {
+                    "default": true,
+                    "description": "Whether the policy evaluates model responses. Set false to skip evaluation of responses entirely.\n\nUse cases: Applying a policy to prompts only\n\nAWS: outputEnabled on the Bedrock Guardrail policy entry\n\nValidation: Optional; Boolean",
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "definition",
+                "name"
+            ],
             "type": "object"
         },
         "DockerImage": {
@@ -5006,7 +5104,7 @@
             "additionalProperties": false,
             "properties": {
                 "piiEntities": {
-                    "description": "PII entity filter configurations",
+                    "description": "PII entity filter configurations. `action` is required on every entry, even when\n`inputAction` and `outputAction` are both set. ANONYMIZE on input lets a prompt that\ncontains PII reach the model with the PII masked, rather than rejecting it.\n\nUse cases: Masking customer names in support queries; Blocking social security numbers\n\nAWS: Bedrock Guardrail sensitiveInformationPolicyConfig.piiEntitiesConfig\n\nValidation: Optional; each entry needs type (for example NAME, EMAIL, US_SOCIAL_SECURITY_NUMBER) and action (BLOCK, ANONYMIZE or NONE)",
                     "items": {
                         "$ref": "#/definitions/CfnGuardrail.PiiEntityConfigProperty"
                     },
@@ -5759,6 +5857,54 @@
                 "subnetIds",
                 "vpcId"
             ],
+            "type": "object"
+        },
+        "WordFilters": {
+            "additionalProperties": false,
+            "properties": {
+                "inputAction": {
+                    "default": "BLOCK",
+                    "description": "Action taken when the policy detects content in a prompt. NONE runs the policy in\ndetect-only mode, so it can be tuned against guardrail traces before it blocks anything.\n\nUse cases: Detect-only rollout of a new policy; Enforcing a policy on prompts\n\nAWS: inputAction on the Bedrock Guardrail policy entry\n\nValidation: Optional; BLOCK or NONE",
+                    "enum": [
+                        "BLOCK",
+                        "NONE"
+                    ],
+                    "type": "string"
+                },
+                "inputEnabled": {
+                    "default": true,
+                    "description": "Whether the policy evaluates prompts. Set false to skip evaluation of prompts entirely.\n\nUse cases: Applying a policy to responses only\n\nAWS: inputEnabled on the Bedrock Guardrail policy entry\n\nValidation: Optional; Boolean",
+                    "type": "boolean"
+                },
+                "outputAction": {
+                    "default": "BLOCK",
+                    "description": "Action taken when the policy detects content in a model response. NONE runs the policy\nin detect-only mode.\n\nUse cases: Detect-only rollout of a new policy; Enforcing a policy on responses\n\nAWS: outputAction on the Bedrock Guardrail policy entry\n\nValidation: Optional; BLOCK or NONE",
+                    "enum": [
+                        "BLOCK",
+                        "NONE"
+                    ],
+                    "type": "string"
+                },
+                "outputEnabled": {
+                    "default": true,
+                    "description": "Whether the policy evaluates model responses. Set false to skip evaluation of responses entirely.\n\nUse cases: Applying a policy to prompts only\n\nAWS: outputEnabled on the Bedrock Guardrail policy entry\n\nValidation: Optional; Boolean",
+                    "type": "boolean"
+                },
+                "profanity": {
+                    "default": false,
+                    "description": "Turns on the AWS-managed profanity word list, which AWS updates continually.\n\nUse cases: Brand safety for customer-facing assistants\n\nAWS: Bedrock Guardrail wordPolicyConfig.managedWordListsConfig (type PROFANITY)\n\nValidation: Optional; Boolean",
+                    "type": "boolean"
+                },
+                "words": {
+                    "description": "Words or phrases (up to three words each) the guardrail filters. Matching is\ncase-insensitive and whole-word, so 'competitor' does not match 'competitors'. The spacing\nbetween a phrase's words must match exactly: 'off the record' does not match a prompt with\nextra spaces, a tab or a line break between those words. Prefer single-word entries, which\nspacing cannot affect, and list each spacing of a phrase that you need to catch as its own\nentry. Must be unique ignoring case; entries that differ only in spacing are not duplicates.\n\nUse cases: Blocking competitor names; Blocking internal project codenames; Blocking legal matter names\n\nAWS: Bedrock Guardrail wordPolicyConfig.wordsConfig\n\nValidation: Optional; up to 10,000 entries of 1-100 characters each; at least one of words or profanity is required",
+                    "items": {
+                        "type": "string"
+                    },
+                    "maxItems": 10000,
+                    "minItems": 1,
+                    "type": "array"
+                }
+            },
             "type": "object"
         }
     },

@@ -168,7 +168,7 @@ describe('BedrockBuilderL3Construct AgentCore harness wiring', () => {
     const t = template({
       guardrails: {
         'enterprise-guardrail': {
-          contentFilters: {},
+          contentFilters: { hate: { inputStrength: 'HIGH', outputStrength: 'HIGH' } },
           blockedInputMessaging: 'blocked',
           blockedOutputsMessaging: 'blocked',
         },

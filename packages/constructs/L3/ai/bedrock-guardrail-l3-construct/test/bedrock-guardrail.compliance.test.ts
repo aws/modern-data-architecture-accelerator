@@ -5,7 +5,7 @@
 
 import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { BedrockGuardrailL3Construct, BedrockGuardrailL3ConstructProps, BedrockGuardrailProps } from '../lib';
 
@@ -542,6 +542,223 @@ describe('Bedrock Guardrail L3 Construct Tests', () => {
       },
     });
   });
+
+  const synthGuardrail = (guardrailName: string, guardrailConfig: BedrockGuardrailProps): Template => {
+    const testApp = new MdaaTestApp();
+    new BedrockGuardrailL3Construct(testApp.testStack, `${guardrailName}-construct`, {
+      guardrailName,
+      guardrailConfig,
+      kmsKey: new Key(testApp.testStack, 'TestKey', { enableKeyRotation: true }),
+      roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+      naming: testApp.naming,
+    });
+    return Template.fromStack(testApp.testStack);
+  };
+
+  test('Content Filter Direction Controls', () => {
+    const template = synthGuardrail('test-guardrail-filter-controls', {
+      contentFilters: {
+        hate: { inputStrength: 'HIGH', outputStrength: 'HIGH', outputAction: 'NONE' },
+        insults: { inputStrength: 'MEDIUM', outputStrength: 'MEDIUM', inputEnabled: false, outputEnabled: true },
+        violence: { inputStrength: 'LOW', outputStrength: 'LOW' },
+      },
+    });
+
+    template.hasResourceProperties('AWS::Bedrock::Guardrail', {
+      ContentPolicyConfig: {
+        FiltersConfig: [
+          Match.exact({ Type: 'HATE', InputStrength: 'HIGH', OutputStrength: 'HIGH', OutputAction: 'NONE' }),
+          Match.exact({
+            Type: 'INSULTS',
+            InputStrength: 'MEDIUM',
+            OutputStrength: 'MEDIUM',
+            InputEnabled: false,
+            OutputEnabled: true,
+          }),
+          Match.exact({ Type: 'VIOLENCE', InputStrength: 'LOW', OutputStrength: 'LOW' }),
+        ],
+      },
+    });
+  });
+
+  test('Guardrail without Topics or Word Filters omits both policies', () => {
+    const template = synthGuardrail('test-guardrail-no-topics', basicGuardrail);
+
+    template.hasResourceProperties('AWS::Bedrock::Guardrail', {
+      TopicPolicyConfig: Match.absent(),
+      WordPolicyConfig: Match.absent(),
+    });
+  });
+
+  test('Guardrail with Denied Topics renders them in config order', () => {
+    const template = synthGuardrail('test-guardrail-topics', {
+      ...basicGuardrail,
+      deniedTopics: [
+        {
+          name: 'Medical Diagnosis',
+          definition: 'Identifying medical conditions from symptoms, or recommending treatments or medications.',
+          inputAction: 'NONE',
+          outputEnabled: false,
+        },
+        {
+          name: 'Investment Advice',
+          definition: 'Recommendations about buying, selling, or holding financial securities or other investments.',
+          examples: ['Should I buy this stock?', 'Is now a good time to invest?'],
+        },
+      ],
+    });
+
+    template.hasResourceProperties('AWS::Bedrock::Guardrail', {
+      TopicPolicyConfig: {
+        TopicsConfig: [
+          Match.exact({
+            Type: 'DENY',
+            Name: 'Medical Diagnosis',
+            Definition: 'Identifying medical conditions from symptoms, or recommending treatments or medications.',
+            InputAction: 'NONE',
+            OutputEnabled: false,
+          }),
+          Match.exact({
+            Type: 'DENY',
+            Name: 'Investment Advice',
+            Definition: 'Recommendations about buying, selling, or holding financial securities or other investments.',
+            Examples: ['Should I buy this stock?', 'Is now a good time to invest?'],
+          }),
+        ],
+      },
+    });
+  });
+
+  test('Guardrail with Word Filters and Profanity', () => {
+    const template = synthGuardrail('test-guardrail-words', {
+      ...basicGuardrail,
+      wordFilters: { words: ['CompetitorBrandX', 'off the record'], profanity: true },
+    });
+
+    template.hasResourceProperties('AWS::Bedrock::Guardrail', {
+      WordPolicyConfig: Match.exact({
+        WordsConfig: [{ Text: 'CompetitorBrandX' }, { Text: 'off the record' }],
+        ManagedWordListsConfig: [{ Type: 'PROFANITY' }],
+      }),
+    });
+  });
+
+  test('Word Filter Direction Controls apply to every entry', () => {
+    const template = synthGuardrail('test-guardrail-words-controls', {
+      ...basicGuardrail,
+      wordFilters: { words: ['CompetitorBrandX', 'ProjectZephyr'], profanity: true, outputEnabled: false },
+    });
+
+    template.hasResourceProperties('AWS::Bedrock::Guardrail', {
+      WordPolicyConfig: Match.exact({
+        WordsConfig: [
+          { Text: 'CompetitorBrandX', OutputEnabled: false },
+          { Text: 'ProjectZephyr', OutputEnabled: false },
+        ],
+        ManagedWordListsConfig: [{ Type: 'PROFANITY', OutputEnabled: false }],
+      }),
+    });
+  });
+
+  test('Words-only Word Filter omits the profanity list', () => {
+    const template = synthGuardrail('test-guardrail-words-only', {
+      ...basicGuardrail,
+      wordFilters: { words: ['CompetitorBrandX'] },
+    });
+
+    template.hasResourceProperties('AWS::Bedrock::Guardrail', {
+      WordPolicyConfig: Match.exact({
+        WordsConfig: [{ Text: 'CompetitorBrandX' }],
+      }),
+    });
+  });
+
+  test('Empty Content Filters omit the content policy when another policy is set', () => {
+    const template = synthGuardrail('test-guardrail-topics-only', {
+      contentFilters: {},
+      deniedTopics: [{ name: 'Investment Advice', definition: 'Recommendations about financial securities.' }],
+    });
+
+    template.hasResourceProperties('AWS::Bedrock::Guardrail', {
+      ContentPolicyConfig: Match.absent(),
+      TopicPolicyConfig: {
+        TopicsConfig: [Match.objectLike({ Name: 'Investment Advice', Type: 'DENY' })],
+      },
+    });
+  });
+
+  test('Word Filter entries that differ only in spacing are kept as separate entries', () => {
+    const template = synthGuardrail('test-guardrail-words-spacing', {
+      ...basicGuardrail,
+      wordFilters: { words: ['off the record', 'off  the record'] },
+    });
+
+    template.hasResourceProperties('AWS::Bedrock::Guardrail', {
+      WordPolicyConfig: Match.exact({
+        WordsConfig: [{ Text: 'off the record' }, { Text: 'off  the record' }],
+      }),
+    });
+  });
+
+  test('Profanity-only Word Filter omits custom words', () => {
+    const template = synthGuardrail('test-guardrail-profanity', {
+      ...basicGuardrail,
+      wordFilters: { profanity: true, inputAction: 'NONE' },
+    });
+
+    template.hasResourceProperties('AWS::Bedrock::Guardrail', {
+      WordPolicyConfig: Match.exact({
+        ManagedWordListsConfig: [{ Type: 'PROFANITY', InputAction: 'NONE' }],
+      }),
+    });
+  });
+
+  test('PII Entity Directional Actions pass through unchanged', () => {
+    const template = synthGuardrail('test-guardrail-pii-directional', {
+      ...basicGuardrail,
+      sensitiveInformationFilters: {
+        piiEntities: [{ type: 'NAME', action: 'ANONYMIZE', inputAction: 'ANONYMIZE', outputAction: 'BLOCK' }],
+      },
+    });
+
+    template.hasResourceProperties('AWS::Bedrock::Guardrail', {
+      SensitiveInformationPolicyConfig: {
+        PiiEntitiesConfig: [
+          Match.exact({ Type: 'NAME', Action: 'ANONYMIZE', InputAction: 'ANONYMIZE', OutputAction: 'BLOCK' }),
+        ],
+      },
+    });
+  });
+});
+
+describe('Bedrock Guardrail L3 Construct CDK Nag Compliance', () => {
+  const testApp = new MdaaTestApp();
+
+  // One guardrail exercising every policy type, so each rendered policy is evaluated by the rule packs.
+  new BedrockGuardrailL3Construct(testApp.testStack, 'test-guardrail-nag-construct', {
+    guardrailName: 'test-guardrail-nag',
+    guardrailConfig: {
+      description: 'Guardrail exercising every policy type',
+      contentFilters: {
+        hate: { inputStrength: 'HIGH', outputStrength: 'HIGH', outputAction: 'NONE' },
+        promptAttack: { inputStrength: 'HIGH', outputStrength: 'NONE' },
+      },
+      contextualGroundingFilters: { grounding: 0.9, relevance: 0.8 },
+      sensitiveInformationFilters: {
+        piiEntities: [{ type: 'NAME', action: 'BLOCK', inputAction: 'ANONYMIZE', outputAction: 'BLOCK' }],
+        regexes: [{ name: 'EmployeeId', pattern: 'EMP-\\d{6}', action: 'ANONYMIZE' }],
+      },
+      deniedTopics: [
+        { name: 'Investment Advice', definition: 'Recommendations about financial securities.', inputAction: 'NONE' },
+      ],
+      wordFilters: { words: ['CompetitorBrandX'], profanity: true, outputEnabled: false },
+    },
+    kmsKey: new Key(testApp.testStack, 'TestKey', { enableKeyRotation: true }),
+    roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+    naming: testApp.naming,
+  });
+
+  testApp.checkCdkNagCompliance(testApp.testStack);
 });
 
 describe('Bedrock Guardrail L3 Construct Intervention Alarm Compliance', () => {

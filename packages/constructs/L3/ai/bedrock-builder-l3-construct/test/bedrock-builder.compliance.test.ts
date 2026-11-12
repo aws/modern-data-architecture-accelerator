@@ -2772,7 +2772,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       naming: testApp.naming,
       guardrails: {
         'enterprise-guardrail': {
-          contentFilters: {},
+          contentFilters: { hate: { inputStrength: 'HIGH', outputStrength: 'HIGH' } },
           blockedInputMessaging: 'blocked',
           blockedOutputsMessaging: 'blocked',
         },

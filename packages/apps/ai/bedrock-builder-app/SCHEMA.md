@@ -4149,11 +4149,13 @@ Validation: Optional; NamedGuardrailProps (map of guardrail name to config)
 | ---------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | - [blockedInputMessaging](#guardrails_additionalProperties_blockedInputMessaging )             | No      | string | No         | -                                                | Custom message when user input is blocked                                                                                                                                                                                                                                                                                                                                                                                                              |
 | - [blockedOutputsMessaging](#guardrails_additionalProperties_blockedOutputsMessaging )         | No      | string | No         | -                                                | Custom message when model output is blocked                                                                                                                                                                                                                                                                                                                                                                                                            |
-| + [contentFilters](#guardrails_additionalProperties_contentFilters )                           | No      | object | No         | In #/definitions/ContentFilters                  | Content filter configuration across safety categories                                                                                                                                                                                                                                                                                                                                                                                                  |
+| + [contentFilters](#guardrails_additionalProperties_contentFilters )                           | No      | object | No         | In #/definitions/ContentFilters                  | Content filter configuration across safety categories. May be empty ({}) when the guardrail<br />configures another policy, such as denied topics or word filters.                                                                                                                                                                                                                                                                                     |
 | - [contextualGroundingFilters](#guardrails_additionalProperties_contextualGroundingFilters )   | No      | object | No         | In #/definitions/GroundingFilters                | Contextual grounding filters for response accuracy                                                                                                                                                                                                                                                                                                                                                                                                     |
+| - [deniedTopics](#guardrails_additionalProperties_deniedTopics )                               | No      | array  | No         | -                                                | Topics the guardrail denies. Bedrock evaluates topics in the order given, and the order<br />can change whether a borderline prompt is blocked.<br /><br />Use cases: Keeping an assistant within its intended scope; Regulated advice restrictions<br /><br />AWS: Bedrock Guardrail topicPolicyConfig<br /><br />Validation: Optional; 1-30 topics with unique names                                                                                 |
 | - [description](#guardrails_additionalProperties_description )                                 | No      | string | No         | -                                                | Guardrail description                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | - [interventionAlarm](#guardrails_additionalProperties_interventionAlarm )                     | No      | object | No         | In #/definitions/GuardrailInterventionAlarmProps | Intervention alarms on this guardrail, covering every guardrail version. Requires the<br />module-level \`guardrailAlarms\` block, which sets the notification target and timing.<br /><br />Use cases: alerting on spikes in blocked content, intervention-rate monitoring<br /><br />AWS: CloudWatch alarms on AWS/Bedrock/Guardrails InvocationsIntervened<br /><br />Validation: Optional; GuardrailInterventionAlarmProps; at least one threshold |
 | - [sensitiveInformationFilters](#guardrails_additionalProperties_sensitiveInformationFilters ) | No      | object | No         | In #/definitions/SensitiveInformationFilters     | Sensitive information filters for PII and custom patterns                                                                                                                                                                                                                                                                                                                                                                                              |
+| - [wordFilters](#guardrails_additionalProperties_wordFilters )                                 | No      | object | No         | In #/definitions/WordFilters                     | Custom word and phrase filters, and the AWS-managed profanity list. A match with action<br />BLOCK returns the guardrail's blocked input or output messaging.<br /><br />Use cases: Blocking competitor or trademarked names; Blocking confidential codenames; Profanity filtering<br /><br />AWS: Bedrock Guardrail wordPolicyConfig<br /><br />Validation: Optional; at least one of words or profanity is required                                  |
 
 #### <a name="guardrails_additionalProperties_blockedInputMessaging"></a>5.1.1. Property `root > guardrails > additionalProperties > blockedInputMessaging`
 
@@ -4182,7 +4184,8 @@ Validation: Optional; NamedGuardrailProps (map of guardrail name to config)
 | **Additional properties** | Not allowed                  |
 | **Defined in**            | #/definitions/ContentFilters |
 
-**Description:** Content filter configuration across safety categories
+**Description:** Content filter configuration across safety categories. May be empty ({}) when the guardrail
+configures another policy, such as denied topics or word filters.
 
 | Property                                                                        | Pattern | Type   | Deprecated | Definition                                                            | Title/Description                                                                                            |
 | ------------------------------------------------------------------------------- | ------- | ------ | ---------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
@@ -4204,12 +4207,53 @@ Validation: Optional; NamedGuardrailProps (map of guardrail name to config)
 
 **Description:** Hate speech filter config
 
-| Property                                                                                 | Pattern | Type             | Deprecated | Definition                                                                                   | Title/Description                                                                          |
-| ---------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| + [inputStrength](#guardrails_additionalProperties_contentFilters_hate_inputStrength )   | No      | enum (of string) | No         | In #/definitions/Strength                                                                    | Filter strength for user inputs (NONE, LOW, MEDIUM, HIGH)                                  |
-| + [outputStrength](#guardrails_additionalProperties_contentFilters_hate_outputStrength ) | No      | enum (of string) | No         | Same as [inputStrength](#guardrails_additionalProperties_contentFilters_hate_inputStrength ) | Filter strength for model outputs (NONE, LOW, MEDIUM, HIGH). Must be NONE for promptAttack |
+| Property                                                                                 | Pattern | Type             | Deprecated | Definition                                                                                   | Title/Description                                                                                                                                                                                                                                                                                                                                                                         |
+| ---------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [inputAction](#guardrails_additionalProperties_contentFilters_hate_inputAction )       | No      | enum (of string) | No         | -                                                                                            | Action taken when the policy detects content in a prompt. NONE runs the policy in<br />detect-only mode, so it can be tuned against guardrail traces before it blocks anything.<br /><br />Use cases: Detect-only rollout of a new policy; Enforcing a policy on prompts<br /><br />AWS: inputAction on the Bedrock Guardrail policy entry<br /><br />Validation: Optional; BLOCK or NONE |
+| - [inputEnabled](#guardrails_additionalProperties_contentFilters_hate_inputEnabled )     | No      | boolean          | No         | -                                                                                            | Whether the policy evaluates prompts. Set false to skip evaluation of prompts entirely.<br /><br />Use cases: Applying a policy to responses only<br /><br />AWS: inputEnabled on the Bedrock Guardrail policy entry<br /><br />Validation: Optional; Boolean                                                                                                                             |
+| + [inputStrength](#guardrails_additionalProperties_contentFilters_hate_inputStrength )   | No      | enum (of string) | No         | In #/definitions/Strength                                                                    | Filter strength for user inputs (NONE, LOW, MEDIUM, HIGH)                                                                                                                                                                                                                                                                                                                                 |
+| - [outputAction](#guardrails_additionalProperties_contentFilters_hate_outputAction )     | No      | enum (of string) | No         | -                                                                                            | Action taken when the policy detects content in a model response. NONE runs the policy<br />in detect-only mode.<br /><br />Use cases: Detect-only rollout of a new policy; Enforcing a policy on responses<br /><br />AWS: outputAction on the Bedrock Guardrail policy entry<br /><br />Validation: Optional; BLOCK or NONE                                                             |
+| - [outputEnabled](#guardrails_additionalProperties_contentFilters_hate_outputEnabled )   | No      | boolean          | No         | -                                                                                            | Whether the policy evaluates model responses. Set false to skip evaluation of responses entirely.<br /><br />Use cases: Applying a policy to prompts only<br /><br />AWS: outputEnabled on the Bedrock Guardrail policy entry<br /><br />Validation: Optional; Boolean                                                                                                                    |
+| + [outputStrength](#guardrails_additionalProperties_contentFilters_hate_outputStrength ) | No      | enum (of string) | No         | Same as [inputStrength](#guardrails_additionalProperties_contentFilters_hate_inputStrength ) | Filter strength for model outputs (NONE, LOW, MEDIUM, HIGH). Must be NONE for promptAttack                                                                                                                                                                                                                                                                                                |
 
-###### <a name="guardrails_additionalProperties_contentFilters_hate_inputStrength"></a>5.1.3.1.1. Property `root > guardrails > additionalProperties > contentFilters > hate > inputStrength`
+###### <a name="guardrails_additionalProperties_contentFilters_hate_inputAction"></a>5.1.3.1.1. Property `root > guardrails > additionalProperties > contentFilters > hate > inputAction`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+| **Default**  | `"BLOCK"`          |
+
+**Description:** Action taken when the policy detects content in a prompt. NONE runs the policy in
+detect-only mode, so it can be tuned against guardrail traces before it blocks anything.
+
+Use cases: Detect-only rollout of a new policy; Enforcing a policy on prompts
+
+AWS: inputAction on the Bedrock Guardrail policy entry
+
+Validation: Optional; BLOCK or NONE
+
+Must be one of:
+* "BLOCK"
+* "NONE"
+
+###### <a name="guardrails_additionalProperties_contentFilters_hate_inputEnabled"></a>5.1.3.1.2. Property `root > guardrails > additionalProperties > contentFilters > hate > inputEnabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+**Description:** Whether the policy evaluates prompts. Set false to skip evaluation of prompts entirely.
+
+Use cases: Applying a policy to responses only
+
+AWS: inputEnabled on the Bedrock Guardrail policy entry
+
+Validation: Optional; Boolean
+
+###### <a name="guardrails_additionalProperties_contentFilters_hate_inputStrength"></a>5.1.3.1.3. Property `root > guardrails > additionalProperties > contentFilters > hate > inputStrength`
 
 |                |                        |
 | -------------- | ---------------------- |
@@ -4225,7 +4269,44 @@ Must be one of:
 * "MEDIUM"
 * "NONE"
 
-###### <a name="guardrails_additionalProperties_contentFilters_hate_outputStrength"></a>5.1.3.1.2. Property `root > guardrails > additionalProperties > contentFilters > hate > outputStrength`
+###### <a name="guardrails_additionalProperties_contentFilters_hate_outputAction"></a>5.1.3.1.4. Property `root > guardrails > additionalProperties > contentFilters > hate > outputAction`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+| **Default**  | `"BLOCK"`          |
+
+**Description:** Action taken when the policy detects content in a model response. NONE runs the policy
+in detect-only mode.
+
+Use cases: Detect-only rollout of a new policy; Enforcing a policy on responses
+
+AWS: outputAction on the Bedrock Guardrail policy entry
+
+Validation: Optional; BLOCK or NONE
+
+Must be one of:
+* "BLOCK"
+* "NONE"
+
+###### <a name="guardrails_additionalProperties_contentFilters_hate_outputEnabled"></a>5.1.3.1.5. Property `root > guardrails > additionalProperties > contentFilters > hate > outputEnabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+**Description:** Whether the policy evaluates model responses. Set false to skip evaluation of responses entirely.
+
+Use cases: Applying a policy to prompts only
+
+AWS: outputEnabled on the Bedrock Guardrail policy entry
+
+Validation: Optional; Boolean
+
+###### <a name="guardrails_additionalProperties_contentFilters_hate_outputStrength"></a>5.1.3.1.6. Property `root > guardrails > additionalProperties > contentFilters > hate > outputStrength`
 
 |                        |                                                                                     |
 | ---------------------- | ----------------------------------------------------------------------------------- |
@@ -4324,7 +4405,204 @@ Must be one of:
 
 **Description:** Relevance threshold (0.0-1.0) for query relevance
 
-#### <a name="guardrails_additionalProperties_description"></a>5.1.5. Property `root > guardrails > additionalProperties > description`
+#### <a name="guardrails_additionalProperties_deniedTopics"></a>5.1.5. Property `root > guardrails > additionalProperties > deniedTopics`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+**Description:** Topics the guardrail denies. Bedrock evaluates topics in the order given, and the order
+can change whether a borderline prompt is blocked.
+
+Use cases: Keeping an assistant within its intended scope; Regulated advice restrictions
+
+AWS: Bedrock Guardrail topicPolicyConfig
+
+Validation: Optional; 1-30 topics with unique names
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | 1                  |
+| **Max items**        | 30                 |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                    | Description |
+| ------------------------------------------------------------------ | ----------- |
+| [DeniedTopic](#guardrails_additionalProperties_deniedTopics_items) | -           |
+
+##### <a name="guardrails_additionalProperties_deniedTopics_items"></a>5.1.5.1. root > guardrails > additionalProperties > deniedTopics > DeniedTopic
+
+|                           |                           |
+| ------------------------- | ------------------------- |
+| **Type**                  | `object`                  |
+| **Required**              | No                        |
+| **Additional properties** | Not allowed               |
+| **Defined in**            | #/definitions/DeniedTopic |
+
+| Property                                                                              | Pattern | Type             | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| + [definition](#guardrails_additionalProperties_deniedTopics_items_definition )       | No      | string           | No         | -          | What the topic covers, stated as a definition rather than an instruction. Avoid negative<br />definitions and exceptions ("anything except ..."), and use word filters, not topics, to<br />catch specific names or terms.<br /><br />Use cases: Keeping an assistant out of investment advice, medical diagnosis or legal advice<br /><br />AWS: Bedrock Guardrail topicPolicyConfig.topicsConfig[].definition<br /><br />Validation: Required; 1-200 characters (Classic safeguard tier limit) |
+| - [examples](#guardrails_additionalProperties_deniedTopics_items_examples )           | No      | array of string  | No         | -          | Sample prompts or responses that belong to the topic, used to improve detection.<br /><br />Use cases: Sharpening detection of a broad topic<br /><br />AWS: Bedrock Guardrail topicPolicyConfig.topicsConfig[].examples<br /><br />Validation: Optional; up to 5 phrases of 1-100 characters each                                                                                                                                                                                               |
+| - [inputAction](#guardrails_additionalProperties_deniedTopics_items_inputAction )     | No      | enum (of string) | No         | -          | Action taken when the policy detects content in a prompt. NONE runs the policy in<br />detect-only mode, so it can be tuned against guardrail traces before it blocks anything.<br /><br />Use cases: Detect-only rollout of a new policy; Enforcing a policy on prompts<br /><br />AWS: inputAction on the Bedrock Guardrail policy entry<br /><br />Validation: Optional; BLOCK or NONE                                                                                                        |
+| - [inputEnabled](#guardrails_additionalProperties_deniedTopics_items_inputEnabled )   | No      | boolean          | No         | -          | Whether the policy evaluates prompts. Set false to skip evaluation of prompts entirely.<br /><br />Use cases: Applying a policy to responses only<br /><br />AWS: inputEnabled on the Bedrock Guardrail policy entry<br /><br />Validation: Optional; Boolean                                                                                                                                                                                                                                    |
+| + [name](#guardrails_additionalProperties_deniedTopics_items_name )                   | No      | string           | No         | -          | Name of the topic, as a noun or noun phrase (for example 'Investment Advice'). Must be<br />unique within the guardrail.<br /><br />Use cases: Identifying the topic in guardrail traces<br /><br />AWS: Bedrock Guardrail topicPolicyConfig.topicsConfig[].name<br /><br />Validation: Required; 1-100 characters; letters, digits, spaces and - _ ! ? .                                                                                                                                        |
+| - [outputAction](#guardrails_additionalProperties_deniedTopics_items_outputAction )   | No      | enum (of string) | No         | -          | Action taken when the policy detects content in a model response. NONE runs the policy<br />in detect-only mode.<br /><br />Use cases: Detect-only rollout of a new policy; Enforcing a policy on responses<br /><br />AWS: outputAction on the Bedrock Guardrail policy entry<br /><br />Validation: Optional; BLOCK or NONE                                                                                                                                                                    |
+| - [outputEnabled](#guardrails_additionalProperties_deniedTopics_items_outputEnabled ) | No      | boolean          | No         | -          | Whether the policy evaluates model responses. Set false to skip evaluation of responses entirely.<br /><br />Use cases: Applying a policy to prompts only<br /><br />AWS: outputEnabled on the Bedrock Guardrail policy entry<br /><br />Validation: Optional; Boolean                                                                                                                                                                                                                           |
+
+###### <a name="guardrails_additionalProperties_deniedTopics_items_definition"></a>5.1.5.1.1. Property `root > guardrails > additionalProperties > deniedTopics > deniedTopics items > definition`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** What the topic covers, stated as a definition rather than an instruction. Avoid negative
+definitions and exceptions ("anything except ..."), and use word filters, not topics, to
+catch specific names or terms.
+
+Use cases: Keeping an assistant out of investment advice, medical diagnosis or legal advice
+
+AWS: Bedrock Guardrail topicPolicyConfig.topicsConfig[].definition
+
+Validation: Required; 1-200 characters (Classic safeguard tier limit)
+
+| Restrictions   |     |
+| -------------- | --- |
+| **Min length** | 1   |
+| **Max length** | 200 |
+
+###### <a name="guardrails_additionalProperties_deniedTopics_items_examples"></a>5.1.5.1.2. Property `root > guardrails > additionalProperties > deniedTopics > deniedTopics items > examples`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+**Description:** Sample prompts or responses that belong to the topic, used to improve detection.
+
+Use cases: Sharpening detection of a broad topic
+
+AWS: Bedrock Guardrail topicPolicyConfig.topicsConfig[].examples
+
+Validation: Optional; up to 5 phrases of 1-100 characters each
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | 5                  |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                      | Description |
+| ------------------------------------------------------------------------------------ | ----------- |
+| [examples items](#guardrails_additionalProperties_deniedTopics_items_examples_items) | -           |
+
+###### <a name="guardrails_additionalProperties_deniedTopics_items_examples_items"></a>5.1.5.1.2.1. root > guardrails > additionalProperties > deniedTopics > deniedTopics items > examples > examples items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="guardrails_additionalProperties_deniedTopics_items_inputAction"></a>5.1.5.1.3. Property `root > guardrails > additionalProperties > deniedTopics > deniedTopics items > inputAction`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+| **Default**  | `"BLOCK"`          |
+
+**Description:** Action taken when the policy detects content in a prompt. NONE runs the policy in
+detect-only mode, so it can be tuned against guardrail traces before it blocks anything.
+
+Use cases: Detect-only rollout of a new policy; Enforcing a policy on prompts
+
+AWS: inputAction on the Bedrock Guardrail policy entry
+
+Validation: Optional; BLOCK or NONE
+
+Must be one of:
+* "BLOCK"
+* "NONE"
+
+###### <a name="guardrails_additionalProperties_deniedTopics_items_inputEnabled"></a>5.1.5.1.4. Property `root > guardrails > additionalProperties > deniedTopics > deniedTopics items > inputEnabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+**Description:** Whether the policy evaluates prompts. Set false to skip evaluation of prompts entirely.
+
+Use cases: Applying a policy to responses only
+
+AWS: inputEnabled on the Bedrock Guardrail policy entry
+
+Validation: Optional; Boolean
+
+###### <a name="guardrails_additionalProperties_deniedTopics_items_name"></a>5.1.5.1.5. Property `root > guardrails > additionalProperties > deniedTopics > deniedTopics items > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Name of the topic, as a noun or noun phrase (for example 'Investment Advice'). Must be
+unique within the guardrail.
+
+Use cases: Identifying the topic in guardrail traces
+
+AWS: Bedrock Guardrail topicPolicyConfig.topicsConfig[].name
+
+Validation: Required; 1-100 characters; letters, digits, spaces and - _ ! ? .
+
+| Restrictions                      |                                                                                                                   |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| **Must match regular expression** | ```^[0-9a-zA-Z_ !?.-]{1,100}$``` [Test](https://regex101.com/?regex=%5E%5B0-9a-zA-Z_+%21%3F.-%5D%7B1%2C100%7D%24) |
+
+###### <a name="guardrails_additionalProperties_deniedTopics_items_outputAction"></a>5.1.5.1.6. Property `root > guardrails > additionalProperties > deniedTopics > deniedTopics items > outputAction`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+| **Default**  | `"BLOCK"`          |
+
+**Description:** Action taken when the policy detects content in a model response. NONE runs the policy
+in detect-only mode.
+
+Use cases: Detect-only rollout of a new policy; Enforcing a policy on responses
+
+AWS: outputAction on the Bedrock Guardrail policy entry
+
+Validation: Optional; BLOCK or NONE
+
+Must be one of:
+* "BLOCK"
+* "NONE"
+
+###### <a name="guardrails_additionalProperties_deniedTopics_items_outputEnabled"></a>5.1.5.1.7. Property `root > guardrails > additionalProperties > deniedTopics > deniedTopics items > outputEnabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+**Description:** Whether the policy evaluates model responses. Set false to skip evaluation of responses entirely.
+
+Use cases: Applying a policy to prompts only
+
+AWS: outputEnabled on the Bedrock Guardrail policy entry
+
+Validation: Optional; Boolean
+
+#### <a name="guardrails_additionalProperties_description"></a>5.1.6. Property `root > guardrails > additionalProperties > description`
 
 |              |          |
 | ------------ | -------- |
@@ -4333,7 +4611,7 @@ Must be one of:
 
 **Description:** Guardrail description
 
-#### <a name="guardrails_additionalProperties_interventionAlarm"></a>5.1.6. Property `root > guardrails > additionalProperties > interventionAlarm`
+#### <a name="guardrails_additionalProperties_interventionAlarm"></a>5.1.7. Property `root > guardrails > additionalProperties > interventionAlarm`
 
 |                           |                                               |
 | ------------------------- | --------------------------------------------- |
@@ -4356,7 +4634,7 @@ Validation: Optional; GuardrailInterventionAlarmProps; at least one threshold
 | - [countThreshold](#guardrails_additionalProperties_interventionAlarm_countThreshold )             | No      | number | No         | -          | Alarm when the number of guardrail interventions in one alarm period exceeds this<br />value. Counts every evaluation that intervened, on input or output, for inline use<br />(Converse, ConverseStream, InvokeModel with a guardrail) and \`ApplyGuardrail\` alike.<br />Omit to skip the count alarm.<br /><br />Use cases: catching a burst of blocked content regardless of traffic volume<br /><br />AWS: CloudWatch alarm on SUM(InvocationsIntervened)<br /><br />Validation: Optional; Number; >= 0                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | - [ratePercentThreshold](#guardrails_additionalProperties_interventionAlarm_ratePercentThreshold ) | No      | number | No         | -          | Alarm when the percentage of guardrail evaluations that intervened in one alarm<br />period exceeds this value. An inline call is evaluated on its input and, if the input<br />passes, again on its output, so the denominator is evaluations, not calls. Omit to<br />skip the rate alarm.<br /><br />In a period with few evaluations one intervention is a large share: one intervention<br />in a period with a single evaluation is 100%. On a low-traffic guardrail, require<br />several breaching periods with \`datapointsToAlarm\`, or use \`countThreshold\` instead.<br /><br />Use cases: intervention-rate alerting that scales with traffic, detecting policy drift<br /><br />AWS: CloudWatch alarm on AVG(InvocationsIntervened), the share of evaluations that<br />intervened, with a threshold of ratePercentThreshold / 100<br /><br />Validation: Optional; Number; percentage, at least 0 and below 100 |
 
-##### <a name="guardrails_additionalProperties_interventionAlarm_countThreshold"></a>5.1.6.1. Property `root > guardrails > additionalProperties > interventionAlarm > countThreshold`
+##### <a name="guardrails_additionalProperties_interventionAlarm_countThreshold"></a>5.1.7.1. Property `root > guardrails > additionalProperties > interventionAlarm > countThreshold`
 
 |              |          |
 | ------------ | -------- |
@@ -4378,7 +4656,7 @@ Validation: Optional; Number; >= 0
 | ------------ | ------ |
 | **Minimum**  | &ge; 0 |
 
-##### <a name="guardrails_additionalProperties_interventionAlarm_ratePercentThreshold"></a>5.1.6.2. Property `root > guardrails > additionalProperties > interventionAlarm > ratePercentThreshold`
+##### <a name="guardrails_additionalProperties_interventionAlarm_ratePercentThreshold"></a>5.1.7.2. Property `root > guardrails > additionalProperties > interventionAlarm > ratePercentThreshold`
 
 |              |          |
 | ------------ | -------- |
@@ -4406,7 +4684,7 @@ Validation: Optional; Number; percentage, at least 0 and below 100
 | **Minimum**  | &ge; 0   |
 | **Maximum**  | &lt; 100 |
 
-#### <a name="guardrails_additionalProperties_sensitiveInformationFilters"></a>5.1.7. Property `root > guardrails > additionalProperties > sensitiveInformationFilters`
+#### <a name="guardrails_additionalProperties_sensitiveInformationFilters"></a>5.1.8. Property `root > guardrails > additionalProperties > sensitiveInformationFilters`
 
 |                           |                                           |
 | ------------------------- | ----------------------------------------- |
@@ -4417,19 +4695,27 @@ Validation: Optional; Number; percentage, at least 0 and below 100
 
 **Description:** Sensitive information filters for PII and custom patterns
 
-| Property                                                                                   | Pattern | Type  | Deprecated | Definition | Title/Description                |
-| ------------------------------------------------------------------------------------------ | ------- | ----- | ---------- | ---------- | -------------------------------- |
-| - [piiEntities](#guardrails_additionalProperties_sensitiveInformationFilters_piiEntities ) | No      | array | No         | -          | PII entity filter configurations |
-| - [regexes](#guardrails_additionalProperties_sensitiveInformationFilters_regexes )         | No      | array | No         | -          | Custom regex pattern filters     |
+| Property                                                                                   | Pattern | Type  | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ------------------------------------------------------------------------------------------ | ------- | ----- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [piiEntities](#guardrails_additionalProperties_sensitiveInformationFilters_piiEntities ) | No      | array | No         | -          | PII entity filter configurations. \`action\` is required on every entry, even when<br />\`inputAction\` and \`outputAction\` are both set. ANONYMIZE on input lets a prompt that<br />contains PII reach the model with the PII masked, rather than rejecting it.<br /><br />Use cases: Masking customer names in support queries; Blocking social security numbers<br /><br />AWS: Bedrock Guardrail sensitiveInformationPolicyConfig.piiEntitiesConfig<br /><br />Validation: Optional; each entry needs type (for example NAME, EMAIL, US_SOCIAL_SECURITY_NUMBER) and action (BLOCK, ANONYMIZE or NONE) |
+| - [regexes](#guardrails_additionalProperties_sensitiveInformationFilters_regexes )         | No      | array | No         | -          | Custom regex pattern filters                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 
-##### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities"></a>5.1.7.1. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities`
+##### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities"></a>5.1.8.1. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities`
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `array` |
 | **Required** | No      |
 
-**Description:** PII entity filter configurations
+**Description:** PII entity filter configurations. `action` is required on every entry, even when
+`inputAction` and `outputAction` are both set. ANONYMIZE on input lets a prompt that
+contains PII reach the model with the PII masked, rather than rejecting it.
+
+Use cases: Masking customer names in support queries; Blocking social security numbers
+
+AWS: Bedrock Guardrail sensitiveInformationPolicyConfig.piiEntitiesConfig
+
+Validation: Optional; each entry needs type (for example NAME, EMAIL, US_SOCIAL_SECURITY_NUMBER) and action (BLOCK, ANONYMIZE or NONE)
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -4443,7 +4729,7 @@ Validation: Optional; Number; percentage, at least 0 and below 100
 | ---------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
 | [CfnGuardrail.PiiEntityConfigProperty](#guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items) | The PII entity to configure for the guardrail. |
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items"></a>5.1.7.1.1. root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > CfnGuardrail.PiiEntityConfigProperty
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items"></a>5.1.8.1.1. root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > CfnGuardrail.PiiEntityConfigProperty
 
 |                           |                                                    |
 | ------------------------- | -------------------------------------------------- |
@@ -4463,7 +4749,7 @@ Validation: Optional; Number; percentage, at least 0 and below 100
 | - [outputEnabled](#guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_outputEnabled ) | No      | Combination | No         | -          | Indicates whether guardrail evaluation is enabled on the output.<br /><br />When disabled, you aren't charged for the evaluation. The evaluation doesn't appear in the response.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | + [type](#guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_type )                   | No      | string      | No         | -          | Configure guardrail type when the PII entity is detected.<br /><br />The following PIIs are used to block or mask sensitive information:<br /><br />- *General*<br /><br />- *ADDRESS*<br /><br />A physical address, such as "100 Main Street, Anytown, USA" or "Suite #12, Building 123". An address can include information such as the street, building, location, city, state, country, county, zip code, precinct, and neighborhood.<br />- *AGE*<br /><br />An individual's age, including the quantity and unit of time. For example, in the phrase "I am 40 years old," Guardrails recognizes "40 years" as an age.<br />- *NAME*<br /><br />An individual's name. This entity type does not include titles, such as Dr., Mr., Mrs., or Miss. guardrails doesn't apply this entity type to names that are part of organizations or addresses. For example, guardrails recognizes the "John Doe Organization" as an organization, and it recognizes "Jane Doe Street" as an address.<br />- *EMAIL*<br /><br />An email address, such as *marymajor@email.com* .<br />- *PHONE*<br /><br />A phone number. This entity type also includes fax and pager numbers.<br />- *USERNAME*<br /><br />A user name that identifies an account, such as a login name, screen name, nick name, or handle.<br />- *PASSWORD*<br /><br />An alphanumeric string that is used as a password, such as "* *very20special#pass** ".<br />- *DRIVER_ID*<br /><br />The number assigned to a driver's license, which is an official document permitting an individual to operate one or more motorized vehicles on a public road. A driver's license number consists of alphanumeric characters.<br />- *LICENSE_PLATE*<br /><br />A license plate for a vehicle is issued by the state or country where the vehicle is registered. The format for passenger vehicles is typically five to eight digits, consisting of upper-case letters and numbers. The format varies depending on the location of the issuing state or country.<br />- *VEHICLE_IDENTIFICATION_NUMBER*<br /><br />A Vehicle Identification Number (VIN) uniquely identifies a vehicle. VIN content and format are defined in the *ISO 3779* specification. Each country has specific codes and formats for VINs.<br />- *Finance*<br /><br />- *CREDIT_DEBIT_CARD_CVV*<br /><br />A three-digit card verification code (CVV) that is present on VISA, MasterCard, and Discover credit and debit cards. For American Express credit or debit cards, the CVV is a four-digit numeric code.<br />- *CREDIT_DEBIT_CARD_EXPIRY*<br /><br />The expiration date for a credit or debit card. This number is usually four digits long and is often formatted as *month/year* or *MM/YY* . Guardrails recognizes expiration dates such as *01/21* , *01/2021* , and *Jan 2021* .<br />- *CREDIT_DEBIT_CARD_NUMBER*<br /><br />The number for a credit or debit card. These numbers can vary from 13 to 16 digits in length. However, Amazon Comprehend also recognizes credit or debit card numbers when only the last four digits are present.<br />- *PIN*<br /><br />A four-digit personal identification number (PIN) with which you can access your bank account.<br />- *INTERNATIONAL_BANK_ACCOUNT_NUMBER*<br /><br />An International Bank Account Number has specific formats in each country. For more information, see [www.iban.com/structure](https://docs.aws.amazon.com/https://www.iban.com/structure) .<br />- *SWIFT_CODE*<br /><br />A SWIFT code is a standard format of Bank Identifier Code (BIC) used to specify a particular bank or branch. Banks use these codes for money transfers such as international wire transfers.<br /><br />SWIFT codes consist of eight or 11 characters. The 11-digit codes refer to specific branches, while eight-digit codes (or 11-digit codes ending in 'XXX') refer to the head or primary office.<br />- *IT*<br /><br />- *IP_ADDRESS*<br /><br />An IPv4 address, such as *198.51.100.0* .<br />- *MAC_ADDRESS*<br /><br />A *media access control* (MAC) address is a unique identifier assigned to a network interface controller (NIC).<br />- *URL*<br /><br />A web address, such as *www.example.com* .<br />- *AWS_ACCESS_KEY*<br /><br />A unique identifier that's associated with a secret access key; you use the access key ID and secret access key to sign programmatic AWS requests cryptographically.<br />- *AWS_SECRET_KEY*<br /><br />A unique identifier that's associated with an access key. You use the access key ID and secret access key to sign programmatic AWS requests cryptographically.<br />- *USA specific*<br /><br />- *US_BANK_ACCOUNT_NUMBER*<br /><br />A US bank account number, which is typically 10 to 12 digits long.<br />- *US_BANK_ROUTING_NUMBER*<br /><br />A US bank account routing number. These are typically nine digits long,<br />- *US_INDIVIDUAL_TAX_IDENTIFICATION_NUMBER*<br /><br />A US Individual Taxpayer Identification Number (ITIN) is a nine-digit number that starts with a "9" and contain a "7" or "8" as the fourth digit. An ITIN can be formatted with a space or a dash after the third and forth digits.<br />- *US_PASSPORT_NUMBER*<br /><br />A US passport number. Passport numbers range from six to nine alphanumeric characters.<br />- *US_SOCIAL_SECURITY_NUMBER*<br /><br />A US Social Security Number (SSN) is a nine-digit number that is issued to US citizens, permanent residents, and temporary working residents.<br />- *Canada specific*<br /><br />- *CA_HEALTH_NUMBER*<br /><br />A Canadian Health Service Number is a 10-digit unique identifier, required for individuals to access healthcare benefits.<br />- *CA_SOCIAL_INSURANCE_NUMBER*<br /><br />A Canadian Social Insurance Number (SIN) is a nine-digit unique identifier, required for individuals to access government programs and benefits.<br /><br />The SIN is formatted as three groups of three digits, such as *123-456-789* . A SIN can be validated through a simple check-digit process called the [Luhn algorithm](https://docs.aws.amazon.com/https://www.wikipedia.org/wiki/Luhn_algorithm) .<br />- *UK Specific*<br /><br />- *UK_NATIONAL_HEALTH_SERVICE_NUMBER*<br /><br />A UK National Health Service Number is a 10-17 digit number, such as *485 777 3456* . The current system formats the 10-digit number with spaces after the third and sixth digits. The final digit is an error-detecting checksum.<br />- *UK_NATIONAL_INSURANCE_NUMBER*<br /><br />A UK National Insurance Number (NINO) provides individuals with access to National Insurance (social security) benefits. It is also used for some purposes in the UK tax system.<br /><br />The number is nine digits long and starts with two letters, followed by six numbers and one letter. A NINO can be formatted with a space or a dash after the two letters and after the second, forth, and sixth digits.<br />- *UK_UNIQUE_TAXPAYER_REFERENCE_NUMBER*<br /><br />A UK Unique Taxpayer Reference (UTR) is a 10-digit number that identifies a taxpayer or a business.<br />- *Custom*<br /><br />- *Regex filter* - You can use a regular expressions to define patterns for a guardrail to recognize and act upon such as serial number, booking ID etc.. |
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_action"></a>5.1.7.1.1.1. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > action`
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_action"></a>5.1.8.1.1.1. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > action`
 
 |              |          |
 | ------------ | -------- |
@@ -4472,7 +4758,7 @@ Validation: Optional; Number; percentage, at least 0 and below 100
 
 **Description:** Configure guardrail action when the PII entity is detected.
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputAction"></a>5.1.7.1.1.2. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > inputAction`
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputAction"></a>5.1.8.1.1.2. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > inputAction`
 
 |              |          |
 | ------------ | -------- |
@@ -4485,7 +4771,7 @@ Validation: Optional; Number; percentage, at least 0 and below 100
 - `ANONYMIZE` – Mask the content and replace it with identifier tags.
 - `NONE` – Take no action but return detection information in the trace response.
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputEnabled"></a>5.1.7.1.1.3. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > inputEnabled`
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputEnabled"></a>5.1.8.1.1.3. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > inputEnabled`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4502,7 +4788,7 @@ When disabled, you aren't charged for the evaluation. The evaluation doesn't app
 | [IResolvable](#guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputEnabled_anyOf_i0) |
 | [item 1](#guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputEnabled_anyOf_i1)      |
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputEnabled_anyOf_i0"></a>5.1.7.1.1.3.1. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > inputEnabled > anyOf > IResolvable`
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputEnabled_anyOf_i0"></a>5.1.8.1.1.3.1. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > inputEnabled > anyOf > IResolvable`
 
 |                           |                           |
 | ------------------------- | ------------------------- |
@@ -4520,7 +4806,7 @@ Tokens are special objects that participate in synthesis.
 | + [creationStack](#guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputEnabled_anyOf_i0_creationStack ) | No      | array of string  | No         | -          | The creation stack of this resolvable which will be appended to errors<br />thrown during resolution.<br /><br />This may return an array with a single informational element indicating how<br />to get this property populated, if it was skipped for performance reasons. |
 | - [typeHint](#guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputEnabled_anyOf_i0_typeHint )           | No      | enum (of string) | No         | -          | The type that this token will likely resolve to.                                                                                                                                                                                                                             |
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputEnabled_anyOf_i0_creationStack"></a>5.1.7.1.1.3.1.1. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > inputEnabled > anyOf > item 0 > creationStack`
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputEnabled_anyOf_i0_creationStack"></a>5.1.8.1.1.3.1.1. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > inputEnabled > anyOf > item 0 > creationStack`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -4545,14 +4831,14 @@ to get this property populated, if it was skipped for performance reasons.
 | ----------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
 | [creationStack items](#guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputEnabled_anyOf_i0_creationStack_items) | -           |
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputEnabled_anyOf_i0_creationStack_items"></a>5.1.7.1.1.3.1.1.1. root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > inputEnabled > anyOf > item 0 > creationStack > creationStack items
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputEnabled_anyOf_i0_creationStack_items"></a>5.1.8.1.1.3.1.1.1. root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > inputEnabled > anyOf > item 0 > creationStack > creationStack items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputEnabled_anyOf_i0_typeHint"></a>5.1.7.1.1.3.1.2. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > inputEnabled > anyOf > item 0 > typeHint`
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputEnabled_anyOf_i0_typeHint"></a>5.1.8.1.1.3.1.2. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > inputEnabled > anyOf > item 0 > typeHint`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -4566,14 +4852,14 @@ Must be one of:
 * "string"
 * "string-list"
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputEnabled_anyOf_i1"></a>5.1.7.1.1.3.2. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > inputEnabled > anyOf > item 1`
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_inputEnabled_anyOf_i1"></a>5.1.8.1.1.3.2. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > inputEnabled > anyOf > item 1`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_outputAction"></a>5.1.7.1.1.4. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > outputAction`
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_outputAction"></a>5.1.8.1.1.4. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > outputAction`
 
 |              |          |
 | ------------ | -------- |
@@ -4586,7 +4872,7 @@ Must be one of:
 - `ANONYMIZE` – Mask the content and replace it with identifier tags.
 - `NONE` – Take no action but return detection information in the trace response.
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_outputEnabled"></a>5.1.7.1.1.5. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > outputEnabled`
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_outputEnabled"></a>5.1.8.1.1.5. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > outputEnabled`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4603,7 +4889,7 @@ When disabled, you aren't charged for the evaluation. The evaluation doesn't app
 | [IResolvable](#guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_outputEnabled_anyOf_i0) |
 | [item 1](#guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_outputEnabled_anyOf_i1)      |
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_outputEnabled_anyOf_i0"></a>5.1.7.1.1.5.1. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > outputEnabled > anyOf > IResolvable`
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_outputEnabled_anyOf_i0"></a>5.1.8.1.1.5.1. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > outputEnabled > anyOf > IResolvable`
 
 |                           |                                                                                                                                                                                                             |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -4616,14 +4902,14 @@ When disabled, you aren't charged for the evaluation. The evaluation doesn't app
 
 Tokens are special objects that participate in synthesis.
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_outputEnabled_anyOf_i1"></a>5.1.7.1.1.5.2. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > outputEnabled > anyOf > item 1`
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_outputEnabled_anyOf_i1"></a>5.1.8.1.1.5.2. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > outputEnabled > anyOf > item 1`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_type"></a>5.1.7.1.1.6. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > type`
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_piiEntities_items_type"></a>5.1.8.1.1.6. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > piiEntities > piiEntities items > type`
 
 |              |          |
 | ------------ | -------- |
@@ -4749,7 +5035,7 @@ A UK Unique Taxpayer Reference (UTR) is a 10-digit number that identifies a taxp
 
 - *Regex filter* - You can use a regular expressions to define patterns for a guardrail to recognize and act upon such as serial number, booking ID etc..
 
-##### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes"></a>5.1.7.2. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes`
+##### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes"></a>5.1.8.2. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes`
 
 |              |         |
 | ------------ | ------- |
@@ -4770,7 +5056,7 @@ A UK Unique Taxpayer Reference (UTR) is a 10-digit number that identifies a taxp
 | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
 | [CfnGuardrail.RegexConfigProperty](#guardrails_additionalProperties_sensitiveInformationFilters_regexes_items) | The regular expression to configure for the guardrail. |
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items"></a>5.1.7.2.1. root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > CfnGuardrail.RegexConfigProperty
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items"></a>5.1.8.2.1. root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > CfnGuardrail.RegexConfigProperty
 
 |                           |                                                |
 | ------------------------- | ---------------------------------------------- |
@@ -4792,7 +5078,7 @@ A UK Unique Taxpayer Reference (UTR) is a 10-digit number that identifies a taxp
 | - [outputEnabled](#guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_outputEnabled ) | No      | Combination | No         | -          | Specifies whether to enable guardrail evaluation on the output.<br /><br />When disabled, you aren't charged for the evaluation. The evaluation doesn't appear in the response.                                                                                                    |
 | + [pattern](#guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_pattern )             | No      | string      | No         | -          | The regular expression pattern to configure for the guardrail.                                                                                                                                                                                                                     |
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_action"></a>5.1.7.2.1.1. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > action`
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_action"></a>5.1.8.2.1.1. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > action`
 
 |              |          |
 | ------------ | -------- |
@@ -4801,7 +5087,7 @@ A UK Unique Taxpayer Reference (UTR) is a 10-digit number that identifies a taxp
 
 **Description:** The guardrail action to configure when matching regular expression is detected.
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_description"></a>5.1.7.2.1.2. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > description`
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_description"></a>5.1.8.2.1.2. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > description`
 
 |              |          |
 | ------------ | -------- |
@@ -4810,7 +5096,7 @@ A UK Unique Taxpayer Reference (UTR) is a 10-digit number that identifies a taxp
 
 **Description:** The description of the regular expression to configure for the guardrail.
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_inputAction"></a>5.1.7.2.1.3. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > inputAction`
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_inputAction"></a>5.1.8.2.1.3. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > inputAction`
 
 |              |          |
 | ------------ | -------- |
@@ -4822,7 +5108,7 @@ A UK Unique Taxpayer Reference (UTR) is a 10-digit number that identifies a taxp
 - `BLOCK` – Block the content and replace it with blocked messaging.
 - `NONE` – Take no action but return detection information in the trace response.
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_inputEnabled"></a>5.1.7.2.1.4. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > inputEnabled`
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_inputEnabled"></a>5.1.8.2.1.4. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > inputEnabled`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4839,7 +5125,7 @@ When disabled, you aren't charged for the evaluation. The evaluation doesn't app
 | [IResolvable](#guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_inputEnabled_anyOf_i0) |
 | [item 1](#guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_inputEnabled_anyOf_i1)      |
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_inputEnabled_anyOf_i0"></a>5.1.7.2.1.4.1. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > inputEnabled > anyOf > IResolvable`
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_inputEnabled_anyOf_i0"></a>5.1.8.2.1.4.1. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > inputEnabled > anyOf > IResolvable`
 
 |                           |                                                                                                                                                                                                             |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -4852,14 +5138,14 @@ When disabled, you aren't charged for the evaluation. The evaluation doesn't app
 
 Tokens are special objects that participate in synthesis.
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_inputEnabled_anyOf_i1"></a>5.1.7.2.1.4.2. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > inputEnabled > anyOf > item 1`
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_inputEnabled_anyOf_i1"></a>5.1.8.2.1.4.2. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > inputEnabled > anyOf > item 1`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_name"></a>5.1.7.2.1.5. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > name`
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_name"></a>5.1.8.2.1.5. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > name`
 
 |              |          |
 | ------------ | -------- |
@@ -4868,7 +5154,7 @@ Tokens are special objects that participate in synthesis.
 
 **Description:** The name of the regular expression to configure for the guardrail.
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_outputAction"></a>5.1.7.2.1.6. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > outputAction`
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_outputAction"></a>5.1.8.2.1.6. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > outputAction`
 
 |              |          |
 | ------------ | -------- |
@@ -4880,7 +5166,7 @@ Tokens are special objects that participate in synthesis.
 - `BLOCK` – Block the content and replace it with blocked messaging.
 - `NONE` – Take no action but return detection information in the trace response.
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_outputEnabled"></a>5.1.7.2.1.7. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > outputEnabled`
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_outputEnabled"></a>5.1.8.2.1.7. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > outputEnabled`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4897,7 +5183,7 @@ When disabled, you aren't charged for the evaluation. The evaluation doesn't app
 | [IResolvable](#guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_outputEnabled_anyOf_i0) |
 | [item 1](#guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_outputEnabled_anyOf_i1)      |
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_outputEnabled_anyOf_i0"></a>5.1.7.2.1.7.1. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > outputEnabled > anyOf > IResolvable`
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_outputEnabled_anyOf_i0"></a>5.1.8.2.1.7.1. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > outputEnabled > anyOf > IResolvable`
 
 |                           |                                                                                                                                                                                                             |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -4910,14 +5196,14 @@ When disabled, you aren't charged for the evaluation. The evaluation doesn't app
 
 Tokens are special objects that participate in synthesis.
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_outputEnabled_anyOf_i1"></a>5.1.7.2.1.7.2. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > outputEnabled > anyOf > item 1`
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_outputEnabled_anyOf_i1"></a>5.1.8.2.1.7.2. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > outputEnabled > anyOf > item 1`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_pattern"></a>5.1.7.2.1.8. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > pattern`
+###### <a name="guardrails_additionalProperties_sensitiveInformationFilters_regexes_items_pattern"></a>5.1.8.2.1.8. Property `root > guardrails > additionalProperties > sensitiveInformationFilters > regexes > regexes items > pattern`
 
 |              |          |
 | ------------ | -------- |
@@ -4925,6 +5211,162 @@ Tokens are special objects that participate in synthesis.
 | **Required** | Yes      |
 
 **Description:** The regular expression pattern to configure for the guardrail.
+
+#### <a name="guardrails_additionalProperties_wordFilters"></a>5.1.9. Property `root > guardrails > additionalProperties > wordFilters`
+
+|                           |                           |
+| ------------------------- | ------------------------- |
+| **Type**                  | `object`                  |
+| **Required**              | No                        |
+| **Additional properties** | Not allowed               |
+| **Defined in**            | #/definitions/WordFilters |
+
+**Description:** Custom word and phrase filters, and the AWS-managed profanity list. A match with action
+BLOCK returns the guardrail's blocked input or output messaging.
+
+Use cases: Blocking competitor or trademarked names; Blocking confidential codenames; Profanity filtering
+
+AWS: Bedrock Guardrail wordPolicyConfig
+
+Validation: Optional; at least one of words or profanity is required
+
+| Property                                                                       | Pattern | Type             | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ------------------------------------------------------------------------------ | ------- | ---------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [inputAction](#guardrails_additionalProperties_wordFilters_inputAction )     | No      | enum (of string) | No         | -          | Action taken when the policy detects content in a prompt. NONE runs the policy in<br />detect-only mode, so it can be tuned against guardrail traces before it blocks anything.<br /><br />Use cases: Detect-only rollout of a new policy; Enforcing a policy on prompts<br /><br />AWS: inputAction on the Bedrock Guardrail policy entry<br /><br />Validation: Optional; BLOCK or NONE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [inputEnabled](#guardrails_additionalProperties_wordFilters_inputEnabled )   | No      | boolean          | No         | -          | Whether the policy evaluates prompts. Set false to skip evaluation of prompts entirely.<br /><br />Use cases: Applying a policy to responses only<br /><br />AWS: inputEnabled on the Bedrock Guardrail policy entry<br /><br />Validation: Optional; Boolean                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [outputAction](#guardrails_additionalProperties_wordFilters_outputAction )   | No      | enum (of string) | No         | -          | Action taken when the policy detects content in a model response. NONE runs the policy<br />in detect-only mode.<br /><br />Use cases: Detect-only rollout of a new policy; Enforcing a policy on responses<br /><br />AWS: outputAction on the Bedrock Guardrail policy entry<br /><br />Validation: Optional; BLOCK or NONE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [outputEnabled](#guardrails_additionalProperties_wordFilters_outputEnabled ) | No      | boolean          | No         | -          | Whether the policy evaluates model responses. Set false to skip evaluation of responses entirely.<br /><br />Use cases: Applying a policy to prompts only<br /><br />AWS: outputEnabled on the Bedrock Guardrail policy entry<br /><br />Validation: Optional; Boolean                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| - [profanity](#guardrails_additionalProperties_wordFilters_profanity )         | No      | boolean          | No         | -          | Turns on the AWS-managed profanity word list, which AWS updates continually.<br /><br />Use cases: Brand safety for customer-facing assistants<br /><br />AWS: Bedrock Guardrail wordPolicyConfig.managedWordListsConfig (type PROFANITY)<br /><br />Validation: Optional; Boolean                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [words](#guardrails_additionalProperties_wordFilters_words )                 | No      | array of string  | No         | -          | Words or phrases (up to three words each) the guardrail filters. Matching is<br />case-insensitive and whole-word, so 'competitor' does not match 'competitors'. The spacing<br />between a phrase's words must match exactly: 'off the record' does not match a prompt with<br />extra spaces, a tab or a line break between those words. Prefer single-word entries, which<br />spacing cannot affect, and list each spacing of a phrase that you need to catch as its own<br />entry. Must be unique ignoring case; entries that differ only in spacing are not duplicates.<br /><br />Use cases: Blocking competitor names; Blocking internal project codenames; Blocking legal matter names<br /><br />AWS: Bedrock Guardrail wordPolicyConfig.wordsConfig<br /><br />Validation: Optional; up to 10,000 entries of 1-100 characters each; at least one of words or profanity is required |
+
+##### <a name="guardrails_additionalProperties_wordFilters_inputAction"></a>5.1.9.1. Property `root > guardrails > additionalProperties > wordFilters > inputAction`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+| **Default**  | `"BLOCK"`          |
+
+**Description:** Action taken when the policy detects content in a prompt. NONE runs the policy in
+detect-only mode, so it can be tuned against guardrail traces before it blocks anything.
+
+Use cases: Detect-only rollout of a new policy; Enforcing a policy on prompts
+
+AWS: inputAction on the Bedrock Guardrail policy entry
+
+Validation: Optional; BLOCK or NONE
+
+Must be one of:
+* "BLOCK"
+* "NONE"
+
+##### <a name="guardrails_additionalProperties_wordFilters_inputEnabled"></a>5.1.9.2. Property `root > guardrails > additionalProperties > wordFilters > inputEnabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+**Description:** Whether the policy evaluates prompts. Set false to skip evaluation of prompts entirely.
+
+Use cases: Applying a policy to responses only
+
+AWS: inputEnabled on the Bedrock Guardrail policy entry
+
+Validation: Optional; Boolean
+
+##### <a name="guardrails_additionalProperties_wordFilters_outputAction"></a>5.1.9.3. Property `root > guardrails > additionalProperties > wordFilters > outputAction`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+| **Default**  | `"BLOCK"`          |
+
+**Description:** Action taken when the policy detects content in a model response. NONE runs the policy
+in detect-only mode.
+
+Use cases: Detect-only rollout of a new policy; Enforcing a policy on responses
+
+AWS: outputAction on the Bedrock Guardrail policy entry
+
+Validation: Optional; BLOCK or NONE
+
+Must be one of:
+* "BLOCK"
+* "NONE"
+
+##### <a name="guardrails_additionalProperties_wordFilters_outputEnabled"></a>5.1.9.4. Property `root > guardrails > additionalProperties > wordFilters > outputEnabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+**Description:** Whether the policy evaluates model responses. Set false to skip evaluation of responses entirely.
+
+Use cases: Applying a policy to prompts only
+
+AWS: outputEnabled on the Bedrock Guardrail policy entry
+
+Validation: Optional; Boolean
+
+##### <a name="guardrails_additionalProperties_wordFilters_profanity"></a>5.1.9.5. Property `root > guardrails > additionalProperties > wordFilters > profanity`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `false`   |
+
+**Description:** Turns on the AWS-managed profanity word list, which AWS updates continually.
+
+Use cases: Brand safety for customer-facing assistants
+
+AWS: Bedrock Guardrail wordPolicyConfig.managedWordListsConfig (type PROFANITY)
+
+Validation: Optional; Boolean
+
+##### <a name="guardrails_additionalProperties_wordFilters_words"></a>5.1.9.6. Property `root > guardrails > additionalProperties > wordFilters > words`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+**Description:** Words or phrases (up to three words each) the guardrail filters. Matching is
+case-insensitive and whole-word, so 'competitor' does not match 'competitors'. The spacing
+between a phrase's words must match exactly: 'off the record' does not match a prompt with
+extra spaces, a tab or a line break between those words. Prefer single-word entries, which
+spacing cannot affect, and list each spacing of a phrase that you need to catch as its own
+entry. Must be unique ignoring case; entries that differ only in spacing are not duplicates.
+
+Use cases: Blocking competitor names; Blocking internal project codenames; Blocking legal matter names
+
+AWS: Bedrock Guardrail wordPolicyConfig.wordsConfig
+
+Validation: Optional; up to 10,000 entries of 1-100 characters each; at least one of words or profanity is required
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | 1                  |
+| **Max items**        | 10000              |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                         | Description |
+| ----------------------------------------------------------------------- | ----------- |
+| [words items](#guardrails_additionalProperties_wordFilters_words_items) | -           |
+
+###### <a name="guardrails_additionalProperties_wordFilters_words_items"></a>5.1.9.6.1. root > guardrails > additionalProperties > wordFilters > words > words items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 ## <a name="harnesses"></a>6. Property `root > harnesses`
 

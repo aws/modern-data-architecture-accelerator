@@ -7472,6 +7472,7 @@
             },
             {
               "InputStrength": "HIGH",
+              "OutputEnabled": false,
               "OutputStrength": "HIGH",
               "Type": "MISCONDUCT"
             },
@@ -7481,12 +7482,15 @@
               "Type": "PROMPT_ATTACK"
             },
             {
+              "InputAction": "BLOCK",
+              "InputEnabled": true,
               "InputStrength": "HIGH",
               "OutputStrength": "HIGH",
               "Type": "SEXUAL"
             },
             {
               "InputStrength": "MEDIUM",
+              "OutputAction": "NONE",
               "OutputStrength": "MEDIUM",
               "Type": "VIOLENCE"
             }
@@ -7525,6 +7529,12 @@
             {
               "Action": "BLOCK",
               "Type": "PHONE"
+            },
+            {
+              "Action": "BLOCK",
+              "InputAction": "ANONYMIZE",
+              "OutputAction": "BLOCK",
+              "Type": "NAME"
             }
           ],
           "RegexesConfig": [
@@ -7561,7 +7571,63 @@
             "Key": "mdaa_org",
             "Value": "test-org"
           }
-        ]
+        ],
+        "TopicPolicyConfig": {
+          "TopicsConfig": [
+            {
+              "Definition": "Recommendations about buying, selling, or holding financial securities or other investments.",
+              "Examples": [
+                "Should I buy this stock?",
+                "Is now a good time to invest?"
+              ],
+              "InputEnabled": true,
+              "Name": "Investment Advice",
+              "OutputEnabled": true,
+              "Type": "DENY"
+            },
+            {
+              "Definition": "Identifying medical conditions from symptoms, or recommending treatments or medications.",
+              "InputAction": "NONE",
+              "Name": "Medical Diagnosis",
+              "OutputAction": "NONE",
+              "Type": "DENY"
+            }
+          ]
+        },
+        "WordPolicyConfig": {
+          "ManagedWordListsConfig": [
+            {
+              "InputAction": "BLOCK",
+              "InputEnabled": true,
+              "OutputAction": "BLOCK",
+              "OutputEnabled": true,
+              "Type": "PROFANITY"
+            }
+          ],
+          "WordsConfig": [
+            {
+              "InputAction": "BLOCK",
+              "InputEnabled": true,
+              "OutputAction": "BLOCK",
+              "OutputEnabled": true,
+              "Text": "CompetitorBrandX"
+            },
+            {
+              "InputAction": "BLOCK",
+              "InputEnabled": true,
+              "OutputAction": "BLOCK",
+              "OutputEnabled": true,
+              "Text": "InternalProjectCodename"
+            },
+            {
+              "InputAction": "BLOCK",
+              "InputEnabled": true,
+              "OutputAction": "BLOCK",
+              "OutputEnabled": true,
+              "Text": "off the record"
+            }
+          ]
+        }
       }
     },
     "bedrockbuilderbedrockguardrailenterpriseguardrailguardrailenterpriseguardrailarnssm57319B6E": {

@@ -4,6 +4,10 @@
 
 ### New Features
 
+#### Bedrock Builder Module
+
+- Added optional `deniedTopics` and `wordFilters` (custom words plus the AWS-managed profanity list) to guardrails. Content filters, denied topics and word filters accept per-direction `inputAction`/`outputAction`/`inputEnabled`/`outputEnabled`, including a detect-only `NONE` action. Existing guardrails are unchanged. See the [guardrail construct README](packages/constructs/L3/ai/bedrock-guardrail-l3-construct/README.md).
+
 #### Bedrock Settings Module
 
 - The model invocation log group now always masks PII with a CloudWatch data protection policy, extendable via `logDataProtection.additionalIdentifiers`. `Upgrade impact:` readers of the log group see masked values unless they hold `logs:Unmask`; events logged before the deploy stay unmasked. See [Masking and Retention](packages/apps/ai/bedrock-settings-app/README.md#masking-and-retention).

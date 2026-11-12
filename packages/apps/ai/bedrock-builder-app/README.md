@@ -15,7 +15,7 @@ This module deploys and integrates the following resources:
 - **Lambda Layers** (Optional) — Shared code layers for Lambda functions.
 - **Knowledge Base(s)** (Optional) — Bedrock Knowledge Bases with S3 and SharePoint data sources, multiple parsing strategies (default, BDA, Foundation Model, custom), and chunking configurations.
 - **Vector Store(s)** (Optional) — OpenSearch Serverless collections or Aurora Serverless clusters for Knowledge Base vector storage.
-- **Bedrock Guardrail** (Optional) — Content filters, contextual grounding, PII entity detection, and regex-based sensitive information filtering.
+- **Bedrock Guardrail** (Optional) — Content filters, denied topics, word filters, contextual grounding, PII entity detection, and regex-based sensitive information filtering.
 - **Guardrail Intervention Alarms** (Optional) — CloudWatch alarms on the interventions of each guardrail that sets `interventionAlarm`, notifying an existing SNS topic or a module-created one, with SSM parameters for each alarm's name and ARN. See [Guardrail intervention alarms](#guardrail-intervention-alarms).
 - **Guardrail Alarm SNS Topic** (Optional) — With `guardrailAlarms.createNotificationTopic`, the SNS topic the guardrail alarms notify, with optional email subscriptions, its topic policy, and SSM parameters for its name and ARN.
 - **AgentCore Harness(es)** (Optional) — Declarative agent loops (model + system prompt + tools) on AgentCore.
@@ -66,7 +66,9 @@ This module is designed in alignment with MDAA security/compliance principles an
   - Module-managed VPC endpoints are a private network path, not an authorization boundary - the supporting service endpoints carry the AWS default policy, which permits their service in any account, so the harness execution role stays the control on what a session can reach. Created AgentCore Gateway, S3 image-layer and `bedrock-agent-runtime` endpoints carry scoped policies; the `bedrock-agent-runtime` policy allows only `bedrock:Retrieve` on the knowledge bases the set's connectors query
 - **Content Safety**:
   - Guardrails provide content filters and contextual grounding checks
-  - PII entity detection and regex-based sensitive information filtering
+  - Denied topics keep a guardrail's application within scope, and word filters block custom terms and profanity
+  - PII entity detection and regex-based sensitive information filtering, with separate block or mask actions for prompts and responses. Each PII entry still needs `action` when `inputAction` and `outputAction` are set. `ANONYMIZE` on input forwards the prompt to the model with the PII masked rather than rejecting it. Entity types use the Bedrock names, for example `NAME`, `EMAIL` and `US_SOCIAL_SECURITY_NUMBER`
+  - Content filters, denied topics and word filters support a detect-only `NONE` action for tuning before enforcement. See the [Bedrock Guardrail construct README](../../../constructs/L3/ai/bedrock-guardrail-l3-construct/README.md)
   - AgentCore Harness log groups apply an always-on PII masking floor, extensible via config
   - Optional intervention count and rate alarms on each guardrail notify one SNS topic, such as a security team's
 

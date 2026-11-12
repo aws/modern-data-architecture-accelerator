@@ -645,7 +645,7 @@ guardrails:
     # Content filter configuration across safety categories
     contentFilters:
       # (Optional) Hate content filter with input/output strength
-      # (enum: LOW, MEDIUM, HIGH)
+      # (enum: NONE, LOW, MEDIUM, HIGH)
       hate:
         inputStrength: 'MEDIUM'
         outputStrength: 'MEDIUM'
@@ -657,6 +657,9 @@ guardrails:
       misconduct:
         inputStrength: 'HIGH'
         outputStrength: 'HIGH'
+        # (Optional) false skips evaluation of model responses, so the
+        # filter applies to prompts only
+        outputEnabled: false
       # (Optional) Prompt attack content filter. Evaluated on inputs only: outputStrength must be NONE
       promptAttack:
         inputStrength: 'HIGH'
@@ -665,10 +668,17 @@ guardrails:
       sexual:
         inputStrength: 'HIGH'
         outputStrength: 'HIGH'
+        # (Optional) Action on a detection in prompts (BLOCK, NONE)
+        inputAction: 'BLOCK'
+        # (Optional) false skips evaluation of prompts
+        inputEnabled: true
       # (Optional) Violence content filter
       violence:
         inputStrength: 'MEDIUM'
         outputStrength: 'MEDIUM'
+        # (Optional) NONE reports detections in responses without
+        # blocking them (detect-only), while prompts are still blocked
+        outputAction: 'NONE'
     # (Optional) Custom message when user input is blocked
     blockedInputMessaging: 'Your input contains restricted content'
     # (Optional) Custom message when model output is blocked
@@ -708,6 +718,12 @@ guardrails:
           outputEnabled: true
         - type: PHONE
           action: BLOCK
+        # Names are masked in prompts, so the request still reaches
+        # the model, and blocked in responses
+        - type: NAME
+          action: BLOCK
+          inputAction: ANONYMIZE
+          outputAction: BLOCK
       # (Optional) Custom regex pattern filters
       regexes:
         # The name of the regular expression
@@ -738,6 +754,43 @@ guardrails:
       # (Optional) Alarm when more than this percentage of guardrail
       # evaluations in one period intervened
       ratePercentThreshold: 15
+    # (Optional) Topics the guardrail blocks, evaluated in this order
+    deniedTopics:
+      # Topic name: a noun phrase, unique within the guardrail
+      - name: 'Investment Advice'
+        # What the topic covers (max 200 characters)
+        definition: 'Recommendations about buying, selling, or holding financial securities or other investments.'
+        # (Optional) Up to 5 sample prompts that belong to the topic
+        examples:
+          - 'Should I buy this stock?'
+          - 'Is now a good time to invest?'
+        # (Optional) false skips evaluation of prompts or responses
+        # for this topic
+        inputEnabled: true
+        outputEnabled: true
+      - name: 'Medical Diagnosis'
+        definition: 'Identifying medical conditions from symptoms, or recommending treatments or medications.'
+        # (Optional) NONE detects the topic without blocking it, for
+        # tuning before enforcement
+        inputAction: 'NONE'
+        outputAction: 'NONE'
+    # (Optional) Custom word filters and the AWS-managed profanity list
+    wordFilters:
+      # Words or phrases (up to three words each) to block; matched
+      # case-insensitively as whole words
+      words:
+        - 'CompetitorBrandX'
+        - 'InternalProjectCodename'
+        - 'off the record'
+      # (Optional) Also block words on the AWS-managed profanity list
+      profanity: true
+      # (Optional) Action on a match in prompts and responses (BLOCK,
+      # NONE); applies to every word and the profanity list
+      inputAction: 'BLOCK'
+      outputAction: 'BLOCK'
+      # (Optional) false skips evaluation of prompts or responses
+      inputEnabled: true
+      outputEnabled: true
 
 # (Optional) Notification target and timing for the guardrail
 # intervention alarms. Required when a guardrail sets
