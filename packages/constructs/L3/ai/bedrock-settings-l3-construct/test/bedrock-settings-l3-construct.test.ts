@@ -5,6 +5,7 @@
 
 import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
+import { Stack } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import { BedrockSettingsL3Construct, BedrockSettingsL3ConstructProps } from '../lib';
 
@@ -606,6 +607,165 @@ describe('BedrockSettingsL3Construct Unit Tests', () => {
       expect(() => createWithS3Retention(s3RetentionDays)).toThrow(
         `Invalid s3RetentionDays '${s3RetentionDays}'. Must be a positive integer number of days.`,
       );
+    });
+  });
+
+  describe('Read Roles', () => {
+    const readDenyCondition = (template: Template): unknown => {
+      const [policy] = Object.values(template.findResources('AWS::S3::BucketPolicy'));
+      const statements: { Sid?: string; Condition?: unknown }[] = policy.Properties.PolicyDocument.Statement;
+      return statements.find(statement => statement.Sid === 'DenyObjectReadsExceptReadRoles')?.Condition;
+    };
+
+    test('should keep the amazonaws.com ViaService suffix in the aws-cn partition', () => {
+      // KMS ViaService names end in .amazonaws.com in every partition, unlike the stack's URL suffix
+      const cnStack = new Stack(testApp, 'cn-stack', { env: { account: 'test-account', region: 'cn-north-1' } });
+      new BedrockSettingsL3Construct(cnStack, 'bedrock-settings', {
+        enableAuditLoggingToS3: true,
+        enableAuditLoggingToCloudwatch: true,
+        naming: testApp.naming,
+        roleHelper: new MdaaRoleHelper(cnStack, testApp.naming),
+        readRoleRefs: [{ id: 'reader-one' }, { arn: 'arn:aws-cn:iam::999999999999:role/CrossAccountReader' }],
+      });
+      const keyPolicy = Object.values(Template.fromStack(cnStack).findResources('AWS::KMS::Key'))[0].Properties
+        .KeyPolicy;
+      const viaServices = keyPolicy.Statement.map(
+        (statement: { Condition?: { StringEquals?: { 'kms:ViaService'?: unknown } } }) =>
+          statement.Condition?.StringEquals?.['kms:ViaService'],
+      ).filter((value: unknown) => value !== undefined);
+
+      expect(viaServices).toEqual(['s3.cn-north-1.amazonaws.com', 's3.cn-north-1.amazonaws.com']);
+    });
+    test('should exclude only by aws:userId when every read role is in this account', () => {
+      new BedrockSettingsL3Construct(testApp.testStack, 'bedrock-settings', {
+        enableAuditLoggingToS3: false,
+        enableAuditLoggingToCloudwatch: true,
+        naming: testApp.naming,
+        roleHelper,
+        readRoleRefs: [{ id: 'reader-one' }, { id: 'reader-two' }],
+      });
+
+      expect(readDenyCondition(Template.fromStack(testApp.testStack))).toEqual({
+        StringNotLike: { 'aws:userId': ['reader-one:*', 'reader-two:*'] },
+      });
+    });
+
+    test('should grant the read roles access when only CloudWatch logging is enabled', () => {
+      // The bucket still receives the CloudWatch destination's large-data overflow
+      const crossAccountArn = 'arn:test-partition:iam::999999999999:role/CrossAccountReader';
+      new BedrockSettingsL3Construct(testApp.testStack, 'bedrock-settings', {
+        enableAuditLoggingToS3: false,
+        enableAuditLoggingToCloudwatch: true,
+        naming: testApp.naming,
+        roleHelper,
+        readRoleRefs: [{ id: 'reader-one' }, { arn: crossAccountArn }],
+      });
+      const template = Template.fromStack(testApp.testStack);
+      const userIds = { StringLike: { 'aws:userId': ['reader-one:*'] } };
+
+      template.hasResourceProperties('AWS::S3::BucketPolicy', {
+        PolicyDocument: {
+          Statement: Match.arrayWith([
+            Match.objectLike({ Sid: 'AllowObjectReadsToReadRoles', Condition: userIds }),
+            Match.objectLike({ Sid: 'AllowReadsToCrossAccountReadRoles', Principal: { AWS: crossAccountArn } }),
+          ]),
+        },
+      });
+      template.hasResourceProperties('AWS::KMS::Key', {
+        KeyPolicy: {
+          Statement: Match.arrayWith([
+            Match.objectLike({ Action: 'kms:Decrypt', Condition: userIds }),
+            Match.objectLike({ Principal: { AWS: crossAccountArn }, Action: ['kms:Decrypt', 'kms:DescribeKey'] }),
+          ]),
+        },
+      });
+    });
+
+    test('should exclude only by aws:PrincipalArn when every read role is in another account', () => {
+      const crossAccountArn = 'arn:test-partition:iam::999999999999:role/CrossAccountReader';
+      new BedrockSettingsL3Construct(testApp.testStack, 'bedrock-settings', {
+        enableAuditLoggingToS3: true,
+        enableAuditLoggingToCloudwatch: false,
+        naming: testApp.naming,
+        roleHelper,
+        readRoleRefs: [{ arn: crossAccountArn }],
+      });
+      const template = Template.fromStack(testApp.testStack);
+
+      expect(readDenyCondition(template)).toEqual({ StringNotLike: { 'aws:PrincipalArn': [crossAccountArn] } });
+      // A cross-account role ID cannot be resolved from this account, so no role lookup is created
+      expect(Object.keys(template.findResources('AWS::CloudFormation::CustomResource'))).toHaveLength(0);
+    });
+
+    test('should look up a same-account role referenced by ARN and match it by role ID', () => {
+      new BedrockSettingsL3Construct(testApp.testStack, 'bedrock-settings', {
+        enableAuditLoggingToS3: true,
+        enableAuditLoggingToCloudwatch: true,
+        naming: testApp.naming,
+        roleHelper,
+        readRoleRefs: [{ arn: 'arn:test-partition:iam::test-account:role/LocalReader' }],
+      });
+      const template = Template.fromStack(testApp.testStack);
+
+      expect(Object.keys(template.findResources('AWS::CloudFormation::CustomResource'))).toHaveLength(1);
+      template.hasResourceProperties('AWS::S3::BucketPolicy', {
+        PolicyDocument: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Sid: 'DenyObjectReadsExceptReadRoles',
+              Condition: {
+                StringNotLike: {
+                  'aws:userId': [{ 'Fn::Join': ['', [{ 'Fn::GetAtt': [Match.anyValue(), 'id'] }, ':*']] }],
+                  'aws:PrincipalArn': Match.absent(),
+                },
+              },
+            }),
+          ]),
+        },
+      });
+    });
+
+    test('should list a role referenced twice only once', () => {
+      const crossAccountArn = 'arn:test-partition:iam::999999999999:role/CrossAccountReader';
+      new BedrockSettingsL3Construct(testApp.testStack, 'bedrock-settings', {
+        enableAuditLoggingToS3: true,
+        enableAuditLoggingToCloudwatch: true,
+        naming: testApp.naming,
+        roleHelper,
+        readRoleRefs: [{ id: 'reader-one' }, { id: 'reader-one' }, { arn: crossAccountArn }, { arn: crossAccountArn }],
+      });
+
+      expect(readDenyCondition(Template.fromStack(testApp.testStack))).toEqual({
+        StringNotLike: { 'aws:userId': ['reader-one:*'], 'aws:PrincipalArn': [crossAccountArn] },
+      });
+    });
+
+    test('should resolve a same-account role referenced by name to its role ID', () => {
+      new BedrockSettingsL3Construct(testApp.testStack, 'bedrock-settings', {
+        enableAuditLoggingToS3: true,
+        enableAuditLoggingToCloudwatch: true,
+        naming: testApp.naming,
+        roleHelper,
+        readRoleRefs: [{ name: 'incident-responder' }],
+      });
+      const template = Template.fromStack(testApp.testStack);
+
+      // The role ID is looked up at deploy time
+      expect(Object.keys(template.findResources('AWS::CloudFormation::CustomResource'))).toHaveLength(1);
+      template.hasResourceProperties('AWS::S3::BucketPolicy', {
+        PolicyDocument: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Sid: 'DenyObjectReadsExceptReadRoles',
+              Condition: {
+                StringNotLike: {
+                  'aws:userId': [{ 'Fn::Join': ['', [{ 'Fn::GetAtt': [Match.anyValue(), 'id'] }, ':*']] }],
+                },
+              },
+            }),
+          ]),
+        },
+      });
     });
   });
 });

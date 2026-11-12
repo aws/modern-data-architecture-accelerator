@@ -9,6 +9,7 @@ import {
   LogRetentionDays,
   TokenUsageAlarmsProps,
 } from '@aws-mdaa/bedrock-settings-l3-construct';
+import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { Schema } from 'ajv';
 import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
@@ -65,8 +66,9 @@ export interface BedrockSettingsConfigContents extends MdaaBaseConfigContents {
    *
    * PII masking is always applied to the invocation log group: sensitive data (emails, SSNs, credit card
    * numbers, etc.) is masked in log events on ingestion. Users with the logs:Unmask permission can still
-   * view unmasked data. Masking is not retroactive, and does not reach the S3 copies of the logs. This
-   * optional configuration only adds identifiers to the built-in set; it can never reduce it.
+   * view unmasked data. Masking is not retroactive, and does not reach the S3 copies of the logs, which
+   * only readRoles can read. This optional configuration only adds identifiers to the built-in set; it
+   * can never reduce it.
    *
    * Use cases: extending PII masking of prompts and completions with additional identifiers
    *
@@ -108,6 +110,24 @@ export interface BedrockSettingsConfigContents extends MdaaBaseConfigContents {
    * @minimum 1
    */
   readonly s3RetentionDays?: number;
+
+  /**
+   * Roles allowed to read the invocation logs in the module's S3 bucket. Every other principal,
+   * account administrators included, is denied s3:GetObject* on the bucket's objects, although a
+   * principal allowed s3:PutBucketPolicy or s3:DeleteBucketPolicy can remove the Deny. The bucket holds
+   * the S3 destination and the CloudWatch destination's large-data overflow (binary data and bodies over
+   * 100 KB), so the restriction applies when only CloudWatch logging is enabled too. Objects are stored
+   * unmasked, so a listed role reads prompts and completions in clear text.
+   *
+   * Use cases: Incident-responder access to full prompts; Audit of stored conversations; Cross-account log analysis
+   *
+   * AWS: S3 bucket policy Deny on s3:GetObject*. Listed roles get s3:GetObject* and kms:Decrypt through S3;
+   * cross-account roles also get s3:ListBucket, s3:GetBucketLocation and kms:DescribeKey through S3
+   *
+   * Validation: Optional; array of MdaaRoleRef; supports id, arn, and name references
+   * @default - no principal can read the bucket's objects
+   */
+  readonly readRoles?: MdaaRoleRef[];
 }
 
 /**
@@ -138,6 +158,9 @@ export class BedrockSettingsConfigParser extends MdaaAppConfigParser<BedrockSett
   /** Retention period for invocation log objects in S3, in days */
   public readonly s3RetentionDays?: number;
 
+  /** Roles allowed to read the invocation logs in the module's S3 bucket */
+  public readonly readRoleRefs?: MdaaRoleRef[];
+
   /**
    * Creates a new BedrockSettingsConfigParser instance.
    * @param stack - The CDK stack context
@@ -153,5 +176,6 @@ export class BedrockSettingsConfigParser extends MdaaAppConfigParser<BedrockSett
     this.logDataProtection = this.configContents.logDataProtection;
     this.logRetentionDays = this.configContents.logRetentionDays;
     this.s3RetentionDays = this.configContents.s3RetentionDays;
+    this.readRoleRefs = this.configContents.readRoles;
   }
 }

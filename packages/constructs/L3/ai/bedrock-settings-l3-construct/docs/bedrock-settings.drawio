@@ -5,10 +5,10 @@
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="account-boundary" value="" style="rounded=1;whiteSpace=wrap;html=1;fontSize=20;fillColor=none;arcSize=2;dashed=1;" parent="1" vertex="1">
-          <mxGeometry x="150" y="80" width="660" height="760" as="geometry" />
+          <mxGeometry x="0" y="80" width="810" height="760" as="geometry" />
         </mxCell>
         <mxCell id="account-label" value="Deployment/Target Account" style="outlineConnect=0;dashed=0;verticalLabelPosition=middle;verticalAlign=middle;align=left;html=1;shape=mxgraph.aws3.cloud_2;fillColor=#F58534;gradientColor=none;labelPosition=right;fontSize=20;" parent="1" vertex="1">
-          <mxGeometry x="150" y="80" width="60" height="60" as="geometry" />
+          <mxGeometry x="0" y="80" width="60" height="60" as="geometry" />
         </mxCell>
         <mxCell id="kms-key" value="KMS Key" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.key_management_service;" parent="1" vertex="1">
           <mxGeometry x="370" y="150" width="78" height="78" as="geometry" />
@@ -176,6 +176,23 @@
         <mxCell id="lambda-to-bedrock-label" value="Configures Logging" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="lambda-to-bedrock" vertex="1" connectable="0">
           <mxGeometry relative="1" as="geometry">
             <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="read-roles" value="Read Roles&lt;div&gt;(Optional)&lt;/div&gt;" style="group;html=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;fontSize=14;" parent="1" vertex="1" connectable="0">
+          <mxGeometry x="40" y="305" width="72" height="68" as="geometry" />
+        </mxCell>
+        <mxCell id="read-roles-bg" value="" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=bottom;fillColor=#C7131F;strokeColor=#ffffff;fontColor=#232F3E;sketch=0;gradientColor=#F54749;gradientDirection=north;dashed=0;fontStyle=0;labelPosition=center;verticalLabelPosition=top;align=center;" parent="read-roles" vertex="1">
+          <mxGeometry width="72" height="68" as="geometry" />
+        </mxCell>
+        <mxCell id="read-roles-icon" value="" style="sketch=0;outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.role;" parent="read-roles" vertex="1">
+          <mxGeometry x="5" y="17" width="60.27" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="read-roles-to-s3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="read-roles-bg" target="s3-bucket" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="read-roles-to-s3-label" value="Only These&lt;br&gt;Read Logs" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="read-roles-to-s3" vertex="1" connectable="0">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-22" as="offset" />
           </mxGeometry>
         </mxCell>
       </root>

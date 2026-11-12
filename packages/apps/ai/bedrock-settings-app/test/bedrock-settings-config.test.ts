@@ -79,3 +79,22 @@ describe('invocation log masking and retention schema', () => {
     expect(() => parseConfig(config)).toThrow(/shape errors/);
   });
 });
+
+describe('readRoles schema', () => {
+  test('passes every role reference style through to the construct props', () => {
+    const readRoles = [
+      { name: 'incident-responder' },
+      { id: 'AROAEXAMPLEROLEID' },
+      { arn: 'arn:test-partition:iam::222222222222:role/log-analytics' },
+    ];
+    expect(parseConfig({ readRoles }).readRoleRefs).toEqual(readRoles);
+  });
+
+  test('leaves readRoleRefs undefined when readRoles is omitted', () => {
+    expect(parseConfig({}).readRoleRefs).toBeUndefined();
+  });
+
+  test('rejects a role reference with an unknown property', () => {
+    expect(() => parseConfig({ readRoles: [{ roleName: 'incident-responder' }] })).toThrow(/shape errors/);
+  });
+});

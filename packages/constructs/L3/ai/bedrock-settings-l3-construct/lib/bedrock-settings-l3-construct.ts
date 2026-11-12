@@ -4,6 +4,7 @@
  */
 
 import {
+  AnyPrincipal,
   ArnPrincipal,
   Effect,
   ManagedPolicy,
@@ -20,7 +21,8 @@ import { Construct } from 'constructs';
 import { DataProtectionProperty, MdaaLogGroup, validateLogRetentionDays } from '@aws-mdaa/cloudwatch-constructs';
 import { MdaaCustomResource, MdaaCustomResourceProps } from '@aws-mdaa/custom-constructs';
 import { MdaaRole } from '@aws-mdaa/iam-constructs';
-import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
+import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
+import { DECRYPT_ACTIONS, MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import { createTokenUsageAlarms, TokenUsageAlarmsProps } from './token-usage-alarms';
@@ -32,6 +34,25 @@ const LAMBDA_SRC_DIR = '../src/python/bedrock-settings';
 
 // Re-exported so the app config can use the shared types without depending on cloudwatch-constructs.
 export { DataProtectionProperty, LogRetentionDays } from '@aws-mdaa/cloudwatch-constructs';
+
+// Key usage granted to the services and the service role which write the logs
+const KMS_LOGGING_ACTIONS = ['kms:Encrypt', 'kms:Decrypt', 'kms:ReEncrypt', 'kms:GenerateDataKey', 'kms:DescribeKey'];
+
+// Object reads on the logging bucket, which hold prompts and completions in clear text
+const OBJECT_READ_ACTIONS = ['s3:GetObject*'];
+
+// What a cross-account read role needs on the bucket itself to find the objects
+const CROSS_ACCOUNT_BUCKET_ACTIONS = ['s3:ListBucket', 's3:GetBucketLocation'];
+
+/**
+ * The read roles, split by how a resource policy can match them. A same-account role is matched
+ * by role ID through aws:userId. A cross-account role's ID cannot be resolved from this account,
+ * so it is matched by ARN.
+ */
+interface ReadRolePrincipals {
+  readonly roleIds: string[];
+  readonly crossAccountArns: string[];
+}
 
 /**
  * Configuration properties for the Bedrock Settings L3 Construct
@@ -106,6 +127,23 @@ export interface BedrockSettingsL3ConstructProps extends MdaaL3ConstructProps {
    * Validation: Optional; Number; positive integer
    **/
   readonly s3RetentionDays?: number;
+  /**
+   * Roles allowed to read the invocation logs in the module's S3 bucket. Every other principal,
+   * account administrators included, is denied s3:GetObject* on the bucket's objects, although a
+   * principal allowed s3:PutBucketPolicy or s3:DeleteBucketPolicy can remove the Deny. The bucket holds
+   * the S3 destination and the CloudWatch destination's large-data overflow (binary data and bodies over
+   * 100 KB), so the restriction applies when only CloudWatch logging is enabled too. Objects are stored
+   * unmasked, so a listed role reads prompts and completions in clear text.
+   *
+   * Use cases: Incident-responder access to full prompts; Audit of stored conversations; Cross-account log analysis
+   *
+   * AWS: S3 bucket policy Deny on s3:GetObject*. Listed roles get s3:GetObject* and kms:Decrypt through S3;
+   * cross-account roles also get s3:ListBucket, s3:GetBucketLocation and kms:DescribeKey through S3
+   *
+   * Validation: Optional; array of MdaaRoleRef; supports id, arn, and name references
+   * @default - no principal can read the bucket's objects
+   **/
+  readonly readRoleRefs?: MdaaRoleRef[];
 }
 
 /**
@@ -119,6 +157,7 @@ export interface BedrockSettingsL3ConstructProps extends MdaaL3ConstructProps {
  * - Implements security best practices with KMS encryption
  * - Always masks PII in the CloudWatch invocation log group with a data protection policy
  * - Applies optional CloudWatch and S3 retention (never-expire by default)
+ * - Denies reads of the logging bucket's objects to every principal except the configured read roles
  * - Uses custom resource to configure Bedrock logging settings * new BedrockSettingsL3Construct(this, 'BedrockSettings', {
  *   enableAuditLoggingToS3: true,
  *   enableAuditLoggingToCloudwatch: true,
@@ -127,6 +166,7 @@ export interface BedrockSettingsL3ConstructProps extends MdaaL3ConstructProps {
  */
 export class BedrockSettingsL3Construct extends MdaaL3Construct {
   protected readonly props: BedrockSettingsL3ConstructProps;
+  private readonly readRoles: ReadRolePrincipals;
 
   /**
    * Creates a new Bedrock Settings L3 Construct
@@ -140,6 +180,8 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
 
     // Validate configuration before proceeding
     this.validateProps();
+
+    this.readRoles = this.resolveReadRoles();
 
     // Create storage resources (KMS key, S3 bucket, CloudWatch Log Group)
     const { encryptionKey, loggingBucket, logGroup } = this.createStorageResources();
@@ -189,6 +231,60 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
   }
 
   /**
+   * Resolves the read role references into the IDs and ARNs the bucket and key policies match
+   * @returns Same-account role IDs and cross-account role ARNs
+   */
+  private resolveReadRoles(): ReadRolePrincipals {
+    const roles = this.props.roleHelper.resolveRoleRefsWithOrdinals(this.props.readRoleRefs ?? [], 'Read');
+    // A role listed twice would otherwise repeat its principal and condition values
+    return {
+      roleIds: [...new Set(roles.filter(role => !role.isCrossAccount()).map(role => role.id()))],
+      crossAccountArns: [...new Set(roles.filter(role => role.isCrossAccount()).map(role => role.arn()))],
+    };
+  }
+
+  /**
+   * Builds the aws:userId condition values which match any session of the same-account read roles
+   * @returns The condition key and one pattern per same-account read role
+   */
+  private readRoleUserIds(): { [key: string]: string[] } {
+    return { 'aws:userId': this.readRoles.roleIds.map(roleId => `${roleId}:*`) };
+  }
+
+  /**
+   * Creates an Allow for the same-account read roles. It names any principal, so the aws:userId
+   * condition which limits it to the read roles' sessions is always added here, with the principal.
+   * @param props - Statement Sid, actions, resources, and any conditions to add to the aws:userId one
+   * @returns The Allow statement for the same-account read roles
+   */
+  private sameAccountReadRoleStatement(props: {
+    sid?: string;
+    actions: string[];
+    resources: string[];
+    conditions?: { [operator: string]: { [key: string]: string } };
+  }): PolicyStatement {
+    return new PolicyStatement({
+      sid: props.sid,
+      effect: Effect.ALLOW,
+      principals: [new AnyPrincipal()], //NOSONAR - the aws:userId condition below limits this to the read roles
+      actions: props.actions,
+      resources: props.resources,
+      conditions: { StringLike: this.readRoleUserIds(), ...props.conditions },
+    });
+  }
+
+  /**
+   * Builds the condition which limits a key grant to decryption by S3, the only reader the
+   * read roles need. The same key also encrypts the log group and the alarm topic.
+   * KMS ViaService names end in .amazonaws.com in every partition, so the stack's URL suffix
+   * (amazonaws.com.cn in aws-cn) must not be used here.
+   * @returns The kms:ViaService condition values
+   */
+  private viaS3(): { [key: string]: string } {
+    return { 'kms:ViaService': `s3.${this.region}.amazonaws.com` };
+  }
+
+  /**
    * Creates all storage resources needed for Bedrock logging
    * @returns Object containing the created encryption key, logging bucket, and log group
    */
@@ -225,8 +321,6 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
    * @returns PolicyDocument with statements for all required services
    */
   private createKmsKeyPolicy(): PolicyDocument {
-    const kmsActions = ['kms:Encrypt', 'kms:Decrypt', 'kms:ReEncrypt', 'kms:GenerateDataKey', 'kms:DescribeKey'];
-
     return new PolicyDocument({
       statements: [
         // Allow account root full access to the key
@@ -251,7 +345,7 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
         new PolicyStatement({
           effect: Effect.ALLOW,
           principals: [new ServicePrincipal('logs.amazonaws.com')],
-          actions: kmsActions,
+          actions: KMS_LOGGING_ACTIONS,
           resources: ['*'],
           conditions: {
             ArnLike: {
@@ -263,7 +357,7 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
         new PolicyStatement({
           effect: Effect.ALLOW,
           principals: [new ServicePrincipal('logging.s3.amazonaws.com')],
-          actions: kmsActions,
+          actions: KMS_LOGGING_ACTIONS,
           resources: ['*'],
           conditions: {
             ArnLike: {
@@ -271,8 +365,40 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
             },
           },
         }),
+        ...this.createReadRoleKeyStatements(),
       ],
     });
+  }
+
+  /**
+   * Creates the key policy statements which let the read roles decrypt the logging bucket's objects
+   * @returns Decrypt-only grants for the same-account and cross-account read roles
+   */
+  private createReadRoleKeyStatements(): PolicyStatement[] {
+    const sameAccountStatements =
+      this.readRoles.roleIds.length > 0
+        ? [
+            this.sameAccountReadRoleStatement({
+              actions: DECRYPT_ACTIONS,
+              resources: ['*'],
+              conditions: { StringEquals: this.viaS3() },
+            }),
+          ]
+        : [];
+    // Cross-account key users also get DescribeKey, as in MdaaKmsKey, limited to S3 like Decrypt
+    const crossAccountStatements =
+      this.readRoles.crossAccountArns.length > 0
+        ? [
+            new PolicyStatement({
+              effect: Effect.ALLOW,
+              principals: this.readRoles.crossAccountArns.map(arn => new ArnPrincipal(arn)),
+              actions: [...DECRYPT_ACTIONS, 'kms:DescribeKey'],
+              resources: ['*'],
+              conditions: { StringEquals: this.viaS3() },
+            }),
+          ]
+        : [];
+    return [...sameAccountStatements, ...crossAccountStatements];
   }
 
   /**
@@ -311,6 +437,11 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
     // Add bucket policy to allow Bedrock service access
     this.addBucketPolicy(loggingBucket);
 
+    // Restrict who can read the logs. Applied whatever the destinations, because the bucket
+    // always receives the CloudWatch destination's large-data overflow.
+    loggingBucket.addToResourcePolicy(this.createReadDenyStatement(loggingBucket));
+    this.createReadAllowStatements(loggingBucket).forEach(statement => loggingBucket.addToResourcePolicy(statement));
+
     return loggingBucket;
   }
 
@@ -332,6 +463,62 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
         noncurrentVersionExpiration: Duration.days(1),
       },
     ];
+  }
+
+  /**
+   * Creates the statement denying object reads to every principal except the read roles.
+   * It denies reads only: Bedrock writes the logs as a service principal and must not be blocked.
+   * @param bucket - The logging bucket
+   * @returns The Deny statement, unconditional when no read roles are configured
+   */
+  private createReadDenyStatement(bucket: MdaaBucket): PolicyStatement {
+    // Keys within one condition operator are ANDed, so the Deny applies only to a principal
+    // which matches neither list. A key with no values would match nothing, so it is omitted.
+    const excludedPrincipals = {
+      ...(this.readRoles.roleIds.length > 0 ? this.readRoleUserIds() : {}),
+      ...(this.readRoles.crossAccountArns.length > 0 ? { 'aws:PrincipalArn': this.readRoles.crossAccountArns } : {}),
+    };
+    return new PolicyStatement({
+      sid: 'DenyObjectReadsExceptReadRoles',
+      effect: Effect.DENY,
+      principals: [new AnyPrincipal()],
+      actions: OBJECT_READ_ACTIONS,
+      resources: [bucket.arnForObjects('*')],
+      conditions: Object.keys(excludedPrincipals).length > 0 ? { StringNotLike: excludedPrincipals } : undefined,
+    });
+  }
+
+  /**
+   * Creates the statements granting the read roles access to the logging bucket's objects
+   * @param bucket - The logging bucket
+   * @returns Allow statements for the same-account and cross-account read roles
+   */
+  private createReadAllowStatements(bucket: MdaaBucket): PolicyStatement[] {
+    const sameAccountStatements =
+      this.readRoles.roleIds.length > 0
+        ? [
+            this.sameAccountReadRoleStatement({
+              sid: 'AllowObjectReadsToReadRoles',
+              actions: OBJECT_READ_ACTIONS,
+              resources: [bucket.arnForObjects('*')],
+            }),
+          ]
+        : [];
+    // A principal in another account gets nothing on this bucket from its own IAM alone, so it
+    // also needs the bucket-level grants to list and locate the bucket.
+    const crossAccountStatements =
+      this.readRoles.crossAccountArns.length > 0
+        ? [
+            new PolicyStatement({
+              sid: 'AllowReadsToCrossAccountReadRoles',
+              effect: Effect.ALLOW,
+              principals: this.readRoles.crossAccountArns.map(arn => new ArnPrincipal(arn)),
+              actions: [...OBJECT_READ_ACTIONS, ...CROSS_ACCOUNT_BUCKET_ACTIONS],
+              resources: [bucket.bucketArn, bucket.arnForObjects('*')],
+            }),
+          ]
+        : [];
+    return [...sameAccountStatements, ...crossAccountStatements];
   }
 
   /**
@@ -377,7 +564,7 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
       // Allow KMS operations for encrypting/decrypting log data
       new PolicyStatement({
         effect: Effect.ALLOW,
-        actions: ['kms:Encrypt', 'kms:Decrypt', 'kms:ReEncrypt', 'kms:GenerateDataKey', 'kms:DescribeKey'],
+        actions: KMS_LOGGING_ACTIONS,
         resources: [encryptionKey.keyArn],
       }),
     ];

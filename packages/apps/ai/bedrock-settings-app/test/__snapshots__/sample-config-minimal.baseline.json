@@ -503,6 +503,28 @@
                   ]
                 ]
               }
+            },
+            {
+              "Action": "s3:GetObject*",
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "constructbedrockinvocationlogss32FC6A3AD",
+                        "Arn"
+                      ]
+                    },
+                    "/*"
+                  ]
+                ]
+              },
+              "Sid": "DenyObjectReadsExceptReadRoles"
             }
           ],
           "Version": "2012-10-17"

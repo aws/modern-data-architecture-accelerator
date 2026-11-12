@@ -21,6 +21,7 @@ The Bedrock Settings CDK L3 construct is used to configure and deploy Amazon Bed
 * **logDataProtection**: (Optional) Additional data identifiers to mask in the CloudWatch log group, on top of the built-in set. Requires `enableAuditLoggingToCloudwatch`.
 * **logRetentionDays**: (Optional) CloudWatch Logs retention in days; omit or `9999` to never expire. Requires `enableAuditLoggingToCloudwatch`.
 * **s3RetentionDays**: (Optional) Days to keep log objects in the S3 bucket (current and noncurrent versions); omit to never expire.
+* **readRoleRefs**: (Optional) Roles allowed to read the invocation logs in the S3 bucket. Every other principal is denied `s3:GetObject*` on the bucket's objects; with none listed, no principal can read them.
 
 At least one of `enableAuditLoggingToS3` and `enableAuditLoggingToCloudwatch` must be enabled.
 
@@ -43,6 +44,8 @@ The bucket is always created, because it also receives the CloudWatch large-data
 - Bucket policy allows Bedrock service to write objects
 - Objects expire after `s3RetentionDays`, if set; noncurrent versions then expire 1 day after becoming noncurrent
 
+Whichever destinations are enabled, the bucket policy denies `s3:GetObject*` on the bucket's objects to every principal except `readRoleRefs`, which are granted `s3:GetObject*` and `kms:Decrypt` through S3. Cross-account read roles also get `s3:ListBucket`, `s3:GetBucketLocation`, and `kms:DescribeKey` through S3. Objects are stored unmasked, so a read role reads prompts in clear text. See [Who Can Read Invocation Logs in S3](../../../../apps/ai/bedrock-settings-app/README.md#who-can-read-invocation-logs-in-s3) for what readers need in their own IAM, AWS services that read through a role, and who can remove the restriction.
+
 ## CloudWatch Configuration  
 
 When CloudWatch logging is enabled:
@@ -59,3 +62,4 @@ When CloudWatch logging is enabled:
 - Service principals restricted to specific account and region
 - CloudWatch's publish grant on a module-created alarm topic, and its use of the KMS key, are limited to this module's token alarms
 - Bucket policies with condition-based access controls
+- Reads of the stored invocation logs denied to every principal except the configured read roles

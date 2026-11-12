@@ -18,8 +18,8 @@ This module deploys and integrates the following resources:
 - **IAM Managed Policy**: Custom policy granting permissions for Bedrock to write audit logs to the configured destinations
 - **Custom Resource Lambda**: Lambda function that configures Bedrock's account-wide model invocation logging settings through AWS APIs (see [Account-Wide Logging Configuration](#account-wide-logging-configuration))
 - **Custom Resource Handler Role**: Execution role for the custom resource Lambda, allowed to put, get and delete the invocation logging configuration
-- **Bucket Policy**: Resource-based policy allowing Bedrock service to write audit logs to the S3 bucket
-- **KMS Key Policy**: Key policy allowing Bedrock, CloudWatch Logs, and S3 services to use the encryption key
+- **Bucket Policy**: Resource-based policy allowing Bedrock service to write audit logs to the S3 bucket, and denying reads of them to every principal except `readRoles`. See [Who Can Read Invocation Logs in S3](#who-can-read-invocation-logs-in-s3)
+- **KMS Key Policy**: Key policy allowing Bedrock, CloudWatch Logs, and S3 services to use the encryption key, and `readRoles` to decrypt with it
 - **Token Usage Alarms** (Optional): CloudWatch alarms on model input and output token counts, per model and/or account-wide, with SSM parameters for each alarm's name and ARN. See [Token usage alarms](#token-usage-alarms)
 - **SNS Topic** (Optional): Topic the token usage alarms notify, when the module is asked to create one, with optional email subscriptions, its topic policy, and SSM parameters for its name and ARN
 
@@ -41,12 +41,13 @@ This module is designed in alignment with MDAA security/compliance principles an
 
 - **Encryption at Rest**:
   - All audit logs encrypted using a customer-managed KMS key
-  - KMS key policy restricts access to the account root, Bedrock service, and logging services, plus, with a module-created alarm topic, the CloudWatch alarm service for this module's token alarms
+  - KMS key policy restricts access to the account root, Bedrock service, and logging services, plus, with a module-created alarm topic, the CloudWatch alarm service for this module's token alarms, and `readRoles`, which may decrypt only through S3
 - **Encryption in Transit**:
   - All log delivery uses TLS-encrypted connections
 - **Least Privilege**:
   - Dedicated IAM service role scoped to logging destinations only
   - S3 bucket policy uses condition-based access controls with source account and ARN restrictions
+  - S3 bucket policy denies reads of the invocation logs to every principal, account administrators included, except the roles in `readRoles`
   - Cross-service access uses proper service principals and condition keys
 - **Logging & Audit**:
   - Supports real-time monitoring via CloudWatch for Bedrock model invocation audit logs
@@ -94,10 +95,34 @@ The handler role is named `<org>-<env>-<domain>-<module>-logs-model-invocation-h
 
 - **Masking is always applied** to the CloudWatch invocation log group, which holds the full text of every prompt and completion. Masked values appear in CloudWatch Logs Insights, metric filters and subscription filters; principals with `logs:Unmask` (including the `CloudWatchLogsFullAccess` managed policy) can still view them in clear text, which is the break-glass route for incident response.
 - **Masking is not retroactive.** Events ingested before the policy was applied stay unmasked until they expire.
-- **The S3 copies are not masked.** CloudWatch data protection does not reach S3, so the S3 destination and the large-data overflow (bodies over 100 KB and binary data) keep prompts in clear text. Restrict who can read the bucket and decrypt with the module's KMS key.
+- **The S3 copies are not masked.** CloudWatch data protection does not reach S3, so the S3 destination and the large-data overflow (bodies over 100 KB and binary data) keep prompts in clear text. Only `readRoles` can read them; see [Who Can Read Invocation Logs in S3](#who-can-read-invocation-logs-in-s3).
 - **Retention defaults to never-expire** for both destinations, so upgrading never deletes existing invocation logs, and how long to keep prompts, which often contain personal data, stays your decision. Set `logRetentionDays` and `s3RetentionDays` to bound it. `s3RetentionDays` applies to the whole bucket, including the overflow, so a value shorter than `logRetentionDays` removes overflow bodies before the CloudWatch events that point to them.
 - **`s3RetentionDays` also limits version recovery.** The bucket is versioned, and setting `s3RetentionDays` expires every noncurrent object version 1 day after it becomes noncurrent, including versions already in the bucket. An overwritten or deleted object can then be recovered for 1 day only.
 - **On accounts governed by Landing Zone Accelerator**, LZA sets its account-wide `cloudwatchLogRetentionInDays` on new log groups about 10 minutes after they are created, replacing `logRetentionDays`. The effective CloudWatch retention there is LZA's.
+
+### Who Can Read Invocation Logs in S3
+
+Listing a role in `readRoles` is the S3 counterpart of granting it `logs:Unmask`. CloudWatch shows everyone masked values and only `logs:Unmask` holders the clear text; S3 has no masked view, so the module limits who can read the objects at all.
+
+The bucket holds prompts and completions in two places:
+
+- **The S3 destination** (`bedrock-model-invocation-logs/bedrock-model-invocation`), written when `enableAuditLoggingToS3` is `true`.
+- **The CloudWatch destination's large-data overflow** (`bedrock-model-invocation-logs/bedrock-model-invocation/cloudwatch-logs-large-data-delivery/`), where Bedrock writes binary data and request or response bodies over 100 KB. The bucket receives it whenever `enableAuditLoggingToCloudwatch` is `true`, including when `enableAuditLoggingToS3` is `false`. Agents resend the whole conversation on every model call, so for a long agent session most of the conversation ends up here.
+
+The bucket policy denies `s3:GetObject*` on the bucket's objects to every principal except the roles in `readRoles`, account administrators included. The listed roles are granted `s3:GetObject*` on the objects and `kms:Decrypt` on the module KMS key through S3 only. A cross-account role also gets `s3:ListBucket` and `s3:GetBucketLocation` on the bucket, and `kms:DescribeKey` on the key, again through S3 only.
+
+```yaml
+readRoles:
+  - name: incident-responder
+  - arn: 'arn:{{partition}}:iam::{{context:account-2}}:role/log-analytics'
+```
+
+- **Default** - with no `readRoles`, no principal can read the objects. Bedrock still writes them.
+- **Who to list** - only the roles that need full prompts, such as incident responders.
+- **The readers' own permissions** - a same-account role needs nothing of its own to read an object whose key it knows, but needs `s3:ListBucket` in its own IAM policy to list the bucket. A cross-account role needs an identity policy in its own account allowing `s3:GetObject`, `s3:ListBucket` and `s3:GetBucketLocation` on this bucket and `kms:Decrypt` on this key, because access across accounts must be granted on both sides.
+- **AWS services that read objects** - a service that reads through an IAM role, such as Amazon Macie sensitive data discovery, AWS Backup for S3 or GuardDuty Malware Protection for S3, is denied too. List the role it uses to let it in.
+- **The bucket policy itself** - a principal allowed `s3:PutBucketPolicy` or `s3:DeleteBucketPolicy` on the bucket can remove the restriction. Where this matters, deny both actions with an SCP that exempts the CloudFormation execution role deploying this module, which needs `s3:PutBucketPolicy` to apply changes such as a new read role.
+- **Upgrading** - principals that read the bucket before this restriction lose access until they are listed in `readRoles`.
 
 ---
 
@@ -159,7 +184,7 @@ Enables audit logging to both CloudWatch and S3 with default settings. Start her
 
 #### Comprehensive Configuration
 
-Configures audit logging for Bedrock model invocations to both S3 (long-term retention) and CloudWatch (real-time monitoring), with additional PII identifiers masked, retention set for both destinations, and alarms on token use per model and account-wide. Use this as a reference when you need control over masking, log retention, encryption, dual-destination audit configuration, and token usage alerting.
+Configures audit logging for Bedrock model invocations to both S3 (long-term retention) and CloudWatch (real-time monitoring), with additional PII identifiers masked, retention set for both destinations, reads of the S3 copies limited to named roles, and alarms on token use per model and account-wide. Use this as a reference when you need control over masking, log retention, read access, encryption, dual-destination audit configuration, and token usage alerting.
 
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 

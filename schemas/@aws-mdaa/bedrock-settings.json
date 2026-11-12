@@ -3216,7 +3216,7 @@
         },
         "logDataProtection": {
             "$ref": "#/definitions/DataProtectionProperty",
-            "description": "CloudWatch Logs data protection for the invocation log group, which receives the full text of every\nprompt and completion.\n\nPII masking is always applied to the invocation log group: sensitive data (emails, SSNs, credit card\nnumbers, etc.) is masked in log events on ingestion. Users with the logs:Unmask permission can still\nview unmasked data. Masking is not retroactive, and does not reach the S3 copies of the logs. This\noptional configuration only adds identifiers to the built-in set; it can never reduce it.\n\nUse cases: extending PII masking of prompts and completions with additional identifiers\n\nAWS: CloudWatch Logs Data Protection Policy\n\nValidation: Optional; DataProtectionProperty; additive only; requires enableAuditLoggingToCloudwatch: true"
+            "description": "CloudWatch Logs data protection for the invocation log group, which receives the full text of every\nprompt and completion.\n\nPII masking is always applied to the invocation log group: sensitive data (emails, SSNs, credit card\nnumbers, etc.) is masked in log events on ingestion. Users with the logs:Unmask permission can still\nview unmasked data. Masking is not retroactive, and does not reach the S3 copies of the logs, which\nonly readRoles can read. This optional configuration only adds identifiers to the built-in set; it\ncan never reduce it.\n\nUse cases: extending PII masking of prompts and completions with additional identifiers\n\nAWS: CloudWatch Logs Data Protection Policy\n\nValidation: Optional; DataProtectionProperty; additive only; requires enableAuditLoggingToCloudwatch: true"
         },
         "logRetentionDays": {
             "default": 9999,
@@ -3251,6 +3251,14 @@
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",
             "description": "Q-ENHANCED-PROPERTY\nOptional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.\n\nUse cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions\n\nAWS: CDK Nag suppressions for compliance rule management and security exception documentation\n\nValidation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management"
+        },
+        "readRoles": {
+            "default": "- no principal can read the bucket's objects",
+            "description": "Roles allowed to read the invocation logs in the module's S3 bucket. Every other principal,\naccount administrators included, is denied s3:GetObject* on the bucket's objects, although a\nprincipal allowed s3:PutBucketPolicy or s3:DeleteBucketPolicy can remove the Deny. The bucket holds\nthe S3 destination and the CloudWatch destination's large-data overflow (binary data and bodies over\n100 KB), so the restriction applies when only CloudWatch logging is enabled too. Objects are stored\nunmasked, so a listed role reads prompts and completions in clear text.\n\nUse cases: Incident-responder access to full prompts; Audit of stored conversations; Cross-account log analysis\n\nAWS: S3 bucket policy Deny on s3:GetObject*. Listed roles get s3:GetObject* and kms:Decrypt through S3;\ncross-account roles also get s3:ListBucket, s3:GetBucketLocation and kms:DescribeKey through S3\n\nValidation: Optional; array of MdaaRoleRef; supports id, arn, and name references",
+            "items": {
+                "$ref": "#/definitions/MdaaRoleRef"
+            },
+            "type": "array"
         },
         "s3RetentionDays": {
             "description": "Number of days to keep invocation log objects in the S3 bucket. Applies to the whole bucket: the S3\ndestination and the CloudWatch large-data overflow (bodies over 100 KB), so a value shorter than\nlogRetentionDays removes overflow bodies before the CloudWatch events that point to them. Omit to keep\nobjects indefinitely.\n\nUse cases: limiting how long prompts are kept, cost management, compliance retention requirements\n\nSetting it also expires every noncurrent object version 1 day after it becomes noncurrent, across the\nwhole bucket, so versioning can recover an overwritten or deleted object for 1 day only.\n\nAWS: S3 lifecycle expiration (current and noncurrent object versions)\n\nValidation: Optional; Integer; positive",

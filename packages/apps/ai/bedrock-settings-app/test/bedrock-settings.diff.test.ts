@@ -27,6 +27,7 @@ describe('Bedrock Settings Baseline Diff Tests', () => {
         org: 'test-org',
         env: 'test-env',
         domain: 'test-domain',
+        'account-2': '222222222222',
       },
     ),
   );

@@ -12,6 +12,7 @@
 
 - The model invocation log group now always masks PII with a CloudWatch data protection policy, extendable via `logDataProtection.additionalIdentifiers`. `Upgrade impact:` readers of the log group see masked values unless they hold `logs:Unmask`; events logged before the deploy stay unmasked. See [Masking and Retention](packages/apps/ai/bedrock-settings-app/README.md#masking-and-retention).
 - Added optional `logRetentionDays` and `s3RetentionDays` for the invocation logs. Logs still never expire by default, so existing configs are unchanged. See [Masking and Retention](packages/apps/ai/bedrock-settings-app/README.md#masking-and-retention).
+- Reads of the invocation logs in the module's S3 bucket, including the CloudWatch large-data overflow, are now denied to every principal except the roles listed in the new optional `readRoles`. `Upgrade impact:` principals that read the bucket today lose access until they are listed. See [Who Can Read Invocation Logs in S3](packages/apps/ai/bedrock-settings-app/README.md#who-can-read-invocation-logs-in-s3).
 
 ### Bug Fixes
 

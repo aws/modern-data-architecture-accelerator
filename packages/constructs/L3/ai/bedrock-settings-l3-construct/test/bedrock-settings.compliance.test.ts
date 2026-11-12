@@ -689,3 +689,200 @@ describe('Bedrock Settings L3 Construct Token Usage Alarm Compliance with an Exi
     template.allResourcesProperties('AWS::CloudWatch::Alarm', { AlarmActions: [existingTopicArn] });
   });
 });
+
+const objectsArn = { 'Fn::Join': ['', [{ 'Fn::GetAtt': [Match.anyValue(), 'Arn'] }, '/*']] };
+const bucketArn = { 'Fn::GetAtt': [Match.anyValue(), 'Arn'] };
+const viaS3 = { 'kms:ViaService': 's3.test-region.amazonaws.com' };
+
+// Exact statement: inside Match.arrayWith a literal object must match with no extra keys
+const unconditionalReadDeny = {
+  Sid: 'DenyObjectReadsExceptReadRoles',
+  Effect: 'Deny',
+  Principal: { AWS: '*' },
+  Action: 's3:GetObject*',
+  Resource: objectsArn,
+};
+
+type PolicyStatementJson = Record<string, unknown>;
+
+function createReadRestrictionTestApp(props: Partial<BedrockSettingsL3ConstructProps>): MdaaTestApp {
+  const testApp = new MdaaTestApp();
+  new BedrockSettingsL3Construct(testApp.testStack, 'bedrock-settings', {
+    enableAuditLoggingToS3: true,
+    enableAuditLoggingToCloudwatch: true,
+    naming: testApp.naming,
+    roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+    ...props,
+  });
+  return testApp;
+}
+
+function policyStatements(template: Template, type: string, documentKey: string): PolicyStatementJson[] {
+  const [resource] = Object.values(template.findResources(type));
+  return resource.Properties[documentKey].Statement;
+}
+
+function bucketPolicyStatements(template: Template): PolicyStatementJson[] {
+  return policyStatements(template, 'AWS::S3::BucketPolicy', 'PolicyDocument');
+}
+
+/** Whether an IAM action pattern, which may contain * and ? wildcards, matches an action. */
+function actionPatternMatches(pattern: string, action: string): boolean {
+  const regex = [...pattern]
+    .map(char => {
+      if (char === '*') return '.*';
+      if (char === '?') return '.';
+      return char.replace(/[.+^${}()|[\]\\]/g, String.raw`\$&`);
+    })
+    .join('');
+  return new RegExp(`^${regex}$`, 'i').test(action);
+}
+
+/** Whether a policy statement's Action or NotAction applies to an action. */
+function statementCoversAction(statement: PolicyStatementJson, action: string): boolean {
+  if (statement.NotAction !== undefined) {
+    return ![statement.NotAction].flat().some(pattern => actionPatternMatches(pattern as string, action));
+  }
+  return [statement.Action].flat().some(pattern => actionPatternMatches(pattern as string, action));
+}
+
+describe('Bedrock Settings L3 Construct Invocation Log Read Restriction without Read Roles', () => {
+  const testApp = createReadRestrictionTestApp({});
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('object reads are denied to every principal', () => {
+    template.hasResourceProperties('AWS::S3::BucketPolicy', {
+      PolicyDocument: { Statement: Match.arrayWith([unconditionalReadDeny]) },
+    });
+    const sids = bucketPolicyStatements(template).map(statement => statement.Sid);
+    expect(sids).not.toContain('AllowObjectReadsToReadRoles');
+    expect(sids).not.toContain('AllowReadsToCrossAccountReadRoles');
+  });
+
+  test('no unconditional Deny covers the s3:PutObject Bedrock writes the logs with', () => {
+    const putDenies = bucketPolicyStatements(template).filter(
+      statement => statement.Effect === 'Deny' && statementCoversAction(statement, 's3:PutObject'),
+    );
+    expect(putDenies.every(statement => statement.Condition !== undefined)).toBe(true);
+  });
+
+  test('the action pattern check recognises wildcards', () => {
+    expect(statementCoversAction({ Action: 's3:*' }, 's3:PutObject')).toBe(true);
+    expect(statementCoversAction({ Action: ['s3:Get*', 's3:Put*'] }, 's3:PutObject')).toBe(true);
+    expect(statementCoversAction({ Action: 's3:GetObject*' }, 's3:PutObject')).toBe(false);
+    expect(statementCoversAction({ NotAction: 's3:GetObject' }, 's3:PutObject')).toBe(true);
+  });
+});
+
+describe('Bedrock Settings L3 Construct Invocation Log Read Restriction with CloudWatch Logging Only', () => {
+  const testApp = createReadRestrictionTestApp({ enableAuditLoggingToS3: false });
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('the read Deny covers the bucket receiving the large-data overflow', () => {
+    template.hasResourceProperties('Custom::logs-model-invocation', {
+      cloudwatchConfig: { largeDataDeliveryS3Config: { s3Bucket: { Ref: Match.anyValue() } } },
+    });
+    template.hasResourceProperties('AWS::S3::BucketPolicy', {
+      PolicyDocument: { Statement: Match.arrayWith([unconditionalReadDeny]) },
+    });
+  });
+});
+
+describe('Bedrock Settings L3 Construct Invocation Log Read Restriction with Read Roles', () => {
+  const crossAccountArn = 'arn:test-partition:iam::999999999999:role/CrossAccountReader';
+  const testApp = createReadRestrictionTestApp({
+    readRoleRefs: [{ id: 'test-read-role-id' }, { arn: crossAccountArn }],
+  });
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  const grantsToReadRoles = (statement: PolicyStatementJson): boolean =>
+    JSON.stringify(statement).includes('test-read-role-id') || JSON.stringify(statement).includes(crossAccountArn);
+
+  test('the Deny excludes the same-account role by aws:userId and the cross-account role by aws:PrincipalArn', () => {
+    template.hasResourceProperties('AWS::S3::BucketPolicy', {
+      PolicyDocument: {
+        Statement: Match.arrayWith([
+          {
+            ...unconditionalReadDeny,
+            Condition: {
+              StringNotLike: {
+                'aws:userId': ['test-read-role-id:*'],
+                'aws:PrincipalArn': [crossAccountArn],
+              },
+            },
+          },
+        ]),
+      },
+    });
+  });
+
+  test('both roles may read the objects, and only the cross-account role gets bucket-level access', () => {
+    const allows = bucketPolicyStatements(template).filter(
+      statement => statement.Effect === 'Allow' && grantsToReadRoles(statement),
+    );
+    expect(allows).toEqual([
+      {
+        Sid: 'AllowObjectReadsToReadRoles',
+        Effect: 'Allow',
+        Principal: { AWS: '*' },
+        Action: 's3:GetObject*',
+        Resource: expect.anything(),
+        Condition: { StringLike: { 'aws:userId': ['test-read-role-id:*'] } },
+      },
+      {
+        Sid: 'AllowReadsToCrossAccountReadRoles',
+        Effect: 'Allow',
+        Principal: { AWS: crossAccountArn },
+        Action: ['s3:GetObject*', 's3:ListBucket', 's3:GetBucketLocation'],
+        Resource: [expect.anything(), expect.anything()],
+      },
+    ]);
+    template.hasResourceProperties('AWS::S3::BucketPolicy', {
+      PolicyDocument: {
+        Statement: Match.arrayWith([
+          Match.objectLike({ Sid: 'AllowObjectReadsToReadRoles', Resource: objectsArn }),
+          Match.objectLike({ Sid: 'AllowReadsToCrossAccountReadRoles', Resource: [bucketArn, objectsArn] }),
+        ]),
+      },
+    });
+  });
+
+  test('every Allow that names any principal is limited to the read roles by aws:userId', () => {
+    const anyPrincipalAllows = [
+      ...bucketPolicyStatements(template),
+      ...policyStatements(template, 'AWS::KMS::Key', 'KeyPolicy'),
+    ].filter(statement => statement.Effect === 'Allow' && JSON.stringify(statement.Principal) === '{"AWS":"*"}');
+    expect(anyPrincipalAllows).toHaveLength(2);
+    for (const statement of anyPrincipalAllows) {
+      expect(statement.Condition).toMatchObject({ StringLike: { 'aws:userId': ['test-read-role-id:*'] } });
+    }
+  });
+
+  test('both roles may decrypt with the module key only through S3, and get no other key usage', () => {
+    const keyGrants = policyStatements(template, 'AWS::KMS::Key', 'KeyPolicy').filter(grantsToReadRoles);
+    expect(keyGrants).toHaveLength(2);
+    template.hasResourceProperties('AWS::KMS::Key', {
+      KeyPolicy: {
+        Statement: Match.arrayWith([
+          {
+            Effect: 'Allow',
+            Principal: { AWS: '*' },
+            Action: 'kms:Decrypt',
+            Resource: '*',
+            Condition: { StringLike: { 'aws:userId': ['test-read-role-id:*'] }, StringEquals: viaS3 },
+          },
+          {
+            Effect: 'Allow',
+            Principal: { AWS: crossAccountArn },
+            Action: ['kms:Decrypt', 'kms:DescribeKey'],
+            Resource: '*',
+            Condition: { StringEquals: viaS3 },
+          },
+        ]),
+      },
+    });
+  });
+});
