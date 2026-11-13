@@ -38,6 +38,15 @@ export default [
       'prettier/prettier': 'error',
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      'no-restricted-syntax': [
+        'error',
+        {
+          // e.g. `flag?.valueOf` (missing `()`) is always truthy, even when flag is false
+          selector:
+            'MemberExpression[property.name=/^(valueOf|toString|toJSON|getTime|includes|has|isEmpty|startsWith|endsWith)$/]:not(CallExpression > MemberExpression.callee)',
+          message: 'Method is referenced but not called. Did you forget `()`?',
+        },
+      ],
     },
   },
   {

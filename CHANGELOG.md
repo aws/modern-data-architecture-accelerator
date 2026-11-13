@@ -25,6 +25,7 @@
 
 - Fixed the Bedrock Settings module reporting a deploy with a malformed configuration as successful, leaving invocation logging unconfigured. `Upgrade impact:` a malformed configuration now fails the deploy.
 - Fixed the Bedrock Settings module logging a URL that anyone able to read its logs could use to report a false result for its deployment.
+- Fixed the Data Lake module granting the LakeFormation role write and delete access to `lakeFormationLocations` entries set to `write: false`; they now get read-only access, as documented. `Upgrade impact:` on redeploy, the LakeFormation role and the principals it vends credentials to lose write and delete access to those locations.
 
 ### General Changes
 

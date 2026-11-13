@@ -1276,7 +1276,7 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
       roleArn: lakeFormationRole.roleArn,
     });
 
-    const permissions = locationProps.write?.valueOf
+    const permissions = locationProps.write?.valueOf()
       ? {
           readWritePrincipals: [lakeFormationRole],
         }
