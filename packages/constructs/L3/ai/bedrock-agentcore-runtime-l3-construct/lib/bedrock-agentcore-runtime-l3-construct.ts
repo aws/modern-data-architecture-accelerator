@@ -31,6 +31,14 @@ import { DockerImageAsset, Platform } from 'aws-cdk-lib/aws-ecr-assets';
 import { Effect, ManagedPolicy, PolicyDocument, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { ResourcePolicy } from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
+import {
+  AGENTCORE_DEFAULT_MAX_LIFETIME_SECONDS,
+  ContainmentProperty,
+  MANAGED_POLICIES_PER_ROLE_QUOTA_CONTEXT_KEY,
+  resolveManagedPoliciesPerRoleQuota,
+  RuntimeContainment,
+  validateManagedPolicyHeadroom,
+} from './containment';
 import { createAgentCoreVpcEndpoint, VpcEndpointProperty } from './vpc-endpoint';
 import {
   buildAuthorizerConfiguration,
@@ -762,14 +770,14 @@ export interface EventBridgeRuleConfiguration {
   readonly eventNames?: string[];
   /**
    * ARN of an existing, customer-supplied Lambda function to invoke in addition to
-   * the SNS notification, for automated remediation (e.g. revoking credentials or
-   * disabling a target). MDAA does not create this function - revoking an execution
-   * role or stopping sessions is destructive and site-specific.
+   * the SNS notification, for site-specific remediation. MDAA does not create this
+   * function. To contain the agent itself, target the module's `contain` runbook
+   * instead (see `containment`), which denies the execution role without custom code.
    *
    * The rule grants EventBridge `lambda:InvokeFunction` on a same-account target. A
    * cross-account function must grant that permission on its own side.
    *
-   * Use cases: auto-remediation, kill-switch on anomalous activity
+   * Use cases: site-specific auto-remediation alongside the containment runbooks
    *
    * AWS: EventBridge Lambda target with invoke permission
    *
@@ -1057,6 +1065,19 @@ export interface BedrockAgentcoreRuntimeProps {
    * Validation: Optional; EventBridgeConfiguration; requires an alarms topic
    **/
   readonly eventBridgeAlerts?: EventBridgeConfiguration;
+  /**
+   * Containment runbooks for the execution role, created by default. `contain` attaches a deny-all
+   * policy to the role so a compromised agent's AWS calls fail, including from sessions already running
+   * and from credentials copied out of them; `release` detaches it once the release gate has passed.
+   * Nothing changes for the agent until `contain` is run.
+   *
+   * Use cases: incident response on a compromised agent, automated containment from detection findings
+   *
+   * AWS: IAM managed policies + role, Systems Manager Automation documents
+   *
+   * Validation: Optional; ContainmentProperty
+   **/
+  readonly containment?: ContainmentProperty;
 }
 
 /** L3 construct props combining runtime config with MDAA infrastructure properties. */
@@ -1068,6 +1089,8 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
   public readonly runtimeRole?: MdaaRole;
   /** MDAA-created Cognito IdP; undefined unless the `cognito` authorizer path is configured. */
   public readonly cognitoAuth?: AgentcoreCognitoAuth;
+  /** Containment runbooks and policies; undefined when `containment.enabled` is `false`. */
+  public readonly containment?: RuntimeContainment;
   private readonly repositoryArn?: string;
   protected readonly props: BedrockAgentcoreRuntimeL3ConstructProps;
   /** KMS key created for log-group encryption; reused for the alarm SNS topic when one is created. */
@@ -1245,6 +1268,8 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
         alarmNotificationTopic,
       );
     }
+
+    this.containment = this.createContainment(props, runtimeRole);
 
     // Store runtime information in SSM Parameter Store
     this.storeSSMParameters(props.agentRuntimeName);
@@ -1709,6 +1734,7 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
 
     // Add the runtime managed policy to the list
     managedPolicies.push(runtimeManagedPolicy);
+    this.validateContainmentHeadroom(props, managedPolicies.length);
 
     // Create the role with MdaaRole using only managed policies
     const mdaaRole = new MdaaRole(this, 'RuntimeRole', {
@@ -1763,6 +1789,61 @@ export class BedrockAgentcoreRuntimeL3Construct extends MdaaL3Construct {
     }
 
     return mdaaRole;
+  }
+
+  /**
+   * Fails synth when the created execution role has no managed-policy slot left for the containment
+   * policy, so a role that could not take it fails here instead of failing `contain` mid-incident.
+   */
+  private validateContainmentHeadroom(props: BedrockAgentcoreRuntimeProps, attachedCount: number): void {
+    if (props.containment?.enabled === false) {
+      return;
+    }
+    validateManagedPolicyHeadroom({
+      runtimeName: props.agentRuntimeName,
+      attachedCount,
+      quota: resolveManagedPoliciesPerRoleQuota(this.node.tryGetContext(MANAGED_POLICIES_PER_ROLE_QUOTA_CONTEXT_KEY)),
+    });
+  }
+
+  /**
+   * Creates the containment runbooks unless `containment.enabled` is `false`. A referenced role gets no
+   * headroom check, since MDAA cannot see what is attached to it.
+   */
+  private createContainment(
+    props: BedrockAgentcoreRuntimeL3ConstructProps,
+    runtimeRole: MdaaRole | MdaaRoleRef,
+  ): RuntimeContainment | undefined {
+    if (props.containment?.enabled === false) {
+      return undefined;
+    }
+
+    if (!(runtimeRole instanceof MdaaRole)) {
+      Annotations.of(this).addWarningV2(
+        '@aws-mdaa/bedrock-agentcore-runtime:containmentReferencedRole',
+        `Containment targets the referenced execution role ${props.roleArn}. MDAA did not create it, so the ` +
+          `managed-policy headroom check is skipped, and contain applies to every user of the role, not only this ` +
+          `runtime. Set containment.enabled: false if the role's owner contains it with their own tooling.`,
+      );
+    }
+
+    const runtimeArn = this.runtime.attrAgentRuntimeArn;
+    return new RuntimeContainment(this, 'Containment', {
+      naming: this.props.naming,
+      createParams: this.props.createParams,
+      createOutputs: this.props.createOutputs,
+      runtimeName: props.agentRuntimeName,
+      runtimeId: this.runtime.attrAgentRuntimeId,
+      runtimeArn,
+      runtimeEndpointArns: [
+        `${runtimeArn}/runtime-endpoint/DEFAULT`,
+        ...(this.runtimeEndpoint ? [this.runtimeEndpoint.attrAgentRuntimeEndpointArn] : []),
+      ],
+      // A session started through the named endpoint is stopped under its name, so it is the default.
+      qualifiers: this.sanitizedEndpointName ? [this.sanitizedEndpointName, 'DEFAULT'] : ['DEFAULT'],
+      executionRoleArn: this.getRoleArn(runtimeRole),
+      maxLifetimeSeconds: props.lifecycleConfiguration?.maxLifetime ?? AGENTCORE_DEFAULT_MAX_LIFETIME_SECONDS,
+    });
   }
 
   private getRoleArn(role: MdaaRole | MdaaRoleRef): string {

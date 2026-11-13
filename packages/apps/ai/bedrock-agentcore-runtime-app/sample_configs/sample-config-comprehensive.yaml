@@ -268,9 +268,16 @@ eventBridgeAlerts:
       eventNames:
         - 'UpdateAgentRuntime'
         - 'DeleteAgentRuntime'
-      # (Optional) Additionally invoke a customer-supplied Lambda to remediate.
-      # MDAA does not create this function: revoking an execution role or stopping
-      # sessions is destructive and site-specific. The rule grants EventBridge
-      # invoke permission on a same-account function; a cross-account function must
-      # grant that permission on its own side.
+      # (Optional) Additionally invoke a customer-supplied Lambda for site-specific
+      # remediation; to contain the agent, use the contain runbook (see containment
+      # below). The rule grants EventBridge invoke permission on a same-account
+      # function; a cross-account function must grant that permission on its own side.
       targetLambdaArn: 'arn:{{partition}}:lambda:{{region}}:{{account}}:function:agentcore-remediation'
+
+# (Optional) Containment runbooks for the execution role, created by default.
+# With roleArn set (above), contain would deny every user of that role, not only
+# this runtime, so this config opts out as the role's owner would when it
+# contains the role with its own tooling. Omit the block to keep the runbooks.
+containment:
+  # false creates none of the containment resources; true (the default) creates them.
+  enabled: false

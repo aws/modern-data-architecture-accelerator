@@ -132,6 +132,9 @@ describe('MdaaDefaultResourceNaming', () => {
     expect(naming.withResourceType(MdaaResourceType.EC2_NETWORK_INTERFACE).resourceName('eni')).toBe(
       naming.resourceName('eni'),
     );
+    expect(naming.withResourceType(MdaaResourceType.SSM_DOCUMENT).resourceName('runbook')).toBe(
+      naming.resourceName('runbook'),
+    );
     // DataZone Connection resource type also resolves through the no-op default.
     expect(naming.withResourceType(MdaaResourceType.DATAZONE_CONNECTION).resourceName('conn')).toBe(
       naming.resourceName('conn'),

@@ -13,6 +13,7 @@ This construct provides a high-level abstraction for creating Amazon Bedrock Age
 - **Lifecycle Management**: Configure session timeouts and maximum lifetimes
 - **Runtime Endpoints**: Create endpoints for runtime invocation
 - **SSM Parameter Storage**: Automatic storage of runtime ARNs and IDs
+- **Containment Runbooks**: `contain` and `release` Systems Manager Automation runbooks that attach and detach a deny-all policy on the execution role, on by default (see [Containment](#containment))
 
 ## Usage
 
@@ -64,6 +65,7 @@ const runtime = new BedrockAgentcoreRuntimeL3Construct(this, 'MyRuntime', {
 - `requestHeaderConfiguration`: HTTP header forwarding configuration
 - `runtimeEndpoint`: Endpoint configuration for runtime invocation
 - `enableTransactionSearch`: Enable X-Ray Transaction Search Config (default: true, set to false for multiple runtimes in same region)
+- `containment`: Containment runbooks for the execution role (default: enabled; set `enabled: false` to create none)
 
 ### Container Configuration
 - `containerUri`: Pre-built ECR image URI
@@ -137,6 +139,12 @@ The construct automatically creates IAM roles with permissions for:
 - Bedrock AgentCore workload identity tokens
 - Bedrock model invocation
 
+## Containment
+
+Unless `containment.enabled` is `false`, the construct creates a `RuntimeContainment` (exposed as `containment`): an unattached deny-all policy for the execution role, `contain` and `release` Automation runbooks, a separate automation role for each runbook, and unattached responder policies for the principals allowed to start each runbook. The runbooks derive the execution role's name from its ARN when they run, so a `roleArn` given as an SSM reference works. The runbook scripts live in `src/automation/containment/` and are tested under `python-tests/`.
+
+For a created execution role, synth fails when the role has no managed-policy slot left for the containment policy, checked against IAM's default quota of 20 or the `@aws-mdaa/managedPoliciesPerRoleQuota` context value. A `roleArn` role is not checked, and synth warns that containment applies to every user of that role. Operator guidance is in the [module README](../../../../apps/ai/bedrock-agentcore-runtime-app/README.md#containment-runbooks).
+
 ## SSM Parameters
 
 The construct stores the following information in SSM Parameter Store:
@@ -145,6 +153,7 @@ The construct stores the following information in SSM Parameter Store:
 - Runtime Name: `/mdaa/{env}/{runtime-name}-name`
 - Endpoint ARN: `/mdaa/{env}/{runtime-name}-endpoint-arn` (if endpoint configured)
 - Endpoint ID: `/mdaa/{env}/{runtime-name}-endpoint-id` (if endpoint configured)
+- Containment (unless `containment.enabled` is `false`), under `agentruntime/{runtime-name}/`: `contain-runbook-name`, `release-runbook-name`, `contain-automation-role-arn`, `release-automation-role-arn`, `contain-responder-policy-arn`, `release-responder-policy-arn`
 
 ## Dependencies
 

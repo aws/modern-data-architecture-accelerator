@@ -503,6 +503,1362 @@
       "UpdateReplacePolicy": "Delete",
       "DeletionPolicy": "Delete"
     },
+    "bedrockagentcoreruntimeContainmentContainmentPolicy4A47FA30": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "Containment for Bedrock AgentCore Runtime testAgentRuntime: attached by its contain runbook",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-agentcore-r--44063630",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "NotAction": [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Deny",
+              "Resource": "*",
+              "Sid": "DenyAllExceptLogWrites"
+            },
+            {
+              "Action": [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Deny",
+              "NotResource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:test-partition:logs:test-region:test-account:log-group:/aws/bedrock-agentcore/runtimes/",
+                    {
+                      "Fn::GetAtt": [
+                        "bedrockagentcoreruntimeRuntime84537D71",
+                        "AgentRuntimeId"
+                      ]
+                    },
+                    "-*"
+                  ]
+                ]
+              },
+              "Sid": "DenyLogWritesOutsideOwnLogGroups"
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      }
+    },
+    "bedrockagentcoreruntimeContainmentContainmentPolicymanagedpolicyagentcorecontainmenttestAgentRuntimearnssm9D004003": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/managed-policy/agentcore-containment-testagentruntime/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockagentcoreruntimeContainmentContainmentPolicy4A47FA30"
+        }
+      }
+    },
+    "bedrockagentcoreruntimeContainmentContainmentPolicymanagedpolicyagentcorecontainmenttestAgentRuntimenamessmD70A9EBA": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/managed-policy/agentcore-containment-testagentruntime/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "bedrockagentcoreruntimeContainmentContainmentPolicy4A47FA30"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeContainmentContainAutomationPolicyF1A1F85B": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "Permissions for the contain runbook of Bedrock AgentCore Runtime testAgentRuntime",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-agentcore-r--2ab4798e",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "iam:AttachRolePolicy",
+              "Condition": {
+                "ArnEquals": {
+                  "iam:PolicyARN": {
+                    "Ref": "bedrockagentcoreruntimeContainmentContainmentPolicy4A47FA30"
+                  }
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockagentcoreruntimeRuntimeRole7820E6C7",
+                  "Arn"
+                ]
+              },
+              "Sid": "AttachContainmentPolicyOnly"
+            },
+            {
+              "Action": "iam:TagRole",
+              "Condition": {
+                "ForAllValues:StringEquals": {
+                  "aws:TagKeys": [
+                    "mdaa:agentcore:contained-at"
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockagentcoreruntimeRuntimeRole7820E6C7",
+                  "Arn"
+                ]
+              },
+              "Sid": "TagContainmentTimeOnly"
+            },
+            {
+              "Action": "bedrock-agentcore:StopRuntimeSession",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "bedrockagentcoreruntimeRuntime84537D71",
+                    "AgentRuntimeArn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "bedrockagentcoreruntimeRuntime84537D71",
+                          "AgentRuntimeArn"
+                        ]
+                      },
+                      "/runtime-endpoint/DEFAULT"
+                    ]
+                  ]
+                }
+              ],
+              "Sid": "StopRuntimeSessions"
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      }
+    },
+    "bedrockagentcoreruntimeContainmentContainAutomationPolicymanagedpolicyagentcorecontainautomationtestAgentRuntimearnssmB19C5DB1": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/managed-policy/agentcore-contain-automation-testagentruntime/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockagentcoreruntimeContainmentContainAutomationPolicyF1A1F85B"
+        }
+      }
+    },
+    "bedrockagentcoreruntimeContainmentContainAutomationPolicymanagedpolicyagentcorecontainautomationtestAgentRuntimenamessm5CB76F46": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/managed-policy/agentcore-contain-automation-testagentruntime/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "bedrockagentcoreruntimeContainmentContainAutomationPolicyF1A1F85B"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeContainmentContainAutomationRoleBC3C08C3": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account"
+                },
+                "ArnLike": {
+                  "aws:SourceArn": "arn:test-partition:ssm:test-region:test-account:automation-execution/*"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ssm.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "Runs the contain runbook of Bedrock AgentCore Runtime testAgentRuntime",
+        "ManagedPolicyArns": [
+          {
+            "Ref": "bedrockagentcoreruntimeContainmentContainAutomationPolicyF1A1F85B"
+          }
+        ],
+        "RoleName": "test-org-test-env-test-domain-test-bedrock-agentcore-ru-767fd56e",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-agentcore-runtime"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-agentcore-runtime-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "bedrockagentcoreruntimeContainmentContainAutomationRoleroleagentcorecontaintestAgentRuntimearnssm57DF9464": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/role/agentcore-contain-testagentruntime/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeContainmentContainAutomationRoleBC3C08C3",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeContainmentContainAutomationRoleroleagentcorecontaintestAgentRuntimeidssm6C3CFD9F": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/role/agentcore-contain-testagentruntime/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeContainmentContainAutomationRoleBC3C08C3",
+            "RoleId"
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeContainmentContainAutomationRoleroleagentcorecontaintestAgentRuntimenamessm348F201C": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/role/agentcore-contain-testagentruntime/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockagentcoreruntimeContainmentContainAutomationRoleBC3C08C3"
+        }
+      }
+    },
+    "bedrockagentcoreruntimeContainmentReleaseAutomationPolicyD93E5AE9": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "Permissions for the release runbook of Bedrock AgentCore Runtime testAgentRuntime",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-agentcore-ru-152d8f25",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "iam:DetachRolePolicy",
+              "Condition": {
+                "ArnEquals": {
+                  "iam:PolicyARN": {
+                    "Ref": "bedrockagentcoreruntimeContainmentContainmentPolicy4A47FA30"
+                  }
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockagentcoreruntimeRuntimeRole7820E6C7",
+                  "Arn"
+                ]
+              },
+              "Sid": "DetachContainmentPolicyOnly"
+            },
+            {
+              "Action": "iam:UntagRole",
+              "Condition": {
+                "ForAllValues:StringEquals": {
+                  "aws:TagKeys": [
+                    "mdaa:agentcore:contained-at"
+                  ]
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockagentcoreruntimeRuntimeRole7820E6C7",
+                  "Arn"
+                ]
+              },
+              "Sid": "UntagContainmentTimeOnly"
+            },
+            {
+              "Action": "iam:GetRole",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockagentcoreruntimeRuntimeRole7820E6C7",
+                  "Arn"
+                ]
+              },
+              "Sid": "ReadRoleForReleaseGate"
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      }
+    },
+    "bedrockagentcoreruntimeContainmentReleaseAutomationPolicymanagedpolicyagentcorereleaseautomationtestAgentRuntimearnssm229C3407": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/managed-policy/agentcore-release-automation-testagentruntime/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockagentcoreruntimeContainmentReleaseAutomationPolicyD93E5AE9"
+        }
+      }
+    },
+    "bedrockagentcoreruntimeContainmentReleaseAutomationPolicymanagedpolicyagentcorereleaseautomationtestAgentRuntimenamessmAE071965": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/managed-policy/agentcore-release-automation-testagentruntime/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "bedrockagentcoreruntimeContainmentReleaseAutomationPolicyD93E5AE9"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeContainmentReleaseAutomationRole486F670F": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "test-account"
+                },
+                "ArnLike": {
+                  "aws:SourceArn": "arn:test-partition:ssm:test-region:test-account:automation-execution/*"
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ssm.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Description": "Runs the release runbook of Bedrock AgentCore Runtime testAgentRuntime",
+        "ManagedPolicyArns": [
+          {
+            "Ref": "bedrockagentcoreruntimeContainmentReleaseAutomationPolicyD93E5AE9"
+          }
+        ],
+        "RoleName": "test-org-test-env-test-domain-test-bedrock-agentcore-r--55d3c165",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-agentcore-runtime"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-agentcore-runtime-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ]
+      }
+    },
+    "bedrockagentcoreruntimeContainmentReleaseAutomationRoleroleagentcorereleasetestAgentRuntimearnssm801A1D54": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/role/agentcore-release-testagentruntime/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeContainmentReleaseAutomationRole486F670F",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeContainmentReleaseAutomationRoleroleagentcorereleasetestAgentRuntimeidssm4B439C30": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/role/agentcore-release-testagentruntime/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeContainmentReleaseAutomationRole486F670F",
+            "RoleId"
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeContainmentReleaseAutomationRoleroleagentcorereleasetestAgentRuntimenamessm299E2D55": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/role/agentcore-release-testagentruntime/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockagentcoreruntimeContainmentReleaseAutomationRole486F670F"
+        }
+      }
+    },
+    "bedrockagentcoreruntimeContainmentContainRunbookC2142F2D": {
+      "Type": "AWS::SSM::Document",
+      "Properties": {
+        "Content": {
+          "schemaVersion": "0.3",
+          "description": {
+            "Fn::Join": [
+              "",
+              [
+                "# Contain a Bedrock AgentCore runtime\n\nAttaches the containment policy to the execution role. Every AWS call made with the role is then denied, except log writes to the runtime's own log groups. Running sessions fail at their next AWS call, as do new sessions, and credentials copied out of a session are denied too. It stops neither callers nor session billing.\n\n* Runtime: ",
+                {
+                  "Fn::GetAtt": [
+                    "bedrockagentcoreruntimeRuntime84537D71",
+                    "AgentRuntimeArn"
+                  ]
+                },
+                "\n* Execution role: ",
+                {
+                  "Fn::GetAtt": [
+                    "bedrockagentcoreruntimeRuntimeRole7820E6C7",
+                    "Arn"
+                  ]
+                },
+                "\n* Containment policy: ",
+                {
+                  "Ref": "bedrockagentcoreruntimeContainmentContainmentPolicy4A47FA30"
+                }
+              ]
+            ]
+          },
+          "assumeRole": "{{ AutomationAssumeRole }}",
+          "parameters": {
+            "AutomationAssumeRole": {
+              "type": "AWS::IAM::Role::Arn",
+              "description": "Role the automation runs as. Defaults to the module-created contain automation role.",
+              "default": {
+                "Fn::GetAtt": [
+                  "bedrockagentcoreruntimeContainmentContainAutomationRoleBC3C08C3",
+                  "Arn"
+                ]
+              }
+            },
+            "SessionIds": {
+              "type": "StringList",
+              "description": "(Optional) IDs of running sessions to stop once the policy is attached.",
+              "default": []
+            },
+            "Qualifier": {
+              "type": "String",
+              "description": "Endpoint the SessionIds run under.",
+              "default": "DEFAULT",
+              "allowedValues": [
+                "DEFAULT"
+              ]
+            },
+            "Approvers": {
+              "type": "StringList",
+              "description": "(Optional) IAM principal ARNs, any one of whom must approve before the policy is attached. Leave empty to contain immediately.",
+              "default": []
+            }
+          },
+          "mainSteps": [
+            {
+              "name": "ResolveExecutionRole",
+              "onFailure": "Abort",
+              "outputs": [
+                {
+                  "Name": "RoleName",
+                  "Selector": "$.Payload.RoleName",
+                  "Type": "String"
+                }
+              ],
+              "action": "aws:executeScript",
+              "inputs": {
+                "Runtime": "python3.12",
+                "Handler": "handler",
+                "Script": "\"\"\"\n`contain` and `release` runbook step: resolves the execution role's name from its ARN.\n\nThe IAM calls the runbooks make take a role name, but a referenced role's ARN can be\na dynamic reference (`roleArn: ssm:/...`) that resolves only at deploy, so the name\ncannot be derived at synth. A role name is the last segment of the ARN's path.\n\"\"\"\n\n\ndef handler(events: dict, _context: object) -> dict:\n    role_arn = str(events.get(\"RoleArn\") or \"\")\n    parts = role_arn.split(\":\", 5)\n    resource = parts[5] if len(parts) == 6 and parts[2] == \"iam\" else \"\"\n    if not resource.startswith(\"role/\"):\n        raise ValueError(f\"{role_arn!r} is not an IAM role ARN, so the containment runbooks cannot act on it.\")\n    return {\"RoleName\": resource.rsplit(\"/\", 1)[-1]}\n",
+                "InputPayload": {
+                  "RoleArn": {
+                    "Fn::GetAtt": [
+                      "bedrockagentcoreruntimeRuntimeRole7820E6C7",
+                      "Arn"
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "name": "CheckApprovers",
+              "outputs": [
+                {
+                  "Name": "HasApprovers",
+                  "Selector": "$.Payload.HasApprovers",
+                  "Type": "Boolean"
+                }
+              ],
+              "action": "aws:executeScript",
+              "inputs": {
+                "Runtime": "python3.12",
+                "Handler": "handler",
+                "Script": "\"\"\"\n`contain` runbook step: reports whether the execution named any approvers.\n\naws:branch compares only strings, numbers and booleans, so it cannot test the\n`Approvers` StringList for emptiness itself. This step turns it into a boolean\nthe branch can evaluate.\n\"\"\"\n\n\ndef handler(events: dict, _context: object) -> dict:\n    approvers = [a for a in events.get(\"Approvers\") or [] if isinstance(a, str) and a.strip()]\n    return {\"HasApprovers\": bool(approvers)}\n",
+                "InputPayload": {
+                  "Approvers": "{{ Approvers }}"
+                }
+              }
+            },
+            {
+              "name": "BranchOnApprovers",
+              "action": "aws:branch",
+              "inputs": {
+                "Choices": [
+                  {
+                    "NextStep": "WaitForApproval",
+                    "Variable": "{{ CheckApprovers.HasApprovers }}",
+                    "BooleanEquals": true
+                  }
+                ],
+                "Default": "AttachContainmentPolicy"
+              }
+            },
+            {
+              "name": "WaitForApproval",
+              "action": "aws:approve",
+              "onFailure": "Abort",
+              "inputs": {
+                "Approvers": "{{ Approvers }}",
+                "MinRequiredApprovals": 1,
+                "Message": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "Approve containment of Bedrock AgentCore runtime ",
+                      {
+                        "Fn::GetAtt": [
+                          "bedrockagentcoreruntimeRuntime84537D71",
+                          "AgentRuntimeArn"
+                        ]
+                      },
+                      ". Every AWS call made with its execution role will be denied until release."
+                    ]
+                  ]
+                }
+              }
+            },
+            {
+              "name": "AttachContainmentPolicy",
+              "onFailure": "Abort",
+              "action": "aws:executeAwsApi",
+              "inputs": {
+                "Service": "iam",
+                "Api": "AttachRolePolicy",
+                "RoleName": "{{ ResolveExecutionRole.RoleName }}",
+                "PolicyArn": {
+                  "Ref": "bedrockagentcoreruntimeContainmentContainmentPolicy4A47FA30"
+                }
+              }
+            },
+            {
+              "name": "RecordContainmentTime",
+              "onFailure": "step:StopSessions",
+              "outputs": [
+                {
+                  "Name": "ContainedAt",
+                  "Selector": "$.Payload.ContainedAt",
+                  "Type": "String"
+                }
+              ],
+              "action": "aws:executeScript",
+              "inputs": {
+                "Runtime": "python3.12",
+                "Handler": "handler",
+                "Script": "\"\"\"\n`contain` runbook step: tags the execution role with the containment time.\n\nThe `release` runbook's gate is measured from this tag, so the value must be\nwritten in the format release_gate.py parses (TIMESTAMP_FORMAT, UTC). Running\n`contain` again on a contained role moves the tag forward, which only lengthens\nthe gate.\n\"\"\"\n\nfrom datetime import datetime, timezone\n\nimport boto3\n\nTIMESTAMP_FORMAT = \"%Y-%m-%dT%H:%M:%SZ\"\n\n\ndef handler(events: dict, _context: object) -> dict:\n    contained_at = datetime.now(timezone.utc).strftime(TIMESTAMP_FORMAT)\n    boto3.client(\"iam\").tag_role(\n        RoleName=events[\"RoleName\"],\n        Tags=[{\"Key\": events[\"TagKey\"], \"Value\": contained_at}],\n    )\n    return {\"ContainedAt\": contained_at}\n",
+                "InputPayload": {
+                  "RoleName": "{{ ResolveExecutionRole.RoleName }}",
+                  "TagKey": "mdaa:agentcore:contained-at"
+                }
+              }
+            },
+            {
+              "name": "StopSessions",
+              "isCritical": false,
+              "onFailure": "Continue",
+              "isEnd": true,
+              "action": "aws:executeScript",
+              "inputs": {
+                "Runtime": "python3.12",
+                "Handler": "handler",
+                "Script": "\"\"\"\n`contain` runbook step: stops the runtime sessions passed in `SessionIds`.\n\nRuns after the containment policy is attached, so a failure here never undoes\ncontainment. Every session is attempted; any that could not be stopped are\nnamed in the failure message so the operator can follow up by ID.\n\"\"\"\n\nimport boto3\nfrom botocore.exceptions import BotoCoreError, ClientError\n\n\ndef handler(events: dict, _context: object) -> dict:\n    session_ids = [s.strip() for s in events.get(\"SessionIds\") or [] if isinstance(s, str) and s.strip()]\n    if not session_ids:\n        return {\"Stopped\": []}\n\n    try:\n        client = boto3.client(\"bedrock-agentcore\")\n    except BotoCoreError as err:\n        # An SDK in the Automation runtime that predates AgentCore cannot build the client at all.\n        raise RuntimeError(_not_stopped_message(0, {sid: type(err).__name__ for sid in session_ids})) from err\n    if not hasattr(client, \"stop_runtime_session\"):\n        # An SDK that knows the service but predates StopRuntimeSession.\n        raise RuntimeError(_not_stopped_message(0, {sid: \"StopRuntimeSession unsupported by SDK\" for sid in session_ids}))\n\n    stopped = []\n    failures = {}\n    for session_id in session_ids:\n        try:\n            client.stop_runtime_session(\n                agentRuntimeArn=events[\"RuntimeArn\"],\n                runtimeSessionId=session_id,\n                qualifier=events[\"Qualifier\"],\n            )\n            stopped.append(session_id)\n        except ClientError as err:\n            failures[session_id] = err.response.get(\"Error\", {}).get(\"Code\", \"Unknown\")\n        except BotoCoreError as err:\n            failures[session_id] = type(err).__name__\n\n    if failures:\n        raise RuntimeError(_not_stopped_message(len(stopped), failures))\n    return {\"Stopped\": stopped}\n\n\ndef _not_stopped_message(stopped_count: int, failures: dict) -> str:\n    detail = \", \".join(f\"{session_id} ({reason})\" for session_id, reason in failures.items())\n    return (\n        f\"The containment policy is attached. Stopped {stopped_count} of {stopped_count + len(failures)} \"\n        f\"sessions; not stopped: {detail}. A ResourceNotFoundException can mean the session already ended \"\n        \"or that it runs under a different Qualifier.\"\n    )\n",
+                "InputPayload": {
+                  "SessionIds": "{{ SessionIds }}",
+                  "RuntimeArn": {
+                    "Fn::GetAtt": [
+                      "bedrockagentcoreruntimeRuntime84537D71",
+                      "AgentRuntimeArn"
+                    ]
+                  },
+                  "Qualifier": "{{ Qualifier }}"
+                }
+              }
+            }
+          ],
+          "outputs": [
+            "RecordContainmentTime.ContainedAt"
+          ]
+        },
+        "DocumentFormat": "JSON",
+        "DocumentType": "Automation",
+        "Name": "test-org-test-env-test-domain-test-bedrock-agentcore-runtime-minimal-agentcore-contain-testagentruntime",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-agentcore-runtime"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-agentcore-runtime-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "UpdateMethod": "NewVersion"
+      }
+    },
+    "bedrockagentcoreruntimeContainmentReleaseRunbook8D5054EC": {
+      "Type": "AWS::SSM::Document",
+      "Properties": {
+        "Content": {
+          "schemaVersion": "0.3",
+          "description": {
+            "Fn::Join": [
+              "",
+              [
+                "# Release a contained Bedrock AgentCore runtime\n\nDetaches the containment policy from the execution role and removes the containment tag. Refuses until the release gate has passed: the containment time, plus the runtime's maxLifetime (8 hours), plus the role's MaxSessionDuration. Until then, a session that was running at containment may still hold credentials that would work again on release. Sessions started or resumed while contained are not covered, so block new invocations before relying on the gate.\n\n* Runtime: ",
+                {
+                  "Fn::GetAtt": [
+                    "bedrockagentcoreruntimeRuntime84537D71",
+                    "AgentRuntimeArn"
+                  ]
+                },
+                "\n* Execution role: ",
+                {
+                  "Fn::GetAtt": [
+                    "bedrockagentcoreruntimeRuntimeRole7820E6C7",
+                    "Arn"
+                  ]
+                },
+                "\n* Containment policy: ",
+                {
+                  "Ref": "bedrockagentcoreruntimeContainmentContainmentPolicy4A47FA30"
+                }
+              ]
+            ]
+          },
+          "assumeRole": "{{ AutomationAssumeRole }}",
+          "parameters": {
+            "AutomationAssumeRole": {
+              "type": "AWS::IAM::Role::Arn",
+              "description": "Role the automation runs as. Defaults to the module-created release automation role.",
+              "default": {
+                "Fn::GetAtt": [
+                  "bedrockagentcoreruntimeContainmentReleaseAutomationRole486F670F",
+                  "Arn"
+                ]
+              }
+            },
+            "Force": {
+              "type": "Boolean",
+              "description": "Skips the release gate. Use only after stopping the live sessions by ID and revoking the role's active sessions.",
+              "default": false
+            }
+          },
+          "mainSteps": [
+            {
+              "name": "ResolveExecutionRole",
+              "onFailure": "Abort",
+              "outputs": [
+                {
+                  "Name": "RoleName",
+                  "Selector": "$.Payload.RoleName",
+                  "Type": "String"
+                }
+              ],
+              "action": "aws:executeScript",
+              "inputs": {
+                "Runtime": "python3.12",
+                "Handler": "handler",
+                "Script": "\"\"\"\n`contain` and `release` runbook step: resolves the execution role's name from its ARN.\n\nThe IAM calls the runbooks make take a role name, but a referenced role's ARN can be\na dynamic reference (`roleArn: ssm:/...`) that resolves only at deploy, so the name\ncannot be derived at synth. A role name is the last segment of the ARN's path.\n\"\"\"\n\n\ndef handler(events: dict, _context: object) -> dict:\n    role_arn = str(events.get(\"RoleArn\") or \"\")\n    parts = role_arn.split(\":\", 5)\n    resource = parts[5] if len(parts) == 6 and parts[2] == \"iam\" else \"\"\n    if not resource.startswith(\"role/\"):\n        raise ValueError(f\"{role_arn!r} is not an IAM role ARN, so the containment runbooks cannot act on it.\")\n    return {\"RoleName\": resource.rsplit(\"/\", 1)[-1]}\n",
+                "InputPayload": {
+                  "RoleArn": {
+                    "Fn::GetAtt": [
+                      "bedrockagentcoreruntimeRuntimeRole7820E6C7",
+                      "Arn"
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "name": "CheckReleaseGate",
+              "onFailure": "Abort",
+              "outputs": [
+                {
+                  "Name": "GateStatus",
+                  "Selector": "$.Payload.GateStatus",
+                  "Type": "String"
+                }
+              ],
+              "action": "aws:executeScript",
+              "inputs": {
+                "Runtime": "python3.12",
+                "Handler": "handler",
+                "Script": "\"\"\"\n`release` runbook step: refuses to release before the release gate has passed.\n\nA session running at containment keeps receiving fresh role credentials until it\nends, and those credentials work again once the containment policy is detached.\nRelease is therefore safe only after every such session has ended (at most the\nruntime's maxLifetime after containment) and the last credential issued to it has\nexpired (at most the role's MaxSessionDuration after that).\n\nSessions started or resumed after containment are not covered: invocations still\narrive while the role is contained, and a session they start can outlive a gate\nmeasured from the containment time. The operator blocks new invocations and runs\n`contain` again, which moves the tag forward, before relying on the gate.\n\"\"\"\n\nfrom datetime import datetime, timedelta, timezone\n\nimport boto3\n\n# Must match record_containment.py, which writes the tag this step reads.\nTIMESTAMP_FORMAT = \"%Y-%m-%dT%H:%M:%SZ\"\n\n\ndef handler(events: dict, _context: object) -> dict:\n    if _is_true(events.get(\"Force\")):\n        return {\"GateStatus\": \"forced\"}\n\n    role = boto3.client(\"iam\").get_role(RoleName=events[\"RoleName\"])[\"Role\"]\n    gate_opens_at = gate_opening_time(role, events[\"TagKey\"], int(events[\"MaxLifetimeSeconds\"]))\n    if datetime.now(timezone.utc) < gate_opens_at:\n        raise RuntimeError(\n            f\"The release gate has not passed. It opens at {gate_opens_at.strftime(TIMESTAMP_FORMAT)}. \"\n            \"Run release again after that time, or pass Force=true only after stopping the live sessions \"\n            \"by ID and revoking the role's active sessions.\"\n        )\n    return {\"GateStatus\": \"passed\", \"GateOpenedAt\": gate_opens_at.strftime(TIMESTAMP_FORMAT)}\n\n\ndef gate_opening_time(role: dict, tag_key: str, max_lifetime_seconds: int) -> datetime:\n    \"\"\"Returns the containment time from the role's tag plus maxLifetime plus MaxSessionDuration.\"\"\"\n    contained_at = next((t[\"Value\"] for t in role.get(\"Tags\", []) if t[\"Key\"] == tag_key), None)\n    if contained_at is None:\n        raise RuntimeError(\n            f\"Role {role['RoleName']} has no {tag_key} tag, so the release gate cannot be computed. \"\n            \"Pass Force=true only after stopping the live sessions by ID and revoking the role's active sessions.\"\n        )\n    try:\n        start = datetime.strptime(contained_at, TIMESTAMP_FORMAT).replace(tzinfo=timezone.utc)\n    except ValueError as err:\n        raise RuntimeError(\n            f\"The {tag_key} tag value {contained_at!r} is not a {TIMESTAMP_FORMAT} UTC timestamp, \"\n            \"so the release gate cannot be computed.\"\n        ) from err\n    return start + timedelta(seconds=max_lifetime_seconds + int(role[\"MaxSessionDuration\"]))\n\n\ndef _is_true(value: object) -> bool:\n    return value is True or str(value).lower() == \"true\"\n",
+                "InputPayload": {
+                  "RoleName": "{{ ResolveExecutionRole.RoleName }}",
+                  "TagKey": "mdaa:agentcore:contained-at",
+                  "MaxLifetimeSeconds": 28800,
+                  "Force": "{{ Force }}"
+                }
+              }
+            },
+            {
+              "name": "DetachContainmentPolicy",
+              "onFailure": "Abort",
+              "action": "aws:executeAwsApi",
+              "inputs": {
+                "Service": "iam",
+                "Api": "DetachRolePolicy",
+                "RoleName": "{{ ResolveExecutionRole.RoleName }}",
+                "PolicyArn": {
+                  "Ref": "bedrockagentcoreruntimeContainmentContainmentPolicy4A47FA30"
+                }
+              }
+            },
+            {
+              "name": "RemoveContainmentTag",
+              "isEnd": true,
+              "action": "aws:executeAwsApi",
+              "inputs": {
+                "Service": "iam",
+                "Api": "UntagRole",
+                "RoleName": "{{ ResolveExecutionRole.RoleName }}",
+                "TagKeys": [
+                  "mdaa:agentcore:contained-at"
+                ]
+              }
+            }
+          ],
+          "outputs": [
+            "CheckReleaseGate.GateStatus"
+          ]
+        },
+        "DocumentFormat": "JSON",
+        "DocumentType": "Automation",
+        "Name": "test-org-test-env-test-domain-test-bedrock-agentcore-runtime-minimal-agentcore-release-testagentruntime",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-agentcore-runtime"
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain"
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env"
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-agentcore-runtime-minimal"
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org"
+          }
+        ],
+        "UpdateMethod": "NewVersion"
+      }
+    },
+    "bedrockagentcoreruntimeContainmentagentRuntimetestAgentRuntimecontainrunbooknamessm834BBEA3": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/agentruntime/testagentruntime/contain-runbook-name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockagentcoreruntimeContainmentContainRunbookC2142F2D"
+        }
+      }
+    },
+    "bedrockagentcoreruntimeContainmentagentRuntimetestAgentRuntimereleaserunbooknamessmBF24A5A7": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/agentruntime/testagentruntime/release-runbook-name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockagentcoreruntimeContainmentReleaseRunbook8D5054EC"
+        }
+      }
+    },
+    "bedrockagentcoreruntimeContainmentagentRuntimetestAgentRuntimecontainautomationrolearnssm22F55896": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/agentruntime/testagentruntime/contain-automation-role-arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeContainmentContainAutomationRoleBC3C08C3",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeContainmentagentRuntimetestAgentRuntimereleaseautomationrolearnssm2E43270A": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/agentruntime/testagentruntime/release-automation-role-arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "bedrockagentcoreruntimeContainmentReleaseAutomationRole486F670F",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeContainmentContainResponderPolicy0B24C6AE": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "Grants starting the contain runbook of Bedrock AgentCore Runtime testAgentRuntime",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-agentcore-r--55fb9b67",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "ssm:StartAutomationExecution",
+              "Effect": "Allow",
+              "Resource": [
+                "arn:test-partition:ssm:test-region:test-account:automation-definition/test-org-test-env-test-domain-test-bedrock-agentcore-runtime-minimal-agentcore-contain-testagentruntime:*",
+                "arn:test-partition:ssm:test-region:test-account:document/test-org-test-env-test-domain-test-bedrock-agentcore-runtime-minimal-agentcore-contain-testagentruntime",
+                "arn:test-partition:ssm:test-region:test-account:automation-execution/*"
+              ],
+              "Sid": "StartRunbook"
+            },
+            {
+              "Action": "iam:PassRole",
+              "Condition": {
+                "StringEquals": {
+                  "iam:PassedToService": "ssm.amazonaws.com"
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockagentcoreruntimeContainmentContainAutomationRoleBC3C08C3",
+                  "Arn"
+                ]
+              },
+              "Sid": "PassAutomationRole"
+            },
+            {
+              "Action": "ssm:GetParameter",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:ssm:test-region:test-account:parameter/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/agentruntime/testagentruntime/contain-runbook-name",
+              "Sid": "LookUpRunbook"
+            },
+            {
+              "Action": [
+                "ssm:DescribeDocument",
+                "ssm:GetDocument",
+                "ssm:DescribeDocumentParameters"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:ssm:test-region:test-account:document/test-org-test-env-test-domain-test-bedrock-agentcore-runtime-minimal-agentcore-contain-testagentruntime",
+              "Sid": "ReadRunbook"
+            },
+            {
+              "Action": [
+                "ssm:GetAutomationExecution",
+                "ssm:DescribeAutomationStepExecutions"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:ssm:test-region:test-account:automation-execution/*",
+              "Sid": "ConfirmExecution"
+            },
+            {
+              "Action": "iam:ListAttachedRolePolicies",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockagentcoreruntimeRuntimeRole7820E6C7",
+                  "Arn"
+                ]
+              },
+              "Sid": "ConfirmContainment"
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/containment.ts] ssm:StartAutomationExecution, ssm:GetAutomationExecution and ssm:DescribeAutomationStepExecutions require the automation-execution resource, whose ID is generated when the execution starts, so it cannot be named in advance; the runbook itself is pinned by its document and automation-definition ARNs, with :* covering its versions. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_ssm.html",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                {
+                  "regex": "/^Resource::arn:.+:ssm:.+:automation-execution\\/\\*$/"
+                },
+                {
+                  "regex": "/^Resource::arn:.+:ssm:.+:automation-definition\\/.+:\\*$/"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeContainmentContainResponderPolicymanagedpolicyagentcorecontainrespondertestAgentRuntimearnssmD324E2A4": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/managed-policy/agentcore-contain-responder-testagentruntime/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockagentcoreruntimeContainmentContainResponderPolicy0B24C6AE"
+        }
+      }
+    },
+    "bedrockagentcoreruntimeContainmentContainResponderPolicymanagedpolicyagentcorecontainrespondertestAgentRuntimenamessm5196F3FD": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/managed-policy/agentcore-contain-responder-testagentruntime/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "bedrockagentcoreruntimeContainmentContainResponderPolicy0B24C6AE"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeContainmentReleaseResponderPolicy252C24B9": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "Grants starting the release runbook of Bedrock AgentCore Runtime testAgentRuntime",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-agentcore-ru-3034f986",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "ssm:StartAutomationExecution",
+              "Effect": "Allow",
+              "Resource": [
+                "arn:test-partition:ssm:test-region:test-account:automation-definition/test-org-test-env-test-domain-test-bedrock-agentcore-runtime-minimal-agentcore-release-testagentruntime:*",
+                "arn:test-partition:ssm:test-region:test-account:document/test-org-test-env-test-domain-test-bedrock-agentcore-runtime-minimal-agentcore-release-testagentruntime",
+                "arn:test-partition:ssm:test-region:test-account:automation-execution/*"
+              ],
+              "Sid": "StartRunbook"
+            },
+            {
+              "Action": "iam:PassRole",
+              "Condition": {
+                "StringEquals": {
+                  "iam:PassedToService": "ssm.amazonaws.com"
+                }
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockagentcoreruntimeContainmentReleaseAutomationRole486F670F",
+                  "Arn"
+                ]
+              },
+              "Sid": "PassAutomationRole"
+            },
+            {
+              "Action": "ssm:GetParameter",
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:ssm:test-region:test-account:parameter/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/agentruntime/testagentruntime/release-runbook-name",
+              "Sid": "LookUpRunbook"
+            },
+            {
+              "Action": [
+                "ssm:DescribeDocument",
+                "ssm:GetDocument",
+                "ssm:DescribeDocumentParameters"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:ssm:test-region:test-account:document/test-org-test-env-test-domain-test-bedrock-agentcore-runtime-minimal-agentcore-release-testagentruntime",
+              "Sid": "ReadRunbook"
+            },
+            {
+              "Action": [
+                "ssm:GetAutomationExecution",
+                "ssm:DescribeAutomationStepExecutions"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:test-partition:ssm:test-region:test-account:automation-execution/*",
+              "Sid": "ConfirmExecution"
+            },
+            {
+              "Action": "iam:ListAttachedRolePolicies",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "bedrockagentcoreruntimeRuntimeRole7820E6C7",
+                  "Arn"
+                ]
+              },
+              "Sid": "ConfirmContainment"
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/containment.ts] ssm:StartAutomationExecution, ssm:GetAutomationExecution and ssm:DescribeAutomationStepExecutions require the automation-execution resource, whose ID is generated when the execution starts, so it cannot be named in advance; the runbook itself is pinned by its document and automation-definition ARNs, with :* covering its versions. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_ssm.html",
+              "id": "AwsSolutions-IAM5",
+              "applies_to": [
+                {
+                  "regex": "/^Resource::arn:.+:ssm:.+:automation-execution\\/\\*$/"
+                },
+                {
+                  "regex": "/^Resource::arn:.+:ssm:.+:automation-definition\\/.+:\\*$/"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeContainmentReleaseResponderPolicymanagedpolicyagentcorereleaserespondertestAgentRuntimearnssm2CA424F0": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/managed-policy/agentcore-release-responder-testagentruntime/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockagentcoreruntimeContainmentReleaseResponderPolicy252C24B9"
+        }
+      }
+    },
+    "bedrockagentcoreruntimeContainmentReleaseResponderPolicymanagedpolicyagentcorereleaserespondertestAgentRuntimenamessmFFD77863": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/managed-policy/agentcore-release-responder-testagentruntime/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "bedrockagentcoreruntimeContainmentReleaseResponderPolicy252C24B9"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "bedrockagentcoreruntimeContainmentagentRuntimetestAgentRuntimecontainresponderpolicyarnssm8E905F3C": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/agentruntime/testagentruntime/contain-responder-policy-arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockagentcoreruntimeContainmentContainResponderPolicy0B24C6AE"
+        }
+      }
+    },
+    "bedrockagentcoreruntimeContainmentagentRuntimetestAgentRuntimereleaseresponderpolicyarnssm6C33F8D0": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-agentcore-runtime-minimal/agentruntime/testagentruntime/release-responder-policy-arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-agentcore-runtime",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-agentcore-runtime-minimal",
+          "mdaa_org": "test-org"
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "bedrockagentcoreruntimeContainmentReleaseResponderPolicy252C24B9"
+        }
+      }
+    },
     "bedrockagentcoreruntimeagentRuntimetestAgentRuntimearnssmBD5DB9C8": {
       "Type": "AWS::SSM::Parameter",
       "Properties": {
@@ -1367,6 +2723,300 @@
       },
       "Export": {
         "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:kms:agentcoreruntimelogstestagentruntime:id"
+      }
+    },
+    "bedrockagentcoreruntimeContainmentContainmentPolicymanagedpolicyagentcorecontainmenttestAgentRuntimearnout937FDBD1": {
+      "Value": {
+        "Ref": "bedrockagentcoreruntimeContainmentContainmentPolicy4A47FA30"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:managed-policy:agentcorecontainmenttestagentruntime:arn"
+      }
+    },
+    "bedrockagentcoreruntimeContainmentContainmentPolicymanagedpolicyagentcorecontainmenttestAgentRuntimenameout87066BF4": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "bedrockagentcoreruntimeContainmentContainmentPolicy4A47FA30"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:managed-policy:agentcorecontainmenttestagentruntime:name"
+      }
+    },
+    "bedrockagentcoreruntimeContainmentContainAutomationPolicymanagedpolicyagentcorecontainautomationtestAgentRuntimearnoutF4D6F723": {
+      "Value": {
+        "Ref": "bedrockagentcoreruntimeContainmentContainAutomationPolicyF1A1F85B"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:managed-policy:agentcorecontainautomationtestagentruntime:arn"
+      }
+    },
+    "bedrockagentcoreruntimeContainmentContainAutomationPolicymanagedpolicyagentcorecontainautomationtestAgentRuntimenameout1FCD1366": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "bedrockagentcoreruntimeContainmentContainAutomationPolicyF1A1F85B"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:managed-policy:agentcorecontainautomationtestagentruntime:name"
+      }
+    },
+    "bedrockagentcoreruntimeContainmentContainAutomationRoleroleagentcorecontaintestAgentRuntimearnoutFFCD6709": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockagentcoreruntimeContainmentContainAutomationRoleBC3C08C3",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:role:agentcorecontaintestagentruntime:arn"
+      }
+    },
+    "bedrockagentcoreruntimeContainmentContainAutomationRoleroleagentcorecontaintestAgentRuntimeidout389A7492": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockagentcoreruntimeContainmentContainAutomationRoleBC3C08C3",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:role:agentcorecontaintestagentruntime:id"
+      }
+    },
+    "bedrockagentcoreruntimeContainmentContainAutomationRoleroleagentcorecontaintestAgentRuntimenameout0B002DB0": {
+      "Value": {
+        "Ref": "bedrockagentcoreruntimeContainmentContainAutomationRoleBC3C08C3"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:role:agentcorecontaintestagentruntime:name"
+      }
+    },
+    "bedrockagentcoreruntimeContainmentReleaseAutomationPolicymanagedpolicyagentcorereleaseautomationtestAgentRuntimearnout60834C60": {
+      "Value": {
+        "Ref": "bedrockagentcoreruntimeContainmentReleaseAutomationPolicyD93E5AE9"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:managed-policy:agentcorereleaseautomationtestagentruntime:arn"
+      }
+    },
+    "bedrockagentcoreruntimeContainmentReleaseAutomationPolicymanagedpolicyagentcorereleaseautomationtestAgentRuntimenameout1A805157": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "bedrockagentcoreruntimeContainmentReleaseAutomationPolicyD93E5AE9"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:managed-policy:agentcorereleaseautomationtestagentruntime:name"
+      }
+    },
+    "bedrockagentcoreruntimeContainmentReleaseAutomationRoleroleagentcorereleasetestAgentRuntimearnout8C9F12DA": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockagentcoreruntimeContainmentReleaseAutomationRole486F670F",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:role:agentcorereleasetestagentruntime:arn"
+      }
+    },
+    "bedrockagentcoreruntimeContainmentReleaseAutomationRoleroleagentcorereleasetestAgentRuntimeidout09DC51BE": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockagentcoreruntimeContainmentReleaseAutomationRole486F670F",
+          "RoleId"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:role:agentcorereleasetestagentruntime:id"
+      }
+    },
+    "bedrockagentcoreruntimeContainmentReleaseAutomationRoleroleagentcorereleasetestAgentRuntimenameout5B13530A": {
+      "Value": {
+        "Ref": "bedrockagentcoreruntimeContainmentReleaseAutomationRole486F670F"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:role:agentcorereleasetestagentruntime:name"
+      }
+    },
+    "bedrockagentcoreruntimeContainmentagentRuntimetestAgentRuntimecontainrunbooknameoutD3C529E8": {
+      "Value": {
+        "Ref": "bedrockagentcoreruntimeContainmentContainRunbookC2142F2D"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:agentruntime:testagentruntime:contain-runbook-name"
+      }
+    },
+    "bedrockagentcoreruntimeContainmentagentRuntimetestAgentRuntimereleaserunbooknameoutC38FD131": {
+      "Value": {
+        "Ref": "bedrockagentcoreruntimeContainmentReleaseRunbook8D5054EC"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:agentruntime:testagentruntime:release-runbook-name"
+      }
+    },
+    "bedrockagentcoreruntimeContainmentagentRuntimetestAgentRuntimecontainautomationrolearnoutF5B99555": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockagentcoreruntimeContainmentContainAutomationRoleBC3C08C3",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:agentruntime:testagentruntime:contain-automation-role-arn"
+      }
+    },
+    "bedrockagentcoreruntimeContainmentagentRuntimetestAgentRuntimereleaseautomationrolearnout726C0F29": {
+      "Value": {
+        "Fn::GetAtt": [
+          "bedrockagentcoreruntimeContainmentReleaseAutomationRole486F670F",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:agentruntime:testagentruntime:release-automation-role-arn"
+      }
+    },
+    "bedrockagentcoreruntimeContainmentContainResponderPolicymanagedpolicyagentcorecontainrespondertestAgentRuntimearnout1B8FBC42": {
+      "Value": {
+        "Ref": "bedrockagentcoreruntimeContainmentContainResponderPolicy0B24C6AE"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:managed-policy:agentcorecontainrespondertestagentruntime:arn"
+      }
+    },
+    "bedrockagentcoreruntimeContainmentContainResponderPolicymanagedpolicyagentcorecontainrespondertestAgentRuntimenameoutCFE4967E": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "bedrockagentcoreruntimeContainmentContainResponderPolicy0B24C6AE"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:managed-policy:agentcorecontainrespondertestagentruntime:name"
+      }
+    },
+    "bedrockagentcoreruntimeContainmentReleaseResponderPolicymanagedpolicyagentcorereleaserespondertestAgentRuntimearnoutA43A0790": {
+      "Value": {
+        "Ref": "bedrockagentcoreruntimeContainmentReleaseResponderPolicy252C24B9"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:managed-policy:agentcorereleaserespondertestagentruntime:arn"
+      }
+    },
+    "bedrockagentcoreruntimeContainmentReleaseResponderPolicymanagedpolicyagentcorereleaserespondertestAgentRuntimenameout580587B1": {
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "bedrockagentcoreruntimeContainmentReleaseResponderPolicy252C24B9"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:managed-policy:agentcorereleaserespondertestagentruntime:name"
+      }
+    },
+    "bedrockagentcoreruntimeContainmentagentRuntimetestAgentRuntimecontainresponderpolicyarnoutF961BE38": {
+      "Value": {
+        "Ref": "bedrockagentcoreruntimeContainmentContainResponderPolicy0B24C6AE"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:agentruntime:testagentruntime:contain-responder-policy-arn"
+      }
+    },
+    "bedrockagentcoreruntimeContainmentagentRuntimetestAgentRuntimereleaseresponderpolicyarnoutA377A983": {
+      "Value": {
+        "Ref": "bedrockagentcoreruntimeContainmentReleaseResponderPolicy252C24B9"
+      },
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-agentcore-runtime-minimal:agentruntime:testagentruntime:release-responder-policy-arn"
       }
     },
     "bedrockagentcoreruntimeagentRuntimetestAgentRuntimearnoutA7A7C358": {

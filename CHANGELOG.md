@@ -16,6 +16,11 @@
 - Added optional `logRetentionDays` and `s3RetentionDays` for the invocation logs. Logs still never expire by default, so existing configs are unchanged. See [Masking and Retention](packages/apps/ai/bedrock-settings-app/README.md#masking-and-retention).
 - Reads of the invocation logs in the module's S3 bucket, including the CloudWatch large-data overflow, are now denied to every principal except the roles listed in the new optional `readRoles`. `Upgrade impact:` principals that read the bucket today lose access until they are listed. See [Who Can Read Invocation Logs in S3](packages/apps/ai/bedrock-settings-app/README.md#who-can-read-invocation-logs-in-s3).
 
+#### Bedrock AgentCore Runtime Module
+
+- Added `contain` and `release` Systems Manager Automation runbooks that deny a runtime's execution role on demand, stopping a compromised agent's AWS calls on both inbound auth paths, including in running sessions. `Upgrade impact:` every runtime stack gains the containment resources, none attached or run; set the new `containment.enabled: false` to opt out. A scoped-down CloudFormation execution role needs SSM document permissions, and an org whose name starts with `aws`, `amazon` or `amzn` fails synth until it opts out. See [Containment Runbooks](packages/apps/ai/bedrock-agentcore-runtime-app/README.md#containment-runbooks) and [Permissions boundaries, SCPs and opting out](packages/apps/ai/bedrock-agentcore-runtime-app/README.md#permissions-boundaries-scps-and-opting-out).
+- Synth now fails when a runtime's execution role has no room left for the containment policy. `Upgrade impact:` set the new `@aws-mdaa/managedPoliciesPerRoleQuota` context key if the account's quota was raised. See [Permissions boundaries, SCPs and opting out](packages/apps/ai/bedrock-agentcore-runtime-app/README.md#permissions-boundaries-scps-and-opting-out).
+
 ### Bug Fixes
 
 - Fixed the Bedrock Settings module reporting a deploy with a malformed configuration as successful, leaving invocation logging unconfigured. `Upgrade impact:` a malformed configuration now fails the deploy.

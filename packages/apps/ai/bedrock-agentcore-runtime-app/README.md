@@ -24,7 +24,8 @@ This module deploys and integrates the following resources:
 - **CloudWatch Data Protection Policy** — PII masking policy applied to the log groups on ingestion. Extendable via `dataProtection.additionalIdentifiers`.
 - **CloudWatch Alarms** (Optional) — Error-rate and/or throttle-count alarms on the AgentCore service metrics (namespace `AWS/Bedrock-AgentCore`), created when an `alarms` block is configured. Notify an SNS topic on breach.
 - **SNS Topic** (Optional) — CMK-encrypted topic for alarm notifications, created when `alarms.createNotificationTopic` is true. Alternatively, alarms notify an existing topic via `alarms.notificationTopicArn`.
-- **SSM Parameters** — Runtime ARN, Runtime ID, Runtime Name, and optionally Endpoint ARN/ID, stored in Parameter Store for cross-module reference. A created Cognito pool publishes its pool ID, client ID, discovery URL, and (with a hosted UI) domain. A created alarm SNS topic and the alarms publish their own SSM parameters (topic and alarm ARN/name) via the underlying MDAA constructs.
+- **Containment Runbooks** (on by default) — A deny-all containment policy for the execution role (created unattached), `contain` and `release` Systems Manager Automation runbooks that attach and detach it, a separate automation role for each runbook, and two responder policies (created unattached) granting permission to start each runbook. Nothing changes for the agent until `contain` is run. Set `containment.enabled: false` to create none of it. See [Containment Runbooks](#containment-runbooks).
+- **SSM Parameters** — Runtime ARN, Runtime ID, Runtime Name, and optionally Endpoint ARN/ID, stored in Parameter Store for cross-module reference. A created Cognito pool publishes its pool ID, client ID, discovery URL, and (with a hosted UI) domain. A created alarm SNS topic and the alarms publish their own SSM parameters (topic and alarm ARN/name) via the underlying MDAA constructs. Containment publishes its runbook names, automation role ARNs and responder policy ARNs (see [Operator procedure](#operator-procedure)).
 
 ---
 
@@ -50,6 +51,9 @@ This module is designed in alignment with MDAA security/compliance principles an
 - **Least Privilege**:
   - Execution role scoped to specific permissions for ECR access, CloudWatch Logs, X-Ray, and Bedrock model invocation
   - Supports using an existing role or auto-creating one with minimal required permissions
+- **Incident Response**:
+  - `contain` and `release` runbooks deny the execution role on demand, cutting off a compromised agent's AWS calls on both inbound auth paths, in sessions already running, and for credentials copied out of a session (see [Containment Runbooks](#containment-runbooks))
+  - Each runbook runs as its own automation role: the contain role can only attach the containment policy, the release role can only detach it, and only on this runtime's execution role
 - **Network Isolation**:
   - Runtimes deployed in VPC mode with no public internet access unless explicitly configured via VPC routing
   - JWT authentication (custom or standard) controls runtime endpoint access
@@ -78,25 +82,171 @@ Two items from it affect how this module behaves:
 
 ### Containment and Incident Response
 
-Stopping a misbehaving agent is an out-of-band operator action against a deployed runtime, so this module ships no kill switch — [`eventBridgeAlerts`](#eventbridge-alerting) exposes `targetLambdaArn` for a remediation function you write. An operator mid-incident should not have to follow a link to find the options, so they are listed here in the order to reach for them:
+When the agent itself is compromised, the thing to stop is its execution role: any code in the session, including code the model generates, can read the role's credentials. The module's [`contain` runbook](#containment-runbooks) denies that role on demand. The other mechanisms act on callers or on the network and still apply alongside it. An operator mid-incident should not have to follow a link to find the options, so they are listed here in the order to reach for them:
 
-| #   | Mechanism                                                                                                                    | Scope                               |
-| --- | ---------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
-| 1   | **IAM/SCP deny** on `bedrock-agentcore:InvokeAgentRuntime*`                                                                  | A role, an account, or an OU        |
-| 2   | **Remove the invocation path** — `DeleteAgentRuntimeEndpoint`, or `UpdateAgentRuntime` to an authorizer admitting no callers | One runtime                         |
-| 3   | **Cut egress** — modify the security group or VPC routing                                                                    | One runtime's network               |
-| 4   | **`StopRuntimeSession`**                                                                                                     | One session, by `runtimeSessionId`  |
-| 5   | **`forceAuthentication: true`** on `GetResourceOauth2Token` — agent-code change, not an operator action                      | Forces a fresh 3LO; revokes nothing |
-| 6   | **Shorten the inbound token lifetime** (preventive)                                                                          | Every future token                  |
-| 7   | **Rotate IdP signing keys** (break glass)                                                                                    | Every token from that IdP           |
+| #   | Mechanism                                                                                                                    | Scope                                                         |
+| --- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| 1   | **[`contain` runbook](#containment-runbooks)** — attaches a deny-all policy to the execution role                            | One runtime's execution role (every user of a `roleArn` role) |
+| 2   | **IAM/SCP deny** on `bedrock-agentcore:InvokeAgentRuntime*`                                                                  | A role, an account, or an OU                                  |
+| 3   | **Remove the invocation path** — `DeleteAgentRuntimeEndpoint`, or `UpdateAgentRuntime` to an authorizer admitting no callers | One runtime                                                   |
+| 4   | **Cut egress** — modify the security group or VPC routing                                                                    | One runtime's network                                         |
+| 5   | **`StopRuntimeSession`**                                                                                                     | One session, by `runtimeSessionId`                            |
+| 6   | **`forceAuthentication: true`** on `GetResourceOauth2Token` — agent-code change, not an operator action                      | Forces a fresh 3LO; revokes nothing                           |
+| 7   | **Shorten the inbound token lifetime** (preventive)                                                                          | Every future token                                            |
+| 8   | **Rotate IdP signing keys** (break glass)                                                                                    | Every token from that IdP                                     |
 
-Three things to settle before an incident, not during one:
+Four things to settle before an incident, not during one:
 
-- **There is no single-token revocation API.** JWT validation is offline against a cached JWKS, so disabling a user or client at your IdP does not invalidate tokens already issued — they stay valid until `exp`. The smallest unit you can actually cut off out of band is a single live session (4) or the agent's IAM role; no documented API revokes a stored user+agent credential.
-- **Mechanism 1 does not reach OAuth/JWT callers**, for the same reason SCPs do not (above). On a `customJwtAuthorizer` runtime the first response has to be 2 or 3 instead, so know which inbound mode each of your runtimes uses.
-- **Mechanism 6 caps how long an agent can run.** It shortens maximum invocation length as well as the revocation gap — read [Session Lifecycle and Token Expiry](#session-lifecycle-and-token-expiry) before tightening it, and on the `cognito` path note the knob is `idTokenValidityMinutes`.
+- **There is no single-token revocation API.** JWT validation is offline against a cached JWKS, so disabling a user or client at your IdP does not invalidate tokens already issued — they stay valid until `exp`. The smallest units you can actually cut off out of band are a single live session (5) and the agent's IAM role (1); no documented API revokes a stored user+agent credential.
+- **Mechanism 2 does not reach OAuth/JWT callers**, for the same reason SCPs do not (above). On a `customJwtAuthorizer` runtime the caller-side response has to be 3 or 4 instead, so know which inbound mode each of your runtimes uses. Mechanism 1 works on both paths, because it acts on the agent rather than its callers.
+- **Mechanism 7 caps how long an agent can run.** It shortens maximum invocation length as well as the revocation gap — read [Session Lifecycle and Token Expiry](#session-lifecycle-and-token-expiry) before tightening it, and on the `cognito` path note the knob is `idTokenValidityMinutes`.
+- **Who may run `contain` and `release`.** Attach the module's responder policies to those roles in advance; see [Who can run it](#who-can-run-it).
 
-Decision detail for each mechanism — when it fits, who needs the permission, and what to test in advance — is in [YOUR-RESPONSIBILITIES.md § 5](https://github.com/aws-samples/sample-config-modern-data-architecture-accelerator/blob/main/agentic_app/security-best-practices/YOUR-RESPONSIBILITIES.md#5-containment-and-incident-response), which is the canonical list. One correction worth carrying: **there is no "disable runtime" action** despite AgentCore enablement material implying one — neither AgentCore API has any `Disable*`/`Enable*` operation, and `UpdateAgentRuntime` exposes no such field. Mechanism 2 is that intent's real form.
+Decision detail for mechanisms 2–8 — when each fits, who needs the permission, and what to test in advance — is in [YOUR-RESPONSIBILITIES.md § 5](https://github.com/aws-samples/sample-config-modern-data-architecture-accelerator/blob/main/agentic_app/security-best-practices/YOUR-RESPONSIBILITIES.md#5-containment-and-incident-response), which numbers them 1–7; mechanism 1 is covered in [Containment Runbooks](#containment-runbooks). One correction worth carrying: **there is no "disable runtime" action** despite AgentCore enablement material implying one — neither AgentCore API has any `Disable*`/`Enable*` operation, and `UpdateAgentRuntime` exposes no such field. Mechanism 3 is that intent's real form.
+
+### Containment Runbooks
+
+Every runtime gets two Systems Manager Automation runbooks, created with a normal deploy and doing nothing until started. Nothing needs to be deployed during an incident.
+
+- **`contain`** attaches the module's containment policy to the execution role and tags the role with the containment time. The policy denies every AWS call made with the execution role except `logs:CreateLogStream` and `logs:PutLogEvents` on the runtime's own log groups, so the contained agent's activity is still recorded. Running sessions fail at their next AWS call (Bedrock included), so do new sessions, and credentials copied out of a session are denied too. Optionally it also stops the sessions passed in `SessionIds`, under the endpoint named by `Qualifier`; a session that cannot be stopped makes the `StopSessions` step fail with a message naming it, without undoing containment.
+- **`release`** detaches the policy and removes the tag, but only once the **release gate** has passed: the containment time, plus the runtime's `lifecycleConfiguration.maxLifetime` (8 hours by default), plus the role's `MaxSessionDuration` (1 hour by default) — about 9 hours with defaults. A session that was running at containment keeps receiving fresh credentials until it ends, and those would work again on release. The gate covers only those sessions: invocations still arrive while contained, and every session they start or resume, including one `StopSessions` stopped, holds credentials that work the moment `release` runs. So block new invocations (mechanism 3; mechanism 2 reaches only SigV4 callers), then run `contain` again so the gate is measured from that point. The gate also assumes AgentCore's credentials expire within `MaxSessionDuration`, which IAM does not enforce for roles that AWS services assume, so revoke the role's active sessions just before release. `Force=true` skips the gate; pass it only after stopping the live sessions by ID and revoking the role's active sessions. Without the containment tag, `release` refuses unless forced.
+
+What containment does **not** do: it stops neither callers nor session billing — invocations still arrive and fail — and traces and metrics from the contained agent stop, because X-Ray and CloudWatch metric calls are denied. **Containment is an outage** for the agent until release, so make automated triggers selective, or pass `Approvers` so a human approves first. Role sessions the agent assumed before containment keep that role's permissions for up to an hour, so if `policies` grant `sts:AssumeRole`, revoke those roles' active sessions too.
+
+**Redeploying while contained.** `mdaa deploy` runs a standard change set, which compares the new template with the old one, and the role's CloudFormation update handler is not granted `iam:ListAttachedRolePolicies`, so it does not see the containment policy and leaves it and the tag in place. A drift-aware deploy (`cdk deploy --revert-drift`, or `--deployment-mode REVERT_DRIFT`) brings the role back to its template, which can detach the policy, and keeps tag keys the template does not set, so the role is released while its tag still says contained. A deploy with a new image may fail while contained, because the execution role that pulls the image from ECR is denied. After any deploy, confirm the attachment with `aws iam list-attached-role-policies --role-name <execution role>`, and run `contain` again if it is gone.
+
+#### Operator procedure
+
+Each runbook's `AutomationAssumeRole` defaults to that runbook's automation role, so starting one needs only the document name. Its description names the runtime ARN, the execution role and the containment policy it acts on, so check the target in the console before running it.
+
+| When                                      | What the operator does                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Before any incident                       | Deploy the module as usual. Attach the responder policies to the on-call and release roles (see [Who can run it](#who-can-run-it))                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| Incident, by hand                         | Start `contain`. **Console:** Systems Manager → Automation → Execute automation → _Owned by me_ → the runtime's `contain` document → Execute. **CLI:** below                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| Incident, automatic                       | An EventBridge rule owned by the detection team starts `contain`. See the [example rule](#example-eventbridge-trigger)                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| Approval, when the run passed `Approvers` | An approver approves the waiting execution in the console, or with `aws ssm send-automation-signal --automation-execution-id <id> --signal-type Approve`. Until then the policy is not attached                                                                                                                                                                                                                                                                                                                                                                                  |
+| Confirm containment                       | The `AttachContainmentPolicy` step reports `Success`, and `aws iam list-attached-role-policies --role-name <execution role>` lists the containment policy. A failed `StopSessions` step names the sessions it could not stop                                                                                                                                                                                                                                                                                                                                                     |
+| Release                                   | Fix the cause, block new invocations and run `contain` again, then start `release` the same way once the gate has passed, revoking the role's active sessions just before. Disable any automatic trigger first. It refuses until the release gate has passed and its message gives the time the gate opens. A fix that needs a deploy either deploys while contained and then confirms the policy is still attached, or keeps invocations blocked, releases, then deploys. Pass `Force=true` only after stopping the live sessions by ID and revoking the role's active sessions |
+
+```bash
+# Same path as the runtime's other parameters, all lowercase (<runtime> is the runtime's config name
+# lowercased); <env> is present only when the naming includes it
+DOC=$(aws ssm get-parameter \
+  --name /<org>/<domain>[/<env>]/<module>/agentruntime/<runtime>/contain-runbook-name \
+  --query Parameter.Value --output text)
+
+aws ssm start-automation-execution --document-name "$DOC"
+# Optionally also stop known sessions (Qualifier defaults to the runtime's named endpoint, else DEFAULT):
+#   --parameters SessionIds=<id1>,<id2>
+# Optionally require approval first:
+#   --parameters Approvers=arn:aws:iam::<account>:role/<approver role>
+
+# Per-step status: StopSessions is not critical, so the overall status reads Success even when it
+# failed, and Failed when only RecordContainmentTime failed although the policy is attached
+aws ssm get-automation-execution --automation-execution-id <id returned above> \
+  --query "AutomationExecution.StepExecutions[].[StepName,StepStatus,FailureMessage]" --output table
+```
+
+The runtime's containment parameters, under `/<org>/<domain>[/<env>]/<module>/agentruntime/<runtime>/` (all lowercase, so `<runtime>` is the runtime's config name lowercased):
+
+| Parameter                      | Value                                         |
+| ------------------------------ | --------------------------------------------- |
+| `contain-runbook-name`         | Name of the `contain` document                |
+| `release-runbook-name`         | Name of the `release` document                |
+| `contain-automation-role-arn`  | ARN of the role `contain` runs as             |
+| `release-automation-role-arn`  | ARN of the role `release` runs as             |
+| `contain-responder-policy-arn` | Policy granting permission to start `contain` |
+| `release-responder-policy-arn` | Policy granting permission to start `release` |
+
+#### Who can run it
+
+Starting a runbook takes `ssm:StartAutomationExecution` on the document and `iam:PassRole` on that runbook's automation role. The module fixes what each automation role can do, so these grants decide who can contain and release a runtime. The module ships them as two **responder policies**, created unattached; attach them to your own roles:
+
+| Principal                             | Attach                                                                                                                                                                                                                                                                                                                                      |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Responders who may contain            | `contain-responder-policy-arn`                                                                                                                                                                                                                                                                                                              |
+| Principals who may release            | `release-responder-policy-arn`                                                                                                                                                                                                                                                                                                              |
+| EventBridge target role for `contain` | `contain-responder-policy-arn`                                                                                                                                                                                                                                                                                                              |
+| Approvers named in `Approvers`        | Neither: grant `ssm:SendAutomationSignal` and `ssm:GetAutomationExecution` on `arn:<partition>:ssm:<region>:<account>:automation-execution/*`, and `ssm:DescribeAutomationExecutions` on `*` to find the waiting execution, yourself, since approvers are chosen per run. AWS's `AmazonSSMAutomationApproverAccess` grants all three on `*` |
+
+Each responder policy allows starting its own runbook (by document and automation-definition ARN), passing that runbook's automation role to `ssm.amazonaws.com` only, reading its runbook-name parameter and its document, and the read-only `ssm:GetAutomationExecution`, `ssm:DescribeAutomationStepExecutions` and `iam:ListAttachedRolePolicies` calls to confirm the result. Listing documents in the console also takes `ssm:ListDocuments`, which supports only `*`, so the responder policies leave it out: grant it alongside them for console use, or start the runbook from the CLI.
+
+- **`release` is the more sensitive grant.** It ends containment, so hold it more narrowly than `contain`: on-call can contain, and only the security lead can release, for example. The split holds in IAM, not only in the documents: the contain role cannot detach the policy, so a principal able to pass it to some other Automation document still cannot release.
+- **Everything runs in the runtime's account.** Both automation roles trust `ssm.amazonaws.com` only for Automation executions in that account and region (`aws:SourceAccount` and `aws:SourceArn`), so the automation, any EventBridge rule that starts it, and that rule's target role all live there.
+
+#### Example EventBridge trigger
+
+This CloudFormation template starts `contain` on High-severity GuardDuty findings (7.0 and above) about the runtime's execution role, such as `Exfiltration:IAMUser/AnomalousBehavior` or `Impact:IAMUser/AnomalousBehavior`. GuardDuty has no credential-exfiltration finding for AgentCore runtime credentials (`InstanceCredentialExfiltration` covers EC2 instance credentials, `ResourceCredentialExfiltration` Lambda and ECS), so credentials copied out of a session are flagged only when their use trips another finding type. `UnauthorizedAccess:IAMUser/MaliciousIPCaller` and `UnauthorizedAccess:IAMUser/TorIPCaller`, for calls from a known malicious IP or a Tor exit node, are Medium: lower the threshold to 4 to include them. Deploy it in the runtime's account; if GuardDuty findings for that account reach EventBridge only in a delegated administrator account, forward them to an event bus in the runtime's account first.
+
+The runtime is identified by `detail.resource.accessKeyDetails.principalId`, which for an assumed-role session is `<role unique ID>:<session name>`. The rule therefore matches the prefix `<role unique ID>:`. For a module-created role the ID is published at `/<org>/<domain>[/<env>]/<module>/role/bedrock-agentcore-runtime-<runtime>/id` (lowercase, like every path here); for a `roleArn` role, read it with `aws iam get-role --role-name <role name> --query Role.RoleId` and change the template's `ExecutionRoleId` to `Type: String` with that ID as its value. A detection source that names only the VPC, such as a DNS Firewall block alarm, does not identify one runtime when several share the VPC: either contain every runtime in the VPC, or trigger on a source that names the role.
+
+```yaml
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Starts an AgentCore runtime's contain runbook on GuardDuty findings about its execution role
+Parameters:
+  ContainRunbookName:
+    Type: AWS::SSM::Parameter::Value<String>
+    # All lowercase; insert /<env> after /<domain> in these paths when the naming includes it
+    Default: /<org>/<domain>/<module>/agentruntime/<runtime>/contain-runbook-name
+  ContainResponderPolicyArn:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /<org>/<domain>/<module>/agentruntime/<runtime>/contain-responder-policy-arn
+  ExecutionRoleId:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /<org>/<domain>/<module>/role/bedrock-agentcore-runtime-<runtime>/id
+Resources:
+  ContainTargetRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+            Action: sts:AssumeRole
+            Condition:
+              StringEquals:
+                aws:SourceAccount: !Ref AWS::AccountId
+      ManagedPolicyArns:
+        - !Ref ContainResponderPolicyArn
+  ContainOnGuardDutyFinding:
+    Type: AWS::Events::Rule
+    Properties:
+      EventPattern:
+        source:
+          - aws.guardduty
+        detail-type:
+          - GuardDuty Finding
+        detail:
+          severity:
+            - numeric: ['>=', 7]
+          resource:
+            accessKeyDetails:
+              principalId:
+                - prefix: !Sub '${ExecutionRoleId}:'
+      Targets:
+        - Id: contain
+          Arn: !Sub 'arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:automation-definition/${ContainRunbookName}:$DEFAULT'
+          RoleArn: !GetAtt ContainTargetRole.Arn
+          # Runs with the runbook's defaults instead of passing the event as parameters. To require a
+          # human before the outage, name approvers instead:
+          #   Input: '{"Approvers": ["arn:aws:iam::<account>:role/<approver role>"]}'
+          Input: '{}'
+```
+
+- **Later occurrences start `contain` again.** GuardDuty sends later occurrences of a finding to EventBridge every 6 hours by default, and as often as every 15 minutes, including for findings archived by hand. Each run moves the containment tag forward, so `release` keeps refusing, and an occurrence after release contains the runtime again. Before `release`, disable the rule or add a GuardDuty suppression rule for the finding: suppressed findings are not sent to EventBridge.
+- **Approvals are silent.** `WaitForApproval` sends no notification and waits up to the `aws:approve` default of 7 days with the policy unattached. Alert approvers separately, for example with an SNS target on the same rule, and when you release, stop any run still waiting (`aws ssm stop-automation-execution`), since one approved after release contains the runtime again.
+
+#### Permissions boundaries, SCPs and opting out
+
+- **The automation roles need IAM write access.** MDAA applies `permissions_boundary_arn` to every role it creates, the automation roles included. If that boundary, or an SCP limiting IAM writes to approved roles, does not allow the contain role (`contain-automation-role-arn`) `iam:AttachRolePolicy` and `iam:TagRole` on the execution role plus `bedrock-agentcore:StopRuntimeSession` on the runtime, and the release role (`release-automation-role-arn`) `iam:DetachRolePolicy`, `iam:UntagRole` and `iam:GetRole` on the execution role, the stack deploys cleanly and the runbook fails with `AccessDenied` mid-incident. Exempt both, and test `contain` and `release` before you need them.
+- **Managed-policy headroom.** A role holds 20 managed policies by default. The execution role already carries the module's policy plus any `policies[].policyArn` entries, and containment needs one more slot, so synth fails when there is none. If the account's quota was raised through Service Quotas (to at most 25), set the `@aws-mdaa/managedPoliciesPerRoleQuota` context value to the new quota at env level in `mdaa.yaml`. Set it only after the increase is approved: synth cannot check the account's real quota, and a wrong value moves the failure to `contain` mid-incident.
+- **The deploy role needs SSM document permissions.** Every runtime stack creates two `AWS::SSM::Document`s. A CloudFormation execution role scoped down from `AdministratorAccess` must allow `ssm:CreateDocument`, `ssm:GetDocument`, `ssm:DescribeDocument`, `ssm:UpdateDocument`, `ssm:UpdateDocumentDefaultVersion`, `ssm:DeleteDocument`, `ssm:AddTagsToResource`, `ssm:RemoveTagsFromResource` and `ssm:ListTagsForResource`, or the upgrade deploy fails.
+- **Reserved document name prefixes.** AWS reserves `aws`, `amazon` and `amzn` as SSM document name prefixes. Under default naming the runbook names start with the org, so an org such as `awsdemo` fails synth; set `containment.enabled: false` for such an org.
+- **Referenced roles (`roleArn`).** The Deny attaches to the referenced role, so `contain` stops every user of that role, not only this runtime. MDAA cannot check headroom on a role it did not create, and synth warns that the check is skipped. The stack also gains automation roles that can attach the containment policy to, and tag, a role MDAA does not own, so tell the role's owner.
+- **`containment.enabled: false`** creates none of the above, for two cases: a `roleArn` role whose owner contains it with their own tooling, and organizations that run incident response centrally and do not allow roles with IAM write permissions outside it.
+- **Release before opting out, renaming or destroying.** Setting `containment.enabled: false`, renaming the runtime or changing the naming (the policy name cannot change in place), and `mdaa destroy` each delete the containment policy and both runbooks. IAM requires a managed policy to be detached from every role before it is deleted, and the policy's CloudFormation delete handler holds `iam:ListEntitiesForPolicy` and `iam:DetachRolePolicy` to do it, so expect the delete to release the role without the gate. If the delete fails instead, the role stays contained with no runbook left to release it. On `mdaa destroy` the policy goes before the runtime, so a live session gets its permissions back during teardown. Run `release` first.
 
 ---
 
@@ -212,10 +362,10 @@ This is deliberate, and documented as your responsibility:
 
 **Where the check runs.** Two options, and they cost differently:
 
-|                                                     | MDAA configuration needed                                              | Agent code needed                                                                      |
-| --------------------------------------------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| **Your client backend** — the documented pattern    | None                                                                   | None                                                                                   |
-| **Inside the agent** — optional defence in depth    | `requestHeaderConfiguration.requestHeaderAllowlist: ['Authorization']` | Entrypoint signature `def invoke(payload, context)`, reading `context.request_headers` |
+|                                                  | MDAA configuration needed                                              | Agent code needed                                                                      |
+| ------------------------------------------------ | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| **Your client backend** — the documented pattern | None                                                                   | None                                                                                   |
+| **Inside the agent** — optional defence in depth | `requestHeaderConfiguration.requestHeaderAllowlist: ['Authorization']` | Entrypoint signature `def invoke(payload, context)`, reading `context.request_headers` |
 
 The agent-side option needs **both**, and neither is a default: without the allowlist the inbound JWT never reaches the container, and without the second entrypoint parameter the agent cannot read request headers. See [Propagate a JWT token to AgentCore Runtime](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-oauth.html). Runtime has already validated the signature by then, so the agent decodes the claims without re-verifying them.
 
@@ -394,7 +544,7 @@ Contains only required properties for deploying an agent runtime with a pre-buil
 
 #### Comprehensive Configuration (Pre-built Container Image)
 
-Deploys an agent runtime using a pre-built ECR container image with VPC networking, JWT authentication, IAM policies, header forwarding, lifecycle management, and CloudWatch alarms. Start here when evaluating all available options for securing and managing a production AgentCore runtime.
+Deploys an agent runtime using a pre-built ECR container image with VPC networking, JWT authentication, IAM policies, header forwarding, lifecycle management, CloudWatch alarms, and the containment opt-out for a referenced execution role whose owner contains it with their own tooling. Start here when evaluating all available options for securing and managing a production AgentCore runtime.
 
 [sample-config-comprehensive.yaml](sample_configs/sample-config-comprehensive.yaml)
 
@@ -595,7 +745,7 @@ Two details of the generated pattern are worth knowing, because they explain how
 
 Notification is **EventBridge → SNS**, with an input transformer rendering a readable message (principal, error code, source IP, event name). No Lambda is created for notification — SNS already delivers to email, Slack, or PagerDuty via subscription.
 
-`targetLambdaArn` optionally attaches a **customer-supplied** remediation function as an additional target. MDAA does not create or ship one: revoking an execution role or stopping sessions is destructive and site-specific, so kill-switch actions remain a deliberate customer decision. The rule grants EventBridge `lambda:InvokeFunction` on a same-account function; a cross-account function must grant that permission on its own side.
+`targetLambdaArn` optionally attaches a **customer-supplied** remediation function as an additional target, for site-specific actions MDAA does not create. To contain the agent itself, start the module's [`contain` runbook](#containment-runbooks) instead; these rules match caller activity, so see [Example EventBridge trigger](#example-eventbridge-trigger) for a rule keyed to the execution role. The rule grants EventBridge `lambda:InvokeFunction` on a same-account function; a cross-account function must grant that permission on its own side.
 
 If your `alarms` block references an existing topic by ARN, MDAA cannot modify that topic's resource policy and emits a synth-time warning: ensure the topic allows the `events.amazonaws.com` service principal to `sns:Publish` (and, if the topic is CMK-encrypted, to use the key), or the rules will match but deliver nothing.
 

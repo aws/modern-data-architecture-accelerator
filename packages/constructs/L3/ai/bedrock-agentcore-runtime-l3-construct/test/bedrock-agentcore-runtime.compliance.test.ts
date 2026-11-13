@@ -348,4 +348,31 @@ describe('BedrockAgentcoreRuntimeL3Construct Compliance Tests', () => {
 
     testApp.checkCdkNagCompliance(stack);
   });
+
+  // Containment is on by default, so every case above also covers it. This one adds the named
+  // endpoint, whose ARN joins the automation role's StopRuntimeSession resources.
+  describe('Runtime with containment runbooks and a named endpoint', () => {
+    const testApp = new MdaaTestApp();
+    const stack = testApp.testStack;
+    const constructProps: BedrockAgentcoreRuntimeL3ConstructProps = {
+      agentRuntimeName: 'containment-compliant-runtime',
+      agentRuntimeArtifact: {
+        containerConfiguration: {
+          containerUri: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-runtime:latest',
+        },
+      },
+      networkConfiguration: {
+        securityGroups: ['sg-12345678'],
+        subnets: ['subnet-12345678'],
+      },
+      runtimeEndpoint: { name: 'prod' },
+      containment: { enabled: true },
+      naming: testApp.naming,
+      roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+    };
+
+    new BedrockAgentcoreRuntimeL3Construct(stack, 'containment-compliant-runtime-construct', constructProps);
+
+    testApp.checkCdkNagCompliance(stack);
+  });
 });

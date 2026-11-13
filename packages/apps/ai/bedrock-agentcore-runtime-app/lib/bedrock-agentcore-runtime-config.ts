@@ -14,6 +14,7 @@ import {
   RuntimeEndpointProperty,
   DataProtectionProperty,
   AlarmsConfiguration,
+  ContainmentProperty,
   EventBridgeConfiguration,
 } from '@aws-mdaa/bedrock-agentcore-runtime-l3-construct';
 import { Schema } from 'ajv';
@@ -293,6 +294,19 @@ export interface BedrockAgentcoreRuntimeConfigContents extends MdaaBaseConfigCon
    * Validation: Optional; EventBridgeConfiguration; requires an alarms topic and at least one rule
    **/
   readonly eventBridgeAlerts?: EventBridgeConfiguration;
+  /**
+   * Containment runbooks for the execution role, created by default. Running the `contain` runbook
+   * attaches a deny-all policy to the role, so a compromised agent's AWS calls fail; `release` detaches
+   * it once the release gate has passed. Nothing changes for the agent until `contain` is run. Set
+   * `enabled: false` to create none of it, for example when incident response runs centrally.
+   *
+   * Use cases: incident response on a compromised agent, automated containment from detection findings
+   *
+   * AWS: IAM managed policies + role, Systems Manager Automation documents
+   *
+   * Validation: Optional; ContainmentProperty
+   **/
+  readonly containment?: ContainmentProperty;
 }
 
 export class BedrockAgentcoreRuntimeConfigParser extends MdaaAppConfigParser<BedrockAgentcoreRuntimeConfigContents> {
@@ -315,6 +329,7 @@ export class BedrockAgentcoreRuntimeConfigParser extends MdaaAppConfigParser<Bed
   public readonly dataProtection?: DataProtectionProperty;
   public readonly alarms?: AlarmsConfiguration;
   public readonly eventBridgeAlerts?: EventBridgeConfiguration;
+  public readonly containment?: ContainmentProperty;
 
   constructor(stack: Stack, props: MdaaAppConfigParserProps) {
     super(stack, props, configSchema as Schema);
@@ -338,5 +353,6 @@ export class BedrockAgentcoreRuntimeConfigParser extends MdaaAppConfigParser<Bed
     this.dataProtection = this.configContents.dataProtection;
     this.alarms = this.configContents.alarms;
     this.eventBridgeAlerts = this.configContents.eventBridgeAlerts;
+    this.containment = this.configContents.containment;
   }
 }

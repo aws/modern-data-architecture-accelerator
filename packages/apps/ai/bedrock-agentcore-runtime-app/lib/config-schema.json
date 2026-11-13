@@ -826,6 +826,18 @@
             },
             "type": "object"
         },
+        "ContainmentProperty": {
+            "additionalProperties": false,
+            "description": "Containment runbooks for the runtime's execution role. Enabled by default: the module creates a\ndeny-all containment policy (unattached), `contain` and `release` Systems Manager Automation runbooks\nthat attach and detach it, an automation role for each runbook, and two responder policies (unattached)\nthat grant permission to start each runbook. Nothing changes for the agent until `contain` is run.\n\nUse cases: incident response on a compromised agent, automated containment from GuardDuty or DNS\nFirewall findings, opting out where incident response runs centrally\n\nAWS: IAM managed policies + role, Systems Manager Automation documents\n\nValidation: Optional; omit for the default (enabled)",
+            "properties": {
+                "enabled": {
+                    "default": true,
+                    "description": "Whether to create the containment policy, runbooks, automation roles, responder policies and their\nSSM parameters. Set `false` for a `roleArn` role whose owner contains it with their own tooling, or\nwhere incident response runs centrally and roles with IAM write permissions are not allowed outside it.\n\nUse cases: central incident-response tooling, externally managed execution roles\n\nAWS: gates creation of the containment IAM resources and Automation documents\n\nValidation: Optional; Boolean",
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
+        },
         "CustomJwtAuthorizerProperty": {
             "additionalProperties": false,
             "description": "Custom JWT authorizer configuration for token-based authentication via OIDC.\n\nExactly one of `discoveryUrl` or `cognito` must be specified — they are the two ways\nof naming the identity provider, differing only in who provisions it. Supply\n`discoveryUrl` for an IdP you already run, or `cognito` to have MDAA create and\nconfigure one.\n\nUse cases: JWT authentication, OIDC integration, token validation, identity provider connection\n\nAWS: Bedrock AgentCore Runtime JWT authorizer\n\nValidation: exactly one of discoveryUrl or cognito; discoveryUrl must end with /.well-known/openid-configuration",
@@ -1143,7 +1155,7 @@
                     "type": "array"
                 },
                 "targetLambdaArn": {
-                    "description": "ARN of an existing, customer-supplied Lambda function to invoke in addition to\nthe SNS notification, for automated remediation (e.g. revoking credentials or\ndisabling a target). MDAA does not create this function - revoking an execution\nrole or stopping sessions is destructive and site-specific.\n\nThe rule grants EventBridge `lambda:InvokeFunction` on a same-account target. A\ncross-account function must grant that permission on its own side.\n\nUse cases: auto-remediation, kill-switch on anomalous activity\n\nAWS: EventBridge Lambda target with invoke permission\n\nValidation: Optional; String; valid Lambda function ARN in this account",
+                    "description": "ARN of an existing, customer-supplied Lambda function to invoke in addition to\nthe SNS notification, for site-specific remediation. MDAA does not create this\nfunction. To contain the agent itself, target the module's `contain` runbook\ninstead (see `containment`), which denies the execution role without custom code.\n\nThe rule grants EventBridge `lambda:InvokeFunction` on a same-account target. A\ncross-account function must grant that permission on its own side.\n\nUse cases: site-specific auto-remediation alongside the containment runbooks\n\nAWS: EventBridge Lambda target with invoke permission\n\nValidation: Optional; String; valid Lambda function ARN in this account",
                     "type": "string"
                 }
             },
@@ -3613,6 +3625,10 @@
         "authorizerConfiguration": {
             "$ref": "#/definitions/AuthorizerConfigurationProperty",
             "description": "Authentication configuration with support for custom JWT authorizers via OIDC.\n\nUse cases: Access control, JWT authentication, OIDC integration\n\nAWS: Bedrock AgentCore Runtime authorizer\n\nValidation: Optional; AuthorizerConfigurationProperty"
+        },
+        "containment": {
+            "$ref": "#/definitions/ContainmentProperty",
+            "description": "Containment runbooks for the execution role, created by default. Running the `contain` runbook\nattaches a deny-all policy to the role, so a compromised agent's AWS calls fail; `release` detaches\nit once the release gate has passed. Nothing changes for the agent until `contain` is run. Set\n`enabled: false` to create none of it, for example when incident response runs centrally.\n\nUse cases: incident response on a compromised agent, automated containment from detection findings\n\nAWS: IAM managed policies + role, Systems Manager Automation documents\n\nValidation: Optional; ContainmentProperty"
         },
         "dataProtection": {
             "$ref": "#/definitions/DataProtectionProperty",

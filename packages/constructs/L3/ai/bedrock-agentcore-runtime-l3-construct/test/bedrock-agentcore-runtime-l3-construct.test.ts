@@ -747,10 +747,10 @@ describe('BedrockAgentcoreRuntimeL3Construct Unit Tests', () => {
         RoleArn: existingRoleArn,
       });
 
-      // Should not create a new execution role. The two roles present belong to the
-      // always-on log-protection custom resource (its Lambda handler + CR provider),
-      // not the runtime execution role.
-      template.resourceCountIs('AWS::IAM::Role', 2);
+      // Should not create a new execution role. The four roles present belong to the
+      // always-on log-protection custom resource (its Lambda handler + CR provider) and
+      // the contain and release automation roles, not the runtime execution role.
+      template.resourceCountIs('AWS::IAM::Role', 4);
     });
 
     test("should scope GetAgentAccessToken to this runtime's own workload identity", () => {
@@ -973,8 +973,9 @@ describe('BedrockAgentcoreRuntimeL3Construct Unit Tests', () => {
       });
 
       // Should not create a new execution role - allowedModelArns only applies to created
-      // roles. The two roles present belong to the always-on log-protection custom resource.
-      template.resourceCountIs('AWS::IAM::Role', 2);
+      // roles. The four roles present belong to the always-on log-protection custom resource
+      // and the contain and release automation roles.
+      template.resourceCountIs('AWS::IAM::Role', 4);
     });
   });
 
@@ -999,8 +1000,10 @@ describe('BedrockAgentcoreRuntimeL3Construct Unit Tests', () => {
       const template = Template.fromStack(testApp.testStack);
 
       // Should create SSM parameters for runtime (3) + role (3) + always-on log
-      // protection: KMS key (2) + custom-resource Lambda handler (3)
-      template.resourceCountIs('AWS::SSM::Parameter', 11);
+      // protection: KMS key (2) + custom-resource Lambda handler (3) + containment:
+      // runbooks, automation roles and responder policies (6) + automation roles (3 each) +
+      // containment managed policies (5, 2 each)
+      template.resourceCountIs('AWS::SSM::Parameter', 33);
     });
 
     test('should create SSM parameters for endpoint when configured', () => {
@@ -1026,8 +1029,10 @@ describe('BedrockAgentcoreRuntimeL3Construct Unit Tests', () => {
       const template = Template.fromStack(testApp.testStack);
 
       // Should create SSM parameters for runtime (3) + endpoint (2) + role (3) + always-on
-      // log protection: KMS key (2) + custom-resource Lambda handler (3)
-      template.resourceCountIs('AWS::SSM::Parameter', 13);
+      // log protection: KMS key (2) + custom-resource Lambda handler (3) + containment:
+      // runbooks, automation roles and responder policies (6) + automation roles (3 each) +
+      // containment managed policies (5, 2 each)
+      template.resourceCountIs('AWS::SSM::Parameter', 35);
     });
   });
 
@@ -1974,7 +1979,7 @@ describe('BedrockAgentcoreRuntimeL3Construct Unit Tests', () => {
       const statements = Object.values(policies).flatMap(
         p => p.Properties.PolicyDocument.Statement as Record<string, unknown>[],
       );
-      const grants = statements.filter(s => JSON.stringify(s.Action).includes('logs:PutResourcePolicy'));
+      const grants = statements.filter(s => JSON.stringify(s.Action ?? []).includes('logs:PutResourcePolicy'));
 
       expect(grants).toHaveLength(1);
       const rendered = JSON.stringify(grants[0].Resource);
@@ -1996,7 +2001,7 @@ describe('BedrockAgentcoreRuntimeL3Construct Unit Tests', () => {
 
       // No statement anywhere in the policy grants PutResourcePolicy on '*'
       const wildcardGrants = statements.filter(
-        s => JSON.stringify(s.Action).includes('logs:PutResourcePolicy') && s.Resource === '*',
+        s => JSON.stringify(s.Action ?? []).includes('logs:PutResourcePolicy') && s.Resource === '*',
       );
       expect(wildcardGrants).toEqual([]);
     });
@@ -2014,7 +2019,7 @@ describe('BedrockAgentcoreRuntimeL3Construct Unit Tests', () => {
       const statements = Object.values(policies).flatMap(
         p => p.Properties.PolicyDocument.Statement as Record<string, unknown>[],
       );
-      expect(statements.filter(s => JSON.stringify(s.Action).includes('logs:PutResourcePolicy'))).toEqual([]);
+      expect(statements.filter(s => JSON.stringify(s.Action ?? []).includes('logs:PutResourcePolicy'))).toEqual([]);
     });
 
     test('grants PutResourcePolicy when unrelated variables are configured', () => {
@@ -2030,7 +2035,7 @@ describe('BedrockAgentcoreRuntimeL3Construct Unit Tests', () => {
       const statements = Object.values(policies).flatMap(
         p => p.Properties.PolicyDocument.Statement as Record<string, unknown>[],
       );
-      expect(statements.filter(s => JSON.stringify(s.Action).includes('logs:PutResourcePolicy'))).toHaveLength(1);
+      expect(statements.filter(s => JSON.stringify(s.Action ?? []).includes('logs:PutResourcePolicy'))).toHaveLength(1);
     });
 
     test('grants no PutResourcePolicy when an existing execution role is supplied', () => {
@@ -2046,7 +2051,7 @@ describe('BedrockAgentcoreRuntimeL3Construct Unit Tests', () => {
       const statements = Object.values(policies).flatMap(
         p => p.Properties.PolicyDocument.Statement as Record<string, unknown>[],
       );
-      expect(statements.filter(s => JSON.stringify(s.Action).includes('logs:PutResourcePolicy'))).toEqual([]);
+      expect(statements.filter(s => JSON.stringify(s.Action ?? []).includes('logs:PutResourcePolicy'))).toEqual([]);
     });
 
     test('scopes the grant to the same runtime name the log protection resource targets', () => {
@@ -2064,7 +2069,7 @@ describe('BedrockAgentcoreRuntimeL3Construct Unit Tests', () => {
       const statements = Object.values(policies).flatMap(
         p => p.Properties.PolicyDocument.Statement as Record<string, unknown>[],
       );
-      const grant = statements.find(s => JSON.stringify(s.Action).includes('logs:PutResourcePolicy'));
+      const grant = statements.find(s => JSON.stringify(s.Action ?? []).includes('logs:PutResourcePolicy'));
 
       expect(JSON.stringify(grant?.Resource)).toContain(`/aws/bedrock-agentcore/runtimes/${runtimeName}-*`);
     });
