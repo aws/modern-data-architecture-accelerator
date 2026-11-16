@@ -16,7 +16,7 @@ This construct exposes **only** the Harness `bedrockModelConfig` model surface -
 - **IAM Role Management**: create-or-reference execution role, scoped to the resolved model ARN (not `*`), plus scoped grants for guardrails and gateways
 - **Model API format**: fixed to Converse (`converse_stream`); the harness always calls the model over the Converse API (see below)
 - **Guardrail support**: applies a Bedrock Guardrail to the agent loop and grants scoped `bedrock:ApplyGuardrail` (see below)
-- **JWT Authorization**: shared `customJwt` / AWS IAM inbound-auth model (same as AgentCore Runtime and Gateway)
+- **JWT Authorization**: shared `customJwt` / AWS IAM inbound-auth model (same as AgentCore Runtime and Gateway); `customJwt` requires `allowedAudience` and/or `allowedClients`
 - **Tools**: `inline_function` (client-executed) and `agentcore_gateway` (gateway-fronted, `AWS_IAM` outbound auth)
 - **Tool allowlist**: `allowedTools` scopes which tools (including the built-in `shell` / `file_operations`) the agent may select at invocation time (see [Tool allowlist](#tool-allowlist))
 - **Skills**: filesystem-path skill bundles injected into the runtime image via `skills` (path source only - see [Skills](#skills))

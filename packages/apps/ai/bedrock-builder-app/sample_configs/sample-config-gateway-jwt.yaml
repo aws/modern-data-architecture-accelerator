@@ -8,7 +8,7 @@
 # What this sample covers:
 #   - gateway A: CUSTOM_JWT with allowedAudience and allowedClients, and a finite
 #                logDelivery.logRetentionDays
-#   - gateway B: CUSTOM_JWT with only discoveryUrl, and logDelivery.enabled: false -> opt out of the
+#   - gateway B: CUSTOM_JWT with allowedClients only, and logDelivery.enabled: false -> opt out of the
 #                vended log-delivery pipeline (no destination log group / delivery created)
 #   - an S3 tool schema WITHOUT bucketOwnerAccountId  -> defaults to the deploying account
 #                                                       (confused-deputy protection default branch)
@@ -70,11 +70,12 @@ gateways:
       customJwt:
         # OIDC discovery URL; must end with /.well-known/openid-configuration.
         discoveryUrl: 'https://example.com/.well-known/openid-configuration'
-        # (Optional) Allowed audiences validated against the token `aud` claim.
+        # Set at least one of allowedAudience / allowedClients.
+        # Allowed audiences validated against the token `aud` claim.
         allowedAudience:
           - 'metrics-clients'
           - 'metrics-admin'
-        # (Optional) Allowed client IDs validated against the token `client_id` claim.
+        # Allowed client IDs validated against the token `client_id` claim.
         allowedClients:
           - 'client-abc123'
     targets:
@@ -89,8 +90,10 @@ gateways:
     description: 'Reports MCP gateway with log delivery disabled'
     authorizerConfiguration:
       customJwt:
-        # Minimal CUSTOM_JWT: only the required discoveryUrl (no allowedAudience / allowedClients).
+        # Minimal CUSTOM_JWT: discoveryUrl plus one token restriction (here the client_id claim).
         discoveryUrl: 'https://example.com/.well-known/openid-configuration'
+        allowedClients:
+          - 'reports-client'
     targets:
       - reports
     logDelivery:

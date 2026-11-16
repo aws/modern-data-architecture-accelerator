@@ -58,6 +58,7 @@ This module is designed in alignment with MDAA security/compliance principles an
   - Runtimes deployed in VPC mode with no public internet access unless explicitly configured via VPC routing
   - JWT authentication (custom or standard) controls runtime endpoint access
 - **Inbound Authorization**:
+  - A `customJwtAuthorizer` must restrict accepted tokens by audience or client; one with only a `discoveryUrl` fails at synth, and the `cognito` path supplies the created app client as the audience (see [Inbound Authorization](#inbound-authorization))
   - An MDAA-created Cognito pool requires MFA by default, enables threat protection, requires an 8+ character mixed-class password, restricts user creation to administrators, and limits account recovery to email (see [Inbound Authorization](#inbound-authorization))
   - Required MFA obliges each user to register a TOTP authenticator before their first token — see [MFA enrolment](#mfa-enrolment), and set `mfa: optional` for callers with no human present to enrol
   - Tokens default to a 15-minute lifetime rather than Cognito's 60-minute default, and the refresh token is bound to 1 day rather than Cognito's 30, so a leaked token of either kind has a comparable revocation gap
@@ -265,7 +266,7 @@ Specifying both fails at synth; so does specifying neither.
 
 ### Bring your own IdP: `discoveryUrl`
 
-MDAA creates no Cognito resources and passes your values through:
+MDAA creates no Cognito resources and passes your values through. Set `allowedAudience` (the `aud` claim: ID tokens, or access tokens from IdPs that set `aud`) and/or `allowedClients` (the `client_id` claim, for example Cognito access tokens) alongside `discoveryUrl`, or synth fails: AgentCore requires at least one claim restriction.
 
 ```yaml
 authorizerConfiguration:

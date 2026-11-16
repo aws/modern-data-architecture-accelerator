@@ -221,6 +221,12 @@ describe('BedrockAgentcoreRuntimeL3Construct Cognito authorizer', () => {
       });
     });
 
+    test('should fail synth when neither allowedAudience nor allowedClients is set', () => {
+      expect(() => buildConstruct({ customJwtAuthorizer: { discoveryUrl: USER_DISCOVERY_URL } })).toThrow(
+        /must restrict which tokens it accepts/,
+      );
+    });
+
     test('should still support allowedClients for access-token callers', () => {
       buildConstruct({
         customJwtAuthorizer: { discoveryUrl: USER_DISCOVERY_URL, allowedClients: ['my-client'] },

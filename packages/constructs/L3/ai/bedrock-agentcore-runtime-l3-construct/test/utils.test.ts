@@ -173,14 +173,23 @@ describe('bedrock-agentcore-runtime-utils', () => {
       const result = buildAuthorizerConfiguration({
         jwtAuthorizer: {
           discoveryUrl: 'https://example.com/.well-known/openid-configuration',
+          allowedAudience: ['aud1'],
         },
       });
 
       expect(result).toEqual({
         customJwtAuthorizer: {
           discoveryUrl: 'https://example.com/.well-known/openid-configuration',
+          allowedAudience: ['aud1'],
         },
       });
+    });
+
+    it.each([
+      ['customJwtAuthorizer', { customJwtAuthorizer: { discoveryUrl: VALID_DISCOVERY_URL } }],
+      ['the deprecated jwtAuthorizer alias', { jwtAuthorizer: { discoveryUrl: VALID_DISCOVERY_URL } }],
+    ])('should throw when %s on the discoveryUrl path has no token restriction', (_name, config) => {
+      expect(() => buildAuthorizerConfiguration(config)).toThrow(/must restrict which tokens it accepts/);
     });
 
     it('should throw error for invalid discovery URL pattern', () => {
@@ -252,6 +261,33 @@ describe('bedrock-agentcore-runtime-utils', () => {
           allowedClients: undefined,
         },
       });
+    });
+
+    it.each([
+      ['allowedAudience', { allowedAudience: ['ok', ''] }],
+      ['allowedClients', { allowedClients: [''] }],
+    ])('should reject a blank %s entry on the discoveryUrl path', (field, lists) => {
+      const index = field === 'allowedAudience' ? 1 : 0;
+      expect(() =>
+        buildAuthorizerConfiguration({ customJwtAuthorizer: { discoveryUrl: VALID_DISCOVERY_URL, ...lists } }),
+      ).toThrow(`"${field}[${index}]" must be a non-blank string`);
+    });
+
+    it('should report a conflicting IdP source before a blank entry', () => {
+      expect(() =>
+        buildAuthorizerConfiguration({
+          customJwtAuthorizer: { discoveryUrl: VALID_DISCOVERY_URL, cognito: {}, allowedAudience: [''] },
+        }),
+      ).toThrow(/accepts either discoveryUrl or cognito, not both/);
+    });
+
+    it('should report a blank user audience at its configured index on the cognito path', () => {
+      expect(() =>
+        buildAuthorizerConfiguration(
+          { customJwtAuthorizer: { cognito: {}, allowedAudience: [''] } },
+          FAKE_COGNITO_AUTH as unknown as AgentcoreCognitoAuth,
+        ),
+      ).toThrow('"allowedAudience[0]" must be a non-blank string');
     });
 
     it('should prepend the created client to additional configured audiences', () => {

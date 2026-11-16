@@ -92,6 +92,16 @@ describe('BedrockAgentcoreGatewayL3Construct Exception Tests', () => {
     ).toThrow(/DiscoveryUrl must match pattern/);
   });
 
+  test('JWT with no token restriction throws at synth', () => {
+    expect(
+      build({
+        authorizerConfiguration: {
+          customJwt: { discoveryUrl: 'https://example.com/.well-known/openid-configuration' },
+        },
+      }),
+    ).toThrow(/must restrict which tokens it accepts/);
+  });
+
   test('more than 2 interceptors throws', () => {
     expect(
       build({

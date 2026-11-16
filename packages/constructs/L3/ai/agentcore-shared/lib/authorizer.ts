@@ -29,11 +29,15 @@ export type AuthorizerType = 'CUSTOM_JWT' | 'AWS_IAM';
  * so a built object (see {@link buildCustomJwtAuthorizer}) is assignable to either L1's typed
  * authorizer property.
  *
+ * At least one of `allowedAudience` or `allowedClients` is required. AgentCore checks every
+ * restriction that is configured, so a token must satisfy all of them.
+ *
  * Use cases: JWT authentication, OIDC integration, token validation
  *
  * AWS: AWS::BedrockAgentCore::{Runtime,Gateway} CustomJWTAuthorizerConfiguration
  *
- * Validation: discoveryUrl required and must end with /.well-known/openid-configuration
+ * Validation: discoveryUrl required and must end with /.well-known/openid-configuration; at least
+ * one of allowedAudience or allowedClients
  */
 export interface CustomJwtAuthorizerProperty {
   /**
@@ -47,23 +51,27 @@ export interface CustomJwtAuthorizerProperty {
    **/
   readonly discoveryUrl: string;
   /**
-   * Allowed audience values validated against the token `aud` claim.
+   * Allowed audience values validated against the token `aud` claim. Use for ID tokens, and for
+   * access tokens from IdPs that set `aud`.
    *
    * Use cases: audience validation, access restriction
    *
    * AWS: CustomJWTAuthorizerConfiguration AllowedAudience
    *
-   * Validation: Optional; String[]
+   * Validation: Optional; String[]; at least one of allowedAudience / allowedClients required (empty
+   * list = unset); entries non-blank
    **/
   readonly allowedAudience?: string[];
   /**
-   * Allowed client IDs validated against the token `client_id` claim.
+   * Allowed client IDs validated against the token `client_id` claim. Use for Cognito access
+   * tokens, which carry the app client in `client_id` and have no `aud` claim.
    *
    * Use cases: client filtering, access control
    *
    * AWS: CustomJWTAuthorizerConfiguration AllowedClients
    *
-   * Validation: Optional; String[]
+   * Validation: Optional; String[]; at least one of allowedAudience / allowedClients required (empty
+   * list = unset); entries non-blank
    **/
   readonly allowedClients?: string[];
 }
@@ -107,9 +115,11 @@ export function resolveAuthorizerType(config?: AgentcoreAuthorizerConfigProperty
 
 /**
  * Validates a shared Custom JWT authorizer configuration: `discoveryUrl` is required and must end
- * with `/.well-known/openid-configuration`. (`allowedAudience` / `allowedClients` are optional.)
+ * with `/.well-known/openid-configuration`, and at least one of `allowedAudience` /
+ * `allowedClients` must be set with non-blank entries (an empty list counts as unset). AgentCore
+ * rejects an authorizer with no claim rule at deploy; this fails the same config at synth.
  *
- * @throws Error if discoveryUrl is missing or does not match the OIDC discovery URL pattern
+ * @throws Error if discoveryUrl is missing or malformed, no token restriction is set, or an entry is blank
  */
 export function validateCustomJwtAuthorizer(jwtConfig: CustomJwtAuthorizerProperty): void {
   if (!jwtConfig.discoveryUrl) {
@@ -117,6 +127,34 @@ export function validateCustomJwtAuthorizer(jwtConfig: CustomJwtAuthorizerProper
   }
   if (!DISCOVERY_URL_PATTERN.test(jwtConfig.discoveryUrl)) {
     throw new Error(String.raw`DiscoveryUrl must match pattern: ^.+/\.well-known/openid-configuration$`);
+  }
+  validateJwtRestrictionEntries(jwtConfig.allowedAudience, jwtConfig.allowedClients);
+  if (!jwtConfig.allowedAudience?.length && !jwtConfig.allowedClients?.length) {
+    throw new Error(
+      'CustomJwt authorizer must restrict which tokens it accepts: set allowedAudience (validated against ' +
+        'the token aud claim, e.g. ID tokens) and/or allowedClients (validated against the client_id claim, ' +
+        'e.g. Cognito access tokens).',
+    );
+  }
+}
+
+/**
+ * Validates that every `allowedAudience` / `allowedClients` entry is a non-blank string. Exported so
+ * the Runtime can check the user's own lists before it adds the MDAA-created Cognito client, keeping
+ * reported indexes aligned with the configured lists.
+ *
+ * @throws Error naming the first blank entry
+ */
+export function validateJwtRestrictionEntries(allowedAudience?: string[], allowedClients?: string[]): void {
+  validateNonBlankEntries(allowedAudience, 'allowedAudience');
+  validateNonBlankEntries(allowedClients, 'allowedClients');
+}
+
+// Loose input types: YAML and jsii callers can pass null lists or non-string entries.
+function validateNonBlankEntries(values: readonly unknown[] | null | undefined, fieldName: string): void {
+  const blankIndex = (values ?? []).findIndex(value => typeof value !== 'string' || value.trim().length === 0);
+  if (blankIndex >= 0) {
+    throw new Error(`CustomJwt authorizer "${fieldName}[${blankIndex}]" must be a non-blank string.`);
   }
 }
 

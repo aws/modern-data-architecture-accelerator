@@ -70,8 +70,10 @@ const gateway = new BedrockAgentcoreGatewayL3Construct(this, 'MyGateway', {
 ### JWT Authorizer
 
 - `discoveryUrl`: OIDC discovery URL (required; must end with `/.well-known/openid-configuration`)
-- `allowedAudience`: Array of allowed audience values (optional)
-- `allowedClients`: Array of allowed client IDs (optional)
+- `allowedAudience`: Array of allowed values for the token `aud` claim
+- `allowedClients`: Array of allowed values for the token `client_id` claim
+
+At least one of `allowedAudience` or `allowedClients` is required; a config with only `discoveryUrl` fails at synth (AgentCore would otherwise reject it at deploy). If both are set, a token must satisfy both.
 
 The `customJwt` shape is shared with the AgentCore Runtime module (`@aws-mdaa/agentcore-shared`). OAuth scope gating (`allowedScopes`) and custom-claim matching (`customClaims`) are not currently exposed; they are tracked as a follow-up to add to both modules together.
 
@@ -206,7 +208,7 @@ Note: in a KMS key policy, `Resource: "*"` means "this key" (the key the policy 
 
 Inbound authorization is set via the optional `authorizerConfiguration` object (shared with the AgentCore Runtime module). Provide `customJwt`, or omit it (or the whole `authorizerConfiguration`) to fall back to AWS IAM:
 
-- `customJwt`: validates inbound JWTs against the configured OIDC provider, with optional audience and client matching. Maps to AWS `authorizerType: CUSTOM_JWT`.
+- `customJwt`: validates inbound JWTs against the configured OIDC provider, with audience and/or client matching (at least one is required). Maps to AWS `authorizerType: CUSTOM_JWT`.
 - omitted: callers authorize with IAM SigV4; no configuration is needed. Maps to AWS `authorizerType: AWS_IAM`.
 
 ```yaml

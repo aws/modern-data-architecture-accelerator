@@ -755,6 +755,25 @@ describe('BedrockAgentcoreHarnessL3Construct Unit Tests', () => {
       });
     });
 
+    test('should throw when the JWT authorizer has no token restriction', () => {
+      const constructProps: BedrockAgentcoreHarnessL3ConstructProps = {
+        harnessName: 'open-jwt-harness',
+        modelId: 'anthropic.claude-sonnet-4-6-20250514-v1:0',
+        systemPrompt: 'Be concise.',
+        authorizerConfiguration: {
+          customJwt: { discoveryUrl: 'https://example.com/.well-known/openid-configuration', allowedAudience: [] },
+        },
+        networkConfiguration: NET,
+        kmsKey,
+        naming: testApp.naming,
+        roleHelper,
+      };
+
+      expect(() => {
+        new BedrockAgentcoreHarnessL3Construct(testApp.testStack, 'open-jwt-harness-construct', constructProps);
+      }).toThrow(/must restrict which tokens it accepts/);
+    });
+
     test('should throw for an invalid discovery URL', () => {
       const constructProps: BedrockAgentcoreHarnessL3ConstructProps = {
         harnessName: 'invalid-jwt-harness',

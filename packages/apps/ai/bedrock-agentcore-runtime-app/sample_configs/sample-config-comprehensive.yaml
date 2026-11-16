@@ -88,10 +88,12 @@ authorizerConfiguration:
     # OIDC discovery URL for JWT token validation. Must end with
     # /.well-known/openid-configuration.
     discoveryUrl: 'https://cognito-idp.{{region}}.amazonaws.com/{{region}}_test/.well-known/openid-configuration'
-    # (Optional) Allowed audience values for JWT token validation
+    # With discoveryUrl, set at least one of allowedAudience /
+    # allowedClients.
+    # Allowed audience values for JWT token validation
     allowedAudience:
       - 'test-client-id'
-    # (Optional) Allowed client IDs for JWT token validation
+    # Allowed client IDs for JWT token validation
     allowedClients:
       - 'test-client-app-1'
       - 'test-client-app-2'

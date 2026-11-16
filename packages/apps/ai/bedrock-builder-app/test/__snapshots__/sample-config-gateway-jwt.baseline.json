@@ -1289,6 +1289,9 @@
       "Properties": {
         "AuthorizerConfiguration": {
           "CustomJWTAuthorizer": {
+            "AllowedClients": [
+              "reports-client"
+            ],
             "DiscoveryUrl": "https://example.com/.well-known/openid-configuration"
           }
         },

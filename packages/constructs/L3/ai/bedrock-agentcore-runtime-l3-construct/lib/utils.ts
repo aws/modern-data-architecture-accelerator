@@ -9,6 +9,7 @@ import {
   buildAgentcoreVpcNetworkConfiguration,
   buildCustomJwtAuthorizer,
   validateAgentcoreVpcNetworkMembers,
+  validateJwtRestrictionEntries,
 } from '@aws-mdaa/agentcore-shared';
 import { aws_bedrockagentcore as bedrockagentcore } from 'aws-cdk-lib';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
@@ -85,7 +86,10 @@ export function resolveJwtAuthorizerConfig(
  * half-built authorizer, and reported against `customJwtAuthorizer` regardless of which
  * alias supplied the config, since that is the field new configs should use.
  *
- * @throws Error if both or neither of discoveryUrl and cognito are configured
+ * Blank `allowedAudience` / `allowedClients` entries are rejected here, before the cognito path
+ * prepends the created client, so the reported index matches the configured list.
+ *
+ * @throws Error if both or neither of discoveryUrl and cognito are configured, or an entry is blank
  */
 export function validateJwtAuthorizerIdpSource(jwtConfig: CustomJwtAuthorizerProperty): void {
   if (jwtConfig.discoveryUrl && jwtConfig.cognito) {
@@ -114,6 +118,8 @@ export function validateJwtAuthorizerIdpSource(jwtConfig: CustomJwtAuthorizerPro
         'hand-configured allowedClients for access-token callers.',
     );
   }
+  // Entry contents are checked after the config shape, so a structural mistake is reported first.
+  validateJwtRestrictionEntries(jwtConfig.allowedAudience, jwtConfig.allowedClients);
 }
 
 /**

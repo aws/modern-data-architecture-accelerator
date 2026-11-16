@@ -1103,11 +1103,11 @@ AWS: CustomJWTAuthorizer
 
 Validation: Optional; valid CustomJwtAuthorizerProperty when present
 
-| Property                                                                                               | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                       |
-| ------------------------------------------------------------------------------------------------------ | ------- | --------------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [allowedAudience](#gateways_additionalProperties_authorizerConfiguration_customJwt_allowedAudience ) | No      | array of string | No         | -          | Allowed audience values validated against the token \`aud\` claim.<br /><br />Use cases: audience validation, access restriction<br /><br />AWS: CustomJWTAuthorizerConfiguration AllowedAudience<br /><br />Validation: Optional; String[]                                             |
-| - [allowedClients](#gateways_additionalProperties_authorizerConfiguration_customJwt_allowedClients )   | No      | array of string | No         | -          | Allowed client IDs validated against the token \`client_id\` claim.<br /><br />Use cases: client filtering, access control<br /><br />AWS: CustomJWTAuthorizerConfiguration AllowedClients<br /><br />Validation: Optional; String[]                                                    |
-| + [discoveryUrl](#gateways_additionalProperties_authorizerConfiguration_customJwt_discoveryUrl )       | No      | string          | No         | -          | OIDC discovery URL used to validate JWTs.<br /><br />Use cases: OIDC integration, token validation, identity provider connection<br /><br />AWS: CustomJWTAuthorizerConfiguration DiscoveryUrl<br /><br />Validation: Required; String; must end with /.well-known/openid-configuration |
+| Property                                                                                               | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ------------------------------------------------------------------------------------------------------ | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [allowedAudience](#gateways_additionalProperties_authorizerConfiguration_customJwt_allowedAudience ) | No      | array of string | No         | -          | Allowed audience values validated against the token \`aud\` claim. Use for ID tokens, and for<br />access tokens from IdPs that set \`aud\`.<br /><br />Use cases: audience validation, access restriction<br /><br />AWS: CustomJWTAuthorizerConfiguration AllowedAudience<br /><br />Validation: Optional; String[]; at least one of allowedAudience / allowedClients required (empty<br />list = unset); entries non-blank                           |
+| - [allowedClients](#gateways_additionalProperties_authorizerConfiguration_customJwt_allowedClients )   | No      | array of string | No         | -          | Allowed client IDs validated against the token \`client_id\` claim. Use for Cognito access<br />tokens, which carry the app client in \`client_id\` and have no \`aud\` claim.<br /><br />Use cases: client filtering, access control<br /><br />AWS: CustomJWTAuthorizerConfiguration AllowedClients<br /><br />Validation: Optional; String[]; at least one of allowedAudience / allowedClients required (empty<br />list = unset); entries non-blank |
+| + [discoveryUrl](#gateways_additionalProperties_authorizerConfiguration_customJwt_discoveryUrl )       | No      | string          | No         | -          | OIDC discovery URL used to validate JWTs.<br /><br />Use cases: OIDC integration, token validation, identity provider connection<br /><br />AWS: CustomJWTAuthorizerConfiguration DiscoveryUrl<br /><br />Validation: Required; String; must end with /.well-known/openid-configuration                                                                                                                                                                 |
 
 ###### <a name="gateways_additionalProperties_authorizerConfiguration_customJwt_allowedAudience"></a>3.1.1.1.1. Property `root > gateways > additionalProperties > authorizerConfiguration > customJwt > allowedAudience`
 
@@ -1116,13 +1116,15 @@ Validation: Optional; valid CustomJwtAuthorizerProperty when present
 | **Type**     | `array of string` |
 | **Required** | No                |
 
-**Description:** Allowed audience values validated against the token `aud` claim.
+**Description:** Allowed audience values validated against the token `aud` claim. Use for ID tokens, and for
+access tokens from IdPs that set `aud`.
 
 Use cases: audience validation, access restriction
 
 AWS: CustomJWTAuthorizerConfiguration AllowedAudience
 
-Validation: Optional; String[]
+Validation: Optional; String[]; at least one of allowedAudience / allowedClients required (empty
+list = unset); entries non-blank
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -1150,13 +1152,15 @@ Validation: Optional; String[]
 | **Type**     | `array of string` |
 | **Required** | No                |
 
-**Description:** Allowed client IDs validated against the token `client_id` claim.
+**Description:** Allowed client IDs validated against the token `client_id` claim. Use for Cognito access
+tokens, which carry the app client in `client_id` and have no `aud` claim.
 
 Use cases: client filtering, access control
 
 AWS: CustomJWTAuthorizerConfiguration AllowedClients
 
-Validation: Optional; String[]
+Validation: Optional; String[]; at least one of allowedAudience / allowedClients required (empty
+list = unset); entries non-blank
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |

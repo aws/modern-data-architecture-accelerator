@@ -83,9 +83,11 @@ const runtime = new BedrockAgentcoreRuntimeL3Construct(this, 'MyRuntime', {
 Note: All runtimes are deployed in VPC mode for security. The network mode is automatically set to VPC.
 
 ### JWT Authorizer
-- `discoveryUrl`: OIDC discovery URL (required)
-- `allowedAudience`: Array of allowed audience values
-- `allowedClients`: Array of allowed client IDs
+- `discoveryUrl`: OIDC discovery URL (required unless `cognito` is set)
+- `allowedAudience`: Array of allowed values for the token `aud` claim
+- `allowedClients`: Array of allowed values for the token `client_id` claim
+
+With `discoveryUrl`, at least one of `allowedAudience` or `allowedClients` is required; a config without one fails at synth (AgentCore would otherwise reject it at deploy). The `cognito` path supplies the created app client as `allowedAudience`.
 
 ### Lifecycle Configuration
 - `idleRuntimeSessionTimeout`: Idle timeout in seconds (60-28800)

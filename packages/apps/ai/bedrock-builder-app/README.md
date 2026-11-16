@@ -64,6 +64,8 @@ This module is designed in alignment with MDAA security/compliance principles an
   - No public connectivity to VPC-bound resources
   - AgentCore Harnesses run in mandatory VPC-only network mode, with module-managed VPC endpoints and a per-harness endpoint client security group when a harness references a `vpcEndpoints` set
   - Module-managed VPC endpoints are a private network path, not an authorization boundary - the supporting service endpoints carry the AWS default policy, which permits their service in any account, so the harness execution role stays the control on what a session can reach. Created AgentCore Gateway, S3 image-layer and `bedrock-agent-runtime` endpoints carry scoped policies; the `bedrock-agent-runtime` policy allows only `bedrock:Retrieve` on the knowledge bases the set's connectors query
+- **Inbound Authorization**:
+  - A CUSTOM_JWT gateway or harness authorizer must set `allowedAudience` and/or `allowedClients`; one with only a discovery URL fails at synth (see the [Gateway L3 README](../../../constructs/L3/ai/bedrock-agentcore-gateway-l3-construct/README.md#jwt-authorizer) and the [Harness L3 README](../../../constructs/L3/ai/bedrock-agentcore-harness-l3-construct/README.md#features))
 - **Content Safety**:
   - Guardrails provide content filters and contextual grounding checks
   - Denied topics keep a guardrail's application within scope, and word filters block custom terms and profanity

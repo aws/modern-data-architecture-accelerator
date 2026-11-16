@@ -1232,17 +1232,17 @@
         },
         "CustomJwtAuthorizerProperty": {
             "additionalProperties": false,
-            "description": "Custom JWT (OIDC) inbound authorizer configuration shared by the AgentCore Runtime and Gateway\nL3 constructs. The field set matches both services' `CustomJWTAuthorizerConfiguration` exactly,\nso a built object (see {@link buildCustomJwtAuthorizer}) is assignable to either L1's typed\nauthorizer property.\n\nUse cases: JWT authentication, OIDC integration, token validation\n\nAWS: AWS::BedrockAgentCore::{Runtime,Gateway} CustomJWTAuthorizerConfiguration\n\nValidation: discoveryUrl required and must end with /.well-known/openid-configuration",
+            "description": "Custom JWT (OIDC) inbound authorizer configuration shared by the AgentCore Runtime and Gateway\nL3 constructs. The field set matches both services' `CustomJWTAuthorizerConfiguration` exactly,\nso a built object (see {@link buildCustomJwtAuthorizer}) is assignable to either L1's typed\nauthorizer property.\n\nAt least one of `allowedAudience` or `allowedClients` is required. AgentCore checks every\nrestriction that is configured, so a token must satisfy all of them.\n\nUse cases: JWT authentication, OIDC integration, token validation\n\nAWS: AWS::BedrockAgentCore::{Runtime,Gateway} CustomJWTAuthorizerConfiguration\n\nValidation: discoveryUrl required and must end with /.well-known/openid-configuration; at least\none of allowedAudience or allowedClients",
             "properties": {
                 "allowedAudience": {
-                    "description": "Allowed audience values validated against the token `aud` claim.\n\nUse cases: audience validation, access restriction\n\nAWS: CustomJWTAuthorizerConfiguration AllowedAudience\n\nValidation: Optional; String[]",
+                    "description": "Allowed audience values validated against the token `aud` claim. Use for ID tokens, and for\naccess tokens from IdPs that set `aud`.\n\nUse cases: audience validation, access restriction\n\nAWS: CustomJWTAuthorizerConfiguration AllowedAudience\n\nValidation: Optional; String[]; at least one of allowedAudience / allowedClients required (empty\nlist = unset); entries non-blank",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "allowedClients": {
-                    "description": "Allowed client IDs validated against the token `client_id` claim.\n\nUse cases: client filtering, access control\n\nAWS: CustomJWTAuthorizerConfiguration AllowedClients\n\nValidation: Optional; String[]",
+                    "description": "Allowed client IDs validated against the token `client_id` claim. Use for Cognito access\ntokens, which carry the app client in `client_id` and have no `aud` claim.\n\nUse cases: client filtering, access control\n\nAWS: CustomJWTAuthorizerConfiguration AllowedClients\n\nValidation: Optional; String[]; at least one of allowedAudience / allowedClients required (empty\nlist = unset); entries non-blank",
                     "items": {
                         "type": "string"
                     },

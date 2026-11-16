@@ -226,11 +226,15 @@ export interface LifecycleConfigurationProperty {
  * `discoveryUrl` for an IdP you already run, or `cognito` to have MDAA create and
  * configure one.
  *
+ * On the `discoveryUrl` path at least one of `allowedAudience` or `allowedClients` is also
+ * required; the `cognito` path supplies one (the created app client as `allowedAudience`).
+ *
  * Use cases: JWT authentication, OIDC integration, token validation, identity provider connection
  *
  * AWS: Bedrock AgentCore Runtime JWT authorizer
  *
- * Validation: exactly one of discoveryUrl or cognito; discoveryUrl must end with /.well-known/openid-configuration
+ * Validation: exactly one of discoveryUrl or cognito; discoveryUrl must end with /.well-known/openid-configuration;
+ * at least one of allowedAudience or allowedClients on the discoveryUrl path
  */
 export interface CustomJwtAuthorizerProperty {
   /**
@@ -261,7 +265,8 @@ export interface CustomJwtAuthorizerProperty {
    **/
   readonly cognito?: CognitoAuthProperty;
   /**
-   * Allowed audience values for JWT token validation.
+   * Allowed audience values for JWT token validation. Use for ID tokens, and for access tokens
+   * from IdPs that set `aud`.
    *
    * On the `cognito` path MDAA always adds the app client it creates, so values set here
    * are additional accepted audiences rather than a replacement.
@@ -270,11 +275,13 @@ export interface CustomJwtAuthorizerProperty {
    *
    * AWS: JWT audience claim validation
    *
-   * Validation: Optional; String[]; validates against aud claim
+   * Validation: Optional; String[]; validates against aud claim; on the discoveryUrl path at least
+   * one of allowedAudience / allowedClients required (empty list = unset); entries non-blank
    **/
   readonly allowedAudience?: string[];
   /**
-   * Allowed client IDs for JWT token validation.
+   * Allowed client IDs for JWT token validation. Use for Cognito access tokens, which carry the
+   * app client in `client_id` and have no `aud` claim.
    *
    * Only valid on the `discoveryUrl` path. Combining it with `cognito` is rejected at
    * synth: AgentCore validates every claim filter configured, and MDAA sets
@@ -286,7 +293,8 @@ export interface CustomJwtAuthorizerProperty {
    *
    * AWS: JWT client_id claim validation
    *
-   * Validation: Optional; String[]; validates against client_id claim
+   * Validation: Optional; String[]; validates against client_id claim; on the discoveryUrl path at
+   * least one of allowedAudience / allowedClients required (empty list = unset); entries non-blank
    **/
   readonly allowedClients?: string[];
 }

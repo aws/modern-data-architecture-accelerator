@@ -999,6 +999,7 @@ harnesses:
       customJwt:
         # Must end with /.well-known/openid-configuration
         discoveryUrl: 'https://example.com/.well-known/openid-configuration'
+        # At least one of allowedAudience / allowedClients is required.
         allowedAudience:
           - 'support-clients'
         allowedClients:
