@@ -4,7 +4,7 @@
  */
 
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Match, Template } from 'aws-cdk-lib/assertions';
+import { Annotations, Match, Template } from 'aws-cdk-lib/assertions';
 import { Stack } from 'aws-cdk-lib';
 import { DomainConfig, DomainConfigProps } from '../lib/domain_config';
 
@@ -332,6 +332,113 @@ describe('DomainConfig Tests', () => {
     });
   });
 
+  describe('Custom resource response size limiting', () => {
+    test('should only request domain unit paths and blueprint names actually used', () => {
+      const domainConfig = new DomainConfig(testStack, 'scoped-request-config', {
+        ssmParamBase: '/test-ssm',
+        naming: testApp.naming,
+      });
+
+      domainConfig.getDomainUnitId('/Sales');
+      domainConfig.getDomainUnitId('/Sales/Marketing');
+      domainConfig.getBlueprintId('Tooling');
+
+      const template = Template.fromStack(testStack);
+      template.hasResourceProperties('Custom::DomainConfig', {
+        domain_unit_paths: ['domain_unit_id/root/Sales', 'domain_unit_id/root/Sales/Marketing'],
+        blueprint_names: ['blueprint_id/Tooling'],
+      });
+    });
+
+    test('should request each domain unit path only once even when looked up multiple times', () => {
+      const domainConfig = new DomainConfig(testStack, 'dedup-request-config', {
+        ssmParamBase: '/test-ssm',
+        naming: testApp.naming,
+      });
+
+      domainConfig.getDomainUnitId('/Sales');
+      domainConfig.getDomainUnitId('/Sales');
+      domainConfig.getDomainUnitId('/Sales/Marketing');
+
+      const template = Template.fromStack(testStack);
+      template.hasResourceProperties('Custom::DomainConfig', {
+        domain_unit_paths: ['domain_unit_id/root/Sales', 'domain_unit_id/root/Sales/Marketing'],
+      });
+    });
+
+    test('should request empty lists when no domain units or blueprints are looked up', () => {
+      new DomainConfig(testStack, 'no-lookups-config', {
+        ssmParamBase: '/test-ssm',
+        naming: testApp.naming,
+      });
+
+      const template = Template.fromStack(testStack);
+      template.hasResourceProperties('Custom::DomainConfig', {
+        domain_unit_paths: [],
+        blueprint_names: [],
+      });
+    });
+
+    test('should not warn when the estimated response size is just under the warning threshold', () => {
+      // 55 domain units estimates to 3470 bytes, just under the 85% warning threshold (3481.6)
+      // of the 4096-byte CFN limit - close enough that removing the 0.85 margin would flip this.
+      const domainConfig = new DomainConfig(testStack, 'near-threshold-no-warn-config', {
+        ssmParamBase: '/test-ssm',
+        naming: testApp.naming,
+      });
+
+      for (let i = 0; i < 55; i++) {
+        domainConfig.getDomainUnitId(`/division-unit-${i}`);
+      }
+
+      Template.fromStack(testStack);
+      const annotations = Annotations.fromStack(testStack);
+      annotations.hasNoWarning('*', Match.stringLikeRegexp('.*Response object is too long.*'));
+    });
+
+    test('should warn once requests cross the warning threshold but stay under the hard CFN limit', () => {
+      // 56 domain units estimates to 3526 bytes: over the 3481.6 warning threshold but still
+      // well under the 4096-byte hard limit, proving the warning fires before the limit is hit.
+      const domainConfig = new DomainConfig(testStack, 'near-threshold-warn-config', {
+        ssmParamBase: '/test-ssm',
+        naming: testApp.naming,
+      });
+
+      for (let i = 0; i < 56; i++) {
+        domainConfig.getDomainUnitId(`/division-unit-${i}`);
+      }
+
+      Template.fromStack(testStack);
+      const annotations = Annotations.fromStack(testStack);
+      annotations.hasWarning(
+        '*',
+        Match.stringLikeRegexp(
+          '.*DomainConfig requests 56 domain unit path\\(s\\) and 0 blueprint name\\(s\\), an estimated 3526 bytes.*Response object is too long.*',
+        ),
+      );
+    });
+
+    test('should warn when blueprint lookups alone push requests over the warning threshold', () => {
+      // 70 blueprints alone estimates to 3540 bytes, over the warning threshold - if
+      // blueprintBytes were dropped from the estimate, this would stay far under it and fail.
+      const domainConfig = new DomainConfig(testStack, 'blueprint-only-warn-config', {
+        ssmParamBase: '/test-ssm',
+        naming: testApp.naming,
+      });
+
+      for (let i = 0; i < 70; i++) {
+        domainConfig.getBlueprintId(`Blueprint-${i}`);
+      }
+
+      Template.fromStack(testStack);
+      const annotations = Annotations.fromStack(testStack);
+      annotations.hasWarning(
+        '*',
+        Match.stringLikeRegexp('.*DomainConfig requests 0 domain unit path\\(s\\) and 70 blueprint name\\(s\\).*'),
+      );
+    });
+  });
+
   describe('Domain KMS Usage Policy', () => {
     test('should include kms:GenerateDataKey in the custom resource handler policy', () => {
       const kmsKeyArn = 'arn:aws:kms:us-east-1:xxxxxxxxxxxxx:key/12345678-1234-1234-1234-xxxxxxxxxxxxx';
@@ -363,6 +470,35 @@ describe('DomainConfig Tests', () => {
           ]),
         },
       });
+    });
+  });
+
+  describe('Custom resource handler DataZone permissions', () => {
+    test('should grant only ListDomainUnitsForParent and ListEnvironmentBlueprints, not the removed project-list actions', () => {
+      new DomainConfig(testStack, 'DataZonePermissionsConfig', {
+        ssmParamBase: '/test-ssm',
+        naming: testApp.naming,
+      });
+
+      const template = Template.fromStack(testStack);
+      template.hasResourceProperties('AWS::IAM::Policy', {
+        PolicyDocument: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Action: Match.arrayEquals(['datazone:ListDomainUnitsForParent', 'datazone:ListEnvironmentBlueprints']),
+              Resource: '*',
+            }),
+          ]),
+        },
+      });
+
+      const policies = template.findResources('AWS::IAM::Policy');
+      const statements = Object.values(policies).flatMap(
+        policy => policy.Properties.PolicyDocument.Statement as { Action?: string | string[] }[],
+      );
+      const actions = statements.flatMap(statement => statement.Action ?? []);
+      expect(actions).not.toContain('datazone:ListProjectProfiles');
+      expect(actions).not.toContain('datazone:ListProjects');
     });
   });
 });

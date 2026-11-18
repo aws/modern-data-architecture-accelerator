@@ -54,9 +54,6 @@ class TestDomainConfig:
         """Test Create request with V2 domain."""
         mock_dz.get_domain.return_value = domain_response_v2
         mock_dz.list_domain_units_for_parent.return_value = {'items': []}
-        mock_dz.list_projects.return_value = {
-            'items': [{'name': 'project1', 'id': 'proj-123'}]
-        }
         mock_dz.list_environment_blueprints.return_value = {'items': []}
 
         response = domain_config.lambda_handler(create_event, lambda_context)
@@ -64,7 +61,12 @@ class TestDomainConfig:
         assert response['PhysicalResourceId'] == 'dzd_test123'
         assert response['Data']['name'] == 'test-domain'
         assert response['Data']['domainVersion'] == 'V2'
-        assert 'project_id/project1' in response['Data']
+        # project_id/*, arn and kmsKeyIdentifier are never read by any caller and must not be
+        # returned, since they only grow the response and risk the CFN 4096-byte response limit.
+        mock_dz.list_projects.assert_not_called()
+        assert 'arn' not in response['Data']
+        assert 'kmsKeyIdentifier' not in response['Data']
+        assert not any(key.startswith('project_id/') for key in response['Data'])
 
     @patch.object(domain_config, 'datazone_client')
     def test_lambda_handler_create_v1_domain(
@@ -83,6 +85,61 @@ class TestDomainConfig:
 
         assert response['Data']['domainVersion'] == 'V1'
         mock_dz.list_projects.assert_not_called()
+
+    @patch.object(domain_config, 'datazone_client')
+    def test_lambda_handler_filters_to_requested_domain_unit_paths(
+        self, mock_dz, domain_response_v2, lambda_context
+    ):
+        """When domain_unit_paths is supplied, only those keys are returned."""
+        event = {
+            "RequestType": "Create",
+            "ResourceProperties": {
+                "domain_id": "dzd_test123",
+                "domain_unit_paths": ["domain_unit_id/root/ChildUnit"],
+            },
+        }
+        mock_dz.get_domain.return_value = domain_response_v2
+        mock_dz.list_environment_blueprints.return_value = {'items': []}
+
+        def list_domain_units_side_effect(**kwargs):
+            parent_id = kwargs.get('parentDomainUnitIdentifier')
+            if parent_id == 'root-unit-123':
+                return {'items': [{'name': 'ChildUnit', 'id': 'child-unit-1'}]}
+            return {'items': []}
+
+        mock_dz.list_domain_units_for_parent.side_effect = list_domain_units_side_effect
+
+        response = domain_config.lambda_handler(event, lambda_context)
+
+        assert response['Data']['domain_unit_id/root/ChildUnit'] == 'child-unit-1'
+        assert 'domain_unit_id/root' not in response['Data']
+
+    @patch.object(domain_config, 'datazone_client')
+    def test_lambda_handler_filters_to_requested_blueprint_names(
+        self, mock_dz, create_event, domain_response_v2, lambda_context
+    ):
+        """When blueprint_names (full 'blueprint_id/<name>' keys) is supplied, only those keys are returned."""
+        event = {
+            "RequestType": "Create",
+            "ResourceProperties": {
+                "domain_id": "dzd_test123",
+                "blueprint_names": ["blueprint_id/ManagedBP"],
+            },
+        }
+        mock_dz.get_domain.return_value = domain_response_v2
+        mock_dz.list_domain_units_for_parent.return_value = {'items': []}
+
+        def list_blueprints_side_effect(**kwargs):
+            if kwargs.get('managed'):
+                return {'items': [{'name': 'ManagedBP', 'id': 'bp-managed'}]}
+            return {'items': [{'name': 'CustomBP', 'id': 'bp-custom'}]}
+
+        mock_dz.list_environment_blueprints.side_effect = list_blueprints_side_effect
+
+        response = domain_config.lambda_handler(event, lambda_context)
+
+        assert response['Data']['blueprint_id/ManagedBP'] == 'bp-managed'
+        assert 'blueprint_id/CustomBP' not in response['Data']
 
     @patch.object(domain_config, 'datazone_client')
     def test_lambda_handler_update(self, mock_dz, domain_response_v2, lambda_context):
@@ -125,9 +182,16 @@ class TestDomainConfig:
 
     @patch.object(domain_config, 'datazone_client')
     def test_environment_blueprints_returned(
-        self, mock_dz, create_event, domain_response_v2, lambda_context
+        self, mock_dz, domain_response_v2, lambda_context
     ):
-        """Test managed and unmanaged blueprints are returned."""
+        """Test managed and unmanaged blueprints are returned when requested."""
+        event = {
+            "RequestType": "Create",
+            "ResourceProperties": {
+                "domain_id": "dzd_test123",
+                "blueprint_names": ["blueprint_id/ManagedBP", "blueprint_id/CustomBP"],
+            },
+        }
         mock_dz.get_domain.return_value = domain_response_v2
         mock_dz.list_domain_units_for_parent.return_value = {'items': []}
         mock_dz.list_projects.return_value = {'items': []}
@@ -139,16 +203,23 @@ class TestDomainConfig:
 
         mock_dz.list_environment_blueprints.side_effect = list_blueprints_side_effect
 
-        response = domain_config.lambda_handler(create_event, lambda_context)
+        response = domain_config.lambda_handler(event, lambda_context)
 
         assert response['Data']['blueprint_id/ManagedBP'] == 'bp-managed'
         assert response['Data']['blueprint_id/CustomBP'] == 'bp-custom'
 
     @patch.object(domain_config, 'datazone_client')
     def test_nested_domain_units(
-        self, mock_dz, create_event, domain_response_v2, lambda_context
+        self, mock_dz, domain_response_v2, lambda_context
     ):
-        """Test nested domain units are returned."""
+        """Test nested domain units are returned when requested."""
+        event = {
+            "RequestType": "Create",
+            "ResourceProperties": {
+                "domain_id": "dzd_test123",
+                "domain_unit_paths": ["domain_unit_id/root", "domain_unit_id/root/ChildUnit"],
+            },
+        }
         mock_dz.get_domain.return_value = domain_response_v2
         mock_dz.list_projects.return_value = {'items': []}
         mock_dz.list_environment_blueprints.return_value = {'items': []}
@@ -161,10 +232,40 @@ class TestDomainConfig:
 
         mock_dz.list_domain_units_for_parent.side_effect = list_domain_units_side_effect
 
-        response = domain_config.lambda_handler(create_event, lambda_context)
+        response = domain_config.lambda_handler(event, lambda_context)
 
         assert response['Data']['domain_unit_id/root'] == 'root-unit-123'
         assert response['Data']['domain_unit_id/root/ChildUnit'] == 'child-unit-1'
+
+    @patch.object(domain_config, 'datazone_client')
+    def test_lambda_handler_absent_lists_return_no_keys(
+        self, mock_dz, create_event, domain_response_v2, lambda_context
+    ):
+        """When domain_unit_paths/blueprint_names are absent (e.g. a rollback to pre-fix
+        properties), no domain_unit_id/* or blueprint_id/* keys are returned, so the response
+        can't balloon back over the CFN 4096-byte limit."""
+        mock_dz.get_domain.return_value = domain_response_v2
+        mock_dz.list_projects.return_value = {'items': []}
+
+        def list_domain_units_side_effect(**kwargs):
+            parent_id = kwargs.get('parentDomainUnitIdentifier')
+            if parent_id == 'root-unit-123':
+                return {'items': [{'name': 'ChildUnit', 'id': 'child-unit-1'}]}
+            return {'items': []}
+
+        mock_dz.list_domain_units_for_parent.side_effect = list_domain_units_side_effect
+
+        def list_blueprints_side_effect(**kwargs):
+            if kwargs.get('managed'):
+                return {'items': [{'name': 'ManagedBP', 'id': 'bp-managed'}]}
+            return {'items': [{'name': 'CustomBP', 'id': 'bp-custom'}]}
+
+        mock_dz.list_environment_blueprints.side_effect = list_blueprints_side_effect
+
+        response = domain_config.lambda_handler(create_event, lambda_context)
+
+        assert not any(key.startswith('domain_unit_id/') for key in response['Data'])
+        assert not any(key.startswith('blueprint_id/') for key in response['Data'])
 
 
 class TestPaginatedList:

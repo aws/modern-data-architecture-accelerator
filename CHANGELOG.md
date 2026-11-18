@@ -27,6 +27,7 @@
 - Fixed the Bedrock Settings module reporting a deploy with a malformed configuration as successful, leaving invocation logging unconfigured. `Upgrade impact:` a malformed configuration now fails the deploy.
 - Fixed the Bedrock Settings module logging a URL that anyone able to read its logs could use to report a false result for its deployment.
 - Fixed the Data Lake module granting the LakeFormation role write and delete access to `lakeFormationLocations` entries set to `write: false`; they now get read-only access, as documented. `Upgrade impact:` on redeploy, the LakeFormation role and the principals it vends credentials to lose write and delete access to those locations.
+- Fixed the DataZone/SageMaker domain module failing to deploy with `Response object is too long.` once a domain accumulated enough domain units or blueprints. Synth now warns if a single stack's lookups are still likely to exceed the limit.
 
 ### General Changes
 

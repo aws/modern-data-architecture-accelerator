@@ -6,7 +6,7 @@
 import { MdaaConstructProps, MdaaStringParameter } from '@aws-mdaa/construct';
 import { MdaaCustomResource, MdaaCustomResourceProps } from '@aws-mdaa/custom-constructs';
 import { DECRYPT_ACTIONS } from '@aws-mdaa/kms-constructs';
-import { CfnParameter, Duration, Token } from 'aws-cdk-lib';
+import { Annotations, CfnParameter, Duration, Lazy, Token } from 'aws-cdk-lib';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { IStringParameter, ParameterTier, StringListParameter } from 'aws-cdk-lib/aws-ssm';
@@ -45,6 +45,14 @@ export interface DomainConfigProps extends MdaaConstructProps {
   readonly refresh?: boolean;
 }
 
+// Tracked outside the class, keyed by instance, rather than as instance fields: DomainConfig
+// is referenced as a property type across every module's config interface, and
+// typescript-json-schema (used for config-schema.json generation) does not respect TS
+// `private` on members of a class used that way - it would otherwise leak these bookkeeping
+// sets into every generated SCHEMA.md as if they were user-configurable properties.
+const requestedDomainUnitPathsByInstance = new WeakMap<DomainConfig, Set<string>>();
+const requestedBlueprintKeysByInstance = new WeakMap<DomainConfig, Set<string>>();
+
 export class DomainConfig extends Construct {
   readonly domainName: string;
   readonly domainVersion: string;
@@ -74,6 +82,17 @@ export class DomainConfig extends Construct {
 
   public static readonly SSM_PARAM_CUSTOM_RESOURCE_ROLE_NAME = 'custom_resource_role';
 
+  // CloudFormation's custom resource response limit, and rough byte-cost estimates used to warn
+  // before synth-time rather than let a deploy fail with "Response object is too long." The
+  // provider framework's own envelope accounts for part of the 4096-byte budget, and each
+  // returned domain unit/blueprint ID is a fixed ~14-character DataZone identifier. This is an
+  // approximation (actual JSON encoding overhead varies slightly), not an exact byte count.
+  private static readonly RESPONSE_SIZE_LIMIT_BYTES = 4096;
+  private static readonly RESPONSE_ENVELOPE_BYTES = 400;
+  private static readonly RESOURCE_ID_BYTES = 14;
+  // Warn before actually hitting the limit, so there's room to react before a deploy fails.
+  private static readonly RESPONSE_SIZE_WARNING_THRESHOLD = DomainConfig.RESPONSE_SIZE_LIMIT_BYTES * 0.85;
+
   public readonly props: DomainConfigProps;
   private readonly domainConfigCr: MdaaCustomResource;
 
@@ -82,6 +101,12 @@ export class DomainConfig extends Construct {
   public constructor(scope: Construct, id: string, props: DomainConfigProps) {
     super(scope, id);
     this.props = props;
+
+    // Accumulates the specific domain unit paths/blueprint names actually requested via
+    // getDomainUnitId()/getBlueprintId(), so the custom resource response only contains what's
+    // used instead of every unit/blueprint in the domain (avoids the CFN 4096-byte response limit).
+    requestedDomainUnitPathsByInstance.set(this, new Set<string>());
+    requestedBlueprintKeysByInstance.set(this, new Set<string>());
 
     this.ssmParamBase = props.ssmParamBase;
 
@@ -161,6 +186,7 @@ export class DomainConfig extends Construct {
     if (this.domainUnitIds?.[path]) {
       return this.domainUnitIds[path];
     } else {
+      requestedDomainUnitPathsByInstance.get(this)?.add(`domain_unit_id${path}`);
       return this.domainConfigCr.getAttString(`domain_unit_id${path}`);
     }
   }
@@ -169,7 +195,30 @@ export class DomainConfig extends Construct {
     if (this.blueprintIds[blueprintName]) {
       return this.blueprintIds[blueprintName];
     } else {
+      requestedBlueprintKeysByInstance.get(this)?.add(`blueprint_id/${blueprintName}`);
       return this.domainConfigCr.getAttString(`blueprint_id/${blueprintName}`);
+    }
+  }
+
+  // Called once all getDomainUnitId()/getBlueprintId() calls have been recorded (i.e. when the
+  // Lazy-resolved handlerProps are rendered at synth time), to warn if this stack's requests are
+  // likely to make the custom resource response exceed CloudFormation's 4096-byte limit.
+  private warnIfResponseSizeApproachesLimit(): void {
+    const requestedDomainUnitPaths = requestedDomainUnitPathsByInstance.get(this) ?? new Set<string>();
+    const requestedBlueprintKeys = requestedBlueprintKeysByInstance.get(this) ?? new Set<string>();
+    const entryBytes = (key: string) => key.length + DomainConfig.RESOURCE_ID_BYTES + 6; // quotes, colon, comma
+    const domainUnitBytes = Array.from(requestedDomainUnitPaths).reduce((sum, path) => sum + entryBytes(path), 0);
+    const blueprintBytes = Array.from(requestedBlueprintKeys).reduce((sum, key) => sum + entryBytes(key), 0);
+    const estimatedBytes = DomainConfig.RESPONSE_ENVELOPE_BYTES + domainUnitBytes + blueprintBytes;
+
+    if (estimatedBytes > DomainConfig.RESPONSE_SIZE_WARNING_THRESHOLD) {
+      Annotations.of(this).addWarning(
+        `DomainConfig requests ${requestedDomainUnitPaths.size} domain unit path(s) and ` +
+          `${requestedBlueprintKeys.size} blueprint name(s), an estimated ${estimatedBytes} bytes. The ` +
+          `CloudFormation custom resource response limit is ${DomainConfig.RESPONSE_SIZE_LIMIT_BYTES} bytes; ` +
+          `exceeding it fails the deployment with "Response object is too long." Reduce the number of domain ` +
+          `units/blueprints this stack looks up through this construct.`,
+      );
     }
   }
 
@@ -237,12 +286,7 @@ export class DomainConfig extends Construct {
       }),
       new PolicyStatement({
         resources: ['*'],
-        actions: [
-          'datazone:ListDomainUnitsForParent',
-          'datazone:ListProjectProfiles',
-          'datazone:ListProjects',
-          'datazone:ListEnvironmentBlueprints',
-        ],
+        actions: ['datazone:ListDomainUnitsForParent', 'datazone:ListEnvironmentBlueprints'],
       }),
       // GenerateDataKey is required for cross-account ListDomainUnitsForParent calls
       // against domains encrypted with a customer-managed KMS key.
@@ -262,11 +306,24 @@ export class DomainConfig extends Construct {
         {
           id: 'AwsSolutions-IAM5',
           reason:
-            'DataZone List operations (ListDomainUnitsForParent, ListProjectProfiles, ListProjects, ListEnvironmentBlueprints) do not support resource-level permissions.',
+            'DataZone List operations (ListDomainUnitsForParent, ListEnvironmentBlueprints) do not support ' +
+            'resource-level permissions ' +
+            '(https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html).',
         },
       ],
       handlerProps: {
         domain_id: domainId,
+        // Resolved at synth time, after getDomainUnitId()/getBlueprintId() calls from other
+        // constructs (made after this constructor returns) have populated these sets.
+        domain_unit_paths: Lazy.list({
+          produce: () => {
+            this.warnIfResponseSizeApproachesLimit();
+            return Array.from(requestedDomainUnitPathsByInstance.get(this) ?? []);
+          },
+        }),
+        blueprint_names: Lazy.list({
+          produce: () => Array.from(requestedBlueprintKeysByInstance.get(this) ?? []),
+        }),
         refresh: refresh ? Date.now() : undefined,
       },
       naming: this.props.naming,

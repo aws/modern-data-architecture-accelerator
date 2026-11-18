@@ -86,7 +86,11 @@
         },
         "domain_id": {
           "Ref": "sagemakerprojectdomainconfigparserdomainconfigparserssmdomainidParameter178D8BA1"
-        }
+        },
+        "domain_unit_paths": [
+          "domain_unit_id/root/business-teams/team2"
+        ],
+        "blueprint_names": []
       },
       "UpdateReplacePolicy": "Delete",
       "DeletionPolicy": "Delete",
@@ -540,8 +544,6 @@
             {
               "Action": [
                 "datazone:ListDomainUnitsForParent",
-                "datazone:ListProjectProfiles",
-                "datazone:ListProjects",
                 "datazone:ListEnvironmentBlueprints"
               ],
               "Effect": "Allow",
@@ -584,7 +586,7 @@
               "id": "PCI.DSS.321-IAMNoInlinePolicy"
             },
             {
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] DataZone List operations (ListDomainUnitsForParent, ListProjectProfiles, ListProjects, ListEnvironmentBlueprints) do not support resource-level permissions.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts] DataZone List operations (ListDomainUnitsForParent, ListEnvironmentBlueprints) do not support resource-level permissions (https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html).",
               "id": "AwsSolutions-IAM5"
             }
           ]
