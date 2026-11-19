@@ -1,56 +1,62 @@
-# Modern Data Architecture Accelerator (MDAA)
+# Secure AI Foundations
+
+_Formerly the Modern Data Architecture Accelerator (MDAA)_
 
 ![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
 
+> **The Modern Data Architecture Accelerator (MDAA) is now Secure AI Foundations.** This is a name change only: existing deployments, configurations, the `mdaa` CLI, and the `@aws-mdaa` packages keep working as before. In a future release, the packages and this repository move to new names. We will publish a migration guide before the `@aws-mdaa` packages are deprecated. See [Transition from MDAA](#transition-from-mdaa).
+
 **Note:** All documentation in this repo is available as rendered/searchable HTML [here](https://aws.github.io/modern-data-architecture-accelerator/).
 
-The Modern Data Architecture Accelerator (MDAA) deploys secure, compliant modern Data and AI architectures on AWS in minutes. Pick a starter kit, fill in your environment details, and deploy — MDAA handles security compliance, encryption, and IAM best practices automatically.
+Secure AI Foundations deploys a secure, compliant foundation for data and AI workloads on AWS in minutes, from governed data lakes to generative AI applications and AI agents on Amazon Bedrock AgentCore. Pick a starter kit, fill in your environment details, and deploy. Every module applies encryption, least-privilege IAM, and audit logging by default.
 
 ## Table of Contents
 
-- [Why MDAA](#why-mdaa)
+- [Why Secure AI Foundations](#why-secure-ai-foundations)
 - [Uses](#uses)
 - [Key Features](#key-features)
 - [Quick Start](#quick-start)
 - [Available Modules](#available-modules)
 - [Security](#security)
 - [Workshops and Learning Resources](#workshops-and-learning-resources)
-- [Using and Extending MDAA](#using-and-extending-mdaa)
+- [Using and Extending Secure AI Foundations](#using-and-extending-secure-ai-foundations)
 - [For Developers](#for-developers)
 - [Contributing](#contributing)
+- [Transition from MDAA](#transition-from-mdaa)
 - [License](#license)
 
-## Why MDAA
+## Why Secure AI Foundations
 
-Building a secure, compliant data and AI platform on AWS typically takes months of architecture design, security reviews, and infrastructure coding. MDAA compresses that into minutes. You get production-ready infrastructure that passes compliance audits on day one — not after weeks of remediation.
+Building a secure, compliant data and AI platform on AWS typically takes months of architecture design, security reviews, and infrastructure coding. Secure AI Foundations compresses that into minutes. You get production-ready infrastructure, validated against NIST 800-53, HIPAA, and PCI-DSS rulesets, on day one rather than after weeks of remediation.
 
 - **Minutes, not months**: Deploy a complete data lake, ML platform, or GenAI backend in 15–45 minutes instead of building from scratch.
 - **Compliance without compromise**: Every module enforces encryption, least-privilege IAM, and audit logging by default. No shortcuts, no security debt.
 - **Focus on your problem, not plumbing**: Spend time on data, models, and business logic — not on writing CloudFormation, debugging IAM policies, or passing security reviews.
 
-![MDAA Business Value](docs/mdaa_business_value.png)
+![Secure AI Foundations Business Value](docs/mdaa_business_value.png)
 
 ## Uses
 
-MDAA can be used to build an architecture to solve any variety of data or AI problem, including:
+Secure AI Foundations can be used to build an architecture to solve any variety of data or AI problem, including:
 
 ![Modern Data Architecture Examples](docs/mda_examples.png)
 
-Additionally, MDAA can be used to build complex, multi-domain and multi-account data and AI architectures:
+It can also build complex, multi-domain and multi-account data and AI architectures:
 
 ![Modern Data Architecture Examples](docs/mda_data_mesh.png)
 
 ## Key Features
 
+- **Built for AI workloads**: Deploy Amazon Bedrock AgentCore Runtime, Gateway, and Harness, Bedrock Knowledge Bases, and Bedrock Guardrails. Agents run inside your VPC, every endpoint requires IAM or JWT authentication, and the Bedrock Settings module adds model invocation logging.
 - **Deploy in minutes, not months**: Starter kits go from zero to a working environment in 15–45 minutes. No custom code required.
 - **Security and compliance built in**: All modules enforce encryption, least-privilege IAM, and audit logging. Validated against AWS Solutions, NIST 800-53, HIPAA, and PCI-DSS rulesets.
 - **Configuration-driven**: Define your environment in YAML files. Change what you need, leave the rest as secure defaults.
 - **Extend as you grow**: Start with a kit, then add modules for analytics, AI, governance, or data pipelines as your needs evolve.
 - **Multi-account and multi-region**: Deploy across accounts and regions with built-in cross-account trust.
 
-| Without MDAA                               | With MDAA                            |
-| ------------------------------------------ | ------------------------------------ |
-| ![From Scratch](docs/mda_from_scratch.png) | ![With MDAA](docs/mda_with_mdaa.png) |
+| Without Secure AI Foundations              | With Secure AI Foundations                            |
+| ------------------------------------------ | ----------------------------------------------------- |
+| ![From Scratch](docs/mda_from_scratch.png) | ![With Secure AI Foundations](docs/mda_with_mdaa.png) |
 
 ## Quick Start
 
@@ -62,9 +68,9 @@ Additionally, MDAA can be used to build complex, multi-domain and multi-account 
 
 ### 1. Pick a Starter Kit
 
-Start by identifying the business problem you need to solve, then select the starter kit that provides the best coverage of required capabilities. Starter kits are just starting points — deploy as-is or modify and extend with additional [modules](#available-modules) and configurations to match your requirements. If necessary, MDAA deployments can be further customized through [code-level escape hatches](CUSTOMIZATION.md).
+Start by identifying the business problem you need to solve, then select the starter kit that provides the best coverage of required capabilities. Starter kits are just starting points: deploy as-is or modify and extend with additional [modules](#available-modules) and configurations to match your requirements. If necessary, deployments can be further customized through [code-level escape hatches](CUSTOMIZATION.md).
 
-![MDAA Working Backwards](docs/working_backwards_starter_kit.png)
+![Secure AI Foundations Working Backwards](docs/working_backwards_starter_kit.png)
 
 | Starter Kit                                                                       | What you get                                                                    | Est. Deploy Time |
 | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ---------------- |
@@ -102,9 +108,9 @@ Once deployed, start using your new architecture (see the kit's USAGE.md) or enh
 
 ## Available Modules
 
-MDAA includes 40+ modules for governance, data lakes, pipelines, analytics, AI, and utilities. Browse the full list with documentation at [aws.github.io/modern-data-architecture-accelerator](https://aws.github.io/modern-data-architecture-accelerator/).
+Secure AI Foundations includes 40+ modules for governance, data lakes, pipelines, analytics, AI, and utilities. Browse the full list with documentation at [aws.github.io/modern-data-architecture-accelerator](https://aws.github.io/modern-data-architecture-accelerator/).
 
-![MDAA Capabilities and Services](docs/mdaa_capabilities_services.png)
+![Secure AI Foundations Capabilities and Services](docs/mdaa_capabilities_services.png)
 
 <details>
 <summary>Governance Modules</summary>
@@ -143,7 +149,7 @@ MDAA includes 40+ modules for governance, data lakes, pipelines, analytics, AI, 
 - [**Data Ops DataBrew**](packages/apps/dataops/dataops-databrew-app/README.md) - Glue DataBrew for data profiling and cleansing.
 - [**Data Ops Nifi**](packages/apps/dataops/dataops-nifi-app/README.md) - Apache Nifi clusters for event-driven data flows.
 - [**Data Ops DMS**](packages/apps/dataops/dataops-dms-app/README.md) - DMS replication instances, endpoints, and tasks.
-- [**Data Ops Dashboard**](packages/apps/dataops/dataops-dashboard-app/README.md) - CloudWatch dashboards for MDAA observability.
+- [**Data Ops Dashboard**](packages/apps/dataops/dataops-dashboard-app/README.md) - CloudWatch dashboards for data pipeline observability.
 - [**Data Ops Data Quality**](packages/apps/dataops/dataops-data-quality-app/README.md) - Glue Data Quality rulesets for automated data validation.
 - [**Data Ops DynamoDB**](packages/apps/dataops/dataops-dynamodb-app/README.md) - DynamoDB tables for data operations.
 - [**Data Ops Aurora**](packages/apps/dataops/dataops-aurora-app/README.md) - Aurora Serverless v2 clusters for relational database workloads.
@@ -193,7 +199,7 @@ MDAA includes 40+ modules for governance, data lakes, pipelines, analytics, AI, 
 
 ## Security
 
-See [SECURITY.md](SECURITY.md) for details on MDAA's security design principles and compliance approach.
+See [SECURITY.md](SECURITY.md) for details on the security design principles and compliance approach.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md#security-issue-notifications) for information on reporting security issues.
 
@@ -201,35 +207,35 @@ See [CONTRIBUTING.md](CONTRIBUTING.md#security-issue-notifications) for informat
 
 ### Self-Paced Workshops
 
-- [MDAA Hands-On Workshop](https://catalog.us-east-1.prod.workshops.aws/workshops/6e7289c7-5662-494d-8b56-b8706412c3a6): A guided, hands-on workshop that walks you through deploying and configuring MDAA from scratch.
+- [Secure AI Foundations (formerly MDAA) Hands-On Workshop](https://catalog.us-east-1.prod.workshops.aws/workshops/6e7289c7-5662-494d-8b56-b8706412c3a6): A guided, hands-on workshop that walks you through deploying and configuring it from scratch.
 
 ### Documentation
 
 Browse the full documentation, module references, and configuration schemas at [aws.github.io/modern-data-architecture-accelerator](https://aws.github.io/modern-data-architecture-accelerator/).
 
-- [Architecture and Design Guide](ARCHITECTURES.md): Reference architectures and design patterns for MDAA deployments.
-- [Configuration Guide](CONFIGURATION.md): How to author MDAA YAML configuration files.
-- [Customization Guide](CUSTOMIZATION.md): How to extend MDAA modules with code-based escape hatches.
-- [Predeployment Guide](PREDEPLOYMENT.md): How to prepare your AWS accounts for MDAA deployment.
-- [Deployment Guide](DEPLOYMENT.md): Step-by-step deployment instructions using the MDAA CLI.
+- [Architecture and Design Guide](ARCHITECTURES.md): Reference architectures and design patterns.
+- [Configuration Guide](CONFIGURATION.md): How to author the YAML configuration files.
+- [Customization Guide](CUSTOMIZATION.md): How to extend modules with code-based escape hatches.
+- [Predeployment Guide](PREDEPLOYMENT.md): How to prepare your AWS accounts for deployment.
+- [Deployment Guide](DEPLOYMENT.md): Step-by-step deployment instructions using the `mdaa` CLI.
 
-## Using and Extending MDAA
+## Using and Extending Secure AI Foundations
 
-MDAA can be used and extended in three ways:
+There are three ways to use and extend it:
 
 ### Configuration-Driven Deployment
 
-Deploy compliant, end-to-end data and AI environments using YAML config files and the MDAA CLI. No code required - accessible to all roles, from simple to complex deployments with high compliance assurance.
+Deploy compliant, end-to-end data and AI environments using YAML config files and the `mdaa` CLI. No code required - accessible to all roles, from simple to complex deployments with high compliance assurance.
 
 ### Code-Driven Custom Environments
 
-Build custom data and AI environments using MDAA's reusable CDK constructs. L2 and L3 constructs are published as TypeScript npm packages under the `@aws-mdaa` scope.
+Build custom data and AI environments using the reusable CDK constructs. L2 and L3 constructs are published as TypeScript npm packages under the `@aws-mdaa` scope.
 
 ### Workload Integration
 
-Independently developed workloads (CDK or CloudFormation) can leverage MDAA-deployed resources via the standard set of SSM (Systems Manager) parameters published by all MDAA modules.
+Independently developed workloads (CDK or CloudFormation) can use deployed resources through the standard set of SSM (Systems Manager) parameters that every module publishes.
 
-![MDAA Usage and Extension](docs/MDAA-Extending.png)
+![Secure AI Foundations Usage and Extension](docs/MDAA-Extending.png)
 
 ### Metrics Collection
 
@@ -248,6 +254,26 @@ Full documentation and module reference is available at [aws.github.io/modern-da
 ## Contributing
 
 We welcome contributions from the community. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to get started, set up your development environment, and submit pull requests.
+
+## Transition from MDAA
+
+The Modern Data Architecture Accelerator (MDAA) is now Secure AI Foundations. The new name reflects where the project is heading: a governed foundation for data, generative AI, and agentic AI workloads on AWS.
+
+**What changes now:** the project name in this README and the documentation site title. The rest of the documentation still uses the MDAA name for now.
+
+**What does not change:**
+
+- This repository and its URL
+- The documentation site URL
+- The `mdaa` CLI and its commands
+- The `@aws-mdaa` npm package names and version numbering
+- Configuration file formats, SSM parameter names, and deployed resource names
+
+**Do I need to do anything now?** No. The rename needs no changes to existing configurations or deployments.
+
+**What happens next?** In a future release, the packages move to a new npm namespace and this repository moves to a new name. The `@aws-mdaa` packages will be deprecated with a pointer to their replacements. The first step changes package names only, with no functional changes. We will announce each step in the release notes and publish a migration guide before it happens. Deployed resources will not need to be replaced.
+
+**Where do I ask questions?** Open an issue in this repository.
 
 ## License
 

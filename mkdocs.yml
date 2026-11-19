@@ -1,4 +1,4 @@
-site_name: Modern Data Architecture Accelerator
+site_name: Secure AI Foundations
 docs_dir: target/docs
 site_dir: target/docs_site
 use_directory_urls: false

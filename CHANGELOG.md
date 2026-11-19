@@ -31,6 +31,7 @@
 
 ### General Changes
 
+- The project is now Secure AI Foundations, formerly the Modern Data Architecture Accelerator (MDAA). The rename changes only the README and the documentation site title; the `mdaa` CLI, the `@aws-mdaa` packages, configurations, and deployed resources are unchanged. See [Transition from MDAA](README.md#transition-from-mdaa).
 - Updated `aws-cdk-lib` to 2.273.0 to address a CVE in its bundled `brace-expansion`. `Upgrade impact:` redeploying updates some resources in place; none are replaced:
   - The CDK bucket-deployment Lambda now runs on `arm64` with 1024 MB memory by default.
   - Glue connections and SageMaker notebook lifecycle configs now get the `mdaa_*` tags; the deploy role needs `glue:TagResource` and `sagemaker:AddTags`.
