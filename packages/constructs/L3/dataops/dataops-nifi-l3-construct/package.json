@@ -61,7 +61,7 @@
     "cdk-nag": "2.37.55",
     "cdk8s": "2.70.114",
     "constructs": "10.6.0",
-    "fast-xml-parser": "5.7.0",
+    "fast-xml-parser": "5.12.0",
     "lodash": "4.18.1"
   },
   "bundledDependencies": [
