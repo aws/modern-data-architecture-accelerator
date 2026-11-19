@@ -1,6 +1,6 @@
 # Change Log
 
-## [NEXT_RELEASE_VERSION] - NEXT_RELEASE_DATE
+## [1.10.1] - 2026-11-19
 
 ### New Features
 
