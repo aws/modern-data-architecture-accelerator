@@ -6,7 +6,7 @@
 #   2. Feature Branch Pipeline - Runs on feature branches when RUN_FEATURE_PIPELINE=true (feature_*)
 #   3. Prerelease Pipeline     - Runs on main branch commits (prerelease_*)
 #   4. Release Pipeline        - Manually triggered on main branch (release_*)
-#   5. Cornerstone Pipeline    - Manually triggered on main for distribution builds (cornerstone_*)
+#   5. Cornerstone Pipeline    - Runs in the release pipeline, before the git push (cornerstone_*)
 # =============================================================================
 
 workflow:
@@ -1470,8 +1470,9 @@ prerelease_publish_npm:
 # then publishes to production CodeArtifact repos.
 #
 # Two operator actions on the happy path: release_version_package starts the release,
-# confirm_push_to_git authorizes the irreversible push. cornerstone_build_distributions and
-# rollback_release keep their own manual triggers.
+# confirm_push_to_git authorizes the irreversible push. The Cornerstone upload needs no trigger,
+# and confirm_push_to_git waits for it so the push stays the last step. rollback_release keeps
+# its own manual trigger.
 # Stage order: pre_release -> release_validate -> release_publish -> post_release
 # =============================================================================
 
@@ -1496,7 +1497,7 @@ release_version_package:
   interruptible: false
   when: manual
   # GitLab expands neither variables nor inputs in manual_confirmation; keep its defaults in sync with inputs.
-  manual_confirmation: 'This will create a new version from the version_bump_level and release_type inputs and, once validate_release_commit passes, publish it to CodeArtifact. The Run button uses the defaults (minor, release); to choose other values, cancel and select the job name. Pushing to git stays a separate confirmation. Continue?'
+  manual_confirmation: 'This will create a new version from the version_bump_level and release_type inputs and, once validate_release_commit passes, publish it to CodeArtifact and upload it to Cornerstone. The Run button uses the defaults (minor, release); to choose other values, cancel and select the job name. Pushing to git stays a separate confirmation. Continue?'
   inputs:
     version_bump_level:
       default: minor
@@ -1781,7 +1782,7 @@ confirm_push_to_git:
     - arch:amd64
   environment: release_git_confirmation
   when: manual
-  manual_confirmation: 'Packages have been published. Do you want to push version changes to git repositories?'
+  manual_confirmation: 'Packages have been published and the Cornerstone artifact uploaded. Do you want to push version changes to git repositories?'
   except:
     variables:
       - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
@@ -1797,6 +1798,10 @@ confirm_push_to_git:
     - validate_release_commit
     - release_publish_npm
     - release_publish_npm_prerelease
+    # The push to git is the only step that cannot be undone, so it goes last. A Cornerstone
+    # upload is not customer-visible until the version is published in Valence, and deleting
+    # the version there reverts it.
+    - cornerstone_upload
   allow_failure: false
   script:
     - echo "User confirmed - proceeding with git push"
@@ -2001,19 +2006,18 @@ rollback_delete_release_packages:
     - ./scripts/publish/delete_codeartifact_version.sh $RELEASE_VERSION $MDAA_CODEARTIFACT_RELEASE_NPM_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT $MDAA_CODEARTIFACT_RELEASE_REGION $MDAA_CODEARTIFACT_RELEASE_NAMESPACE
 
 # =============================================================================
-# Pipeline 5: Cornerstone Pipeline (main branch, manual trigger)
+# Pipeline 5: Cornerstone Pipeline (main branch, part of the release pipeline)
 # =============================================================================
-# Manually triggered on main. Builds the Cornerstone solution distribution,
-# packages it as a zip artifact, and uploads it to S3.
+# Runs once validate_release_commit passes, with no trigger of its own. Builds the
+# Cornerstone solution distribution, packages it as a zip artifact, and uploads it to S3.
+# confirm_push_to_git needs cornerstone_upload, so the push to git comes after it.
 # Stage order: post_release (build -> package -> upload)
 # =============================================================================
 
-# Build Cornerstone solution distributions (manual trigger)
+# Build Cornerstone solution distributions
 cornerstone_build_distributions:
   extends: .size_3xlarge
   interruptible: false
-  when: manual
-  manual_confirmation: 'This will build, package, and upload the Cornerstone distribution. Continue?'
   tags:
     - arch:amd64
   only:
@@ -2029,7 +2033,7 @@ cornerstone_build_distributions:
     - release_version_package
   needs:
     # Gate the Cornerstone distribution build on the clean-checkout validation so the
-    # irreversible S3 upload downstream is only ever produced from a tree proven to
+    # S3 upload downstream is only ever produced from a tree proven to
     # install/build/test from a pristine npm ci.
     - validate_release_commit
     - release_version_package
